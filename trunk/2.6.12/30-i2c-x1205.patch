@@ -29,7 +29,7 @@ diff -urN linux-2.6.14-rc3/drivers/i2c/chips/Makefile test9/drivers/i2c/chips/Ma
 diff -urN linux-2.6.14-rc3/drivers/i2c/chips/x1205.c test9/drivers/i2c/chips/x1205.c
 --- linux-2.6.14-rc3/drivers/i2c/chips/x1205.c	1970-01-01 01:00:00.000000000 +0100
 +++ test9/drivers/i2c/chips/x1205.c	2005-10-03 16:02:57.000000000 +0200
-@@ -0,0 +1,612 @@
+@@ -0,0 +1,613 @@
 +/*
 + *  linux/drivers/i2c/chips/x1205.c
 + *
@@ -69,6 +69,7 @@ diff -urN linux-2.6.14-rc3/drivers/i2c/chips/x1205.c test9/drivers/i2c/chips/x12
 +
 +/* Addresses to scan */
 +static unsigned short normal_i2c[] = { X1205_I2C_BUS_ADDR, I2C_CLIENT_END };
++static unsigned short normal_i2c_range[] = { I2C_CLIENT_END };
 +
 +/* Insmod parameters */
 +I2C_CLIENT_INSMOD;
