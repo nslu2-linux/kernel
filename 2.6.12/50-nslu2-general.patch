@@ -262,7 +262,7 @@
 +static struct timer_list n2bz_timer;		//beeper
 +
 +// sysfs class
-+static struct class *n2lm_class;
++static struct class_simple *n2lm_class;
 +
 +//==================================================================================================
 +//
@@ -627,7 +627,7 @@
 +  	
 +	n2iom_initarch();
 +
-+	n2lm_class = class_create(THIS_MODULE, "nslu2");
++	n2lm_class = class_simple_create(THIS_MODULE, "nslu2");
 +
 +#ifndef CONFIG_LEDS
 +	if (register_chrdev(NSLU2LM_MAJOR, "n2_ledm", &n2lm_fops) < 0) {
@@ -635,7 +635,7 @@
 +		return -EBUSY;
 +	}
 +	else {
-+		class_device_create(n2lm_class, MKDEV(NSLU2LM_MAJOR, 0), NULL, "leds");
++		class_simple_device_add(n2lm_class, MKDEV(NSLU2LM_MAJOR, 0), NULL, "leds");
 +	}
 +#endif
 +
@@ -644,7 +644,7 @@
 +		return -EBUSY;
 +	}
 +	else {
-+		class_device_create(n2lm_class, MKDEV(NSLU2BZ_MAJOR, 0), NULL, "buzzer");
++		class_simple_device_add(n2lm_class, MKDEV(NSLU2BZ_MAJOR, 0), NULL, "buzzer");
 +	}
 +
 +	return 0;
@@ -662,13 +662,13 @@
 +	del_timer(&n2lm_d2_timer);	
 +
 +	unregister_chrdev(NSLU2LM_MAJOR, "n2lm" );
-+	class_device_destroy(n2lm_class, MKDEV(NSLU2LM_MAJOR, 0));
++	class_simple_device_remove(MKDEV(NSLU2LM_MAJOR, 0));
 +#endif
 +
 +	unregister_chrdev(NSLU2BZ_MAJOR, "n2bz");
-+	class_device_destroy(n2lm_class, MKDEV(NSLU2BZ_MAJOR, 0));
++	class_simple_device_remove(MKDEV(NSLU2BZ_MAJOR, 0));
 +
-+	class_destroy(n2lm_class);
++	class_simple_destroy(n2lm_class);
 +}
 +
 +module_init(n2iom_init);
@@ -771,7 +771,7 @@
 +
 +static struct platform_device nslu2_uart = {
 +	.name			= "serial8250",
-+	.id			= PLAT8250_DEV_PLATFORM,
++	.id			= 0,
 +	.dev.platform_data	= nslu2_uart_data,
 +	.num_resources		= 2,
 +	.resource		= nslu2_uart_resources
@@ -808,7 +808,7 @@
 +	.phys_ram	= PHYS_OFFSET,
 +	.phys_io	= IXP4XX_PERIPHERAL_BASE_PHYS,
 +	.io_pg_offst	= ((IXP4XX_PERIPHERAL_BASE_VIRT) >> 18) & 0xFFFC,
-+	.boot_params	= 0x00000100,
++	BOOT_PARAMS(0x0100)
 +	.map_io		= ixp4xx_map_io,
 +	.init_irq	= ixp4xx_init_irq, /* FIXME: all irq are off here */
 +        .timer          = &ixp4xx_timer,
