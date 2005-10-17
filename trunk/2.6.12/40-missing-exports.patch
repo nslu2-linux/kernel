@@ -10,7 +10,7 @@
  {
 --- linux-2.6.12/lib/kobject_uevent.c~	2005-05-14 16:45:13.000000000 -0400
 +++ linux-2.6.12/lib/kobject_uevent.c	2005-05-14 16:45:27.000000000 -0400
-@@ -178,6 +178,7 @@ static inline int send_uevent(const char
+@@ -178,5 +178,6 @@ static inline int send_uevent(const char
  
  #ifdef CONFIG_HOTPLUG
  char hotplug_path[HOTPLUG_PATH_LEN] = "/sbin/hotplug";
