@@ -142,7 +142,7 @@
 +
 +static irqreturn_t nslu2_power_handler(int irq, void *dev_id, struct pt_regs *regs)
 +{
-+	/* Signal init to do the ctrlaltdel action */
++	/* Signal user space - this invokes the init ctrlaltdel action */
 +	kill_proc(1, SIGINT, 1);
 +
 +	return IRQ_HANDLED;
@@ -150,11 +150,11 @@
 +
 +static irqreturn_t nslu2_reset_handler(int irq, void *dev_id, struct pt_regs *regs)
 +{
-+	/* FIXME This doesn't reset the NSLU2. It powers it off.
-+	 * Close enough, since reset is unreliable
++	/* Do the reboot thing with the kernel - this does a hard, no sync
++	 * reset, whereas init ctrl-alt-del does everything in a controlled fashion.
 +	 */
 +
-+	machine_power_off();
++	ctrl_alt_del();
 +
 +	return IRQ_HANDLED;
 +}
@@ -261,19 +261,19 @@
 +	.name			= "IXP4XX-I2C",
 +	.id			= 0,
 +	.dev.platform_data	= &nslu2_i2c_gpio_pins,
-+	.num_resources		= 0
++	.num_resources		= 0,
 +};
 +
 +static struct resource nslu2_uart_resources[] = {
 +	{
 +		.start		= IXP4XX_UART1_BASE_PHYS,
 +		.end		= IXP4XX_UART1_BASE_PHYS + 0x0fff,
-+		.flags		= IORESOURCE_MEM
++		.flags		= IORESOURCE_MEM,
 +	},
 +	{
 +		.start		= IXP4XX_UART2_BASE_PHYS,
 +		.end		= IXP4XX_UART2_BASE_PHYS + 0x0fff,
-+		.flags		= IORESOURCE_MEM
++		.flags		= IORESOURCE_MEM,
 +	}
 +};
 +
@@ -304,18 +304,18 @@
 +	.id			= PLAT8250_DEV_PLATFORM,
 +	.dev.platform_data	= nslu2_uart_data,
 +	.num_resources		= 2,
-+	.resource		= nslu2_uart_resources
++	.resource		= nslu2_uart_resources,
 +};
 +
 +static struct platform_device *nslu2_devices[] __initdata = {
 +	&nslu2_i2c_controller,
 +	&nslu2_flash,
-+	&nslu2_uart
++	&nslu2_uart,
 +};
 +
 +static void nslu2_power_off(void)
 +{
-+        /* This causes the box to drop the power and go dead. */
++	/* This causes the box to drop the power and go dead. */
 +
 +	/* enable the pwr cntl gpio */
 +	gpio_line_config(NSLU2_PO_GPIO, IXP4XX_GPIO_OUT);
@@ -340,8 +340,8 @@
 +	.io_pg_offst	= ((IXP4XX_PERIPHERAL_BASE_VIRT) >> 18) & 0xFFFC,
 +	.boot_params	= 0x00000100,
 +	.map_io		= ixp4xx_map_io,
-+	.init_irq	= ixp4xx_init_irq, /* FIXME: all irq are off here */
-+        .timer          = &ixp4xx_timer,
++	.init_irq	= ixp4xx_init_irq,
++	.timer          = &ixp4xx_timer,
 +	.init_machine	= nslu2_init,
 +MACHINE_END
 --- linux-2.6.13/.pc/50-nslu2-arch.patch/include/asm-arm/arch-ixp4xx/hardware.h	2005-10-26 15:19:37.451112111 -0700
