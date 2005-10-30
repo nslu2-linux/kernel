@@ -112,9 +112,9 @@
 +}
 +
 +subsys_initcall(nslu2_pci_init);
---- linux-2.6.13/.pc/50-nslu2-arch.patch/arch/arm/mach-ixp4xx/nslu2-power.c	2005-10-26 15:19:43.171472071 -0700
-+++ linux-2.6.13/arch/arm/mach-ixp4xx/nslu2-power.c	2005-10-26 15:23:39.646352497 -0700
-@@ -0,0 +1,92 @@
+--- linux-2.6.14/arch/arm/mach-ixp4xx/nslu2-power.c	2005-09-06 00:17:15.000000000 -0700
++++ linux-2.6.14/arch/arm/mach-ixp4xx/nslu2-power.c	2005-10-28 15:50:43.554157030 -0700
+@@ -0,0 +1,94 @@
 +/*
 + * arch/arm/mach-ixp4xx/nslu2-power.c
 + *
@@ -140,21 +140,23 @@
 +
 +#include <asm/mach-types.h>
 +
++extern void ctrl_alt_del(void);
++
 +static irqreturn_t nslu2_power_handler(int irq, void *dev_id, struct pt_regs *regs)
 +{
-+	/* Signal user space - this invokes the init ctrlaltdel action */
-+	kill_proc(1, SIGINT, 1);
++	/* Signal init to do the ctrlaltdel action, this will bypass init if
++	 * it hasn't started and do a kernel_restart.
++	 */
++	ctrl_alt_del();
 +
 +	return IRQ_HANDLED;
 +}
 +
 +static irqreturn_t nslu2_reset_handler(int irq, void *dev_id, struct pt_regs *regs)
 +{
-+	/* Do the reboot thing with the kernel - this does a hard, no sync
-+	 * reset, whereas init ctrl-alt-del does everything in a controlled fashion.
++	/* This is the paper-clip reset, it shuts the machine down directly.
 +	 */
-+
-+	ctrl_alt_del();
++	machine_power_off();
 +
 +	return IRQ_HANDLED;
 +}
