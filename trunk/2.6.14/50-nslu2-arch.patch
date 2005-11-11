@@ -1,5 +1,5 @@
---- linux-2.6.14-git.orig/arch/arm/mach-ixp4xx/Kconfig	2005-11-09 23:23:28.000000000 +0100
-+++ linux-2.6.14-git/arch/arm/mach-ixp4xx/Kconfig	2005-11-09 23:24:48.000000000 +0100
+--- linux-2.6.14/arch/arm/mach-ixp4xx/Kconfig	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.14/arch/arm/mach-ixp4xx/Kconfig	1970-01-01 00:00:00.000000000 +0000
 @@ -8,6 +8,16 @@ menu "Intel IXP4xx Implementation Option
  
  comment "IXP4xx Platforms"
@@ -17,16 +17,16 @@
  config ARCH_AVILA
  	bool "Avila"
  	help
---- linux-2.6.14-git.orig/arch/arm/mach-ixp4xx/Makefile	2005-11-09 23:23:28.000000000 +0100
-+++ linux-2.6.14-git/arch/arm/mach-ixp4xx/Makefile	2005-11-09 23:24:48.000000000 +0100
+--- linux-2.6.14/arch/arm/mach-ixp4xx/Makefile	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.14/arch/arm/mach-ixp4xx/Makefile	1970-01-01 00:00:00.000000000 +0000
 @@ -8,4 +8,5 @@ obj-$(CONFIG_ARCH_IXDP4XX)	+= ixdp425-pc
  obj-$(CONFIG_MACH_IXDPG425)	+= ixdpg425-pci.o coyote-setup.o
  obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-pci.o coyote-setup.o
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-pci.o gtwx5715-setup.o
 +obj-$(CONFIG_MACH_NSLU2)	+= nslu2-pci.o nslu2-setup.o nslu2-power.o
  
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.14-git/arch/arm/mach-ixp4xx/nslu2-pci.c	2005-11-09 23:31:42.000000000 +0100
+--- linux-2.6.14/arch/arm/mach-ixp4xx/nslu2-pci.c	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.14/arch/arm/mach-ixp4xx/nslu2-pci.c	1970-01-01 00:00:00.000000000 +0000
 @@ -0,0 +1,77 @@
 +/*
 + * arch/arm/mach-ixp4xx/nslu2-pci.c
@@ -105,8 +105,8 @@
 +}
 +
 +subsys_initcall(nslu2_pci_init);
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.14-git/arch/arm/mach-ixp4xx/nslu2-power.c	2005-11-09 23:31:58.000000000 +0100
+--- linux-2.6.14/arch/arm/mach-ixp4xx/nslu2-power.c	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.14/arch/arm/mach-ixp4xx/nslu2-power.c	1970-01-01 00:00:00.000000000 +0000
 @@ -0,0 +1,92 @@
 +/*
 + * arch/arm/mach-ixp4xx/nslu2-power.c
@@ -200,8 +200,8 @@
 +MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
 +MODULE_DESCRIPTION("NSLU2 Power/Reset driver");
 +MODULE_LICENSE("GPL");
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.14-git/arch/arm/mach-ixp4xx/nslu2-setup.c	2005-11-09 23:24:48.000000000 +0100
+--- linux-2.6.14/arch/arm/mach-ixp4xx/nslu2-setup.c	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.14/arch/arm/mach-ixp4xx/nslu2-setup.c	1970-01-01 00:00:00.000000000 +0000
 @@ -0,0 +1,134 @@
 +/*
 + * arch/arm/mach-ixp4xx/nslu2-setup.c
@@ -337,8 +337,8 @@
 +	.timer          = &ixp4xx_timer,
 +	.init_machine	= nslu2_init,
 +MACHINE_END
---- linux-2.6.14-git.orig/include/asm-arm/arch-ixp4xx/hardware.h	2005-11-09 23:23:28.000000000 +0100
-+++ linux-2.6.14-git/include/asm-arm/arch-ixp4xx/hardware.h	2005-11-09 23:24:48.000000000 +0100
+--- linux-2.6.14/include/asm-arm/arch-ixp4xx/hardware.h	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.14/include/asm-arm/arch-ixp4xx/hardware.h	1970-01-01 00:00:00.000000000 +0000
 @@ -44,5 +44,6 @@ extern unsigned int processor_id;
  #include "ixdp425.h"
  #include "coyote.h"
@@ -346,8 +346,8 @@
 +#include "nslu2.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
---- linux-2.6.14-git.orig/include/asm-arm/arch-ixp4xx/irqs.h	2005-11-09 23:23:28.000000000 +0100
-+++ linux-2.6.14-git/include/asm-arm/arch-ixp4xx/irqs.h	2005-11-09 23:24:48.000000000 +0100
+--- linux-2.6.14/include/asm-arm/arch-ixp4xx/irqs.h	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.14/include/asm-arm/arch-ixp4xx/irqs.h	1970-01-01 00:00:00.000000000 +0000
 @@ -93,4 +93,11 @@
  #define	IRQ_COYOTE_PCI_SLOT1	IRQ_IXP4XX_GPIO11
  #define	IRQ_COYOTE_IDE		IRQ_IXP4XX_GPIO5
@@ -360,8 +360,8 @@
 +#define        IRQ_NSLU2_PCI_INTC      IRQ_IXP4XX_GPIO9
 +
  #endif
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.14-git/include/asm-arm/arch-ixp4xx/nslu2.h	2005-11-09 23:24:48.000000000 +0100
+--- linux-2.6.14/include/asm-arm/arch-ixp4xx/nslu2.h	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.14/include/asm-arm/arch-ixp4xx/nslu2.h	1970-01-01 00:00:00.000000000 +0000
 @@ -0,0 +1,96 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/nslu2.h
