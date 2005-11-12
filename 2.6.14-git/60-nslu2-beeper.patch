@@ -1,5 +1,10 @@
---- linux-2.6.13/.pc/60-nslu2-beeper.patch/drivers/input/misc/Kconfig	2005-08-28 16:41:01.000000000 -0700
-+++ linux-2.6.13/drivers/input/misc/Kconfig	2005-10-26 15:24:01.199708764 -0700
+ drivers/input/misc/Kconfig     |   12 +++
+ drivers/input/misc/Makefile    |    1 
+ drivers/input/misc/nslu2spkr.c |  148 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 161 insertions(+)
+
+--- linux-nslu2.orig/drivers/input/misc/Kconfig	2005-11-12 18:07:40.000000000 +0100
++++ linux-nslu2/drivers/input/misc/Kconfig	2005-11-12 18:08:04.000000000 +0100
 @@ -40,6 +40,18 @@ config INPUT_M68K_BEEP
  	tristate "M68k Beeper support"
  	depends on M68K
@@ -19,16 +24,16 @@
  config INPUT_UINPUT
  	tristate "User level driver support"
  	help
---- linux-2.6.13/.pc/60-nslu2-beeper.patch/drivers/input/misc/Makefile	2005-08-28 16:41:01.000000000 -0700
-+++ linux-2.6.13/drivers/input/misc/Makefile	2005-10-26 15:24:01.199708764 -0700
+--- linux-nslu2.orig/drivers/input/misc/Makefile	2005-11-12 18:06:18.000000000 +0100
++++ linux-nslu2/drivers/input/misc/Makefile	2005-11-12 18:08:04.000000000 +0100
 @@ -10,3 +10,4 @@ obj-$(CONFIG_INPUT_M68K_BEEP)		+= m68ksp
  obj-$(CONFIG_INPUT_98SPKR)		+= 98spkr.o
  obj-$(CONFIG_INPUT_UINPUT)		+= uinput.o
  obj-$(CONFIG_HP_SDC_RTC)		+= hp_sdc_rtc.o
 +obj-$(CONFIG_INPUT_NSLU2_BEEPER)	+= nslu2spkr.o
---- linux-2.6.13/.pc/60-nslu2-beeper.patch/drivers/input/misc/nslu2spkr.c	2005-10-26 15:19:43.711506053 -0700
-+++ linux-2.6.13/drivers/input/misc/nslu2spkr.c	2005-10-26 15:24:01.199708764 -0700
-@@ -0,0 +1,144 @@
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-nslu2/drivers/input/misc/nslu2spkr.c	2005-11-12 18:19:28.000000000 +0100
+@@ -0,0 +1,148 @@
 +/*
 + * drivers/input/misc/nslu2spkr.c
 + *
@@ -36,7 +41,7 @@
 + *
 + * Copyright (C) 2005 Tower Technologies
 + *
-+ * based on nslu2-io.c  
++ * based on nslu2-io.c
 + *  Copyright (C) 2004 Karen Spearel
 + *
 + * Author: Alessandro Zummo <a.zummo@towertech.it>
@@ -56,6 +61,7 @@
 +
 +#include <asm/hardware.h>
 +#include <asm/irq.h>
++#include <asm/mach-types.h>
 +
 +static unsigned int beep_on_startup = 1;
 +module_param(beep_on_startup, bool, 0);
@@ -132,9 +138,12 @@
 +
 +static int __init nslu2_spkr_init(void)
 +{
++	if (!(machine_is_nslu2()))
++		return -ENODEV;
++
 +	if (request_irq(IRQ_IXP4XX_TIMER2, &nslu2_spkr_handler,
-+		SA_INTERRUPT | SA_TIMER, "NSLU2 beeper", NULL < 0)) {
-+			
++		SA_INTERRUPT | SA_TIMER, "nslu2-beeper", NULL < 0)) {
++
 +		printk(KERN_INFO "NSLU2 beeper: IRQ %d not available\n",
 +			IRQ_IXP4XX_TIMER2);
 +
