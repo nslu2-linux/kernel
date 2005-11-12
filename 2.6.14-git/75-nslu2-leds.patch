@@ -1,6 +1,11 @@
---- linux-2.6.13/.pc/75-nslu2-leds.patch/arch/arm/Kconfig	2005-10-26 15:19:34.490925838 -0700
-+++ linux-2.6.13/arch/arm/Kconfig	2005-10-26 15:24:18.628805508 -0700
-@@ -389,7 +389,8 @@ config LEDS
+ arch/arm/Kconfig                  |    8 -
+ arch/arm/mach-ixp4xx/Makefile     |    4 
+ arch/arm/mach-ixp4xx/nslu2-leds.c |  223 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 232 insertions(+), 3 deletions(-)
+
+--- linux-nslu2.orig/arch/arm/Kconfig	2005-11-12 02:00:38.000000000 +0100
++++ linux-nslu2/arch/arm/Kconfig	2005-11-12 02:01:32.000000000 +0100
+@@ -418,7 +418,8 @@ config LEDS
  		   ARCH_EBSA285 || ARCH_IMX || ARCH_INTEGRATOR || \
  		   ARCH_LUBBOCK || MACH_MAINSTONE || ARCH_NETWINDER || \
  		   ARCH_OMAP || ARCH_P720T || ARCH_PXA_IDP || \
@@ -10,7 +15,7 @@
  	help
  	  If you say Y here, the LEDs on your machine will be used
  	  to provide useful information about your current system status.
-@@ -403,7 +404,7 @@ config LEDS
+@@ -432,7 +433,7 @@ config LEDS
  
  config LEDS_TIMER
  	bool "Timer LED" if (!ARCH_CDB89712 && !ARCH_OMAP) || \
@@ -19,7 +24,7 @@
  	depends on LEDS
  	default y if ARCH_EBSA110
  	help
-@@ -419,7 +420,8 @@ config LEDS_TIMER
+@@ -448,7 +449,8 @@ config LEDS_TIMER
  
  config LEDS_CPU
  	bool "CPU usage LED" if (!ARCH_CDB89712 && !ARCH_EBSA110 && \
@@ -29,18 +34,18 @@
  	depends on LEDS
  	help
  	  If you say Y here, the red LED will be used to give a good real
---- linux-2.6.13/.pc/75-nslu2-leds.patch/arch/arm/mach-ixp4xx/Makefile	2005-10-26 15:19:43.979522918 -0700
-+++ linux-2.6.13/arch/arm/mach-ixp4xx/Makefile	2005-10-26 15:24:18.632805759 -0700
+--- linux-nslu2.orig/arch/arm/mach-ixp4xx/Makefile	2005-11-12 02:00:38.000000000 +0100
++++ linux-nslu2/arch/arm/mach-ixp4xx/Makefile	2005-11-12 02:01:32.000000000 +0100
 @@ -10,3 +10,7 @@ obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-pci.o gtwx5715-setup.o
- obj-$(CONFIG_MACH_NSLU2)	+= nslu2-pci.o nslu2-setup.o nslu2-power.o nslu2-rtc.o nslu2-io.o
+ obj-$(CONFIG_MACH_NSLU2)	+= nslu2-pci.o nslu2-setup.o nslu2-power.o
  
 +leds-$(CONFIG_MACH_NSLU2)	+= nslu2-leds.o
 +obj-$(CONFIG_LEDS)		+= $(leds-y)
 +
 +
---- linux-2.6.13/.pc/75-nslu2-leds.patch/arch/arm/mach-ixp4xx/nslu2-leds.c	2005-10-26 15:19:44.251540035 -0700
-+++ linux-2.6.13/arch/arm/mach-ixp4xx/nslu2-leds.c	2005-10-26 15:24:18.632805759 -0700
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-nslu2/arch/arm/mach-ixp4xx/nslu2-leds.c	2005-11-12 02:01:32.000000000 +0100
 @@ -0,0 +1,223 @@
 +/*
 + * arch/arm/mach-ixp4xx/nslu2-leds.c
@@ -49,10 +54,10 @@
 + *
 + * Copyright (C) 2005 Tower Technologies
 + *
-+ * based on nslu2-io.c  
++ * based on nslu2-io.c
 + *  Copyright (C) 2004 Karen Spearel
 + * and arch/arm/mach-footbridge/netwinder-leds.c
-+ *  Copyright (C) 1998-1999 Russell King 
++ *  Copyright (C) 1998-1999 Russell King
 + *
 + * Author: Alessandro Zummo <a.zummo@towertech.it>
 + * Maintainers: http://www.nslu2-linux.org/
@@ -83,7 +88,7 @@
 +static unsigned int hw_led_state;
 +
 +static const unsigned long idle_seq[4] = {
-+	
++
 +	NSLU2_LED_GRN_BM, 0,
 +	NSLU2_LED_GRN_BM, 0,
 +};
