@@ -19,6 +19,7 @@
 10-ixp4xx-copy-from.patch [ARM patch system]
 	ARM patch 3080/1 [Incoming]
 	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3080/1
+	Included in 2.6.14-git14
 
 10-ixp4xx-le.patch [LE] [ARM patch system]
 	ARM patch 3085/1 [Incoming]
