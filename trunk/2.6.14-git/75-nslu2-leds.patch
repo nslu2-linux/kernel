@@ -3,8 +3,8 @@
  arch/arm/mach-ixp4xx/nslu2-leds.c |  223 ++++++++++++++++++++++++++++++++++++++
  3 files changed, 232 insertions(+), 3 deletions(-)
 
---- linux-nslu2.orig/arch/arm/Kconfig	2005-11-12 02:00:38.000000000 +0100
-+++ linux-nslu2/arch/arm/Kconfig	2005-11-12 02:01:32.000000000 +0100
+--- linux-nslu2.orig/arch/arm/Kconfig	2005-11-12 18:07:38.000000000 +0100
++++ linux-nslu2/arch/arm/Kconfig	2005-11-12 18:08:04.000000000 +0100
 @@ -418,7 +418,8 @@ config LEDS
  		   ARCH_EBSA285 || ARCH_IMX || ARCH_INTEGRATOR || \
  		   ARCH_LUBBOCK || MACH_MAINSTONE || ARCH_NETWINDER || \
@@ -34,8 +34,8 @@
  	depends on LEDS
  	help
  	  If you say Y here, the red LED will be used to give a good real
---- linux-nslu2.orig/arch/arm/mach-ixp4xx/Makefile	2005-11-12 02:00:38.000000000 +0100
-+++ linux-nslu2/arch/arm/mach-ixp4xx/Makefile	2005-11-12 02:01:32.000000000 +0100
+--- linux-nslu2.orig/arch/arm/mach-ixp4xx/Makefile	2005-11-12 18:07:38.000000000 +0100
++++ linux-nslu2/arch/arm/mach-ixp4xx/Makefile	2005-11-12 18:08:04.000000000 +0100
 @@ -10,3 +10,7 @@ obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-pci.o gtwx5715-setup.o
  obj-$(CONFIG_MACH_NSLU2)	+= nslu2-pci.o nslu2-setup.o nslu2-power.o
@@ -45,7 +45,7 @@
 +
 +
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/arch/arm/mach-ixp4xx/nslu2-leds.c	2005-11-12 02:01:32.000000000 +0100
++++ linux-nslu2/arch/arm/mach-ixp4xx/nslu2-leds.c	2005-11-12 18:16:56.000000000 +0100
 @@ -0,0 +1,223 @@
 +/*
 + * arch/arm/mach-ixp4xx/nslu2-leds.c
@@ -87,17 +87,17 @@
 +static unsigned char led_state;
 +static unsigned int hw_led_state;
 +
++#ifdef CONFIG_LEDS_TIMER
 +static const unsigned long idle_seq[4] = {
-+
 +	NSLU2_LED_GRN_BM, 0,
 +	NSLU2_LED_GRN_BM, 0,
 +};
 +
 +static const unsigned long busy_seq[4] = {
-+
 +	NSLU2_LED_GRN_BM, 0,
 +	NSLU2_LED_GRN_BM | NSLU2_LED_RED_BM, 0,
 +};
++#endif
 +
 +static unsigned char led_count = 0;
 +
@@ -113,10 +113,9 @@
 +	switch (evt) {
 +	case led_start:
 +		/* Let's rock! Red led on, all others off. Remember
-+		 * that disk1/disk2 works inverted. On the NSLU2, the
-+		 * interface starts in a claimed state. XXX
++		 * that disk1/disk2 works inverted.
 +		 */
-+		led_state = LED_STATE_ENABLED | LED_STATE_CLAIMED;
++		led_state = LED_STATE_ENABLED;
 +		hw_led_state = NSLU2_LED_DISK1_BM | NSLU2_LED_DISK2_BM
 +				| NSLU2_LED_RED_BM;
 +		break;
@@ -159,7 +158,6 @@
 +#endif
 +
 +#ifdef CONFIG_LEDS_CPU
-+
 +	case led_idle_start:
 +		led_state |= LED_STATE_IDLE;
 +#ifndef CONFIG_LEDS_TIMER
@@ -176,7 +174,7 @@
 +		hw_led_state |= NSLU2_LED_GRN_BM | NSLU2_LED_RED_BM;
 +#endif
 +		break;
-+#endif
++#endif /* CONFIG_LEDS_CPU */
 +
 +	case led_halted:
 +		if (!(led_state & LED_STATE_CLAIMED))
@@ -231,6 +229,9 @@
 +static int nslu2_leds_panic_event(struct notifier_block *this, unsigned long event,
 +	void *ptr)
 +{
++#ifdef CONFIG_LEDS_TIMER
++	leds_event(led_claim);
++#endif
 +	leds_event(led_green_off);
 +	leds_event(led_red_on);
 +
@@ -269,4 +270,3 @@
 +}
 +
 +module_init(nslu2_leds_init);
-+
