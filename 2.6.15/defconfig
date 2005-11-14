@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.14-rc4
-# Fri Oct 21 16:13:58 2005
+# Linux kernel version: 2.6.15
+# Sun Nov 13 21:46:15 2005
 #
 CONFIG_ARM=y
 CONFIG_MMU=y
@@ -60,6 +60,23 @@ CONFIG_OBSOLETE_MODPARM=y
 CONFIG_KMOD=y
 
 #
+# Block layer
+#
+
+#
+# IO Schedulers
+#
+CONFIG_IOSCHED_NOOP=y
+# CONFIG_IOSCHED_AS is not set
+CONFIG_IOSCHED_DEADLINE=y
+# CONFIG_IOSCHED_CFQ is not set
+# CONFIG_DEFAULT_AS is not set
+CONFIG_DEFAULT_DEADLINE=y
+# CONFIG_DEFAULT_CFQ is not set
+# CONFIG_DEFAULT_NOOP is not set
+CONFIG_DEFAULT_IOSCHED="deadline"
+
+#
 # System Type
 #
 # CONFIG_ARCH_CLPS7500 is not set
@@ -81,6 +98,7 @@ CONFIG_ARCH_IXP4XX=y
 # CONFIG_ARCH_LH7A40X is not set
 # CONFIG_ARCH_OMAP is not set
 # CONFIG_ARCH_VERSATILE is not set
+# CONFIG_ARCH_REALVIEW is not set
 # CONFIG_ARCH_IMX is not set
 # CONFIG_ARCH_H720X is not set
 # CONFIG_ARCH_AAEC2000 is not set
@@ -93,12 +111,12 @@ CONFIG_ARCH_SUPPORTS_BIG_ENDIAN=y
 #
 # IXP4xx Platforms
 #
+CONFIG_MACH_NSLU2=y
 # CONFIG_ARCH_AVILA is not set
 # CONFIG_ARCH_ADI_COYOTE is not set
 # CONFIG_ARCH_IXDP425 is not set
 # CONFIG_MACH_IXDPG425 is not set
 # CONFIG_MACH_IXDP465 is not set
-CONFIG_MACH_NSLU2=y
 # CONFIG_ARCH_PRPMC1100 is not set
 # CONFIG_MACH_GTWX5715 is not set
 
@@ -150,9 +168,8 @@ CONFIG_FLATMEM_MANUAL=y
 CONFIG_FLATMEM=y
 CONFIG_FLAT_NODE_MEM_MAP=y
 # CONFIG_SPARSEMEM_STATIC is not set
-CONFIG_LEDS=y
-CONFIG_LEDS_TIMER=y
-CONFIG_LEDS_CPU=y
+CONFIG_SPLIT_PTLOCK_CPUS=4096
+# CONFIG_LEDS is not set
 CONFIG_ALIGNMENT_TRAP=y
 
 #
@@ -160,7 +177,7 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="root=/dev/mtdblock4 rw rootfstype=jffs2 mem=32M@0x00000000 init=/linuxrc x1205.probe=0,0x6f x1205.hctosys=1 noirqdebug console=ttyS0,115200n8"
+CONFIG_CMDLINE="root=/dev/mtdblock4 rw rootfstype=jffs2 mem=32M@0x00000000 init=/linuxrc x1205.hctosys=1 noirqdebug console=ttyS0,115200n8"
 # CONFIG_XIP_KERNEL is not set
 
 #
@@ -233,6 +250,10 @@ CONFIG_IPV6_TUNNEL=m
 CONFIG_NETFILTER=y
 # CONFIG_NETFILTER_DEBUG is not set
 CONFIG_BRIDGE_NETFILTER=y
+
+#
+# Core Netfilter Configuration
+#
 # CONFIG_NETFILTER_NETLINK is not set
 
 #
@@ -343,6 +364,10 @@ CONFIG_IPDDP_DECAP=y
 # CONFIG_NET_DIVERT is not set
 # CONFIG_ECONET is not set
 # CONFIG_WAN_ROUTER is not set
+
+#
+# QoS and/or fair queueing
+#
 # CONFIG_NET_SCHED is not set
 CONFIG_NET_CLS_ROUTE=y
 
@@ -407,6 +432,7 @@ CONFIG_MTD_BLOCK=y
 # CONFIG_FTL is not set
 # CONFIG_NFTL is not set
 # CONFIG_INFTL is not set
+# CONFIG_RFD_FTL is not set
 
 #
 # RAM/ROM/Flash chip drivers
@@ -416,8 +442,8 @@ CONFIG_MTD_CFI=y
 CONFIG_MTD_GEN_PROBE=y
 CONFIG_MTD_CFI_ADV_OPTIONS=y
 # CONFIG_MTD_CFI_NOSWAP is not set
-CONFIG_MTD_CFI_BE_BYTE_SWAP=y
-# CONFIG_MTD_CFI_LE_BYTE_SWAP is not set
+# CONFIG_MTD_CFI_BE_BYTE_SWAP is not set
+CONFIG_MTD_CFI_LE_BYTE_SWAP=y
 CONFIG_MTD_CFI_GEOMETRY=y
 # CONFIG_MTD_MAP_BANK_WIDTH_1 is not set
 CONFIG_MTD_MAP_BANK_WIDTH_2=y
@@ -446,7 +472,6 @@ CONFIG_MTD_COMPLEX_MAPPINGS=y
 # CONFIG_MTD_PHYSMAP is not set
 # CONFIG_MTD_ARM_INTEGRATOR is not set
 CONFIG_MTD_IXP4XX=y
-# CONFIG_MTD_EDB7312 is not set
 # CONFIG_MTD_PCI is not set
 # CONFIG_MTD_PLATRAM is not set
 
@@ -471,6 +496,11 @@ CONFIG_MTD_IXP4XX=y
 # NAND Flash Device Drivers
 #
 # CONFIG_MTD_NAND is not set
+
+#
+# OneNAND Flash Device Drivers
+#
+# CONFIG_MTD_ONENAND is not set
 
 #
 # Parallel port support
@@ -501,14 +531,6 @@ CONFIG_BLK_DEV_INITRD=y
 CONFIG_CDROM_PKTCDVD=m
 CONFIG_CDROM_PKTCDVD_BUFFERS=8
 # CONFIG_CDROM_PKTCDVD_WCACHE is not set
-
-#
-# IO Schedulers
-#
-CONFIG_IOSCHED_NOOP=y
-# CONFIG_IOSCHED_AS is not set
-CONFIG_IOSCHED_DEADLINE=y
-# CONFIG_IOSCHED_CFQ is not set
 # CONFIG_ATA_OVER_ETH is not set
 
 #
@@ -552,6 +574,7 @@ CONFIG_SCSI_MULTI_LUN=y
 #
 # SCSI low-level drivers
 #
+# CONFIG_ISCSI_TCP is not set
 # CONFIG_BLK_DEV_3W_XXXX_RAID is not set
 # CONFIG_SCSI_3W_9XXX is not set
 # CONFIG_SCSI_ACARD is not set
@@ -576,7 +599,13 @@ CONFIG_SCSI_MULTI_LUN=y
 # CONFIG_SCSI_IPR is not set
 # CONFIG_SCSI_QLOGIC_FC is not set
 # CONFIG_SCSI_QLOGIC_1280 is not set
-CONFIG_SCSI_QLA2XXX=n
+CONFIG_SCSI_QLA2XXX=y
+# CONFIG_SCSI_QLA21XX is not set
+# CONFIG_SCSI_QLA22XX is not set
+# CONFIG_SCSI_QLA2300 is not set
+# CONFIG_SCSI_QLA2322 is not set
+# CONFIG_SCSI_QLA6312 is not set
+# CONFIG_SCSI_QLA24XX is not set
 # CONFIG_SCSI_LPFC is not set
 # CONFIG_SCSI_DC395x is not set
 # CONFIG_SCSI_DC390T is not set
@@ -743,6 +772,7 @@ CONFIG_PPP_ASYNC=m
 # CONFIG_PPP_SYNC_TTY is not set
 CONFIG_PPP_DEFLATE=m
 CONFIG_PPP_BSDCOMP=m
+# CONFIG_PPP_MPPE is not set
 # CONFIG_PPPOE is not set
 # CONFIG_SLIP is not set
 # CONFIG_NET_FC is not set
@@ -781,6 +811,7 @@ CONFIG_INPUT_EVDEV=m
 # CONFIG_INPUT_TOUCHSCREEN is not set
 CONFIG_INPUT_MISC=y
 CONFIG_INPUT_NSLU2_BEEPER=m
+# CONFIG_INPUT_UINPUT is not set
 
 #
 # Hardware I/O ports
@@ -856,6 +887,7 @@ CONFIG_RTC_X1205=y
 # TPM devices
 #
 # CONFIG_TCG_TPM is not set
+# CONFIG_TELCLOCK is not set
 
 #
 # I2C support
@@ -995,6 +1027,7 @@ CONFIG_VIDEO_DPC=m
 CONFIG_VIDEO_HEXIUM_ORION=m
 CONFIG_VIDEO_HEXIUM_GEMINI=m
 CONFIG_VIDEO_CX88=m
+# CONFIG_VIDEO_EM28XX is not set
 CONFIG_VIDEO_OVCAMCHIP=m
 
 #
@@ -1039,7 +1072,6 @@ CONFIG_SND_RAWMIDI=m
 CONFIG_SND_OSSEMUL=y
 CONFIG_SND_MIXER_OSS=m
 CONFIG_SND_PCM_OSS=m
-# CONFIG_SND_RTCTIMER is not set
 # CONFIG_SND_VERBOSE_PRINTK is not set
 # CONFIG_SND_DEBUG is not set
 
@@ -1124,7 +1156,6 @@ CONFIG_USB=y
 CONFIG_USB_DEVICEFS=y
 # CONFIG_USB_BANDWIDTH is not set
 # CONFIG_USB_DYNAMIC_MINORS is not set
-# CONFIG_USB_SUSPEND is not set
 # CONFIG_USB_OTG is not set
 
 #
@@ -1144,15 +1175,15 @@ CONFIG_USB_OHCI_LITTLE_ENDIAN=y
 # USB Device Class drivers
 #
 # CONFIG_OBSOLETE_OSS_USB_DRIVER is not set
-
-#
-# USB Bluetooth TTY can only be used with disabled Bluetooth subsystem
-#
 CONFIG_USB_ACM=m
 CONFIG_USB_PRINTER=m
 
 #
-# NOTE: USB_STORAGE enables SCSI, and 'SCSI disk support' may also be needed; see USB_STORAGE Help for more information
+# NOTE: USB_STORAGE enables SCSI, and 'SCSI disk support'
+#
+
+#
+# may also be needed; see USB_STORAGE Help for more information
 #
 CONFIG_USB_STORAGE=y
 # CONFIG_USB_STORAGE_DEBUG is not set
@@ -1261,6 +1292,7 @@ CONFIG_USB_SERIAL_KEYSPAN_PDA=m
 CONFIG_USB_SERIAL_KLSI=m
 CONFIG_USB_SERIAL_KOBIL_SCT=m
 CONFIG_USB_SERIAL_MCT_U232=m
+# CONFIG_USB_SERIAL_NOKIA_DKU2 is not set
 CONFIG_USB_SERIAL_PL2303=m
 # CONFIG_USB_SERIAL_HP4X is not set
 CONFIG_USB_SERIAL_SAFE=m
@@ -1373,7 +1405,6 @@ CONFIG_RAMFS=y
 #
 # CONFIG_ADFS_FS is not set
 # CONFIG_AFFS_FS is not set
-# CONFIG_ASFS_FS is not set
 # CONFIG_HFS_FS is not set
 # CONFIG_HFSPLUS_FS is not set
 # CONFIG_BEFS_FS is not set
@@ -1383,6 +1414,7 @@ CONFIG_RAMFS=y
 CONFIG_JFFS2_FS=y
 CONFIG_JFFS2_FS_DEBUG=0
 CONFIG_JFFS2_FS_WRITEBUFFER=y
+# CONFIG_JFFS2_SUMMARY is not set
 # CONFIG_JFFS2_COMPRESSION_OPTIONS is not set
 CONFIG_JFFS2_ZLIB=y
 CONFIG_JFFS2_RTIME=y
