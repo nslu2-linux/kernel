@@ -3,8 +3,8 @@
  drivers/char/x1205-rtc.c |  162 +++++++++++++++++++++++++++++++++++++++++++++++
  3 files changed, 167 insertions(+)
 
---- linux-nslu2.orig/drivers/char/Kconfig	2005-11-12 01:40:35.000000000 +0100
-+++ linux-nslu2/drivers/char/Kconfig	2005-11-12 01:40:52.000000000 +0100
+--- linux-2.6.15/drivers/char/Kconfig	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.15/drivers/char/Kconfig	1970-01-01 00:00:00.000000000 +0000
 @@ -783,6 +783,10 @@ config RTC_VR41XX
  	tristate "NEC VR4100 series Real Time Clock Support"
  	depends on CPU_VR41XX
@@ -16,8 +16,8 @@
  config COBALT_LCD
  	bool "Support for Cobalt LCD"
  	depends on MIPS_COBALT
---- linux-nslu2.orig/drivers/char/Makefile	2005-11-12 01:40:35.000000000 +0100
-+++ linux-nslu2/drivers/char/Makefile	2005-11-12 01:40:52.000000000 +0100
+--- linux-2.6.15/drivers/char/Makefile	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.15/drivers/char/Makefile	1970-01-01 00:00:00.000000000 +0000
 @@ -65,6 +65,7 @@ obj-$(CONFIG_SGI_IP27_RTC) += ip27-rtc.o
  obj-$(CONFIG_DS1302) += ds1302.o
  obj-$(CONFIG_S3C2410_RTC) += s3c2410-rtc.o
@@ -26,8 +26,8 @@
  ifeq ($(CONFIG_GENERIC_NVRAM),y)
    obj-$(CONFIG_NVRAM) += generic_nvram.o
  else
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/char/x1205-rtc.c	2005-11-12 01:50:28.000000000 +0100
+--- linux-2.6.15/drivers/char/x1205-rtc.c	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.15/drivers/char/x1205-rtc.c	1970-01-01 00:00:00.000000000 +0000
 @@ -0,0 +1,162 @@
 +/*
 + * drivers/char/x1205-rtc.c

@@ -3,8 +3,8 @@
  drivers/input/misc/nslu2spkr.c |  148 +++++++++++++++++++++++++++++++++++++++++
  3 files changed, 161 insertions(+)
 
---- linux-nslu2.orig/drivers/input/misc/Kconfig	2005-11-12 18:07:40.000000000 +0100
-+++ linux-nslu2/drivers/input/misc/Kconfig	2005-11-12 18:08:04.000000000 +0100
+--- linux-2.6.15/drivers/input/misc/Kconfig	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.15/drivers/input/misc/Kconfig	1970-01-01 00:00:00.000000000 +0000
 @@ -40,6 +40,18 @@ config INPUT_M68K_BEEP
  	tristate "M68k Beeper support"
  	depends on M68K
@@ -24,15 +24,15 @@
  config INPUT_UINPUT
  	tristate "User level driver support"
  	help
---- linux-nslu2.orig/drivers/input/misc/Makefile	2005-11-12 18:06:18.000000000 +0100
-+++ linux-nslu2/drivers/input/misc/Makefile	2005-11-12 18:08:04.000000000 +0100
+--- linux-2.6.15/drivers/input/misc/Makefile	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.15/drivers/input/misc/Makefile	1970-01-01 00:00:00.000000000 +0000
 @@ -10,3 +10,4 @@ obj-$(CONFIG_INPUT_M68K_BEEP)		+= m68ksp
  obj-$(CONFIG_INPUT_98SPKR)		+= 98spkr.o
  obj-$(CONFIG_INPUT_UINPUT)		+= uinput.o
  obj-$(CONFIG_HP_SDC_RTC)		+= hp_sdc_rtc.o
 +obj-$(CONFIG_INPUT_NSLU2_BEEPER)	+= nslu2spkr.o
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/input/misc/nslu2spkr.c	2005-11-12 18:19:28.000000000 +0100
+--- linux-2.6.15/drivers/input/misc/nslu2spkr.c	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.15/drivers/input/misc/nslu2spkr.c	1970-01-01 00:00:00.000000000 +0000
 @@ -0,0 +1,148 @@
 +/*
 + * drivers/input/misc/nslu2spkr.c
