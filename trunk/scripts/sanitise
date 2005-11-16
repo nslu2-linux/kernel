@@ -3,7 +3,7 @@ BEGIN{
 	# The root name - the spurious directory name at the head
 	# of the file paths.  Set on the command line to override
 	if (base == "")
-		base = "linux-2.6.14"
+		base = "linux-2.6.15"
 }
 $1 == "---" {
 	next
