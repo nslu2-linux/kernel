@@ -177,7 +177,7 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="root=/dev/mtdblock4 rw rootfstype=jffs2 mem=32M@0x00000000 init=/linuxrc x1205.hctosys=1 noirqdebug console=ttyS0,115200n8"
+CONFIG_CMDLINE="root=/dev/mtdblock4 rw rootfstype=jffs2 mem=32M@0x00000000 init=/linuxrc x1205.hctosys=1 x1205.probe=0,0x6f noirqdebug console=ttyS0,115200n8"
 # CONFIG_XIP_KERNEL is not set
 
 #
@@ -872,7 +872,7 @@ CONFIG_IXP4XX_WATCHDOG=y
 # CONFIG_USBPCWATCHDOG is not set
 # CONFIG_NVRAM is not set
 # CONFIG_RTC is not set
-CONFIG_RTC_X1205=y
+CONFIG_RTC_X1205=n
 # CONFIG_DTLK is not set
 # CONFIG_R3964 is not set
 # CONFIG_APPLICOM is not set
@@ -1586,3 +1586,8 @@ CONFIG_CRC32=y
 CONFIG_LIBCRC32C=m
 CONFIG_ZLIB_INFLATE=y
 CONFIG_ZLIB_DEFLATE=y
+
+CONFIG_RTC_CLASS=y
+CONFIG_RTC_CLASS_DEV=y
+CONFIG_RTC_CLASS_SYSFS=y
+CONFIG_RTC_CLASS_PROC=y
