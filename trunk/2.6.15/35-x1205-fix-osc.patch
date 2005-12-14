@@ -1,8 +1,8 @@
  drivers/i2c/chips/x1205.c |  116 ++++++++++++++++++++++++++++++----------------
  1 file changed, 76 insertions(+), 40 deletions(-)
 
---- linux-nslu2.orig/drivers/i2c/chips/x1205.c	2005-12-12 01:48:21.000000000 +0100
-+++ linux-nslu2/drivers/i2c/chips/x1205.c	2005-12-12 01:48:46.000000000 +0100
+--- linux-nslu2.orig/drivers/i2c/chips/x1205.c	2005-12-12 18:59:07.000000000 +0100
++++ linux-nslu2/drivers/i2c/chips/x1205.c	2005-12-13 21:31:32.000000000 +0100
 @@ -22,9 +22,9 @@
  #include <linux/string.h>
  #include <linux/bcd.h>
