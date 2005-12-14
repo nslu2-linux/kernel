@@ -1,9 +1,17 @@
- drivers/i2c/chips/x1205.c |  127 +++-------------------------------------------
- include/linux/x1205.h     |   31 -----------
- 2 files changed, 10 insertions(+), 148 deletions(-)
+ drivers/i2c/chips/Kconfig |    5 +
+ drivers/i2c/chips/x1205.c |  131 ++++------------------------------------------
+ include/linux/x1205.h     |   31 ----------
+ 3 files changed, 15 insertions(+), 152 deletions(-)
 
---- linux-nslu2.orig/drivers/i2c/chips/x1205.c	2005-12-08 00:50:51.000000000 +0100
-+++ linux-nslu2/drivers/i2c/chips/x1205.c	2005-12-12 01:48:56.000000000 +0100
+--- linux-nslu2.orig/drivers/i2c/chips/x1205.c	2005-12-13 21:36:26.000000000 +0100
++++ linux-nslu2/drivers/i2c/chips/x1205.c	2005-12-13 21:36:34.000000000 +0100
+@@ -1,5 +1,5 @@
+ /*
+- *  x1205.c - An i2c driver for the Xicor X1205 RTC
++ *  x1205.c - An i2c driver for the Xicor/Intersil X1205 RTC
+  *  Copyright 2004 Karen Spearel
+  *  Copyright 2005 Alessandro Zummo
+  *
 @@ -22,11 +22,9 @@
  #include <linux/string.h>
  #include <linux/bcd.h>
@@ -250,7 +258,12 @@
  static int __init x1205_init(void)
  {
  	return i2c_add_driver(&x1205_driver);
-@@ -691,8 +587,5 @@ MODULE_DESCRIPTION("Xicor X1205 RTC driv
+@@ -687,12 +583,9 @@ static void __exit x1205_exit(void)
+ MODULE_AUTHOR(
+ 	"Karen Spearel <kas11@tampabay.rr.com>, "
+ 	"Alessandro Zummo <a.zummo@towertech.it>");
+-MODULE_DESCRIPTION("Xicor X1205 RTC driver");
++MODULE_DESCRIPTION("Xicor/Intersil X1205 RTC driver");
  MODULE_LICENSE("GPL");
  MODULE_VERSION(DRV_VERSION);
  
@@ -259,7 +272,7 @@
 -
  module_init(x1205_init);
  module_exit(x1205_exit);
---- linux-nslu2.orig/include/linux/x1205.h	2005-12-08 00:50:51.000000000 +0100
+--- linux-nslu2.orig/include/linux/x1205.h	2005-12-13 21:36:26.000000000 +0100
 +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
 @@ -1,31 +0,0 @@
 -/*
@@ -293,3 +306,19 @@
 -	struct i2c_client_address_data *address_data);
 -
 -#endif /* __LINUX_X1205_H__ */
+--- linux-nslu2.orig/drivers/i2c/chips/Kconfig	2005-12-13 21:36:26.000000000 +0100
++++ linux-nslu2/drivers/i2c/chips/Kconfig	2005-12-13 21:38:34.000000000 +0100
+@@ -127,10 +127,11 @@ config SENSORS_MAX6875
+ 	  will be called max6875.
+ 
+ config RTC_X1205_I2C
+-	tristate "Xicor X1205 RTC chip"
++	tristate "Xicor/Intersil X1205 RTC chip"
+ 	depends on I2C && EXPERIMENTAL
+ 	help
+-	  If you say yes here you get support for the Xicor X1205 RTC chip.
++	  If you say yes here you get support for the
++	  Xicor/Intersil X1205 RTC chip.
+ 
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called x1205.
