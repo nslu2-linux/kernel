@@ -2,8 +2,8 @@
  drivers/i2c/chips/x1205.c |  167 ++++++++++++++++++++++++++++++++++++++--------
  2 files changed, 139 insertions(+), 30 deletions(-)
 
---- linux-nslu2.orig/drivers/i2c/chips/x1205.c	2005-12-13 21:54:56.000000000 +0100
-+++ linux-nslu2/drivers/i2c/chips/x1205.c	2005-12-13 21:55:25.000000000 +0100
+--- linux-nslu2.orig/drivers/i2c/chips/x1205.c	2005-12-15 10:02:10.000000000 +0100
++++ linux-nslu2/drivers/i2c/chips/x1205.c	2005-12-15 10:11:18.000000000 +0100
 @@ -18,13 +18,14 @@
  #include <linux/module.h>
  #include <linux/init.h>
@@ -137,7 +137,7 @@
 +	return p - buf;
 +}
 +
-+struct rtc_class_ops x1205_rtc_ops = {
++static struct rtc_class_ops x1205_rtc_ops = {
 +	.owner = THIS_MODULE,
 +	.proc = x1205_rtc_proc,
 +	.read_time = x1205_rtc_read_time,
@@ -238,8 +238,8 @@
  	if ((err = i2c_detach_client(client)))
  		return err;
  
---- linux-nslu2.orig/drivers/i2c/chips/Kconfig	2005-12-13 21:54:56.000000000 +0100
-+++ linux-nslu2/drivers/i2c/chips/Kconfig	2005-12-13 21:55:55.000000000 +0100
+--- linux-nslu2.orig/drivers/i2c/chips/Kconfig	2005-12-15 10:02:10.000000000 +0100
++++ linux-nslu2/drivers/i2c/chips/Kconfig	2005-12-15 10:11:18.000000000 +0100
 @@ -128,7 +128,7 @@ config SENSORS_MAX6875
  
  config RTC_X1205_I2C
