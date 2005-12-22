@@ -1,0 +1,25 @@
+ drivers/i2c/chips/x1205.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- linux-nslu2.orig/drivers/i2c/chips/x1205.c	2005-12-20 20:43:56.000000000 +0100
++++ linux-nslu2/drivers/i2c/chips/x1205.c	2005-12-20 20:43:59.000000000 +0100
+@@ -169,7 +169,7 @@ static int x1205_get_datetime(struct i2c
+ 	tm->tm_min = BCD2BIN(buf[CCR_MIN]);
+ 	tm->tm_hour = BCD2BIN(buf[CCR_HOUR] & 0x3F); /* hr is 0-23 */
+ 	tm->tm_mday = BCD2BIN(buf[CCR_MDAY]);
+-	tm->tm_mon = BCD2BIN(buf[CCR_MONTH]);
++	tm->tm_mon = BCD2BIN(buf[CCR_MONTH]) - 1;
+ 	tm->tm_year = BCD2BIN(buf[CCR_YEAR])
+ 			+ (BCD2BIN(buf[CCR_Y2K]) * 100) - 1900;
+ 	tm->tm_wday = buf[CCR_WDAY];
+@@ -235,8 +235,8 @@ static int x1205_set_datetime(struct i2c
+ 
+ 		buf[CCR_MDAY] = BIN2BCD(tm->tm_mday);
+ 
+-		/* month, 0 - 11 */
+-		buf[CCR_MONTH] = BIN2BCD(tm->tm_mon);
++		/* month, 1 - 12 */
++		buf[CCR_MONTH] = BIN2BCD(tm->tm_mon + 1);
+ 
+ 		/* year, since the rtc epoch*/
+ 		buf[CCR_YEAR] = BIN2BCD(tm->tm_year % 100);
