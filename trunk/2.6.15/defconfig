@@ -177,7 +177,7 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE="root=/dev/mtdblock4 rw rootfstype=jffs2 mem=32M@0x00000000 init=/linuxrc x1205.hctosys=1 x1205.probe=0,0x6f noirqdebug console=ttyS0,115200n8"
+CONFIG_CMDLINE="root=/dev/mtdblock4 rw rootfstype=jffs2 mem=32M@0x00000000 init=/linuxrc rtc-x1205.hctosys=1 rtc-x1205.probe=0,0x6f noirqdebug console=ttyS0,115200n8"
 # CONFIG_XIP_KERNEL is not set
 
 #
