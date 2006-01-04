@@ -792,7 +792,7 @@ CONFIG_NET_POLL_CONTROLLER=y
 #
 # Input device support
 #
-CONFIG_INPUT=m
+CONFIG_INPUT=y
 
 #
 # Userland interfaces
@@ -941,7 +941,7 @@ CONFIG_SENSORS_EEPROM=y
 # CONFIG_SENSORS_PCF8591 is not set
 # CONFIG_SENSORS_RTC8564 is not set
 # CONFIG_SENSORS_MAX6875 is not set
-CONFIG_RTC_X1205_I2C=y
+# CONFIG_RTC_X1205_I2C is not set
 # CONFIG_I2C_DEBUG_CORE is not set
 # CONFIG_I2C_DEBUG_ALGO is not set
 # CONFIG_I2C_DEBUG_BUS is not set
