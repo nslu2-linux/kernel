@@ -14,7 +14,7 @@
 00-memory-h-page-shift.patch [ARM patch system]
 	ARM patch 3218/1
 	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3218/1
-	Signed off by dsaxena, expect it to be included in 2.6.16
+	Moved to "applied" - should be in 2.6.16-rc1
 
 10-mtdpart-redboot-fis-byteswap.patch [linux-mtd]
 	In MM tree: drives-mtd-redbootc-recognise-a-foreign-byte-sex-partition-table.patch
