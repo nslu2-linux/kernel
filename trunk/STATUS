@@ -11,35 +11,16 @@
 [linux-mtd] - patch submitted to the linux-mtd mailing list (because
 	it is not ARM specific.)
 
-90-ixp4xx-pci-le.patch [LE] [l-a-k]
-	Submitted as: 2.6.14-rc3 ixp4xx AHB/PCI endianness fix
-	Deepak said "Tnx, will send upstream." on 10 October
-	Included in 2.6.14-git10
-
-10-ixp4xx-copy-from.patch [ARM patch system]
-	ARM patch 3080/1 [Incoming]
-	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3080/1
-	Included in 2.6.14-git14
-
-10-ixp4xx-le.patch [LE] [ARM patch system]
-	ARM patch 3085/1 [Incoming]
-	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3085/1
+00-memory-h-page-shift.patch [ARM patch system]
+	ARM patch 3218/1
+	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3218/1
+	Signed off by dsaxena, expect it to be included in 2.6.16
 
 10-mtdpart-redboot-fis-byteswap.patch [linux-mtd]
 	In MM tree: drives-mtd-redbootc-recognise-a-foreign-byte-sex-partition-table.patch
 
-15-ixp4xx-writesb-l-w.patch [l-a-k] [warning]
-	Submitted as: 2.6.14-rc5 arch-ixp4xx/io.h: make const args const toremove compiler warning
-	Was in MM: arch-ixp4xx-ioh-make-const-args-const-to-remove-compiler-warning.patch
-	dropped from MM apparently because it is now in another tree
-
-18-ixp4xx-io-h-addr.patch [ARM patch system] [warning]
-	ARM patch 3083/1 [Incoming]
-	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3083/1
-
-20-timer.patch [ARM patch system]
-	ARM patch 3082/1 [Incoming]
-	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3082/1
+19-jffs2-force-be.patch  [Must be replaced]
+	This patch cannot be pushed upstream and must be replaced.
 
 40-rtc-class.patch [RFC on lkml]
 	RTC subsystem with X1205 driver. Requires two more lines in udev
@@ -48,17 +29,22 @@
 	ACTION=="add", SUBSYSTEM=="rtc", ENV{MAJOR}=="[0-9]*",  NAME="rtc%m"
 	ACTION=="add", SUBSYSTEM=="rtc", ENV{MINOR}=="0",       SYMLINK+="rtc"
 
-50-nslu2-arch.patch [ARM patch system]
-	ARM patch 3084/1 [Incoming]
-	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3084/1
-	Needs an update to respond to Deepak's comments
-
 60-nslu2-beeper.patch [driver]
 	Not yet submitted
 
-70-nslu2-io.patch [driver]
+75-nslu2-leds.patch [driver]
+	Not yet submitted
+
+80-nslu2-io.patch [driver]
 	Unlikely to be submitted - this is a compatibility patch to support
 	existing user space use of the old LED driver
 
-75-nslu2-leds.patch [driver]
+85-timer.patch [RFC to be submitted to l-a-k]
 	Not yet submitted
+	Will require discussion on l-a-k, as it touches other ixp4xx machines.
+
+91-maclist.patch [Should be submitted to netdev]
+	Not yet submitted
+
+92-nslu2-maclist.patch [Should be submitted to l-a-k]
+	Depends on 91-maclist.patch being accepted upstream
