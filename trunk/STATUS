@@ -41,17 +41,17 @@
 	ARM patch 3082/1 [Incoming]
 	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3082/1
 
-30-i2c-x1205.patch
-	Being pushed upstream by the maintainer.
-	Included in 2.6.14-git3
+40-rtc-class.patch [RFC on lkml]
+	RTC subsystem with X1205 driver. Requires two more lines in udev
+	config:
+
+	ACTION=="add", SUBSYSTEM=="rtc", ENV{MAJOR}=="[0-9]*",  NAME="rtc%m"
+	ACTION=="add", SUBSYSTEM=="rtc", ENV{MINOR}=="0",       SYMLINK+="rtc"
 
 50-nslu2-arch.patch [ARM patch system]
 	ARM patch 3084/1 [Incoming]
 	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3084/1
 	Needs an update to respond to Deepak's comments
-
-55-nslu2-rtc.patch [driver]
-	Not yet submitted, depends on 30-i2c-x1205.patch
 
 60-nslu2-beeper.patch [driver]
 	Not yet submitted
@@ -62,4 +62,3 @@
 
 75-nslu2-leds.patch [driver]
 	Not yet submitted
-
