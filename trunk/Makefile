@@ -1,0 +1,172 @@
+# Makefile for building the IXP4xx kernel.
+#
+#  Based on the build script for the Loft from Giant Shoulder, Inc.
+#    written by Tommy B.
+#  Based on the great work done in OpenEmbedded for the Linksys NSLU2
+#    written by the nslu2-linux development community.
+#
+#  This builds the kernel in the linux-${REVISION} directory
+#  and builds the ixp400 and ixp425-eth kernel modules.
+#  It then installs all the kernel modules in lib
+#  and creates a tarball there containing all the modules 
+#  under the lib/modules/${REVISION} directory.
+#
+#  N.B. No downloads are provided with this script
+#  The Intel files need to be obtained from Intel in
+#  the proper manner (including agreeing to the licensing).
+#
+#  N.B. You may need to change your crosstool path
+#
+
+
+TARGET = nslu2
+ENDIAN = l
+BASEVER  = 2.6.15
+MAJORVER = 2.6
+MINORVER = 2.6.15
+REVISION = 2.6.15
+
+ifeq (${ENDIAN},b)
+DEBIAN_ARCH = armeb
+else
+DEBIAN_ARCH = arm
+endif
+
+KERNEL_SOURCE = http://kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${BASEVER}.tar.bz2
+KERNEL_PATCH  = http://kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.gz
+
+CROSS_COMPILE = ${DEBIAN_ARCH}-linux-gnu-
+
+ifdef CROSS_COMPILE
+CROSS_COMPILE_FLAGS = CROSS_COMPILE=${CROSS_COMPILE}
+else
+CROSS_COMPILE_FLAGS = 
+endif
+
+all: kernel modules
+
+kernel: vmlinuz-${REVISION}
+ixp400: lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko
+ixp400-eth: lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
+modules: modules-${REVISION}.tar.gz
+
+modules-${REVISION}.tar.gz: vmlinuz-${REVISION} \
+	 lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko \
+	 lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
+	tar zcf modules-${REVISION}.tar.gz lib/modules/${REVISION}
+
+lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko: \
+		ixp400_eth/Kbuild ixp400_xscale_sw/Makefile \
+		vmlinuz-${REVISION}
+	( cd ixp400_eth ; \
+	  make -C `cd .. ; pwd`/linux-${REVISION} ARCH=arm \
+		CROSS_COMPILE=${CROSS_COMPILE} M=`pwd` )
+	mkdir -p lib/modules/${REVISION}/kernel/drivers/net
+	cp ixp400_eth/ixp400_eth.ko lib/modules/${REVISION}/kernel/drivers/net
+	chmod 644 lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
+
+ixp400_eth/Kbuild:
+	( mkdir ixp400_eth ; cd ixp400_eth ; \
+	  unzip ../downloads/GPL_ixp400LinuxEthernetDriverPatch-1_5.zip )
+	( cd patches/ixp400-eth ; cat `grep -v \# series` ) | \
+	patch -d ixp400_eth -p1
+
+lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko: \
+		ixp400_xscale_sw/Makefile vmlinuz-${REVISION}
+	( . ixp400_xscale_sw/buildUtils/environment.linux.sh ; \
+	  export KERNEL_DIR=`pwd`/linux-${REVISION} ; \
+	  export IX_XSCALE_SW=`pwd`/ixp400_xscale_sw ; \
+	  export IX_TARGET=linux${ENDIAN}e ; \
+	  make -C ixp400_xscale_sw ARCH=arm \
+	    CROSS_COMPILE=${CROSS_COMPILE} ixp400.ko )
+	mkdir -p lib/modules/${REVISION}/kernel/drivers/ixp400
+	cp ixp400_xscale_sw/lib/linux${ENDIAN}e/ixp400.ko \
+		lib/modules/${REVISION}/kernel/drivers/ixp400
+	chmod 644 lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko
+
+ixp400_xscale_sw/Makefile:
+	unzip downloads/IPL_ixp400AccessLibrary-2_1.zip
+	unzip downloads/IPL_ixp400NpeLibrary-2_1.zip
+	( cd patches/ixp400 ; cat `grep -v \# series` ) | \
+	patch -d ixp400_xscale_sw -p1
+	( cd patches/ixp-osal ; cat `grep -v \# series` ) | \
+	patch -d ixp_osal -p1
+
+ifeq (${TARGET},nslu2)
+DEVIO_ADD_MACHINE_ID = 'wb 0xe3a01c02,4' 'wb 0xe3811055,4'
+else
+DEVIO_ADD_MACHINE_ID = 
+endif
+
+vmlinuz-${REVISION}: linux-${REVISION}/.config
+	( cd linux-${REVISION} ; \
+	  make ${CROSS_COMPILE_FLAGS} ARCH=arm bzImage modules )
+	( cd linux-${REVISION} ; \
+	  INSTALL_MOD_PATH=".." make ${CROSS_COMPILE_FLAGS} ARCH=arm modules_install )
+	rm -f lib/modules/${REVISION}/build lib/modules/${REVISION}/source
+ifeq (${ENDIAN},b)
+	/usr/sbin/devio '<<'linux-${REVISION}/arch/arm/boot/zImage >vmlinuz-${REVISION} \
+		${DEVIO_ADD_MACHINE_ID} \
+		'cp$$'
+else
+	/usr/sbin/devio '<<'linux-${REVISION}/arch/arm/boot/zImage >vmlinuz-${REVISION} \
+		${DEVIO_ADD_MACHINE_ID} \
+		'wb 0xee110f10,4' \
+		'wb 0xe3c00080,4' \
+		'wb 0xee010f10,4' \
+		'xp $$,4'
+endif
+
+
+
+ifeq (${REVISION},${MINORVER})
+linux-${REVISION}/.config: \
+		downloads/linux-${MINORVER}.tar.bz2 \
+		${MINORVER}/series ${MINORVER}/??-*.patch ${MINORVER}/defconfig
+	[ -e linux-${REVISION} ] || \
+	( tar xjf downloads/linux-${MINORVER}.tar.bz2 ; \
+	  ( cd ${MINORVER}/ ; cat `grep -v \# series` ) | \
+	  patch -d linux-${REVISION} -p1 )
+else
+linux-${REVISION}/.config: \
+		downloads/linux-${BASEVER}.tar.bz2 \
+		downloads/patch-${REVISION}.gz \
+		${MINORVER}/series ${MINORVER}/??-*.patch ${MINORVER}/defconfig
+	[ -e linux-${REVISION} ] || \
+	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
+	  mv linux-${BASEVER} linux-${REVISION} ; \
+	  zcat downloads/patch-${REVISION}.gz | \
+	  patch -d linux-${REVISION} -p1 ) ; \
+	  ( cd ${MINORVER}/ ; cat `grep -v \# series` ) | \
+	  patch -d linux-${REVISION} -p1
+endif
+ifeq (${ENDIAN},b)
+	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/CONFIG_CPU_BIG_ENDIAN=y/' \
+		< ${MINORVER}/defconfig > linux-${REVISION}/.config
+else
+	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/\# CONFIG_CPU_BIG_ENDIAN is not set/' \
+		< ${MINORVER}/defconfig > linux-${REVISION}/.config
+endif
+
+downloads/linux-${BASEVER}.tar.bz2 :
+	[ -e downloads/linux-${BASEVER}.tar.bz2 ] || \
+	( mkdir -p downloads ; cd downloads ; \
+	  wget ${KERNEL_SOURCE} )
+
+downloads/patch-${REVISION}.gz :
+	[ -e downloads/patch-${REVISION}.gz ] || \
+	( mkdir -p downloads ; cd downloads ; \
+	  wget ${KERNEL_PATCH} )
+
+downloads:
+	mkdir -p downloads
+
+clobber:
+	rm -rf vmlinuz-${REVISION} modules-${REVISION}.tar.gz
+	rm -rf linux-${REVISION}
+	rm -rf ixp400_xscale_sw ixp_osal ixp400_eth
+	rm -rf lib
+
+.PHONY: all kernel modules clobber
+
+# End of Makefile
