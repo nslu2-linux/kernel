@@ -19,8 +19,8 @@
 10-mtdpart-redboot-fis-byteswap.patch [linux-mtd]
 	In MM tree: drives-mtd-redbootc-recognise-a-foreign-byte-sex-partition-table.patch
 
-19-jffs2-force-be.patch  [Must be replaced]
-	This patch cannot be pushed upstream and must be replaced.
+15-jffs2-endian-config.patch [linux-mtd]
+	Ready to be submitted to linux-mtd
 
 40-rtc-class.patch [RFC on lkml]
 	RTC subsystem with X1205 driver. Requires two more lines in udev
