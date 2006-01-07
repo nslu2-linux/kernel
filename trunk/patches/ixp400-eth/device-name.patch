@@ -1,0 +1,154 @@
+- register the ethernet devices as ethX
+- add the device name in some P_XXX calls
+
+ ixp400_eth.c |   41 +++++++++++++++++++----------------------
+ 1 file changed, 19 insertions(+), 22 deletions(-)
+
+--- ixp425.orig/ixp400_eth.c	2005-11-25 03:28:29.000000000 +0100
++++ ixp425/ixp400_eth.c	2005-12-01 19:58:44.000000000 +0100
+@@ -160,9 +160,6 @@ MODULE_PARM_DESC(phy_reset, "If non-zero
+ MODULE_PARM(dev_max_count, "i");
+ MODULE_PARM_DESC(dev_max_count, "Number of devices to initialize");
+ 
+-/* devices will be called ixp0 and ixp1 */
+-#define DEVICE_NAME "ixp"
+-
+ /* boolean values for PHY link speed, duplex, and autonegotiation */
+ #define PHY_SPEED_10    0
+ #define PHY_SPEED_100   1
+@@ -1359,9 +1356,10 @@ static int dev_media_check_thread (void*
+ 	
+ 	    if (res != IX_ETH_ACC_SUCCESS)
+ 	    {
+-		P_WARN("ixEthMiiLinkStatus failed on PHY%d.\n"
++		P_WARN("%s: ixEthMiiLinkStatus failed on PHY%d.\n"
+ 		       "\tCan't determine\nthe auto negotiated parameters. "
+ 		       "Using default values.\n",
++		       dev->name,
+ 		       phyNum); 
+ 		/* something is bad, gracefully stops the loop */
+ 		priv->maintenanceCheckStopped = TRUE;
+@@ -1570,7 +1568,7 @@ static int dev_pmu_timer_setup(void)
+     if (request_irq(IX_OSAL_IXP400_XSCALE_PMU_IRQ_LVL,
+                     dev_pmu_timer_os_isr,
+                     SA_SHIRQ,
+-                    DEVICE_NAME,
++                    MODULE_NAME,
+                     (void *)IRQ_ANY_PARAMETER))
+     {
+         P_ERROR("Failed to reassign irq to PMU timer interrupt!\n");
+@@ -2204,7 +2202,7 @@ static int port_enable(struct net_device
+     priv_data_t *priv = dev->priv;
+ #endif
+ 
+-    P_DEBUG("port_enable(%s)\n", dev->name);
++    P_DEBUG("%s: port_enable\n", dev->name);
+ 
+     /* Set MAC addr in h/w (ethAcc checks for MAC address to be valid) */
+     memcpy(&npeMacAddr.macAddress,
+@@ -2212,7 +2210,8 @@ static int port_enable(struct net_device
+ 	   IX_IEEE803_MAC_ADDRESS_SIZE);
+     if ((res = ixEthAccPortUnicastMacAddressSet(priv->port_id, &npeMacAddr)))
+     {
+-        P_VERBOSE("Failed to set MAC address %2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x for port %d\n",
++        P_VERBOSE("%s: Failed to set MAC address %2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x for port %d\n",
++	       dev->name,
+ 	       (unsigned)npeMacAddr.macAddress[0],
+ 	       (unsigned)npeMacAddr.macAddress[1],
+ 	       (unsigned)npeMacAddr.macAddress[2],
+@@ -2306,7 +2305,7 @@ static void port_disable(struct net_devi
+     unsigned long flags;
+ #endif
+ 
+-    P_DEBUG("port_disable(%s)\n", dev->name);
++    P_DEBUG("%s: port_disable\n", dev->name);
+ 
+     if (!netif_queue_stopped(dev))
+     {
+@@ -2696,8 +2695,8 @@ static int do_dev_ioctl(struct net_devic
+ 	    down (miiAccessMutex);     /* lock the MII register access mutex */
+ 	    if ((res = ixEthAccMiiReadRtn (data->phy_id, data->reg_num, &data->val_out)))
+ 	    {
+-		P_ERROR("Error reading MII reg %d on phy %d\n",
+-		       data->reg_num, data->phy_id);
++		P_ERROR("%s: Error reading MII reg %d on phy %d\n",
++		       dev->name, data->reg_num, data->phy_id);
+ 		res = -1;
+ 	    }
+ 	    up (miiAccessMutex);	/* release the MII register access mutex */
+@@ -2709,8 +2708,8 @@ static int do_dev_ioctl(struct net_devic
+ 	    down (miiAccessMutex);     /* lock the MII register access mutex */
+ 	    if ((res = ixEthAccMiiWriteRtn (data->phy_id, data->reg_num, data->val_in)))
+ 	    {
+-		P_ERROR("Error writing MII reg %d on phy %d\n",
+-                        data->reg_num, data->phy_id);
++		P_ERROR("%s: Error writing MII reg %d on phy %d\n",
++                        dev->name, data->reg_num, data->phy_id);
+ 		res = -1;
+ 	    }
+ 	    up (miiAccessMutex);	/* release the MII register access mutex */
+@@ -3009,8 +3008,8 @@ static int phy_init(void)
+ 	if (port_id == IX_ETH_PORT_2) npe_id = "C";
+ 	if (port_id == IX_ETH_PORT_3) npe_id = "A";
+ 
+-	P_INFO("%s%d is using NPE%s and the PHY at address %d\n",
+-	       DEVICE_NAME, dev_count, npe_id, phyAddresses[port_id]);
++	P_INFO("using NPE%s and the PHY at address %d\n",
++	       npe_id, phyAddresses[port_id]);
+ 
+ 	/* Set the MAC to the same duplex mode as the phy */
+ 	ixEthAccPortDuplexModeSet(port_id,
+@@ -3041,7 +3040,8 @@ static int set_mac_address(struct net_de
+     /* Set MAC addr in h/w (ethAcc checks for MAC address to be valid) */
+     if ((res = ixEthAccPortUnicastMacAddressSet(priv->port_id, &npeMacAddr)))
+     {
+-        P_VERBOSE("Failed to set MAC address %2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x for port %d\n",
++        P_VERBOSE("%s: Failed to set MAC address %2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x for port %d\n",
++	       dev->name,
+ 	       (unsigned)npeMacAddr.macAddress[0],
+ 	       (unsigned)npeMacAddr.macAddress[1],
+ 	       (unsigned)npeMacAddr.macAddress[2],
+@@ -3215,9 +3215,6 @@ static int __devinit dev_eth_probe(struc
+     /* set the private port ID */
+     priv->port_id  = portId;
+ 
+-    /* set device name */
+-    sprintf(ndev->name, DEVICE_NAME"%d", priv->port_id);
+-
+     TRACE;
+ 
+     /* initialize RX pool */
+@@ -3310,7 +3307,7 @@ static int __devinit dev_eth_probe(struc
+      */
+     if (is_valid_ether_addr(ndev->dev_addr))
+     {
+-	P_WARN("Use default MAC address %2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x for port %d\n",
++	P_WARN("using default MAC address %2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x on port %d\n",
+ 	       (unsigned)ndev->dev_addr[0],
+ 	       (unsigned)ndev->dev_addr[1],
+ 	       (unsigned)ndev->dev_addr[2],
+@@ -3460,21 +3457,21 @@ static int __devexit dev_eth_remove(int 
+ 	{
+ 	    if (IX_SUCCESS != ixNpeDlNpeStopAndReset(IX_NPEDL_NPEID_NPEA))
+ 	    {
+-		P_NOTICE("Error Halting NPE for Ethernet port %d!\n", portId);
++		P_NOTICE("%s: Error Halting NPE for Ethernet port %d!\n", ndev->name, portId);
+ 	    }
+ 	}
+ 	if (default_npeImageId[portId] == IX_ETH_NPE_B_IMAGE_ID)
+ 	{
+ 	    if (IX_SUCCESS != ixNpeDlNpeStopAndReset(IX_NPEDL_NPEID_NPEB))
+ 	    {
+-		P_NOTICE("Error Halting NPE for Ethernet port %d!\n", portId);
++		P_NOTICE("%s: Error Halting NPE for Ethernet port %d!\n", ndev->name, portId);
+ 	    }
+ 	}
+ 	if (default_npeImageId[portId] == IX_ETH_NPE_C_IMAGE_ID)
+ 	{
+ 	    if (IX_SUCCESS != ixNpeDlNpeStopAndReset(IX_NPEDL_NPEID_NPEC))
+ 	    {
+-		P_NOTICE("Error Halting NPE for Ethernet port %d!\n", portId);
++		P_NOTICE("%s: Error Halting NPE for Ethernet port %d!\n", ndev->name, portId);
+ 	    }
+ 	}
+ 

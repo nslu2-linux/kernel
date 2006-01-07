@@ -1,0 +1,25 @@
+Linksys NSLU2 support
+
+ ixp400_eth.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- ixp425.orig/ixp400_eth.c	2005-11-25 02:58:45.000000000 +0100
++++ ixp425/ixp400_eth.c	2005-11-25 03:24:14.000000000 +0100
+@@ -124,7 +124,7 @@ static int phy_reset = 0;         /* def
+ */
+ #ifdef CONFIG_IXP400_ETH_NPEC_ONLY
+ static int dev_max_count = 1; /* only NPEC is used */
+-#elif defined (CONFIG_IXP400_ETH_NPEB_ONLY)
++#elif defined (CONFIG_IXP400_ETH_NPEB_ONLY) || defined(CONFIG_MACH_NSLU2) || defined(CONFIG_MACH_NAS100D)
+ static int dev_max_count = 1; /* only NPEB is used */
+ #elif defined (CONFIG_ARCH_IXDP425) || defined(CONFIG_ARCH_IXDPG425)\
+       || defined (CONFIG_ARCH_ADI_COYOTE)
+@@ -668,7 +668,7 @@ static IxEthAccPortId default_portId[] =
+     /* configure port for NPE C first */
+     IX_ETH_PORT_2, /* EthAcc Port 2 for ixp0 */
+     IX_ETH_PORT_1
+-#elif defined (CONFIG_IXP400_ETH_NPEB_ONLY)
++#elif defined (CONFIG_IXP400_ETH_NPEB_ONLY) || defined(CONFIG_MACH_NSLU2) || defined(CONFIG_MACH_NAS100D)
+     /* configure port for NPE B first */
+     IX_ETH_PORT_1, /* EthAcc Port 1 for ixp0 */
+     IX_ETH_PORT_2

@@ -1,0 +1,61 @@
+This patch is not necessary but helps when debugging the build
+
+
+--- ixp425.orig/ixp400_eth.c	2005-11-25 02:58:45.000000000 +0100
++++ ixp425/ixp400_eth.c	2005-11-25 03:24:15.000000000 +0100
+@@ -65,6 +65,7 @@
+ #include <linux/unistd.h>
+ #include <linux/version.h>
+ 
++
+ #if KERNEL_VERSION(2,6,0) <= LINUX_VERSION_CODE
+ #include <linux/workqueue.h>
+ #define IS_KERNEL26 1
+@@ -3285,6 +3286,8 @@ static int __devinit dev_eth_probe(struc
+ 	kmalloc(sizeof(struct semaphore), GFP_KERNEL);
+     if (!priv->maintenanceCheckThreadComplete)
+     {
++	P_ERROR("%s: Failed to allocate maintenance semaphore %d\n",
++		ndev->name, priv->port_id);
+ 	goto error;
+     }
+     priv->lock = SPIN_LOCK_UNLOCKED;
+@@ -3394,7 +3397,11 @@ static int __devinit dev_eth_probe(struc
+ 
+ #if IS_KERNEL26
+     if (register_netdev(ndev))
++    {
++	P_ERROR("%s: Failed to register netdevice %d\n",
++		ndev->name, priv->port_id);
+     	goto error;
++    }
+ #else
+     found_devices++;
+ #endif /* IS_KERNEL26 */
+@@ -3404,6 +3411,8 @@ static int __devinit dev_eth_probe(struc
+     /* register EthAcc callbacks for this port */
+     if (dev_rxtxcallback_register(portId, (UINT32)ndev))
+     {
++    	P_ERROR("%s: Failed to register callback %d\n",
++		ndev->name, priv->port_id);
+     	goto error;
+     }
+ 
+@@ -3427,6 +3436,7 @@ static int __devinit dev_eth_probe(struc
+ 
+ /* Error handling: enter here whenever error detected */
+ error:
++    P_ERROR("%s: dev_eth_probe fails\n", ndev->name);
+     TRACE;
+ 
+ #ifdef CONFIG_IXP400_ETH_QDISC_ENABLED
+@@ -3562,6 +3572,9 @@ static int __init ixp400_eth_init(void)
+     TRACE;
+ 
+     P_INFO("Initializing IXP400 NPE Ethernet driver software v. " MOD_VERSION " \n");
++#ifdef IX_OSAL_ENSURE_ON
++    ixOsalLogLevelSet(IX_OSAL_LOG_LVL_ALL);
++#endif
+ 
+     TRACE;
+ 

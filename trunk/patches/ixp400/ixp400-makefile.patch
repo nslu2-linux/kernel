@@ -1,0 +1,110 @@
+ Kbuild.26 |    2 ++
+ Makefile  |   39 ++++++++++++++++++++-------------------
+ 2 files changed, 22 insertions(+), 19 deletions(-)
+
+--- ixp400_xscale_sw.orig/Makefile	2005-11-21 22:55:22.000000000 +0100
++++ ixp400_xscale_sw/Makefile	2005-12-02 21:17:07.000000000 +0100
+@@ -54,7 +54,7 @@
+ # Components that work only for a subset of platforms
+ # should be added to the relevant *_COMPONENTS lists.
+ #
+-BI_ENDIAN_COMPONENTS := atmdAcc atmm atmsch qmgr npeMh npeDl ethAcc ethDB ethMii hssAcc usb uartAcc featureCtrl ossl osServices 
++BI_ENDIAN_COMPONENTS := qmgr npeMh npeDl ethAcc ethDB ethMii featureCtrl osServices
+ 
+ 
+ #Components only applicable to ixp46x
+@@ -64,8 +64,8 @@ ixp46X_BI_ENDIAN_COMPONENTS := timeSyncA
+ vxbe_COMPONENTS := $(BI_ENDIAN_COMPONENTS) perfProfAcc dmaAcc
+ vxle_COMPONENTS := $(BI_ENDIAN_COMPONENTS) perfProfAcc
+ vxsim_COMPONENTS := $(BI_ENDIAN_COMPONENTS) dmaAcc
+-linuxbe_COMPONENTS := $(BI_ENDIAN_COMPONENTS) perfProfAcc dmaAcc oslinux
+-linuxle_COMPONENTS := $(BI_ENDIAN_COMPONENTS) perfProfAcc oslinux
++linuxbe_COMPONENTS := $(BI_ENDIAN_COMPONENTS) dmaAcc oslinux
++linuxle_COMPONENTS := $(BI_ENDIAN_COMPONENTS) oslinux
+ 
+ #The lists below contain the set of components available for each target platform
+ # specific to the ixp46X device
+@@ -156,7 +156,7 @@ endif
+ ################################################################
+ # Linux kernel source
+ 
+-LINUX_SRC := $($(IX_TARGET)_KERNEL_DIR)
++LINUX_SRC := $(KERNEL_DIR)
+ 
+ ################################################################
+ # Inclusion of common Makefile
+@@ -251,11 +251,12 @@ OBJDUMP := objdump$(VX_TOOL_SUFFIX)
+ else # IX_TARGET_OS == vxworks
+ 
+ # Linux tool names
+-ifeq ($(IX_TARGET), linuxbe)
+-LINUX_CROSS_COMPILE := $(HARDHAT_BASE)/devkit/arm/xscale_be/bin/xscale_be-
+-else
+-LINUX_CROSS_COMPILE := $(HARDHAT_BASE)/devkit/arm/xscale_le/bin/xscale_le-
+-endif
++#ifeq ($(IX_TARGET), linuxbe)
++#LINUX_CROSS_COMPILE := $(HARDHAT_BASE)/devkit/arm/xscale_be/bin/xscale_be-
++#else
++#LINUX_CROSS_COMPILE := $(HARDHAT_BASE)/devkit/arm/xscale_le/bin/xscale_le-
++#endif
++LINUX_CROSS_COMPILE := $(CROSS_COMPILE)
+ 
+ LD := $(LINUX_CROSS_COMPILE)ld
+ CC := $(LINUX_CROSS_COMPILE)gcc
+@@ -304,6 +305,8 @@ ifndef IX_INCLUDE_MICROCODE
+ CFLAGS += -DIX_NPEDL_READ_MICROCODE_FROM_FILE
+ endif
+ 
++CFLAGS += -DIX_UPTOPIAMODE=0 -DIX_MPHY=1 -DIX_MPHYSINGLEPORT
++
+ # Linux linker flags
+ LDFLAGS := -r
+ 
+@@ -1306,13 +1309,13 @@ ifeq ($(IX_DEVICE),ixp46X)
+ libIxp400 : $(OBJ_DIR)/libIxp400.a $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE)
+ 
+ $(OBJ_DIR)/libIxp400.a : $(COMPONENT_OBJ) $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE) 
+-	$(MAKEFILE_TRACE) Building Ixp400 library containing components $(COMPONENTS:%=\"%\")
++	$(MAKEFILE_TRACE) Building Ixp400 library containing components $(COMPONENTS:%=\"%\") #"
+ 	$(AR) rvs $(OBJ_DIR)/libIxp400.a $^
+ else
+ libIxp400 : $(OBJ_DIR)/libIxp425.a $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE)
+ 
+ $(OBJ_DIR)/libIxp425.a : $(COMPONENT_OBJ) $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE)
+-	$(MAKEFILE_TRACE) Building Ixp400 library containing components $(COMPONENTS:%=\"%\")
++	$(MAKEFILE_TRACE) Building Ixp400 library containing components $(COMPONENTS:%=\"%\") #"
+ 	$(AR) rvs $(OBJ_DIR)/libIxp425.a $^
+ endif
+ 
+@@ -1323,20 +1326,18 @@ ixp400.o : $(OBJ_DIR)/ixp400.o
+ 
+ ifndef IX_INCLUDE_MICROCODE
+ $(OBJ_DIR)/ixp400.o: $(COMPONENTS:%=$(OBJ_DIR)/ixp400_%.o) $(OSAL_MODULE)
+-	touch $(OBJ_DIR)/ixp400.c
+-	cp Makefile.kmod26 $(OBJ_DIR)/Makefile
+-	make -C $(OBJ_DIR)
+ 	$(LD) $(LDFLAGS) $^ -o $@
+-	make -C $(OBJ_DIR)
+ else
+ $(OBJ_DIR)/ixp400.o: $(COMPONENTS:%=$(OBJ_DIR)/ixp400_%.o) $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE)
+-	touch $(OBJ_DIR)/ixp400.c
+-	cp Makefile.kmod26 $(OBJ_DIR)/Makefile
+-	make -C $(OBJ_DIR)
+ 	$(LD) $(LDFLAGS) $^ -o $@
+-	make -C $(OBJ_DIR)
+ endif
+ 
++$(OBJ_DIR)/ixp400_bin.o_shipped: $(OBJ_DIR)/ixp400.o
++	cp $(OBJ_DIR)/ixp400.o $(OBJ_DIR)/ixp400_bin.o_shipped
++
++ixp400.ko : $(OBJ_DIR)/ixp400_bin.o_shipped
++	cp Kbuild.26 $(OBJ_DIR)/Kbuild
++	make ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) -C $(LINUX_SRC) M=$(IX_XSCALE_SW)/$(OBJ_DIR)
+ 
+ 
+ ################################################################
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ ixp400_xscale_sw/Kbuild.26	2005-12-02 21:58:05.000000000 +0100
+@@ -0,0 +1,2 @@
++obj-m           := ixp400.o
++ixp400-y        := ixp400_bin.o

@@ -1,0 +1,16 @@
+use the ethernet device interrupts to gather entropy
+
+ ixp400_eth.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- ixp425.orig/ixp400_eth.c	2005-11-25 03:07:21.000000000 +0100
++++ ixp425/ixp400_eth.c	2005-11-25 03:09:48.000000000 +0100
+@@ -2864,7 +2864,7 @@ static int qmgr_init(void)
+ 
+     if (request_irq(IX_OSAL_IXP400_QM1_IRQ_LVL,
+                     dev_qmgr_os_isr,
+-                    SA_SHIRQ,
++                    SA_SHIRQ | SA_SAMPLE_RANDOM,
+                     MODULE_NAME,
+                     (void *)IRQ_ANY_PARAMETER))
+     {

@@ -1,0 +1,18 @@
+2.6.15 needs platform_device.h
+
+ ixp400_eth.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- ixp425.orig/ixp400_eth.c	2005-11-25 02:58:45.000000000 +0100
++++ ixp425/ixp400_eth.c	2005-11-25 03:24:21.000000000 +0100
+@@ -74,6 +74,10 @@
+ #define IS_KERNEL26 0
+ #endif
+ 
++#ifndef to_platform_device
++#include <linux/platform_device.h>
++#endif
++
+ /*
+  * Intel IXP400 Software specific header files
+  */

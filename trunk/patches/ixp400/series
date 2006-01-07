@@ -1,0 +1,7 @@
+Makefile.patch
+ixethdb-header.patch
+bit-macro.patch
+ixnpemhconfigisr-is-private.patch
+le.patch
+ixp400-makefile.patch
+environment.patch
