@@ -23,10 +23,9 @@
 	Ready to be submitted to linux-mtd
 
 40-rtc-class.patch [RFC on lkml]
-	RTC subsystem with X1205 driver. Requires two more lines in udev
+	RTC subsystem with X1205 driver. Requires one more line in udev
 	config:
 
-	ACTION=="add", SUBSYSTEM=="rtc", ENV{MAJOR}=="[0-9]*",  NAME="rtc%m"
 	ACTION=="add", SUBSYSTEM=="rtc", ENV{MINOR}=="0",       SYMLINK+="rtc"
 
 60-nslu2-beeper.patch [driver]
