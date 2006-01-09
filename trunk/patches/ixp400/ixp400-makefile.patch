@@ -2,6 +2,9 @@
  Makefile  |   39 ++++++++++++++++++++-------------------
  2 files changed, 22 insertions(+), 19 deletions(-)
 
+ kbuild only patch - do not apply to OpenEmbedded metadata because
+ these defines are done in the OE make command line
+
 --- ixp400_xscale_sw.orig/Makefile	2005-11-21 22:55:22.000000000 +0100
 +++ ixp400_xscale_sw/Makefile	2005-12-02 21:17:07.000000000 +0100
 @@ -54,7 +54,7 @@

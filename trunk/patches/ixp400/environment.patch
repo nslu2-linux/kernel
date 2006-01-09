@@ -1,6 +1,9 @@
  buildUtils/environment.linux.sh |   18 +++++++++---------
  1 file changed, 9 insertions(+), 9 deletions(-)
 
+ kbuild only patch - do not apply to OpenEmbedded metadata because
+ these defines are done in the OE make command line
+
 --- ixp400_xscale_sw.orig/buildUtils/environment.linux.sh	2005-09-25 05:55:10.000000000 +0200
 +++ ixp400_xscale_sw/buildUtils/environment.linux.sh	2005-12-06 21:37:24.000000000 +0100
 @@ -39,17 +39,14 @@
