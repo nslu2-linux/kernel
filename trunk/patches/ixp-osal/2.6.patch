@@ -4,8 +4,8 @@
  os/linux/src/core/IxOsalOsThread.c    |    7 +------
  4 files changed, 21 insertions(+), 14 deletions(-)
 
---- ixp_osal.orig/os/linux/src/core/IxOsalOsMsgQ.c	2005-09-25 05:57:02.000000000 +0200
-+++ ixp_osal/os/linux/src/core/IxOsalOsMsgQ.c	2005-12-06 21:46:37.000000000 +0100
+--- ixp_osal/os/linux/src/core/IxOsalOsMsgQ.c	1970-01-01 00:00:00.000000000 +0000
++++ ixp_osal/os/linux/src/core/IxOsalOsMsgQ.c	1970-01-01 00:00:00.000000000 +0000
 @@ -45,9 +45,9 @@
   * -- End Intel Copyright Notice --
   */
@@ -17,8 +17,8 @@
  #include <linux/interrupt.h>
  
  #include "IxOsal.h"
---- ixp_osal.orig/os/linux/src/core/IxOsalOsSemaphore.c	2005-09-25 05:57:02.000000000 +0200
-+++ ixp_osal/os/linux/src/core/IxOsalOsSemaphore.c	2005-12-06 21:46:37.000000000 +0100
+--- ixp_osal/os/linux/src/core/IxOsalOsSemaphore.c	1970-01-01 00:00:00.000000000 +0000
++++ ixp_osal/os/linux/src/core/IxOsalOsSemaphore.c	1970-01-01 00:00:00.000000000 +0000
 @@ -46,7 +46,7 @@
   */
  
@@ -46,8 +46,8 @@
  
      if (in_irq ())
      {
---- ixp_osal.orig/os/linux/src/core/IxOsalOsServices.c	2005-09-25 05:57:02.000000000 +0200
-+++ ixp_osal/os/linux/src/core/IxOsalOsServices.c	2005-12-06 21:46:37.000000000 +0100
+--- ixp_osal/os/linux/src/core/IxOsalOsServices.c	1970-01-01 00:00:00.000000000 +0000
++++ ixp_osal/os/linux/src/core/IxOsalOsServices.c	1970-01-01 00:00:00.000000000 +0000
 @@ -54,6 +54,7 @@
  #include <linux/time.h>
  #include <linux/sched.h>
@@ -125,8 +125,8 @@
      {
          set_current_state(TASK_INTERRUPTIBLE); 
          schedule_timeout ((milliseconds * HZ) / 1000);
---- ixp_osal.orig/os/linux/src/core/IxOsalOsThread.c	2005-09-25 05:57:02.000000000 +0200
-+++ ixp_osal/os/linux/src/core/IxOsalOsThread.c	2005-12-06 21:46:37.000000000 +0100
+--- ixp_osal/os/linux/src/core/IxOsalOsThread.c	1970-01-01 00:00:00.000000000 +0000
++++ ixp_osal/os/linux/src/core/IxOsalOsThread.c	1970-01-01 00:00:00.000000000 +0000
 @@ -65,12 +65,7 @@ thread_internal (void *unused)
      void *arg = IxOsalOsThreadData.arg;
      static int seq = 0;

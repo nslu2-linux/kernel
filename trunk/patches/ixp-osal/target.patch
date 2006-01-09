@@ -1,6 +1,9 @@
  os/linux/make/macros.mk |   11 ++++++-----
  1 file changed, 6 insertions(+), 5 deletions(-)
 
+ kbuild only patch - do not apply to OpenEmbedded metadata because
+ these defines are done in the OE make command line
+
 --- ixp_osal.orig/os/linux/make/macros.mk	2005-12-06 21:46:14.000000000 +0100
 +++ ixp_osal/os/linux/make/macros.mk	2005-12-06 21:46:38.000000000 +0100
 @@ -71,12 +71,13 @@ endif
