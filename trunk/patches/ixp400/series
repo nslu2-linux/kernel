@@ -3,5 +3,7 @@ ixethdb-header.patch
 bit-macro.patch
 ixnpemhconfigisr-is-private.patch
 le.patch
+mii-debug.patch
+rtl8201-support.patch
 ixp400-makefile.patch
 environment.patch
