@@ -3,11 +3,11 @@
  ixp400_eth.c |    4 ++++
  1 file changed, 4 insertions(+)
 
---- ixp425.orig/ixp400_eth.c	2005-11-25 02:58:45.000000000 +0100
-+++ ixp425/ixp400_eth.c	2005-11-25 03:24:21.000000000 +0100
-@@ -74,6 +74,10 @@
- #define IS_KERNEL26 0
- #endif
+--- ixp400-eth/ixp400_eth.c	1970-01-01 00:00:00.000000000 +0000
++++ ixp400-eth/ixp400_eth.c	1970-01-01 00:00:00.000000000 +0000
+@@ -65,6 +65,10 @@
+ #include <linux/sysctl.h>
+ #include <linux/unistd.h>
  
 +#ifndef to_platform_device
 +#include <linux/platform_device.h>

@@ -5,8 +5,8 @@ it will simply hang.
  ixp400_eth.c |   13 ++++++++++---
  1 file changed, 10 insertions(+), 3 deletions(-)
 
---- ixp425.orig/ixp400_eth.c	2005-12-01 19:13:58.000000000 +0100
-+++ ixp425/ixp400_eth.c	2005-12-01 19:55:14.000000000 +0100
+--- ixp400-eth/ixp400_eth.c	1970-01-01 00:00:00.000000000 +0000
++++ ixp400-eth/ixp400_eth.c	1970-01-01 00:00:00.000000000 +0000
 @@ -3800,9 +3800,16 @@ void __exit ixp400_eth_exit(void)
  
      TRACE;

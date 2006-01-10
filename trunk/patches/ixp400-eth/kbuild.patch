@@ -4,11 +4,13 @@ example:
 
 make ARCH=arm CROSS_COMPILE=armv5b-softfloat-linux- -C /usr/src/linux-nslu2 M=`pwd`
 
+this is a kbuild only patch - use Makefile.patch on OpenEmbedded
+
  Kbuild |   33 +++++++++++++++++++++++++++++++++
  1 file changed, 33 insertions(+)
 
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ ixp425/Kbuild	2005-12-01 19:57:47.000000000 +0100
+--- ixp400-eth/Kbuild	1970-01-01 00:00:00.000000000 +0000
++++ ixp400-eth/Kbuild	1970-01-01 00:00:00.000000000 +0000
 @@ -0,0 +1,33 @@
 +obj-m := ixp400_eth.o
 +

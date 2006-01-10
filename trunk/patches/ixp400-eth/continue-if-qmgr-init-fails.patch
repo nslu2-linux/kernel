@@ -6,8 +6,8 @@ it, without re-inserting ixp400.
  ixp400_eth.c |    5 +----
  1 file changed, 1 insertion(+), 4 deletions(-)
 
---- ixp425.orig/ixp400_eth.c	2005-12-01 19:49:20.000000000 +0100
-+++ ixp425/ixp400_eth.c	2005-12-01 19:52:11.000000000 +0100
+--- ixp400-eth/ixp400_eth.c	1970-01-01 00:00:00.000000000 +0000
++++ ixp400-eth/ixp400_eth.c	1970-01-01 00:00:00.000000000 +0000
 @@ -2850,10 +2850,7 @@ static int qmgr_init(void)
      /* Initialise Queue Manager */
      P_VERBOSE("Initialising Queue Manager...\n");

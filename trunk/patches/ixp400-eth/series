@@ -3,9 +3,9 @@
 device-name.patch
 poll-controller.patch
 le.patch
-debug.patch
-single-npe.patch
+mac-address.patch
 int-random.patch
-kbuild.patch
 stop-on-rmmod.patch
 continue-if-qmgr-init-fails.patch
+debug.patch
+kbuild.patch

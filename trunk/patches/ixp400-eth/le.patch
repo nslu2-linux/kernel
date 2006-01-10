@@ -3,8 +3,8 @@ little endian support
  ixp400_eth.c |   20 ++++++++++++++++++++
  1 file changed, 20 insertions(+)
 
---- ixp425.orig/ixp400_eth.c	2005-11-25 02:58:45.000000000 +0100
-+++ ixp425/ixp400_eth.c	2005-11-25 03:24:17.000000000 +0100
+--- ixp400-eth/ixp400_eth.c	1970-01-01 00:00:00.000000000 +0000
++++ ixp400-eth/ixp400_eth.c	1970-01-01 00:00:00.000000000 +0000
 @@ -2040,6 +2040,16 @@ static void rx_cb(UINT32 callbackTag, IX
  	skb->tail = skb->data + len;
  	skb->len = len;
