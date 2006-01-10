@@ -8,9 +8,9 @@
 #60-nas100d-ide.patch
 #60-nas100d-rtc.patch
 60-nslu2-beeper.patch
-75-nslu2-leds.patch
-80-nslu2-io.patch
+#75-nslu2-leds.patch
+#80-nslu2-io.patch
 85-timer.patch
 91-maclist.patch
-92-nas100d-maclist.patch
-92-nslu2-maclist.patch
+#92-nas100d-maclist.patch
+#92-nslu2-maclist.patch
