@@ -18,7 +18,7 @@ this is a kbuild only patch - use Makefile.patch on OpenEmbedded
 +IX_XSCALE_SW	:= ../ixp400_xscale_sw
 +
 +CFLAGS := -D __KERNEL__ -D__OPTIMIZE__ -Wall -Wno-trigraphs -fno-common -pipe \
-+		-mapcs-32 -msoft-float -D__linux -DCPU=33 -DXSCALE=33 \
++		-msoft-float -D__linux -DCPU=33 -DXSCALE=33 \
 +		-D__LINUX_ARM_ARCH__=5 -mtune=xscale
 +
 +# includes
