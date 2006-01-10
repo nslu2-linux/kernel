@@ -5,8 +5,8 @@
  kbuild only patch - do not apply to OpenEmbedded metadata because
  these defines are done in the OE make command line
 
---- ixp400_xscale_sw.orig/Makefile	2005-11-21 22:55:22.000000000 +0100
-+++ ixp400_xscale_sw/Makefile	2005-12-02 21:17:07.000000000 +0100
+--- ixp400_xscale_sw/Makefile	1970-01-01 00:00:00.000000000 +0000
++++ ixp400_xscale_sw/Makefile	1970-01-01 00:00:00.000000000 +0000
 @@ -54,7 +54,7 @@
  # Components that work only for a subset of platforms
  # should be added to the relevant *_COMPONENTS lists.
@@ -79,22 +79,8 @@
  	$(AR) rvs $(OBJ_DIR)/libIxp425.a $^
  endif
  
-@@ -1323,20 +1326,18 @@ ixp400.o : $(OBJ_DIR)/ixp400.o
- 
- ifndef IX_INCLUDE_MICROCODE
- $(OBJ_DIR)/ixp400.o: $(COMPONENTS:%=$(OBJ_DIR)/ixp400_%.o) $(OSAL_MODULE)
--	touch $(OBJ_DIR)/ixp400.c
--	cp Makefile.kmod26 $(OBJ_DIR)/Makefile
--	make -C $(OBJ_DIR)
+@@ -1329,6 +1332,12 @@ $(OBJ_DIR)/ixp400.o: $(COMPONENTS:%=$(OB
  	$(LD) $(LDFLAGS) $^ -o $@
--	make -C $(OBJ_DIR)
- else
- $(OBJ_DIR)/ixp400.o: $(COMPONENTS:%=$(OBJ_DIR)/ixp400_%.o) $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE)
--	touch $(OBJ_DIR)/ixp400.c
--	cp Makefile.kmod26 $(OBJ_DIR)/Makefile
--	make -C $(OBJ_DIR)
- 	$(LD) $(LDFLAGS) $^ -o $@
--	make -C $(OBJ_DIR)
  endif
  
 +$(OBJ_DIR)/ixp400_bin.o_shipped: $(OBJ_DIR)/ixp400.o
@@ -106,8 +92,8 @@
  
  
  ################################################################
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ ixp400_xscale_sw/Kbuild.26	2005-12-02 21:58:05.000000000 +0100
+--- ixp400_xscale_sw/Kbuild.26	1970-01-01 00:00:00.000000000 +0000
++++ ixp400_xscale_sw/Kbuild.26	1970-01-01 00:00:00.000000000 +0000
 @@ -0,0 +1,2 @@
 +obj-m           := ixp400.o
 +ixp400-y        := ixp400_bin.o
