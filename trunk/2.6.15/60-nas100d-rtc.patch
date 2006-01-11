@@ -3,7 +3,7 @@
 
 --- linux-nas100d.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2005-11-21 22:01:22.000000000 +0100
 +++ linux-nas100d/arch/arm/mach-ixp4xx/nas100d-setup.c	2005-11-30 23:04:07.000000000 +0100
-@@ -93,10 +93,15 @@ static struct platform_device nas100d_ua
+@@ -94,10 +94,15 @@ static struct platform_device nas100d_ua
  	.resource		= nas100d_uart_resources,
  };
  
