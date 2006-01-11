@@ -19,7 +19,6 @@
 #
 
 
-TARGET = nslu2
 ENDIAN = l
 BASEVER  = 2.6.15
 MAJORVER = 2.6
@@ -45,7 +44,7 @@ endif
 
 all: kernel modules
 
-kernel: vmlinuz-${REVISION}
+kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} # vmlinuz-loft-${REVISION}
 ixp400: lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko
 ixp400-eth: lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
 modules: modules-${REVISION}.tar.gz
@@ -92,10 +91,32 @@ ixp400_xscale_sw/Makefile:
 	( cd patches/ixp-osal ; cat `grep -v \# series` ) | \
 	patch -d ixp_osal -p1
 
-ifeq (${TARGET},nslu2)
-DEVIO_ADD_MACHINE_ID = 'wb 0xe3a01c02,4' 'wb 0xe3811055,4'
+vmlinuz-loft-${REVISION}: vmlinuz-${REVISION}
+	cp $< $@
+
+vmlinuz-nas100d-${REVISION}: vmlinuz-${REVISION}
+ifeq (${ENDIAN},b)
+	cp $< $@
 else
-DEVIO_ADD_MACHINE_ID = 
+	devio '<<'$< >$@ \
+		'wb 0xee110f10,4' \
+		'wb 0xe3c00080,4' \
+		'wb 0xee010f10,4' \
+		'xp $$,4'
+endif
+
+vmlinuz-nslu2-${REVISION}: vmlinuz-${REVISION}
+ifeq (${ENDIAN},b)
+	devio '<<'$< >$@ \
+		'wb 0xe3a01c02,4' 'wb 0xe3811055,4' \
+		'cp$$'
+else
+	devio '<<'$< >$@ \
+		'wb 0xe3a01c02,4' 'wb 0xe3811055,4' \
+		'wb 0xee110f10,4' \
+		'wb 0xe3c00080,4' \
+		'wb 0xee010f10,4' \
+		'xp $$,4'
 endif
 
 vmlinuz-${REVISION}: linux-${REVISION}/.config
@@ -104,20 +125,7 @@ vmlinuz-${REVISION}: linux-${REVISION}/.config
 	( cd linux-${REVISION} ; \
 	  INSTALL_MOD_PATH=".." make ${CROSS_COMPILE_FLAGS} ARCH=arm modules_install )
 	rm -f lib/modules/${REVISION}/build lib/modules/${REVISION}/source
-ifeq (${ENDIAN},b)
-	/usr/sbin/devio '<<'linux-${REVISION}/arch/arm/boot/zImage >vmlinuz-${REVISION} \
-		${DEVIO_ADD_MACHINE_ID} \
-		'cp$$'
-else
-	/usr/sbin/devio '<<'linux-${REVISION}/arch/arm/boot/zImage >vmlinuz-${REVISION} \
-		${DEVIO_ADD_MACHINE_ID} \
-		'wb 0xee110f10,4' \
-		'wb 0xe3c00080,4' \
-		'wb 0xee010f10,4' \
-		'xp $$,4'
-endif
-
-
+	cp linux-${REVISION}/arch/arm/boot/zImage vmlinuz-${REVISION}
 
 ifeq (${REVISION},${MINORVER})
 linux-${REVISION}/.config: \
@@ -162,8 +170,8 @@ downloads:
 	mkdir -p downloads
 
 clobber:
-	rm -rf vmlinuz-${REVISION} modules-${REVISION}.tar.gz
-	rm -rf linux-${REVISION}
+	rm -rf vmlinuz-* modules-*.tar.gz
+	rm -rf linux-*
 	rm -rf ixp400_xscale_sw ixp_osal ixp400_eth
 	rm -rf lib
 
