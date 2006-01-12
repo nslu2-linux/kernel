@@ -20,7 +20,8 @@
 	In MM tree: drives-mtd-redbootc-recognise-a-foreign-byte-sex-partition-table.patch
 
 15-jffs2-endian-config.patch [linux-mtd]
-	Ready to be submitted to linux-mtd
+	Submitted to linux-mtd
+	http://lists.infradead.org/pipermail/linux-mtd/2006-January/014740.html
 
 40-rtc-class.patch [RFC on lkml]
 	RTC subsystem with X1205 driver. Requires one more line in udev
