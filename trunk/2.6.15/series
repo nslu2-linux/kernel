@@ -8,6 +8,7 @@
 # 60-nas100d-ide.patch
 60-nas100d-rtc.patch
 60-nslu2-beeper.patch
+65-loft-config.patch
 # 75-nslu2-leds.patch
 80-nslu2-io.patch
 85-timer.patch
