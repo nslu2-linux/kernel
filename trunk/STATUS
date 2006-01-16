@@ -1,7 +1,3 @@
-
-[LE] - patch only required for NSLU2 LE (BE works without it)
-[warning] - just a compiler warning, the builds work fine without the
-	patch.
 [driver] - patch which adds NSLU2 driver support, all these depend on the
 	basic NSLU2 machine patch.
 
@@ -29,15 +25,25 @@
 
 	ACTION=="add", SUBSYSTEM=="rtc", ENV{MINOR}=="0",       SYMLINK+="rtc"
 
+45-eeprom-notifier.patch [Should have an RFC on lkml]
+	To be submitted.
+
 60-nslu2-beeper.patch [driver]
-	Not yet submitted
+	Not yet submitted.
 
 75-nslu2-leds.patch [driver]
-	Not yet submitted
+	Will not be submitted - to be superceded by new LEDS subsystem.
 
 80-nslu2-io.patch [driver]
 	Unlikely to be submitted - this is a compatibility patch to support
-	existing user space use of the old LED driver
+	existing user space use of the old LED driver.  The new LEDS
+	subsystem will supercede this.
+
+81-nslu2-power.patch [ARM patch system]
+	To be submitted.
+
+82-nas100d-power.patch [ARM patch system]
+	To be submitted.
 
 85-timer.patch [RFC to be submitted to l-a-k]
 	Not yet submitted
@@ -48,3 +54,15 @@
 
 92-nslu2-maclist.patch [Should be submitted to l-a-k]
 	Depends on 91-maclist.patch being accepted upstream
+
+93-loft-maclist.patch [Should be submitted to l-a-k]
+	Depends on 91-maclist.patch being accepted upstream
+
+94-loft-setup.patch [ARM patch system]
+	To be submitted.
+
+94-nas100d-setup.patch [ARM patch system]
+	To be submitted.
+
+94-nslu2-setup.patch [ARM patch system]
+	To be submitted.
