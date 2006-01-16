@@ -18,3 +18,6 @@
 92-nas100d-maclist.patch
 92-nslu2-maclist.patch
 93-loft-maclist.patch
+94-loft-setup.patch
+94-nas100d-setup.patch
+94-nslu2-setup.patch
