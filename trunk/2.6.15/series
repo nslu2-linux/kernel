@@ -13,6 +13,8 @@
 65-loft-config.patch
 # 75-nslu2-leds.patch
 80-nslu2-io.patch
+81-nslu2-power.patch
+82-nas100d-power.patch
 85-timer.patch
 91-maclist.patch
 92-nas100d-maclist.patch
