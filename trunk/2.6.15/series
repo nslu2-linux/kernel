@@ -6,10 +6,10 @@
 45-eeprom-notifier.patch
 48-setup-byteswap-cmdline.patch
 50-nas100d-arch.patch
-55-rtc-pcf8563.patch
-60-nas100d-i2c.patch
+# 55-rtc-pcf8563.patch
+# 60-nas100d-i2c.patch
 # 60-nas100d-ide.patch
-60-nas100d-rtc.patch
+# 60-nas100d-rtc.patch
 60-nslu2-beeper.patch
 65-loft-config.patch
 # 75-nslu2-leds.patch
