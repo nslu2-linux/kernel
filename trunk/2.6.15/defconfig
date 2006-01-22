@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.15
-# Tue Jan 17 13:02:33 2006
+# Sun Jan 22 10:16:00 2006
 #
 CONFIG_ARM=y
 CONFIG_MMU=y
@@ -878,7 +878,7 @@ CONFIG_INPUT_EVDEV=m
 # CONFIG_INPUT_JOYSTICK is not set
 # CONFIG_INPUT_TOUCHSCREEN is not set
 CONFIG_INPUT_MISC=y
-CONFIG_INPUT_NSLU2_BEEPER=m
+CONFIG_INPUT_NSLU2_BEEPER=y
 # CONFIG_INPUT_UINPUT is not set
 
 #
