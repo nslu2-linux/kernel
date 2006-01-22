@@ -67,7 +67,10 @@ lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko: \
 ixp400_eth/Kbuild:
 	( mkdir ixp400_eth ; cd ixp400_eth ; \
 	  unzip ../downloads/GPL_ixp400LinuxEthernetDriverPatch-1_5.zip )
-	( cd patches/ixp400-eth ; cat `grep -v \# series` ) | \
+	( cd patches/ixp400-eth ; \
+	  grep -v \# series | \
+  	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	) | \
 	patch -d ixp400_eth -p1
 
 lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko: \
@@ -86,9 +89,15 @@ lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko: \
 ixp400_xscale_sw/Makefile:
 	unzip downloads/IPL_ixp400AccessLibrary-2_1.zip
 	unzip downloads/IPL_ixp400NpeLibrary-2_1.zip
-	( cd patches/ixp400 ; cat `grep -v \# series` ) | \
+	( cd patches/ixp400 ; \
+	  grep -v \# series | \
+  	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	) | \
 	patch -d ixp400_xscale_sw -p1
-	( cd patches/ixp-osal ; cat `grep -v \# series` ) | \
+	( cd patches/ixp-osal ; \
+	  grep -v \# series | \
+  	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	) | \
 	patch -d ixp_osal -p1
 
 vmlinuz-loft-${REVISION}: vmlinuz-${REVISION}
@@ -133,7 +142,10 @@ linux-${REVISION}/.config: \
 		${MINORVER}/series ${MINORVER}/??-*.patch ${MINORVER}/defconfig
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${MINORVER}.tar.bz2 ; \
-	  ( cd ${MINORVER}/ ; cat `grep -v \# series` ) | \
+	  ( cd ${MINORVER}/ ; \
+	    grep -v \# series | \
+  	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	  ) | \
 	  patch -d linux-${REVISION} -p1 )
 else
 linux-${REVISION}/.config: \
@@ -145,7 +157,10 @@ linux-${REVISION}/.config: \
 	  mv linux-${BASEVER} linux-${REVISION} ; \
 	  zcat downloads/patch-${REVISION}.gz | \
 	  patch -d linux-${REVISION} -p1 ) ; \
-	  ( cd ${MINORVER}/ ; cat `grep -v \# series` ) | \
+	  ( cd ${MINORVER}/ ; \
+	    grep -v \# series | \
+  	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	  ) | \
 	  patch -d linux-${REVISION} -p1
 endif
 ifeq (${ENDIAN},b)
