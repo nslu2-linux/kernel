@@ -30,6 +30,7 @@ http://www.rpsys.net/openzaurus/patches/led_nand-r1.patch
 94-nas100d-setup.patch
 94-nslu2-setup.patch
 95-ixp4xx-leds.patch
+951-ixp4xx-leds-cpu-activity.patch
 96-loft-leds.patch
 96-nas100d-leds.patch
 96-nslu2-leds.patch
