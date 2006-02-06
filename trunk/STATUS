@@ -29,8 +29,10 @@
 	To be submitted.
 
 60-ixp4xx-beeper.patch [driver]
-	Input part submitted and accepted. platform device part
-	will be submitted to l-a-k soon.
+	Accepted, will be included in 2.6.16.
+
+61-nslu2-beeper.patch
+	Must be sent to l-a-k.
 
 75-nslu2-leds.patch [driver]
 	Will not be submitted - to be superceded by new LEDS subsystem.
