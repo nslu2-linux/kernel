@@ -1,12 +1,12 @@
-Generic beeper support for the ixp4xx platform.
+NSLU2 beeper support.
 
 Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
 
  arch/arm/mach-ixp4xx/nslu2-setup.c |    7 +++++++
  1 file changed, 7 insertions(+)
 
---- linux-nslu2.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-01-23 02:13:55.000000000 +0100
-+++ linux-nslu2/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-01-25 11:32:14.000000000 +0100
+--- linux-nslu2.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-02-06 20:37:01.000000000 +0100
++++ linux-nslu2/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-02-06 22:21:17.000000000 +0100
 @@ -52,6 +52,12 @@ static struct platform_device nslu2_i2c_
  	.num_resources		= 0,
  };

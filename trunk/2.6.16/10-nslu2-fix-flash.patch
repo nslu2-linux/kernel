@@ -1,8 +1,3 @@
-
-NSLU2 compile fixes.
-
-Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
-
  arch/arm/mach-ixp4xx/nslu2-setup.c |    2 --
  1 file changed, 2 deletions(-)
 
