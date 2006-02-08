@@ -1,3 +1,4 @@
+05-patch-2.6.16-rc2-ide2
 10-nslu2-fix-flash.patch
 10-mtdpart-redboot-fis-byteswap.patch
 11-mtdpart-redboot-config-byteswap.patch
