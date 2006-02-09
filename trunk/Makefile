@@ -32,7 +32,7 @@ DEBIAN_ARCH = arm
 endif
 
 KERNEL_SOURCE = http://kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${BASEVER}.tar.bz2
-KERNEL_PATCH  = http://kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.gz
+KERNEL_PATCH  = http://kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.bz2
 
 CROSS_COMPILE = ${DEBIAN_ARCH}-linux-gnu-
 
@@ -150,12 +150,12 @@ linux-${REVISION}/.config: \
 else
 linux-${REVISION}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
-		downloads/patch-${REVISION}.gz \
+		downloads/patch-${REVISION}.bz2 \
 		${MINORVER}/series ${MINORVER}/??-*.patch ${MINORVER}/defconfig
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
 	  mv linux-${BASEVER} linux-${REVISION} ; \
-	  zcat downloads/patch-${REVISION}.gz | \
+	  bzcat downloads/patch-${REVISION}.bz2 | \
 	  patch -d linux-${REVISION} -p1 ) ; \
 	  ( cd ${MINORVER}/ ; \
 	    grep -v \# series | \
@@ -176,8 +176,8 @@ downloads/linux-${BASEVER}.tar.bz2 :
 	( mkdir -p downloads ; cd downloads ; \
 	  wget ${KERNEL_SOURCE} )
 
-downloads/patch-${REVISION}.gz :
-	[ -e downloads/patch-${REVISION}.gz ] || \
+downloads/patch-${REVISION}.bz2 :
+	[ -e downloads/patch-${REVISION}.bz2 ] || \
 	( mkdir -p downloads ; cd downloads ; \
 	  wget ${KERNEL_PATCH} )
 
