@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16-rc2
-# Thu Feb  9 20:54:57 2006
+# Thu Feb  9 21:45:46 2006
 #
 CONFIG_ARM=y
 CONFIG_MMU=y
@@ -1092,6 +1092,16 @@ CONFIG_HWMON=y
 #
 # Multimedia Capabilities Port drivers
 #
+
+#
+# LED devices
+#
+CONFIG_NEW_LEDS=y
+CONFIG_LEDS_CLASS=y
+CONFIG_LEDS_TRIGGERS=y
+CONFIG_LEDS_IXP4XX=y
+CONFIG_LEDS_TRIGGER_TIMER=y
+CONFIG_LEDS_TRIGGER_CPU_ACTIVITY=y
 
 #
 # Multimedia devices
