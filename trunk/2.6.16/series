@@ -1,6 +1,6 @@
 05-patch-2.6.16-rc2-ide2
-10-nslu2-fix-flash.patch
 10-mtdpart-redboot-fis-byteswap.patch
+10-nslu2-fix-flash.patch
 11-mtdpart-redboot-config-byteswap.patch
 15-jffs2-endian-config.patch
 http://www.rpsys.net/openzaurus/patches/led_core-r11.patch
@@ -18,8 +18,8 @@ http://www.rpsys.net/openzaurus/patches/led_nand-r2.patch
 40-rtc-class.patch
 45-eeprom-notifier.patch
 48-setup-byteswap-cmdline.patch
-61-nslu2-beeper.patch
 61-ixp4xx-beeper-irq.patch
+61-nslu2-beeper.patch
 65-loft-config.patch
 81-nslu2-power.patch
 82-nas100d-power.patch
