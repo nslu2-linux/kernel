@@ -2,11 +2,11 @@ diff -ruN linux-2.6.15.orig/arch/arm/mach-ixp4xx/Makefile linux-2.6.15.new/arch/
 --- linux-2.6.15.orig/arch/arm/mach-ixp4xx/Makefile     2006-02-11 02:57:58.000000000 +0100
 +++ linux-2.6.15.new/arch/arm/mach-ixp4xx/Makefile      2006-02-10 22:13:27.000000000 +0100
 @@ -10,4 +10,4 @@
- obj-$(CONFIG_MACH_GTWX5715)    += gtwx5715-pci.o gtwx5715-setup.o
- obj-$(CONFIG_MACH_NSLU2)       += nslu2-pci.o nslu2-setup.o nslu2-power.o
- obj-$(CONFIG_MACH_NAS100D)     += nas100d-pci.o nas100d-setup.o nas100d-power.o
+ obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-pci.o gtwx5715-setup.o
+ obj-$(CONFIG_MACH_NSLU2)	+= nslu2-pci.o nslu2-setup.o nslu2-power.o
+ obj-$(CONFIG_MACH_NAS100D)	+= nas100d-pci.o nas100d-setup.o nas100d-power.o
 -
-+obj-$(CONFIG_MACH_DS101)       += ds101-pci.o ds101-setup.o ds101-power.o
++obj-$(CONFIG_MACH_DS101)	+= ds101-pci.o ds101-setup.o ds101-power.o
 diff -ruN linux-2.6.15.orig/arch/arm/mach-ixp4xx/Kconfig linux-2.6.15.new/arch/arm/mach-ixp4xx/Kconfig
 --- linux-2.6.15.orig/arch/arm/mach-ixp4xx/Kconfig      2006-02-11 03:00:07.000000000 +0100
 +++ linux-2.6.15.new/arch/arm/mach-ixp4xx/Kconfig       2006-02-10 22:21:09.000000000 +0100
