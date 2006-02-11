@@ -1,5 +1,5 @@
---- linux-nslu2.orig/include/linux/rtc.h	2006-02-06 20:37:43.000000000 +0100
-+++ linux-nslu2/include/linux/rtc.h	2006-02-06 21:41:39.000000000 +0100
+--- linux-rtc.orig/include/linux/rtc.h	2006-02-11 15:16:21.000000000 +0100
++++ linux-rtc/include/linux/rtc.h	2006-02-11 15:29:12.000000000 +0100
 @@ -93,8 +93,91 @@ struct rtc_pll_info {
  #define RTC_PLL_GET	_IOR('p', 0x11, struct rtc_pll_info)  /* Get PLL correction */
  #define RTC_PLL_SET	_IOW('p', 0x12, struct rtc_pll_info)  /* Set PLL correction */
@@ -92,8 +92,8 @@
  typedef struct rtc_task {
  	void (*func)(void *private_data);
  	void *private_data;
---- linux-nslu2.orig/drivers/Kconfig	2006-02-06 20:37:14.000000000 +0100
-+++ linux-nslu2/drivers/Kconfig	2006-02-06 21:11:33.000000000 +0100
+--- linux-rtc.orig/drivers/Kconfig	2006-02-11 15:16:21.000000000 +0100
++++ linux-rtc/drivers/Kconfig	2006-02-11 15:29:12.000000000 +0100
 @@ -70,4 +70,6 @@ source "drivers/sn/Kconfig"
  
  source "drivers/edac/Kconfig"
@@ -101,8 +101,8 @@
 +source "drivers/rtc/Kconfig"
 +
  endmenu
---- linux-nslu2.orig/drivers/Makefile	2006-02-06 20:37:14.000000000 +0100
-+++ linux-nslu2/drivers/Makefile	2006-02-06 21:11:33.000000000 +0100
+--- linux-rtc.orig/drivers/Makefile	2006-02-11 15:16:21.000000000 +0100
++++ linux-rtc/drivers/Makefile	2006-02-11 15:29:12.000000000 +0100
 @@ -56,6 +56,7 @@ obj-$(CONFIG_USB_GADGET)	+= usb/gadget/
  obj-$(CONFIG_GAMEPORT)		+= input/gameport/
  obj-$(CONFIG_INPUT)		+= input/
@@ -112,7 +112,7 @@
  obj-$(CONFIG_W1)		+= w1/
  obj-$(CONFIG_HWMON)		+= hwmon/
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/class.c	2006-02-06 21:41:25.000000000 +0100
++++ linux-rtc/drivers/rtc/class.c	2006-02-11 15:29:12.000000000 +0100
 @@ -0,0 +1,143 @@
 +/*
 + * RTC subsystem, base class
@@ -258,8 +258,8 @@
 +MODULE_DESCRIPTION("RTC class support");
 +MODULE_LICENSE("GPL");
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/Kconfig	2006-02-06 23:58:32.000000000 +0100
-@@ -0,0 +1,121 @@
++++ linux-rtc/drivers/rtc/Kconfig	2006-02-11 15:29:12.000000000 +0100
+@@ -0,0 +1,131 @@
 +#
 +# RTC class/drivers configuration
 +#
@@ -365,6 +365,16 @@
 +	  This driver can also be built as a module. If so, the module
 +	  will be called rtc-pcf8563.
 +
++config RTC_DRV_RS5C372
++	tristate "Ricoh RS5C372A/B"
++	depends on RTC_CLASS && I2C
++	help
++	  If you say yes here you get support for the
++	  Ricoh RS5C372A and RS5C372B RTC chips.
++
++	  This driver can also be built as a module. If so, the module
++	  will be called rtc-rs5c372.
++
 +config RTC_DRV_TEST
 +	tristate "Test driver/device"
 +	depends on RTC_CLASS
@@ -382,8 +392,8 @@
 +
 +endmenu
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/Makefile	2006-02-06 23:58:32.000000000 +0100
-@@ -0,0 +1,17 @@
++++ linux-rtc/drivers/rtc/Makefile	2006-02-11 15:29:12.000000000 +0100
+@@ -0,0 +1,18 @@
 +#
 +# Makefile for RTC class/drivers.
 +#
@@ -400,9 +410,10 @@
 +obj-$(CONFIG_RTC_DRV_TEST)	+= rtc-test.o
 +obj-$(CONFIG_RTC_DRV_DS1672)	+= rtc-ds1672.o
 +obj-$(CONFIG_RTC_DRV_PCF8563)	+= rtc-pcf8563.o
++obj-$(CONFIG_RTC_DRV_RS5C372)	+= rtc-rs5c372.o
 +
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/interface.c	2006-02-07 01:32:10.000000000 +0100
++++ linux-rtc/drivers/rtc/interface.c	2006-02-11 15:29:12.000000000 +0100
 @@ -0,0 +1,232 @@
 +/*
 + * RTC subsystem, interface functions
@@ -637,7 +648,7 @@
 +
 +}
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/utils.c	2006-02-06 21:11:33.000000000 +0100
++++ linux-rtc/drivers/rtc/utils.c	2006-02-11 15:29:12.000000000 +0100
 @@ -0,0 +1,97 @@
 +/*
 + * RTC subsystem, utility functions
@@ -737,7 +748,7 @@
 +}
 +EXPORT_SYMBOL(rtc_tm_to_time);
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/hctosys.c	2006-02-06 21:11:33.000000000 +0100
++++ linux-rtc/drivers/rtc/hctosys.c	2006-02-11 15:29:12.000000000 +0100
 @@ -0,0 +1,62 @@
 +/*
 + * RTC subsystem, initialize system time on startup
@@ -801,9 +812,9 @@
 +}
 +
 +late_initcall(rtc_hctosys);
---- linux-nslu2.orig/arch/arm/Kconfig	2006-02-06 23:52:28.000000000 +0100
-+++ linux-nslu2/arch/arm/Kconfig	2006-02-06 23:53:25.000000000 +0100
-@@ -784,6 +784,8 @@ source "drivers/usb/Kconfig"
+--- linux-rtc.orig/arch/arm/Kconfig	2006-02-11 15:16:21.000000000 +0100
++++ linux-rtc/arch/arm/Kconfig	2006-02-11 15:29:12.000000000 +0100
+@@ -817,6 +817,8 @@ source "drivers/usb/Kconfig"
  
  source "drivers/mmc/Kconfig"
  
@@ -812,8 +823,8 @@
  endmenu
  
  source "fs/Kconfig"
---- linux-nslu2.orig/arch/arm/common/rtctime.c	2006-02-06 23:52:28.000000000 +0100
-+++ linux-nslu2/arch/arm/common/rtctime.c	2006-02-06 23:53:25.000000000 +0100
+--- linux-rtc.orig/arch/arm/common/rtctime.c	2006-02-11 15:16:21.000000000 +0100
++++ linux-rtc/arch/arm/common/rtctime.c	2006-02-11 15:29:12.000000000 +0100
 @@ -42,89 +42,6 @@ static struct rtc_ops *rtc_ops;
  
  #define rtc_epoch 1900UL
@@ -1020,8 +1031,8 @@
  		p += sprintf(p, "alrm_time\t: ");
  		if ((unsigned int)alrm.time.tm_hour <= 24)
  			p += sprintf(p, "%02d:", alrm.time.tm_hour);
---- linux-nslu2.orig/include/asm-arm/rtc.h	2006-02-06 23:52:28.000000000 +0100
-+++ linux-nslu2/include/asm-arm/rtc.h	2006-02-06 23:53:25.000000000 +0100
+--- linux-rtc.orig/include/asm-arm/rtc.h	2006-02-11 15:16:21.000000000 +0100
++++ linux-rtc/include/asm-arm/rtc.h	2006-02-11 15:29:12.000000000 +0100
 @@ -25,9 +25,6 @@ struct rtc_ops {
  	int		(*proc)(char *buf);
  };
@@ -1033,8 +1044,8 @@
  void rtc_update(unsigned long, unsigned long);
  int register_rtc(struct rtc_ops *);
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/rtc-sysfs.c	2006-02-06 23:56:37.000000000 +0100
-@@ -0,0 +1,113 @@
++++ linux-rtc/drivers/rtc/rtc-sysfs.c	2006-02-11 15:29:12.000000000 +0100
+@@ -0,0 +1,110 @@
 +/*
 + * RTC subsystem, sysfs interface
 + *
@@ -1060,7 +1071,6 @@
 +static ssize_t rtc_sysfs_show_date(struct class_device *dev, char *buf)
 +{
 +	ssize_t retval = -ENODEV;
-+	struct rtc_device *rtc = to_rtc_device(dev);
 +	struct rtc_time tm;
 +
 +	if ((retval = rtc_read_time(dev, &tm)) == 0) {
@@ -1075,7 +1085,6 @@
 +static ssize_t rtc_sysfs_show_time(struct class_device *dev, char *buf)
 +{
 +	ssize_t retval = -ENODEV;
-+	struct rtc_device *rtc = to_rtc_device(dev);
 +	struct rtc_time tm;
 +
 +	if ((retval = rtc_read_time(dev, &tm)) == 0) {
@@ -1090,7 +1099,6 @@
 +static ssize_t rtc_sysfs_show_since_epoch(struct class_device *dev, char *buf)
 +{
 +	ssize_t retval = -ENODEV;
-+	struct rtc_device *rtc = to_rtc_device(dev);
 +	struct rtc_time tm;
 +
 +	if ((retval = rtc_read_time(dev, &tm)) == 0) {
@@ -1149,7 +1157,7 @@
 +MODULE_DESCRIPTION("RTC class sysfs interface");
 +MODULE_LICENSE("GPL");
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/rtc-proc.c	2006-02-06 23:58:32.000000000 +0100
++++ linux-rtc/drivers/rtc/rtc-proc.c	2006-02-11 15:29:12.000000000 +0100
 @@ -0,0 +1,158 @@
 +/*
 + * RTC subsystem, proc interface
@@ -1310,7 +1318,7 @@
 +MODULE_DESCRIPTION("RTC class proc interface");
 +MODULE_LICENSE("GPL");
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/rtc-dev.c	2006-02-06 23:58:32.000000000 +0100
++++ linux-rtc/drivers/rtc/rtc-dev.c	2006-02-11 15:29:12.000000000 +0100
 @@ -0,0 +1,366 @@
 +/*
 + * RTC subsystem, dev interface
@@ -1679,7 +1687,7 @@
 +MODULE_DESCRIPTION("RTC class dev interface");
 +MODULE_LICENSE("GPL");
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/rtc-x1205.c	2006-02-06 23:58:32.000000000 +0100
++++ linux-rtc/drivers/rtc/rtc-x1205.c	2006-02-11 15:29:12.000000000 +0100
 @@ -0,0 +1,672 @@
 +/*
 + * An i2c driver for the Xicor/Intersil X1205 RTC
@@ -2354,7 +2362,7 @@
 +module_init(x1205_init);
 +module_exit(x1205_exit);
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/rtc-test.c	2006-02-06 23:58:32.000000000 +0100
++++ linux-rtc/drivers/rtc/rtc-test.c	2006-02-11 15:29:12.000000000 +0100
 @@ -0,0 +1,206 @@
 +/*
 + * An RTC test device/driver
@@ -2563,7 +2571,7 @@
 +module_init(test_init);
 +module_exit(test_exit);
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/rtc-ds1672.c	2006-02-06 23:58:32.000000000 +0100
++++ linux-rtc/drivers/rtc/rtc-ds1672.c	2006-02-11 15:29:12.000000000 +0100
 @@ -0,0 +1,234 @@
 +/*
 + * An rtc/i2c driver for the Dallas DS1672
@@ -2800,8 +2808,8 @@
 +module_init(ds1672_init);
 +module_exit(ds1672_exit);
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-nslu2/drivers/rtc/rtc-pcf8563.c	2006-02-06 23:58:32.000000000 +0100
-@@ -0,0 +1,384 @@
++++ linux-rtc/drivers/rtc/rtc-pcf8563.c	2006-02-11 15:29:12.000000000 +0100
+@@ -0,0 +1,388 @@
 +/*
 + * An I2C driver for the Philips PCF8563 RTC
 + * Copyright 2005-06 Tower Technologies
@@ -2826,8 +2834,12 @@
 +
 +#define DRV_VERSION "0.4.0"
 +
-+/* Addresses to scan */
-+static unsigned short normal_i2c[] = { 0x51, I2C_CLIENT_END };
++/* Addresses to scan: none
++ * This chip cannot be reliably autodetected. An empty eeprom
++ * located at 0x51 will pass the validation routine due to
++ * the way the registers are implemented.
++ */
++static unsigned short normal_i2c[] = { I2C_CLIENT_END };
 +
 +/* Module parameters */
 +I2C_CLIENT_INSMOD;
@@ -3186,3 +3198,253 @@
 +module_init(pcf8563_init);
 +module_exit(pcf8563_exit);
 +
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-rtc/drivers/rtc/rtc-rs5c372.c	2006-02-11 15:29:12.000000000 +0100
+@@ -0,0 +1,247 @@
++/*
++ * An I2C driver for the Ricoh RS5C372 RTC
++ *
++ * Copyright (C) 2005 Pavel Mironchik pmironchik@optifacio.net
++ * Copyright (C) 2006 Tower Technologies
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/i2c.h>
++#include <linux/rtc.h>
++#include <linux/bcd.h>
++
++#define DRV_VERSION "0.1"
++
++/* Addresses to scan */
++static unsigned short normal_i2c[] = { /* 0x32,*/ I2C_CLIENT_END };
++
++/* Insmod parameters */
++I2C_CLIENT_INSMOD;
++
++#define RS5C372_REG_SECS	0
++#define RS5C372_REG_MINS	1
++#define RS5C372_REG_HOURS	2
++#define RS5C372_REG_WDAY	3
++#define RS5C372_REG_DAY		4
++#define RS5C372_REG_MONTH	5
++#define RS5C372_REG_YEAR	6
++#define RS5C372_REG_TRIM	7
++
++static int rs5c372_attach(struct i2c_adapter *adapter);
++static int rs5c372_detach(struct i2c_client *client);
++static int rs5c372_probe(struct i2c_adapter *adapter, int address, int kind);
++
++static struct i2c_driver rs5c372_driver = {
++	.driver		= {
++		.name	= "rs5c372",
++	},
++	.attach_adapter	= &rs5c372_attach,
++	.detach_client	= &rs5c372_detach,
++};
++
++static int rs5c372_get_datetime(struct i2c_client *client, struct rtc_time *tm)
++{
++	unsigned char buf[7];
++
++	/* this implements the 1st reading method, according
++	 * to the datasheet.
++	 */
++	struct i2c_msg msgs[] = {
++		{ client->addr, 0, 1, buf },
++		{ client->addr, I2C_M_RD, sizeof(buf), buf },
++	};
++
++	buf[0] = 0x00; /* address ptr and transmission format register */
++
++	if ((i2c_transfer(client->adapter, msgs, 2)) != 2) {
++		dev_err(&client->dev, "%s: read error\n", __FUNCTION__);
++		return -EIO;
++	}
++
++	tm->tm_sec = BCD2BIN(buf[RS5C372_REG_SECS] & 0x7f);
++	tm->tm_min = BCD2BIN(buf[RS5C372_REG_MINS] & 0x7f);
++	tm->tm_hour = BCD2BIN(buf[RS5C372_REG_HOURS] & 0x3f);
++	tm->tm_wday = BCD2BIN(buf[RS5C372_REG_WDAY] & 0x07);
++	tm->tm_mday = BCD2BIN(buf[RS5C372_REG_DAY] & 0x3f);
++
++	/* tm->tm_mon is zero-based */
++	tm->tm_mon = BCD2BIN(buf[RS5C372_REG_MONTH] & 0x1f) - 1;
++
++	/* year is 1900 + tm->tm_year */
++	tm->tm_year = BCD2BIN(buf[RS5C372_REG_YEAR]) + 100;
++
++	dev_dbg(&client->dev, "%s: tm is secs=%d, mins=%d, hours=%d, "
++		"mday=%d, mon=%d, year=%d, wday=%d\n",
++		__FUNCTION__,
++		tm->tm_sec, tm->tm_min, tm->tm_hour,
++		tm->tm_mday, tm->tm_mon, tm->tm_year, tm->tm_wday);
++
++	return 0;
++}
++
++static int rs5c372_set_datetime(struct i2c_client *client, struct rtc_time *tm,
++					int datetoo)
++{
++	unsigned char buf[8];
++	int len = 4;
++
++	dev_dbg(&client->dev,
++		"%s: secs=%d, mins=%d, hours=%d\n",
++		__FUNCTION__,
++		tm->tm_sec, tm->tm_min, tm->tm_hour);
++
++	buf[0] = 0x00;	/* this is the address ptr */
++	buf[1] = BIN2BCD(tm->tm_sec);
++	buf[2] = BIN2BCD(tm->tm_min);
++	buf[3] = BIN2BCD(tm->tm_hour);
++
++	if (datetoo) {
++		dev_dbg(&client->dev,
++			"%s: mday=%d, mon=%d, year=%d, wday=%d\n",
++			__FUNCTION__,
++			tm->tm_mday, tm->tm_mon, tm->tm_year, tm->tm_wday);
++
++		len = 8;
++
++		buf[4] = BIN2BCD(tm->tm_wday);
++		buf[5] = BIN2BCD(tm->tm_mday);
++		buf[6] = BIN2BCD(tm->tm_mon + 1);
++		buf[7] = BIN2BCD(tm->tm_year - 100);
++	}
++
++	if ((i2c_master_send(client, buf, len)) != len) {
++		dev_err(&client->dev, "%s: write error\n", __FUNCTION__);
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static int rs5c372_rtc_read_time(struct device *dev,
++	struct rtc_time *tm)
++{
++	return rs5c372_get_datetime(to_i2c_client(dev), tm);
++}
++
++static int rs5c372_rtc_set_time(struct device *dev,
++	struct rtc_time *tm)
++{
++	return rs5c372_set_datetime(to_i2c_client(dev), tm, 1);
++}
++
++static int rs5c372_rtc_proc(struct device *dev, struct seq_file *seq)
++{
++	seq_printf(seq, "24hr\t\t: yes\n");
++	/* XXX add trim register */
++	return 0;
++}
++
++static struct rtc_class_ops rs5c372_rtc_ops = {
++	.proc = rs5c372_rtc_proc,
++	.read_time = rs5c372_rtc_read_time,
++	.set_time = rs5c372_rtc_set_time,
++};
++
++static int rs5c372_attach(struct i2c_adapter *adapter)
++{
++	dev_dbg(&adapter->dev, "%s\n", __FUNCTION__);
++	return i2c_probe(adapter, &addr_data, rs5c372_probe);
++}
++
++static int rs5c372_probe(struct i2c_adapter *adapter, int address, int kind)
++{
++	int err = 0;
++	struct i2c_client *client;
++	struct rtc_device *rtc;
++
++	dev_dbg(&adapter->dev, "%s\n", __FUNCTION__);
++
++	if (!i2c_check_functionality(adapter, I2C_FUNC_I2C)) {
++		err = -ENODEV;
++		goto exit;
++	}
++
++	if (!(client = kzalloc(sizeof(struct i2c_client), GFP_KERNEL))) {
++		err = -ENOMEM;
++		goto exit;
++	}
++
++	/* I2C client */
++	client->addr = address;
++	client->driver = &rs5c372_driver;
++	client->adapter = adapter;
++
++	strlcpy(client->name, rs5c372_driver.driver.name, I2C_NAME_SIZE);
++
++	/* Inform the i2c layer */
++	if ((err = i2c_attach_client(client)))
++		goto exit_kfree;
++
++	dev_info(&client->dev, "chip found, driver version " DRV_VERSION "\n");
++
++	rtc = rtc_device_register(rs5c372_driver.driver.name, &client->dev,
++				&rs5c372_rtc_ops, THIS_MODULE);
++
++	if (IS_ERR(rtc)) {
++		err = PTR_ERR(rtc);
++		dev_err(&client->dev,
++			"unable to register the class device\n");
++		goto exit_detach;
++	}
++
++	i2c_set_clientdata(client, rtc);
++
++	return 0;
++
++exit_detach:
++	i2c_detach_client(client);
++
++exit_kfree:
++	kfree(client);
++
++exit:
++	return err;
++}
++
++static int rs5c372_detach(struct i2c_client *client)
++{
++	int err;
++	struct rtc_device *rtc = i2c_get_clientdata(client);
++
++	dev_dbg(&client->dev, "%s\n", __FUNCTION__);
++
++	if (rtc)
++		rtc_device_unregister(rtc);
++
++	if ((err = i2c_detach_client(client)))
++		return err;
++
++	kfree(client);
++
++	return 0;
++}
++
++static __init int rs5c372_init(void)
++{
++	return i2c_add_driver(&rs5c372_driver);
++}
++
++static __exit void rs5c372_exit(void)
++{
++	i2c_del_driver(&rs5c372_driver);
++}
++
++module_init(rs5c372_init);
++module_exit(rs5c372_exit);
++
++MODULE_AUTHOR(
++		"Pavel Mironchik <pmironchik@optifacio.net>, "
++		"Alessandro Zummo <a.zummo@towertech.it>");
++MODULE_DESCRIPTION("Ricoh RS5C372 RTC driver");
++MODULE_LICENSE("GPL");
