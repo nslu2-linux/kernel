@@ -3,16 +3,16 @@
 10-nslu2-fix-flash.patch
 11-mtdpart-redboot-config-byteswap.patch
 15-jffs2-endian-config.patch
-http://www.rpsys.net/openzaurus/patches/led_core-r11.patch
-http://www.rpsys.net/openzaurus/patches/led_triggers-r9.patch
-http://www.rpsys.net/openzaurus/patches/led_trig_timer-r4.patch
+led_core-r11.patch
+led_triggers-r9.patch
+led_trig_timer-r4.patch
 # http://www.rpsys.net/openzaurus/patches/led_trig_sharpsl_pm-r4a.patch
-http://www.rpsys.net/openzaurus/patches/led_zaurus-r8.patch
-http://www.rpsys.net/openzaurus/patches/led_locomo-r5.patch
-http://www.rpsys.net/openzaurus/patches/led_ixp4xx-r0.patch
-http://www.rpsys.net/openzaurus/patches/led_tosa-r3.patch
-http://www.rpsys.net/openzaurus/patches/led_ide-r2.patch
-http://www.rpsys.net/openzaurus/patches/led_nand-r2.patch
+led_zaurus-r8.patch
+led_locomo-r5.patch
+led_ixp4xx-r0.patch
+led_tosa-r3.patch
+led_ide-r2.patch
+led_nand-r2.patch
 950-leds-timer.patch
 951-ixp4xx-leds-cpu-activity.patch
 40-rtc-class.patch
