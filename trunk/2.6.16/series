@@ -34,3 +34,8 @@ http://www.rpsys.net/openzaurus/patches/led_nand-r2.patch
 # 96-loft-leds.patch
 96-nas100d-leds.patch
 96-nslu2-leds.patch
+97-ds101-includes.patch
+97-ds101-misc.patch
+97-ds101-pci.patch
+97-ds101-power.patch
+97-ds101-setup.patch
