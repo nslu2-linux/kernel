@@ -3,9 +3,11 @@
  include/asm-arm/arch-ixp4xx/irqs.h     |    7 +++
  3 files changed, 78 insertions(+)
 
+Index: linux-2.6.15/include/asm-arm/arch-ixp4xx/ds101.h
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/ds101.h	2006-02-11 16:26:48.000000000 +0100
-@@ -0,0 +1,70 @@
++++ linux-2.6.15/include/asm-arm/arch-ixp4xx/ds101.h	2006-02-11 18:08:23.000000000 +0100
+@@ -0,0 +1,74 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/ds101.h
 + *
@@ -71,22 +73,30 @@
 +#define DS101_PB_IRQ          IRQ_IXP4XX_GPIO8
 +#define DS101_RB_IRQ          IRQ_IXP4XX_GPIO12
 +
++/* Buzzer */
++
++#define DS101_GPIO_BUZZ         4
++
 +/*
 +#define DS101_PB_BM           (1L << DS101_PB_GPIO)
 +#define DS101_PO_BM           (1L << DS101_PO_GPIO)
 +#define DS101_RB_BM           (1L << DS101_RB_GPIO)
 +*/
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-02-11 15:53:21.000000000 +0100
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/hardware.h	2006-02-11 15:57:24.000000000 +0100
-@@ -46,5 +46,6 @@ extern unsigned int processor_id;
+Index: linux-2.6.15/include/asm-arm/arch-ixp4xx/hardware.h
+===================================================================
+--- linux-2.6.15.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-02-11 17:56:58.000000000 +0100
++++ linux-2.6.15/include/asm-arm/arch-ixp4xx/hardware.h	2006-02-11 17:58:58.000000000 +0100
+@@ -46,5 +46,6 @@
  #include "prpmc1100.h"
  #include "nslu2.h"
  #include "nas100d.h"
 +#include "ds101.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-02-11 15:53:21.000000000 +0100
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/irqs.h	2006-02-11 15:57:24.000000000 +0100
+Index: linux-2.6.15/include/asm-arm/arch-ixp4xx/irqs.h
+===================================================================
+--- linux-2.6.15.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-02-11 17:56:58.000000000 +0100
++++ linux-2.6.15/include/asm-arm/arch-ixp4xx/irqs.h	2006-02-11 17:58:58.000000000 +0100
 @@ -108,5 +108,12 @@
  #define        IRQ_NAS100D_PCI_INTC    IRQ_IXP4XX_GPIO9
  #define        IRQ_NAS100D_PCI_INTD    IRQ_IXP4XX_GPIO8

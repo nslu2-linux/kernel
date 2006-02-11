@@ -1,9 +1,11 @@
  arch/arm/mach-ixp4xx/ds101-setup.c |  287 +++++++++++++++++++++++++++++++++++++
  1 file changed, 287 insertions(+)
 
+Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/ds101-setup.c	2006-02-11 15:39:00.000000000 +0100
-@@ -0,0 +1,287 @@
++++ linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c	2006-02-11 18:05:50.000000000 +0100
+@@ -0,0 +1,269 @@
 +/*
 + * arch/arm/mach-ixp4xx/ds101-setup.c
 + *
@@ -61,33 +63,15 @@
 +		.flags	= IXP4XX_GPIO_LOW,
 +	},
 +	{
-+		.name	= "status-1",
-+		.start	= 14,
-+		.end	= 14,
-+		.flags	= IXP4XX_GPIO_LOW,
-+	},
-+	{
-+		.name	= "status-2",
-+		.start	= 15,
-+		.end	= 15,
-+		.flags	= IXP4XX_GPIO_LOW,
-+	},
-+	{
-+		.name	= "usb-1", /* The usb-copy-button led */
++		.name	= "usbcopy-1", /* The usb-copy-button led */
 +		.start	= 5,
 +		.end	= 5,
 +		.flags	= IXP4XX_GPIO_LOW,
 +	},
 +	{
-+		.name	= "usb-2", /* also the usb-copy-button led */
++		.name	= "usbcopy-2", /* also the usb-copy-button led */
 +		.start	= 4,
 +		.end	= 4,
-+		.flags	= IXP4XX_GPIO_LOW,
-+	},
-+	{
-+		.name	= "test",
-+		.start	= 6,
-+		.end	= 6,
 +		.flags	= IXP4XX_GPIO_LOW,
 +	},
 +};
@@ -115,7 +99,7 @@
 +
 +static struct platform_device ds101_beeper = {
 +	.name		= "ixp4xx-beeper",
-+	.id		= 2, /* XXX use a define for the pin number */
++	.id		= DS101_GPIO_BUZZ,
 +	.num_resources	= 0,
 +};
 +
