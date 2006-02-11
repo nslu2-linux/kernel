@@ -32,13 +32,14 @@
       "qMgr"			/* name            */
 --- ixp_osal/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Base.h	1970-01-01 00:00:00.000000000 +0000
 +++ ixp_osal/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Base.h	1970-01-01 00:00:00.000000000 +0000
-@@ -0,0 +1,76 @@
+@@ -0,0 +1,77 @@
 +/*
 + * Glue for the current linux definitons of this stuff.
 + */
 +#ifndef IxOsalOsIxp425Base_H
 +#define IxOsalOsIxp425Base_H 1
 +#include <asm-arm/arch-ixp4xx/ixp4xx-regs.h>
++#include <linux/version.h>
 +
 +/* Force Address Coherent (the default) mapping on LE - Linux 2.6
 + * does not have a way of changing it.
