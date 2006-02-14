@@ -38,5 +38,5 @@ led_nand-r2.patch
 97-ds101-includes.patch
 97-ds101-misc.patch
 97-ds101-pci.patch
-97-ds101-power.patch
+97-ds101-buttons.patch
 97-ds101-setup.patch
