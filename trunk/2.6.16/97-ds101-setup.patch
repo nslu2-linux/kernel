@@ -4,8 +4,8 @@
 Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c	2006-02-11 18:05:50.000000000 +0100
-@@ -0,0 +1,269 @@
++++ linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c	2006-02-14 02:59:12.000000000 +0100
+@@ -0,0 +1,277 @@
 +/*
 + * arch/arm/mach-ixp4xx/ds101-setup.c
 + *
@@ -26,6 +26,7 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +#include <linux/serial_8250.h>
 +#include <linux/mtd/mtd.h>
 +#include <linux/leds.h>
++#include <linux/pci.h>
 +
 +#include <asm/setup.h>
 +#include <asm/memory.h>
@@ -58,20 +59,20 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +static struct resource ds101_led_resources[] = {
 +	{
 +		.name	= "power", /* blue power led */
-+		.start	= 3,
-+		.end	= 3,
++		.start	= DS101_POWER_LED,
++		.end	= DS101_POWER_LED,
 +		.flags	= IXP4XX_GPIO_LOW,
 +	},
-+	{
-+		.name	= "usbcopy-1", /* The usb-copy-button led */
-+		.start	= 5,
-+		.end	= 5,
++/*	{
++		.name	= "usbcopy-solid", 
++		.start	= DS101_USBCOPY_SOLID_LED,
++		.end	= DS101_USBCOPY_SOLID_LED,
 +		.flags	= IXP4XX_GPIO_LOW,
-+	},
++	}, */
 +	{
-+		.name	= "usbcopy-2", /* also the usb-copy-button led */
-+		.start	= 4,
-+		.end	= 4,
++		.name	= "usbcopy", /* also the usb-copy-button led */
++		.start	= DS101_USBCOPY_BLINK_LED,
++		.end	= DS101_USBCOPY_BLINK_LED,
 +		.flags	= IXP4XX_GPIO_LOW,
 +	},
 +};
@@ -154,27 +155,22 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +
 +static void ds101_power_off(void)
 +{
-+	/* This causes the box to drop the power and go dead. */
-+
-+	/* enable the pwr cntl gpio */
-+	gpio_line_config(DS101_PO_GPIO, IXP4XX_GPIO_OUT);
-+
-+	/* do the deed */
-+	gpio_line_set(DS101_PO_GPIO, IXP4XX_GPIO_HIGH);
++	gpio_line_config(DS101_POWEROFF_GPIO, DS101_GPIO_OUT);
++	gpio_line_set(DS101_POWEROFF_GPIO, IXP4XX_GPIO_LOW);
 +}
 +
 +/*
 + * When the RedBoot config partition is added the MAC address is read from
 + * it.
-+ * FIXME: This isn't correct on the DS101!
++ * FIXME: This won't work until DoC support works
 + */
 +static void ds101_flash_add(struct mtd_info *mtd) {
-+	if (strcmp(mtd->name, "RedBoot config") == 0) {
++	if (strcmp(mtd->name, "Vender") == 0) {
 +		size_t retlen;
 +		u_char mac[6];
 +
 +		/* The MAC is at a known offset... */
-+		if (mtd->read(mtd, 0x0FD8, 6, &retlen, mac) == 0 && retlen == 6) {
++		if (mtd->read(mtd, 0x0, 6, &retlen, mac) == 0 && retlen == 6) {
 +			printk(KERN_INFO "DS101 MAC: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
 +				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 +			maclist_add(mac);
@@ -194,6 +190,19 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +	.add = ds101_flash_add,
 +	.remove = ds101_flash_remove,
 +};
++
++/*
++static void ds101_artop_pci_fixup(void) 
++{
++	struct pci_dev *pdev;
++	u8 tmp;
++	
++	pdev = pci_get_device(PCI_VENDOR_ID_ARTOP, PCI_DEVICE_ID_ARTOP_ATP865, NULL);
++	pci_read_config_byte(pdev, 0x4A, &tmp);
++	tmp = tmp & ~(1 << 2);
++	pci_write_config_byte(pdev, 0x4A, tmp);
++};
++*/
 +
 +static void __init ds101_init(void)
 +{
@@ -215,9 +224,8 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +	* it does *not* get removed if platform_add_devices fails!
 +	*/
 +	(void)platform_device_register(&ds101_uart);
-+
 +	platform_add_devices(ds101_devices, ARRAY_SIZE(ds101_devices));
-+
++	printk(KERN_INFO "Disabling P-ATA Second IDE Port...\n");
 +#ifdef CONFIG_LEDS_CLASS
 +	/* We don't care whether or not this works. */
 +	(void)platform_device_register(&ds101_leds);
