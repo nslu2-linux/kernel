@@ -1,8 +1,8 @@
-Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-power.c
+Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-buttons.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.15/arch/arm/mach-ixp4xx/ds101-buttons.c	2006-02-13 23:53:09.000000000 +0100
-@@ -0,0 +1,120 @@
++++ linux-2.6.15/arch/arm/mach-ixp4xx/ds101-buttons.c	2006-02-16 19:42:47.000000000 +0100
+@@ -0,0 +1,117 @@
 +/*
 + * arch/arm/mach-ixp4xx/ds101-buttons.c
 + *
@@ -27,7 +27,6 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-power.c
 +static irqreturn_t ds101_usbcopy_handler(int irq, void *dev_id, struct pt_regs *regs)
 +{
 +	usbcopyb_irqcount++;
-+	printk(KERN_INFO "Usbcopy triggered\n");
 +	if (usbcopyb_irqcount > 1)  /* Init creates one IRQ. Ignore it */
 +	{
 +		/* The GPIO line is shared between the button and the led.
@@ -35,9 +34,9 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-power.c
 +		 * irqs from the led going on/off. Disable the irq just in
 +		 * case.
 +		 */
-+		gpio_line_config(DS101_USBCOPYB_IRQ, DS101_GPIO_OUT);
++		gpio_line_config(DS101_USBCOPY_IRQ, DS101_GPIO_OUT);
 +		disable_irq(DS101_USBCOPYB_IRQ);
-+		printk(KERN_ERR "Usbcopy\n");
++		printk(KERN_INFO "Usbcopy\n");
 +	}
 +	return IRQ_HANDLED;
 +}
@@ -47,6 +46,8 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-power.c
 +	powerb_irqcount++;
 +	if (powerb_irqcount > 1)
 +	{
++		/* Make the power led flash */
++		gpio_line_set(DS101_POWER_LED, DS101_GPIO_LOW);
 +		ctrl_alt_del();
 +	}
 +	return IRQ_HANDLED;
@@ -66,10 +67,13 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-power.c
 +{
 +	if (!(machine_is_ds101()))
 +		return 0;
-+	printk(KERN_INFO "DiskStation DS101(j) button driver v0.1\n");
-+	set_irq_type(DS101_USBCOPYB_IRQ, IRQT_BOTHEDGE);
-+	set_irq_type(DS101_POWERB_IRQ, IRQT_RISING);
-+	set_irq_type(DS101_RESETB_IRQ, IRQT_RISING);
++	printk(KERN_INFO "DiskStation DS101 button driver v0.2\n");
++	gpio_line_config(DS101_POWERB_GPIO, (DS101_GPIO_IN|IRQT_FALLING));
++	gpio_line_config(DS101_RESETB_GPIO, (DS101_GPIO_IN|IRQT_FALLING));
++	gpio_line_config(DS101_USBCOPYB_GPIO, (DS101_GPIO_IN|IRQT_FALLING));
++	set_irq_type(DS101_USBCOPYB_IRQ, IRQT_FALLING);
++	set_irq_type(DS101_POWERB_IRQ, IRQT_FALLING);
++	set_irq_type(DS101_RESETB_IRQ, IRQT_FALLING);
 +	if (request_irq(DS101_USBCOPYB_IRQ, &ds101_usbcopy_handler, SA_INTERRUPT,
 +		"DS101 USBCopy button", NULL) < 0)
 +	{
@@ -77,13 +81,6 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-power.c
 +				DS101_USBCOPYB_IRQ);
 +
 +		return -EIO;
-+	} else
-+	{
-+		/* The usbcopy button and usbcopy led share the same
-+		 * GPIO pin. Make sure that the pin is GPIO_IN so
-+		 * we can recieve IRQ events.
-+		 */
-+		gpio_line_config(DS101_USBCOPYB_IRQ, DS101_GPIO_IN);
 +	}
 +
 +	if (request_irq(DS101_POWERB_IRQ, &ds101_power_handler, SA_INTERRUPT,

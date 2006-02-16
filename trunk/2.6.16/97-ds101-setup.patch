@@ -4,8 +4,8 @@
 Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c	2006-02-14 02:59:12.000000000 +0100
-@@ -0,0 +1,277 @@
++++ linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c	2006-02-16 19:44:23.000000000 +0100
+@@ -0,0 +1,246 @@
 +/*
 + * arch/arm/mach-ixp4xx/ds101-setup.c
 + *
@@ -24,7 +24,7 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +#include <linux/kernel.h>
 +#include <linux/serial.h>
 +#include <linux/serial_8250.h>
-+#include <linux/mtd/mtd.h>
++/* #include <linux/mtd/mtd.h> */
 +#include <linux/leds.h>
 +#include <linux/pci.h>
 +
@@ -38,43 +38,38 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +#include <net/maclist.h>
 +#endif
 +
-+static struct flash_platform_data ds101_flash_data = {
-+	.map_name	= "cfi_probe",
-+	.width		= 2,
-+};
-+
-+static struct resource ds101_flash_resource = {
-+	.flags = IORESOURCE_MEM,
-+};
-+
-+static struct platform_device ds101_flash = {
-+	.name			= "IXP4XX-Flash",
-+	.id			= 0,
-+	.dev.platform_data	= &ds101_flash_data,
-+	.num_resources		= 1,
-+	.resource		= &ds101_flash_resource,
-+};
-+
 +#ifdef CONFIG_LEDS_CLASS
 +static struct resource ds101_led_resources[] = {
 +	{
-+		.name	= "power", /* blue power led */
++		.name	= "power",
 +		.start	= DS101_POWER_LED,
 +		.end	= DS101_POWER_LED,
 +		.flags	= IXP4XX_GPIO_LOW,
 +	},
-+/*	{
-+		.name	= "usbcopy-solid", 
++	{
++		.name	= "usbcopy-solid",
 +		.start	= DS101_USBCOPY_SOLID_LED,
 +		.end	= DS101_USBCOPY_SOLID_LED,
 +		.flags	= IXP4XX_GPIO_LOW,
-+	}, */
++	},
 +	{
-+		.name	= "usbcopy", /* also the usb-copy-button led */
++		.name	= "usbcopy-blink",
 +		.start	= DS101_USBCOPY_BLINK_LED,
 +		.end	= DS101_USBCOPY_BLINK_LED,
 +		.flags	= IXP4XX_GPIO_LOW,
 +	},
++	{
++		.name	= "status-ready",
++		.start	= DS101_STATUSOK_LED,
++		.end	= DS101_STATUSOK_LED,
++		.flags	= IXP4XX_GPIO_LOW,
++	},
++	{
++		.name	= "status-error",
++		.start	= DS101_STATUSBAD_LED,
++		.start	= DS101_STATUSBAD_LED,
++		.flags	= IXP4XX_GPIO_LOW,
++	}
 +};
 +
 +
@@ -149,74 +144,48 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +
 +static struct platform_device *ds101_devices[] __initdata = {
 +	&ds101_i2c_controller,
-+	&ds101_flash,
 +	&ds101_beeper,
 +};
 +
 +static void ds101_power_off(void)
 +{
-+	gpio_line_config(DS101_POWEROFF_GPIO, DS101_GPIO_OUT);
++	/* Simple, but effective */
 +	gpio_line_set(DS101_POWEROFF_GPIO, IXP4XX_GPIO_LOW);
 +}
 +
-+/*
-+ * When the RedBoot config partition is added the MAC address is read from
-+ * it.
-+ * FIXME: This won't work until DoC support works
-+ */
-+static void ds101_flash_add(struct mtd_info *mtd) {
-+	if (strcmp(mtd->name, "Vender") == 0) {
-+		size_t retlen;
-+		u_char mac[6];
-+
-+		/* The MAC is at a known offset... */
-+		if (mtd->read(mtd, 0x0, 6, &retlen, mac) == 0 && retlen == 6) {
-+			printk(KERN_INFO "DS101 MAC: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
-+				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-+			maclist_add(mac);
-+		} else {
-+			printk(KERN_ERR "DS101 MAC: read failed\n");
-+		}
-+	}
-+}
-+
-+/*
-+ * Nothing to do on remove at present.
-+ */
-+static void ds101_flash_remove(struct mtd_info *mtd) {
-+}
-+
-+static struct mtd_notifier ds101_flash_notifier = {
-+	.add = ds101_flash_add,
-+	.remove = ds101_flash_remove,
-+};
-+
-+/*
-+static void ds101_artop_pci_fixup(void) 
++static void ds101_gpio_setup(void)
 +{
-+	struct pci_dev *pdev;
-+	u8 tmp;
-+	
-+	pdev = pci_get_device(PCI_VENDOR_ID_ARTOP, PCI_DEVICE_ID_ARTOP_ATP865, NULL);
-+	pci_read_config_byte(pdev, 0x4A, &tmp);
-+	tmp = tmp & ~(1 << 2);
-+	pci_write_config_byte(pdev, 0x4A, tmp);
++	/* Set up buzzer */
++	gpio_line_config(DS101_GPIO_BUZZ, DS101_GPIO_OUT);
++	gpio_line_set(DS101_GPIO_BUZZ, DS101_GPIO_LOW);
++
++	/* Set up powerled */
++	gpio_line_config(DS101_POWER_LED, DS101_GPIO_OUT);
++	gpio_line_set(DS101_POWER_LED, DS101_GPIO_LOW);
++
++	/* Poweroff */
++	gpio_line_config(DS101_POWEROFF_GPIO, DS101_GPIO_OUT);
++	gpio_line_set(DS101_POWEROFF_GPIO, DS101_GPIO_HIGH);
++
++	/* Status leds */
++	(*IXP4XX_GPIO_GPCLKR) = ((*IXP4XX_GPIO_GPCLKR) & ~DS101_GPIO_CLK0_ENABLE);
++	(*IXP4XX_GPIO_GPCLKR) = ((*IXP4XX_GPIO_GPCLKR) & ~DS101_GPIO_CLK1_ENABLE);
++	gpio_line_config(DS101_STATUSOK_LED, DS101_GPIO_OUT);
++	gpio_line_config(DS101_STATUSBAD_LED, DS101_GPIO_OUT);
++	gpio_line_set(DS101_STATUSOK_LED, DS101_GPIO_HIGH);
++	gpio_line_set(DS101_STATUSBAD_LED, DS101_GPIO_LOW);
 +};
-+*/
++
++static void ds101_cs0_setup(void)
++{
++	*IXP4XX_EXP_CS0 = DS101_EXP_CS0_INIT;
++};
 +
 +static void __init ds101_init(void)
 +{
-+	/* The flash has an ethernet MAC embedded in it which we need,
-+	* that is all this notifier does.
-+	*/
-+	register_mtd_user(&ds101_flash_notifier);
-+
 +	ixp4xx_sys_init();
-+
-+	ds101_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
-+	ds101_flash_resource.end =
-+		IXP4XX_EXP_BUS_BASE(0) + ixp4xx_exp_bus_size - 1;
-+
++	ds101_cs0_setup(); /* Needed for DoC support */
++	ds101_gpio_setup();
 +	pm_power_off = ds101_power_off;
 +
 +	/* This is only useful on a modified machine, but it is valuable
@@ -225,7 +194,6 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +	*/
 +	(void)platform_device_register(&ds101_uart);
 +	platform_add_devices(ds101_devices, ARRAY_SIZE(ds101_devices));
-+	printk(KERN_INFO "Disabling P-ATA Second IDE Port...\n");
 +#ifdef CONFIG_LEDS_CLASS
 +	/* We don't care whether or not this works. */
 +	(void)platform_device_register(&ds101_leds);
@@ -234,9 +202,9 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +
 +/*
 + * DS101 bootstrap may pass in parameters, but we zap the mem
-+ * settings to be safe (the box always has 64MByte at 0).  The
-+ * passed in command line can override this default, we prepend
-+ * to the config'ed default.
++ * settings to be safe (DS101  always has 64MByte at 0, DS101J has
++ * 32MB).  The passed in command line can override this default, we
++ * prepend to the config'ed default.
 + *
 + * NOTE: the startup sequence is:
 + *     1) Call the machine fixup
@@ -249,6 +217,7 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 + * any ATAG_MEM tags, but mem= command line options cause nr_banks
 + * to be reset to 0 (on the first mem=)
 + */
++
 +static char ds101_command_line[] __initdata =
 +	"root=/dev/sda1 rootfstype=ext3 init=/sbin/init "
 +	"rtc-rs5c372.probe=0,0x32 "
@@ -265,7 +234,6 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +	mi->bank[0].start = 0;
 +	mi->bank[0].size = (64*1024*1024);
 +	mi->bank[0].node = PHYS_TO_NID(0);
-+
 +	/* A command line in the ATAG list will override this one,
 +	* as is intended.
 +	*/
@@ -283,3 +251,4 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-setup.c
 +	.timer		= &ixp4xx_timer,
 +	.init_machine	= ds101_init,
 +MACHINE_END
++
