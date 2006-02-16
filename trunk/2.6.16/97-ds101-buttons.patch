@@ -1,7 +1,7 @@
 Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-buttons.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.15/arch/arm/mach-ixp4xx/ds101-buttons.c	2006-02-16 19:42:47.000000000 +0100
++++ linux-2.6.15/arch/arm/mach-ixp4xx/ds101-buttons.c	2006-02-16 20:04:47.000000000 +0100
 @@ -0,0 +1,117 @@
 +/*
 + * arch/arm/mach-ixp4xx/ds101-buttons.c
@@ -34,7 +34,7 @@ Index: linux-2.6.15/arch/arm/mach-ixp4xx/ds101-buttons.c
 +		 * irqs from the led going on/off. Disable the irq just in
 +		 * case.
 +		 */
-+		gpio_line_config(DS101_USBCOPY_IRQ, DS101_GPIO_OUT);
++		gpio_line_config(DS101_USBCOPYB_IRQ, DS101_GPIO_OUT);
 +		disable_irq(DS101_USBCOPYB_IRQ);
 +		printk(KERN_INFO "Usbcopy\n");
 +	}
