@@ -43,6 +43,3 @@ led_nand-r2.patch
 97-ds101-pci.patch
 97-ds101-buttons.patch
 97-ds101-setup.patch
-50-onewire-arm-enable.patch
-50-i2c-bus-ixp4xx-hwmon.patch
-50-hwmon-ad741x.patch
