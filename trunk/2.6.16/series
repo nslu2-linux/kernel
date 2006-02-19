@@ -1,4 +1,4 @@
-05-patch-2.6.16-rc2-ide2
+patch-2.6.16-rc3-ide1
 10-mtdpart-redboot-fis-byteswap.patch
 10-nslu2-fix-flash.patch
 11-mtdpart-redboot-config-byteswap.patch
@@ -18,6 +18,9 @@ led_nand-r2.patch
 40-rtc-class.patch
 45-eeprom-notifier.patch
 48-setup-byteswap-cmdline.patch
+#50-onewire-arm-enable.patch
+50-i2c-bus-ixp4xx-hwmon.patch
+50-hwmon-ad741x.patch
 61-ixp4xx-beeper-irq.patch
 61-nslu2-beeper.patch
 65-loft-config.patch
@@ -40,3 +43,6 @@ led_nand-r2.patch
 97-ds101-pci.patch
 97-ds101-buttons.patch
 97-ds101-setup.patch
+50-onewire-arm-enable.patch
+50-i2c-bus-ixp4xx-hwmon.patch
+50-hwmon-ad741x.patch
