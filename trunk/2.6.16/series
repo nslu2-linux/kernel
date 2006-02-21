@@ -12,6 +12,7 @@ leds-class.patch
 50-hwmon-ad741x.patch
 61-nslu2-beeper.patch
 65-loft-config.patch
+70-artop-latency.patch
 80-nas100d-fix-i2c.patch
 81-nslu2-power.patch
 82-nas100d-power.patch
