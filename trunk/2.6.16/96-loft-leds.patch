@@ -1,20 +1,24 @@
-NEW_LEDS support for the loft board
+leds class support for the loft board
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
---- linux-2.6.15/arch/arm/mach-ixp4xx/ixdp425-setup.c	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.15/arch/arm/mach-ixp4xx/ixdp425-setup.c	1970-01-01 00:00:00.000000000 +0000
-@@ -15,6 +15,7 @@
- #include <linux/tty.h>
+---
+ arch/arm/mach-ixp4xx/ixdp425-setup.c |   25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+--- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-02-21 01:40:48.000000000 +0100
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-02-21 01:44:12.000000000 +0100
+@@ -16,6 +16,7 @@
  #include <linux/serial_8250.h>
+ #include <linux/slab.h>
  #include <linux/eeprom.h>
 +#include <linux/leds.h>
  
  #include <asm/types.h>
  #include <asm/setup.h>
-@@ -200,6 +201,29 @@ MACHINE_END
-  * maybe the ixdp425 too.
-  */
+@@ -182,6 +183,24 @@ MACHINE_END
+ #endif
+ 
  #ifdef CONFIG_MACH_LOFT
 +#ifdef CONFIG_LEDS_CLASS
 +static struct resource loft_led_resources[] = {
@@ -34,29 +38,19 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 +};
 +#endif
 +
-+static struct platform_device *loft_devices[] __initdata = {
-+	&ixdp425_i2c_controller,
-+	&ixdp425_flash,
-+};
-+
  /*
-  * When the EEPROM is added the MAC address are read from it.
-  */
-@@ -244,7 +268,16 @@ static void __init loft_init(void)
- 
- 	ixp4xx_sys_init();
- 
--	platform_add_devices(ixdp425_devices, ARRAY_SIZE(ixdp425_devices));
-+	/* Put the UART in first for debugging, don't care if it fails. */
-+	(void)platform_device_register(&ixdp425_uart);
-+
-+	/* These should work... */
-+	platform_add_devices(loft_devices, ARRAY_SIZE(loft_devices));
+  * Loft is functionally equivalent to Avila except that it has a
+  * different number for the maximum PCI devices.  The MACHINE
+@@ -289,6 +308,12 @@ static void __init loft_fixup(struct mac
+ 	memcpy(*cmdline, loft_command_line, len);
+ 	memcpy(*cmdline + len, saved_command_line, COMMAND_LINE_SIZE - len);
+ 	*cmdline[COMMAND_LINE_SIZE-1] = 0;
 +
 +#ifdef CONFIG_LEDS_CLASS
 +	/* We don't care if this fails. */
 +	(void)platform_device_register(&loft_leds);
 +#endif
++
  }
  
  MACHINE_START(LOFT, "Giant Shoulder Inc Loft board")
