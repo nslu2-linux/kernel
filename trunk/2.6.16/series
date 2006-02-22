@@ -24,7 +24,7 @@ leds-class.patch
 94-nas100d-setup.patch
 94-nslu2-setup.patch
 94-loft-setup.patch    
-96-loft-leds.patch
+# 96-loft-leds.patch
 96-nas100d-leds.patch
 96-nslu2-leds.patch
 97-ds101-setup.patch
