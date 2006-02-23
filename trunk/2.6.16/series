@@ -13,6 +13,7 @@ leds-class.patch
 65-loft-config.patch
 70-artop-latency.patch
 #75-dsmg600.patch
+75-dsmg600.patch
 80-nas100d-fix-i2c.patch
 81-nslu2-power.patch
 82-nas100d-power.patch
