@@ -1,4 +1,4 @@
-patch-2.6.16-rc4-ide1
+patch-2.6.16-rc4-ide2
 leds-class.patch
 10-mtdpart-redboot-fis-byteswap.patch
 11-mtdpart-redboot-config-byteswap.patch
@@ -7,12 +7,12 @@ leds-class.patch
 40-rtc-class.patch
 45-eeprom-notifier.patch
 48-setup-byteswap-cmdline.patch
-# 50-onewire-arm-enable.patch
 50-i2c-bus-ixp4xx-hwmon.patch
 50-hwmon-ad741x.patch
 61-nslu2-beeper.patch
 65-loft-config.patch
 70-artop-latency.patch
+#75-dsmg600.patch
 80-nas100d-fix-i2c.patch
 81-nslu2-power.patch
 82-nas100d-power.patch
@@ -29,4 +29,4 @@ leds-class.patch
 97-ds101-includes.patch
 97-ds101-pci.patch
 97-ds101-buttons.patch
-# rtl8150-name.patch
+#96-loft-ide.patch
