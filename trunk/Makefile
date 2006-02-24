@@ -23,7 +23,8 @@ ENDIAN = l
 BASEVER  = 2.6.15
 MAJORVER = 2.6
 MINORVER = 2.6.16
-REVISION := $(shell cat ${MINORVER}/KERNEL)
+REVISION := $(shell sed -e 's/-git.*//' ${MINORVER}/KERNEL)
+SNAPSHOT := $(shell cat ${MINORVER}/KERNEL)
 
 ifeq (${ENDIAN},b)
 DEBIAN_ARCH = armeb
@@ -31,12 +32,9 @@ else
 DEBIAN_ARCH = arm
 endif
 
-KERNEL_SOURCE = http://kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${BASEVER}.tar.bz2
-ifeq ($(findstring -git,${REVISION}),)
-KERNEL_PATCH  = http://kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.bz2
-else
-KERNEL_PATCH  = http://kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots/patch-${REVISION}.bz2
-endif
+KERNEL_SOURCE   = http://kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${BASEVER}.tar.bz2
+KERNEL_PATCH    = http://kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.bz2
+KERNEL_SNAPSHOT = http://kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots/patch-${SNAPSHOT}.bz2
 
 #CROSS_COMPILE = ${DEBIAN_ARCH}-linux-gnu-
 CROSS_COMPILE = ${DEBIAN_ARCH}-linux-
@@ -191,6 +189,7 @@ linux-${REVISION}/.config: \
 	  ) | \
 	  patch -d linux-${REVISION} -p1 )
 else
+ifeq (${REVISION},${SNAPSHOT})
 linux-${REVISION}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
@@ -205,6 +204,23 @@ linux-${REVISION}/.config: \
   	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
 	  ) | \
 	  patch -d linux-${REVISION} -p1
+else
+linux-${REVISION}/.config: \
+		downloads/linux-${BASEVER}.tar.bz2 \
+		downloads/patch-${REVISION}.bz2 \
+		downloads/patch-${SNAPSHOT}.bz2 \
+		${MINORVER}/series ${MINORVER}/??-*.patch ${MINORVER}/defconfig
+	[ -e linux-${REVISION} ] || \
+	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
+	  mv linux-${BASEVER} linux-${REVISION} ; \
+	  bzcat downloads/patch-${REVISION}.bz2 downloads/patch-${SNAPSHOT}.bz2 | \
+	  patch -d linux-${REVISION} -p1 ) ; \
+	  ( cd ${MINORVER}/ ; \
+	    grep -v \# series | \
+  	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	  ) | \
+	  patch -d linux-${REVISION} -p1
+endif
 endif
 ifeq (${ENDIAN},b)
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/CONFIG_CPU_BIG_ENDIAN=y/' \
@@ -223,6 +239,13 @@ downloads/patch-${REVISION}.bz2 :
 	[ -e downloads/patch-${REVISION}.bz2 ] || \
 	( mkdir -p downloads ; cd downloads ; \
 	  wget ${KERNEL_PATCH} )
+
+ifneq (${REVISION},${SNAPSHOT})
+downloads/patch-${SNAPSHOT}.bz2 :
+	[ -e downloads/patch-${SNAPSHOT}.bz2 ] || \
+	( mkdir -p downloads ; cd downloads ; \
+	  wget ${KERNEL_SNAPSHOT} )
+endif
 
 downloads:
 	mkdir -p downloads
