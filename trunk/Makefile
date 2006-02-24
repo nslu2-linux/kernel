@@ -23,7 +23,7 @@ ENDIAN = l
 BASEVER  = 2.6.15
 MAJORVER = 2.6
 MINORVER = 2.6.16
-REVISION = 2.6.16-rc2
+REVISION := $(shell cat ${MINORVER}/KERNEL)
 
 ifeq (${ENDIAN},b)
 DEBIAN_ARCH = armeb
@@ -32,7 +32,11 @@ DEBIAN_ARCH = arm
 endif
 
 KERNEL_SOURCE = http://kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${BASEVER}.tar.bz2
+ifeq ($(findstring -git,${REVISION}),)
 KERNEL_PATCH  = http://kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.bz2
+else
+KERNEL_PATCH  = http://kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots/patch-${REVISION}.bz2
+endif
 
 #CROSS_COMPILE = ${DEBIAN_ARCH}-linux-gnu-
 CROSS_COMPILE = ${DEBIAN_ARCH}-linux-
