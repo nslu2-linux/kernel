@@ -20,6 +20,7 @@
 
 
 ENDIAN = l
+#ENDIAN = b
 BASEVER  = 2.6.15
 MAJORVER = 2.6
 MINORVER = 2.6.16
@@ -145,7 +146,7 @@ ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c03,4' 'wb 0xe3811041,4' \
 		'cp$$'
-	else
+else
 		devio '<<'$< >$@ \
 		'wb 0xe3a01c03,4' 'wb 0xe3811041,4' \
 		'wb 0xee110f10,4' \
@@ -159,7 +160,7 @@ ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c03,4' 'wb 0xe38110c4,4' \
 		'cp$$'
-	else
+else
 		devio '<<'$< >$@ \
 		'wb 0xe3a01c03,4' 'wb 0xe38110c4,4' \
 		'wb 0xee110f10,4' \
