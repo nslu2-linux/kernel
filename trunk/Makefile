@@ -45,7 +45,7 @@ endif
 
 all: kernel modules
 
-kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REVISION} vmlinuz-ds101-${REVISION}
+kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REVISION} vmlinuz-ds101-${REVISION} vmlinuz-dsmg600-${REVISION}
 ixp400: lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko
 ixp400-eth: lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
 modules: modules-${REVISION}.tar.gz
@@ -151,7 +151,21 @@ ifeq (${ENDIAN},b)
 		'wb 0xee010f10,4' \
 		'xp $$,4'
 endif
-                                                                                                
+
+vmlinuz-dsmg600-${REVISION}: vmlinuz-${REVISION}
+ifeq (${ENDIAN},b)
+	devio '<<'$< >$@ \
+		'wb 0xe3a01c03,4' 'wb 0xe38110c0,4' \
+		'cp$$'
+	else
+		devio '<<'$< >$@ \
+		'wb 0xe3a01c03,4' 'wb 0xe38110c0,4' \
+		'wb 0xee110f10,4' \
+		'wb 0xe3c00080,4' \
+		'wb 0xee010f10,4' \
+		'xp $$,4'
+endif
+
 
 vmlinuz-${REVISION}: linux-${REVISION}/.config
 	( cd linux-${REVISION} ; \
