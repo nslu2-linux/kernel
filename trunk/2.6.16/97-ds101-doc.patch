@@ -1,8 +1,8 @@
 Index: linux-2.6.15/include/linux/mtd/doc2000.h
 ===================================================================
 --- linux-2.6.15.orig/include/linux/mtd/doc2000.h	2006-02-24 11:46:50.000000000 +0100
-+++ linux-2.6.15/include/linux/mtd/doc2000.h	2006-02-24 12:12:04.000000000 +0100
-@@ -73,14 +73,30 @@
++++ linux-2.6.15/include/linux/mtd/doc2000.h	2006-02-24 12:14:18.000000000 +0100
+@@ -73,14 +73,29 @@
  #define DoC_Mplus_Toggle		0x1046
  #define DoC_Mplus_DownloadStatus	0x1074
  #define DoC_Mplus_CtrlConfirm		0x1076
@@ -29,8 +29,15 @@ Index: linux-2.6.15/include/linux/mtd/doc2000.h
 +#define WriteDOC_(d, adr, reg)  writew(swab16(d), (void __iomem *)(adr) + (reg))
 +#define DOC_IOREMAP_LEN 0x4000
 +#endif
-+#endif
-+#if defined(__arm__) && !defined(CONFIG_MACH_DS101)
++#elif defined(__arm__)
  #define ReadDOC_(adr, reg)      ((unsigned char)(*(volatile __u32 *)(((unsigned long)adr)+((reg)<<2))))
  #define WriteDOC_(d, adr, reg)  do{ *(volatile __u32 *)(((unsigned long)adr)+((reg)<<2)) = (__u32)d; wmb();} while(0)
  #define DOC_IOREMAP_LEN 0x8000
+@@ -92,7 +107,6 @@
+ #define ReadDOC_(adr, reg)      readb((void __iomem *)(adr) + (reg))
+ #define WriteDOC_(d, adr, reg)  writeb(d, (void __iomem *)(adr) + (reg))
+ #define DOC_IOREMAP_LEN 0x2000
+-
+ #endif
+ 
+ #if defined(__i386__) || defined(__x86_64__)
