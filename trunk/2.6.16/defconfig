@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.16-rc4-git5
-# Fri Feb 24 13:00:28 2006
+# Linux kernel version: 2.6.16-rc4-git7
+# Fri Feb 24 22:40:39 2006
 #
 CONFIG_ARM=y
 CONFIG_MMU=y
@@ -685,6 +685,7 @@ CONFIG_SCSI_PATA_ARTOP=y
 # CONFIG_SCSI_PATA_TRIFLEX is not set
 # CONFIG_SCSI_PATA_VIA is not set
 # CONFIG_SCSI_PATA_WINBOND is not set
+CONFIG_SCSI_PATA_IXP4XX=y
 # CONFIG_SCSI_DMX3191D is not set
 # CONFIG_SCSI_FUTURE_DOMAIN is not set
 # CONFIG_SCSI_IPS is not set
