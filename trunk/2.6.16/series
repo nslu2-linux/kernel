@@ -21,6 +21,7 @@ leds-class.patch
 94-nas100d-setup.patch
 94-nslu2-setup.patch
 94-loft-setup.patch    
+96-pata-ixp4xx.patch
 96-nas100d-leds.patch
 96-nslu2-leds.patch
 97-ds101-setup.patch
@@ -28,4 +29,3 @@ leds-class.patch
 97-ds101-pci.patch
 97-ds101-buttons.patch
 97-ds101-doc.patch
-#96-loft-ide.patch
