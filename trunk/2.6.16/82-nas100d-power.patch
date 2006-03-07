@@ -1,5 +1,11 @@
+
+http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3353/1
+
  arch/arm/mach-ixp4xx/nas100d-power.c |    3 +++
  1 file changed, 3 insertions(+)
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
 
 --- linux-nslu2.orig/arch/arm/mach-ixp4xx/nas100d-power.c	2006-02-06 20:37:01.000000000 +0100
 +++ linux-nslu2/arch/arm/mach-ixp4xx/nas100d-power.c	2006-02-06 22:34:52.000000000 +0100
