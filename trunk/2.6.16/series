@@ -11,6 +11,7 @@ leds-class.patch
 50-hwmon-ad741x.patch
 65-loft-config.patch
 75-dsmg600.patch
+82-nslu2-fix-depends.patch
 82-nas100d-gpio.patch
 85-timer.patch
 91-maclist.patch
