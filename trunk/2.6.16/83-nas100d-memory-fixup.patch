@@ -2,23 +2,25 @@ Include a fixup machine start function in nas100d-setup.c to handle
 the command line and memory setup parameters which are not specifiable
 in the boot loader.
 
+TODO: We must check what is actually passed by the stock
+RedBoot on the nas100d.
+
 Signed-off-by: John Bowler <jbowler@acm.org>
 
- arch/arm/mach-ixp4xx/nas100d-setup.c |   43 +++++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+ arch/arm/mach-ixp4xx/nas100d-setup.c |   33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
---- linux-nslu2.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-02-10 19:19:53.000000000 +0100
-+++ linux-nslu2/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-02-10 19:29:18.000000000 +0100
-@@ -17,6 +17,8 @@
- #include <linux/serial_8250.h>
- #include <linux/mtd/mtd.h>
- 
-+#include <asm/setup.h>
-+#include <asm/memory.h>
+--- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-03-09 02:13:15.000000000 +0100
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-03-09 02:13:54.000000000 +0100
+@@ -19,6 +19,7 @@
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
-@@ -161,11 +163,52 @@ static void __init nas100d_init(void)
++#include <asm/setup.h>
+ 
+ static struct flash_platform_data nas100d_flash_data = {
+ 	.map_name		= "cfi_probe",
+@@ -125,11 +126,43 @@ static void __init nas100d_init(void)
  	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
  }
  
@@ -39,10 +41,6 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 + * any ATAG_MEM tags, but mem= command line options cause nr_banks
 + * to be reset to 0 (on the first mem=)
 + */
-+static char nas100d_command_line[] __initdata =
-+	"root=/dev/mtdblock2 rootfstype=jffs2 init=/linuxrc "
-+	"rtc-pcf8563.probe=0,0x51 "
-+	CONFIG_CMDLINE;
 +
 +static void __init nas100d_fixup(struct machine_desc *desc,
 +		struct tag *tags, char **cmdline, struct meminfo *mi)
@@ -51,15 +49,10 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 +	 * NOTE: setting nr_banks != 0 causes kernel/setup.c to remove
 +	 * the mem tags from the tag list.  We need do nothing here!
 +	 */
-+	mi->nr_banks=1;
++	mi->nr_banks = 1;
 +	mi->bank[0].start = 0;
 +	mi->bank[0].size = (64*1024*1024);
 +	mi->bank[0].node = PHYS_TO_NID(0);
-+
-+	/* A command line in the ATAG list will override this one,
-+	 * as is intended.
-+	 */
-+	strlcpy(*cmdline, nas100d_command_line, COMMAND_LINE_SIZE);
 +}
 +
  MACHINE_START(NAS100D, "Iomega NAS 100d")

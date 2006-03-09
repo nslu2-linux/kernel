@@ -13,11 +13,12 @@ leds-class.patch
 75-dsmg600.patch
 82-nslu2-fix-depends.patch
 82-nas100d-gpio.patch
+83-nas100d-memory-fixup.patch
+84-nas100d-cmdline.patch
 85-timer.patch
 91-maclist.patch
 92-nas100d-maclist.patch
 92-nslu2-maclist.patch
-94-nas100d-setup.patch
 94-nslu2-setup.patch
 94-loft-setup.patch    
 96-pata-ixp4xx.patch
