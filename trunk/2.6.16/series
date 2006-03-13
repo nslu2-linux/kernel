@@ -22,8 +22,9 @@ leds-class.patch
 96-pata-ixp4xx.patch
 96-nas100d-leds.patch
 96-nslu2-leds.patch
-97-ds101-setup.patch
-97-ds101-includes.patch
-97-ds101-pci.patch
+#97-ds101-setup.patch
+#97-ds101-includes.patch
+#97-ds101-pci.patch
+97-ds101.patch
 97-ds101-buttons.patch
 97-ds101-doc.patch

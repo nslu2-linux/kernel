@@ -1,15 +1,15 @@
  arch/arm/mach-ixp4xx/Kconfig           |    8 +
  arch/arm/mach-ixp4xx/Makefile          |    2 
  arch/arm/mach-ixp4xx/ds101-pci.c       |   66 +++++++++
- arch/arm/mach-ixp4xx/ds101-setup.c     |  233 +++++++++++++++++++++++++++++++++
- include/asm-arm/arch-ixp4xx/ds101.h    |   89 ++++++++++++
+ arch/arm/mach-ixp4xx/ds101-setup.c     |  234 +++++++++++++++++++++++++++++++++
+ include/asm-arm/arch-ixp4xx/ds101.h    |   88 ++++++++++++
  include/asm-arm/arch-ixp4xx/hardware.h |    1 
- include/asm-arm/arch-ixp4xx/irqs.h     |    7 
- 7 files changed, 405 insertions(+), 1 deletion(-)
+ include/asm-arm/arch-ixp4xx/irqs.h     |    8 +
+ 7 files changed, 406 insertions(+), 1 deletion(-)
 
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/ds101.h	2006-03-07 23:16:37.000000000 +0100
-@@ -0,0 +1,89 @@
++++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/ds101.h	2006-03-08 08:41:31.000000000 +0100
+@@ -0,0 +1,88 @@
 +/*
 + * DS101 platform specific definitions
 + *
@@ -37,9 +37,10 @@
 +/* GPIO6 is unknown */
 +#define DS101_POWEROFF_GPIO	DS101_GPIO7
 +#define DS101_POWERB_GPIO	DS101_GPIO8
-+#define DS101_PCI_INTC_PIN	DS101_GPIO9
++/*#define DS101_PCI_INTC_PIN	DS101_GPIO9
 +#define DS101_PCI_INTB_PIN	DS101_GPIO10
 +#define DS101_PCI_INTA_PIN	DS101_GPIO11
++*/
 +#define DS101_RESETB_GPIO	DS101_GPIO12
 +#define DS101_STATUSOK_LED	DS101_GPIO14
 +#define DS101_STATUSBAD_LED	DS101_GPIO15
@@ -56,9 +57,6 @@
 +#define DS101_GPIO_OUT		IXP4XX_GPIO_OUT
 +#define DS101_GPIO_HIGH		1
 +#define DS101_GPIO_LOW		0
-+
-+#define DS101_GPIO_CLK0_ENABLE	0x100
-+#define DS101_GPIO_CLK1_ENABLE	0x1000000
 +
 +/* GPIO */
 +
@@ -94,13 +92,14 @@
 +#define DS101_EXP_BYTE_RD16	(1 << 6)
 +#define DS101_EXP_CS_EN		(1 << 31)
 +
++/* XXX nope. use the _EXP_ macros in the -setup.c */
 +#define DS101_EXP_CS0_INIT	(DS101_EXP_ADDR_T(1) | \
 +	DS101_EXP_SETUP_T(1) | DS101_EXP_STROBE_T(1) | \
 +	DS101_EXP_HOLD_T(1) | DS101_EXP_RECOVERY_T(1)| \
 +	DS101_EXP_SZ_16M | DS101_EXP_WR_EN | \
 +	DS101_EXP_BYTE_RD16 | DS101_EXP_CS_EN)
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-03-07 23:01:02.000000000 +0100
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/hardware.h	2006-03-07 23:16:37.000000000 +0100
+--- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-03-08 08:41:02.000000000 +0100
++++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/hardware.h	2006-03-08 08:41:31.000000000 +0100
 @@ -47,5 +47,6 @@ extern unsigned int processor_id;
  #include "nslu2.h"
  #include "nas100d.h"
@@ -108,31 +107,32 @@
 +#include "ds101.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-03-07 23:01:02.000000000 +0100
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/irqs.h	2006-03-07 23:16:37.000000000 +0100
-@@ -108,6 +108,13 @@
- #define        IRQ_NAS100D_PCI_INTC    IRQ_IXP4XX_GPIO9
- #define        IRQ_NAS100D_PCI_INTD    IRQ_IXP4XX_GPIO8
+--- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-03-08 08:41:02.000000000 +0100
++++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/irqs.h	2006-03-08 08:41:31.000000000 +0100
+@@ -110,6 +110,14 @@
  #define        IRQ_NAS100D_PCI_INTE    IRQ_IXP4XX_GPIO7
-+/*
-+ * DS101 board IRQs
-+ */
-+
-+#define        IRQ_DS101_PCI_INTA    IRQ_IXP4XX_GPIO11
-+#define        IRQ_DS101_PCI_INTB    IRQ_IXP4XX_GPIO10
-+#define        IRQ_DS101_PCI_INTC    IRQ_IXP4XX_GPIO9
  
  /*
++ * Synology DS101 board IRQs
++ */
++
++#define IRQ_DS101_PCI_INTA	IRQ_IXP4XX_GPIO11
++#define IRQ_DS101_PCI_INTB	IRQ_IXP4XX_GPIO10
++#define IRQ_DS101_PCI_INTC	IRQ_IXP4XX_GPIO9
++
++/*
   * D-Link DSM-G600 board IRQs
+  */
+ #define IRQ_DSMG600_PCI_INTA	IRQ_IXP4XX_GPIO11
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/ds101-pci.c	2006-03-07 23:16:37.000000000 +0100
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/ds101-pci.c	2006-03-08 08:41:31.000000000 +0100
 @@ -0,0 +1,66 @@
 +/*
 + * DS101 board-level PCI initialization
 + *
 + * based on ixdp425-pci.c:
-+ *     Copyright (C) 2002 Intel Corporation.
-+ *     Copyright (C) 2003-2004 MontaVista Software, Inc.
++ * 	Copyright (C) 2002 Intel Corporation.
++ * 	Copyright (C) 2003-2004 MontaVista Software, Inc.
 + *
 + * Maintainer: http://www.nslu2-linux.org/
 + *
@@ -151,51 +151,51 @@
 +
 +void __init ds101_pci_preinit(void)
 +{
-+       set_irq_type(IRQ_DS101_PCI_INTA, IRQT_LOW);
-+       set_irq_type(IRQ_DS101_PCI_INTB, IRQT_LOW);
-+       set_irq_type(IRQ_DS101_PCI_INTC, IRQT_LOW);
++	set_irq_type(IRQ_DS101_PCI_INTA, IRQT_LOW);
++	set_irq_type(IRQ_DS101_PCI_INTB, IRQT_LOW);
++	set_irq_type(IRQ_DS101_PCI_INTC, IRQT_LOW);
 +
-+       ixp4xx_pci_preinit();
++	ixp4xx_pci_preinit();
 +}
 +
 +static int __init ds101_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
 +{
-+       static int pci_irq_table[DS101_PCI_MAX_DEV][DS101_PCI_IRQ_LINES] =
-+       {
-+               { IRQ_DS101_PCI_INTA, -1, -1 },
-+               { IRQ_DS101_PCI_INTB, IRQ_DS101_PCI_INTB, IRQ_DS101_PCI_INTC },
-+       };
++	static int pci_irq_table[DS101_PCI_MAX_DEV][DS101_PCI_IRQ_LINES] =
++	{
++		{ IRQ_DS101_PCI_INTA, -1, -1 },
++		{ IRQ_DS101_PCI_INTB, IRQ_DS101_PCI_INTB, IRQ_DS101_PCI_INTC },
++	};
 +
-+       int irq = -1;
++	int irq = -1;
 +
-+       if (slot >= 1 && slot <= DS101_PCI_MAX_DEV &&
-+               pin >= 1 && pin <= DS101_PCI_IRQ_LINES)
-+               irq = pci_irq_table[slot-1][pin-1];
++	if (slot >= 1 && slot <= DS101_PCI_MAX_DEV &&
++		pin >= 1 && pin <= DS101_PCI_IRQ_LINES)
++			irq = pci_irq_table[slot-1][pin-1];
 +
-+       return irq;
++	return irq;
 +}
 +
 +struct hw_pci __initdata ds101_pci = {
-+       .nr_controllers = 1,
-+       .preinit        = ds101_pci_preinit,
-+       .swizzle        = pci_std_swizzle,
-+       .setup          = ixp4xx_setup,
-+       .scan           = ixp4xx_scan_bus,
-+       .map_irq        = ds101_map_irq,
++	.nr_controllers	= 1,
++	.preinit	= ds101_pci_preinit,
++	.swizzle	= pci_std_swizzle,
++	.setup		= ixp4xx_setup,
++	.scan		= ixp4xx_scan_bus,
++	.map_irq	= ds101_map_irq,
 +};
 +
 +int __init ds101_pci_init(void)
 +{
-+       if (machine_is_ds101())
-+               pci_common_init(&ds101_pci);
++	if (machine_is_ds101())
++		pci_common_init(&ds101_pci);
 +
-+       return 0;
++	return 0;
 +}
 +
 +subsys_initcall(ds101_pci_init);
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/ds101-setup.c	2006-03-07 23:16:37.000000000 +0100
-@@ -0,0 +1,233 @@
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/ds101-setup.c	2006-03-08 08:41:31.000000000 +0100
+@@ -0,0 +1,234 @@
 +/*
 + * Synology DS101 board setup
 + *
@@ -351,8 +351,9 @@
 +	gpio_line_set(DS101_POWEROFF_GPIO, DS101_GPIO_HIGH);
 +
 +	/* Status leds */
-+	(*IXP4XX_GPIO_GPCLKR) = ((*IXP4XX_GPIO_GPCLKR) & ~DS101_GPIO_CLK0_ENABLE);
-+	(*IXP4XX_GPIO_GPCLKR) = ((*IXP4XX_GPIO_GPCLKR) & ~DS101_GPIO_CLK1_ENABLE);
++	*IXP4XX_GPIO_GPCLKR = 0;
++
++	/* XXX can't the leds subsystem take care of those? */
 +	gpio_line_config(DS101_STATUSOK_LED, DS101_GPIO_OUT);
 +	gpio_line_config(DS101_STATUSBAD_LED, DS101_GPIO_OUT);
 +	gpio_line_set(DS101_STATUSOK_LED, DS101_GPIO_HIGH);
@@ -429,28 +430,28 @@
 +	.timer		= &ixp4xx_timer,
 +	.init_machine	= ds101_init,
 +MACHINE_END
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/Kconfig	2006-03-07 23:01:02.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/Kconfig	2006-03-07 23:16:37.000000000 +0100
+--- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/Kconfig	2006-03-08 08:41:02.000000000 +0100
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/Kconfig	2006-03-08 08:41:31.000000000 +0100
 @@ -93,6 +93,14 @@ config MACH_DSMG600
  	  DSM-G600 device. For more information on this platform,
  	  see http://www.nslu2-linux.org/
  
 +config MACH_DS101
-+       bool
-+       prompt "DS101"
-+       help
-+         Say 'Y' here if you want your kernel to support Synology's
-+         DiskStation DS101(j) device. For more information on this
-+         platform see http://www.nslu2-linux.org/wiki/DS101/HomePage
++	bool
++	prompt "Synology DS101"
++	help
++	  Say 'Y' here if you want your kernel to support Synology's
++	  DiskStation DS101(j) device. For more information on this
++	  platform see http://www.nslu2-linux.org/wiki/DS101/HomePage
 +
  #
  # Avila and IXDP share the same source for now. Will change in future
  #
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/Makefile	2006-03-07 23:01:02.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/Makefile	2006-03-07 23:16:37.000000000 +0100
+--- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/Makefile	2006-03-08 08:41:02.000000000 +0100
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/Makefile	2006-03-08 08:41:31.000000000 +0100
 @@ -11,4 +11,4 @@ obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-
  obj-$(CONFIG_MACH_NSLU2)	+= nslu2-pci.o nslu2-setup.o nslu2-power.o
  obj-$(CONFIG_MACH_NAS100D)	+= nas100d-pci.o nas100d-setup.o nas100d-power.o
  obj-$(CONFIG_MACH_DSMG600)	+= dsmg600-pci.o dsmg600-setup.o
 -
-+obj-$(CONFIG_MACH_DS101)	+= ds101-pci.o ds101-setup.o ds101-buttons.o
++obj-$(CONFIG_MACH_DS101)	+= ds101-pci.o ds101-setup.o
