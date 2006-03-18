@@ -916,7 +916,21 @@ CONFIG_INPUT_IXP4XX_BEEPER=y
 #
 # CONFIG_VT is not set
 CONFIG_SERIAL_NONSTANDARD=y
+# CONFIG_COMPUTONE is not set
+# CONFIG_ROCKETPORT is not set
+# CONFIG_CYCLADES is not set
+# CONFIG_DIGIEPCA is not set
+# CONFIG_MOXA_INTELLIO is not set
+# CONFIG_MOXA_SMARTIO is not set
+# CONFIG_ISI is not set
+# CONFIG_SYNCLINKMP is not set
+# CONFIG_SYNCLINK_GT is not set
 CONFIG_N_HDLC=m
+# CONFIG_RISCOM8 is not set
+# CONFIG_SPECIALIX is not set
+# CONFIG_SX is not set
+# CONFIG_RIO is not set
+# CONFIG_STALDRV is not set
 
 #
 # Serial drivers
@@ -1040,6 +1054,18 @@ CONFIG_SENSORS_EEPROM=y
 #
 # CONFIG_SPI is not set
 # CONFIG_SPI_MASTER is not set
+
+#
+# Dallas's 1-wire bus
+#
+CONFIG_W1=m
+# CONFIG_W1_MATROX is not set
+CONFIG_W1_DS9490=m
+CONFIG_W1_DS9490_BRIDGE=m
+CONFIG_W1_THERM=m
+CONFIG_W1_SMEM=m
+CONFIG_W1_DS2433=m
+CONFIG_W1_DS2433_CRC=y
 
 #
 # Hardware Monitoring support
