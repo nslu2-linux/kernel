@@ -1,6 +1,6 @@
-patch-2.6.16-rc5-ide2
+patch-2.6.16-rc6-ide1
 leds-class.patch
-#10-mtdpart-redboot-fis-byteswap.patch
+10-ixp4xx-fix-irq.patch
 11-mtdpart-redboot-config-byteswap.patch
 15-jffs2-endian-config.patch
 951-ixp4xx-leds-cpu-activity.patch
