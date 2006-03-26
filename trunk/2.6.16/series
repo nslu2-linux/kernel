@@ -1,5 +1,6 @@
 patch-2.6.16-rc6-ide1
 leds-class.patch
+linux-2.6.16-i2c.patch
 10-ixp4xx-fix-irq.patch
 11-mtdpart-redboot-config-byteswap.patch
 15-jffs2-endian-config.patch
@@ -7,7 +8,6 @@ leds-class.patch
 40-rtc-class.patch
 45-eeprom-notifier.patch
 48-setup-byteswap-cmdline.patch
-50-i2c-bus-ixp4xx-hwmon.patch
 50-hwmon-ad741x.patch
 65-loft-config.patch
 75-dsmg600.patch
