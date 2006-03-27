@@ -15,8 +15,8 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  include/linux/notifier.h   |    3 +
  3 files changed, 116 insertions(+), 21 deletions(-)
 
---- linux-ixp4xx.orig/drivers/i2c/chips/eeprom.c	2006-03-26 16:40:33.000000000 +0200
-+++ linux-ixp4xx/drivers/i2c/chips/eeprom.c	2006-03-26 18:56:24.000000000 +0200
+--- linux-ixp4xx.orig/drivers/i2c/chips/eeprom.c	2006-03-27 03:03:46.000000000 +0200
++++ linux-ixp4xx/drivers/i2c/chips/eeprom.c	2006-03-27 03:03:47.000000000 +0200
 @@ -25,7 +25,6 @@
      along with this program; if not, write to the Free Software
      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -123,7 +123,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  {
  	return i2c_add_driver(&eeprom_driver);
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/include/linux/eeprom.h	2006-03-26 18:14:06.000000000 +0200
++++ linux-ixp4xx/include/linux/eeprom.h	2006-03-27 03:03:47.000000000 +0200
 @@ -0,0 +1,71 @@
 +#ifndef _LINUX_EEPROM_H
 +#define _LINUX_EEPROM_H
@@ -196,8 +196,8 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 +extern int unregister_eeprom_notifier(struct notifier_block *nb);
 +
 +#endif /* _LINUX_EEPROM_H */
---- linux-ixp4xx.orig/include/linux/notifier.h	2006-02-11 15:17:47.000000000 +0100
-+++ linux-ixp4xx/include/linux/notifier.h	2006-03-26 17:30:35.000000000 +0200
+--- linux-ixp4xx.orig/include/linux/notifier.h	2006-03-27 01:33:10.000000000 +0200
++++ linux-ixp4xx/include/linux/notifier.h	2006-03-27 03:03:47.000000000 +0200
 @@ -72,5 +72,8 @@ extern int notifier_call_chain(struct no
  #define CPU_DOWN_FAILED		0x0006 /* CPU (unsigned)v NOT going down */
  #define CPU_DEAD		0x0007 /* CPU (unsigned)v dead */
