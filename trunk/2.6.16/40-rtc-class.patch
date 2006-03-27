@@ -2809,10 +2809,10 @@
 -
 -#endif /* __LINUX_X1205_H__ */
 --- linux-ixp4xx.orig/drivers/i2c/chips/Kconfig	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/drivers/i2c/chips/Kconfig	2006-03-08 01:59:26.000000000 +0100
+1+++ linux-ixp4xx/drivers/i2c/chips/Kconfig	2006-03-08 01:59:26.000000000 +0100
 @@ -74,15 +74,6 @@ config SENSORS_RTC8564
  	  This driver can also be built as a module.  If so, the module
- 	  will be called i2c-rtc8564.
+ 	  will be called pcf8591.
  
 -config SENSORS_RTC8564
 -	tristate "Epson 8564 RTC chip"
@@ -2827,8 +2827,8 @@
  	tristate "Philips ISP1301 with OMAP OTG"
  	depends on I2C && ARCH_OMAP_OTG
 @@ -144,13 +135,4 @@ config RTC_X1205_I2C
- 	  This driver can also be built as a module. If so, the module
- 	  will be called x1205.
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called max6875.
  
 -config RTC_X1205_I2C
 -	tristate "Xicor X1205 RTC chip"
