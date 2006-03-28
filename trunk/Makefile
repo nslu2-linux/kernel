@@ -38,7 +38,7 @@ KERNEL_PATCH    = http://kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-
 KERNEL_SNAPSHOT = http://kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots/patch-${SNAPSHOT}.bz2
 
 #CROSS_COMPILE = ${DEBIAN_ARCH}-linux-gnu-
-CROSS_COMPILE = ${DEBIAN_ARCH}-linux-
+CROSS_COMPILE ?= ${DEBIAN_ARCH}-linux-
 
 ifdef CROSS_COMPILE
 CROSS_COMPILE_FLAGS = CROSS_COMPILE=${CROSS_COMPILE}
