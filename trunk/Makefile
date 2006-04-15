@@ -289,7 +289,7 @@ downloads:
 	mkdir -p downloads
 
 clobber:
-	rm -rf vmlinuz-* modules-*.tar.gz
+	rm -rf vmlinuz-* modules-*.tar.gz usr-*.tar.gz
 	rm -rf linux-*
 	rm -rf ixp400_xscale_sw ixp_osal ixp400_eth
 	rm -rf madwifi-ng
