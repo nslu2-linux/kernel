@@ -293,7 +293,7 @@ clobber:
 	rm -rf linux-*
 	rm -rf ixp400_xscale_sw ixp_osal ixp400_eth
 	rm -rf madwifi-ng
-	rm -rf lib
+	rm -rf lib usr
 
 .PHONY: all kernel modules clobber
 
