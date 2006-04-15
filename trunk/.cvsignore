@@ -2,6 +2,9 @@ ixp400_eth
 ixp400_xscale_sw
 ixp_osal
 linux-*
+madwifi-ng
 modules-*
+user-*
 vmlinuz-*
 lib
+usr
