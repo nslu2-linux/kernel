@@ -27,6 +27,8 @@ MINORVER = 2.6.16
 REVISION := $(shell sed -e 's/-git.*//' ${MINORVER}/KERNEL)
 SNAPSHOT := $(shell cat ${MINORVER}/KERNEL)
 
+MADWIFIVER = r1503-20060415
+
 ifeq (${ENDIAN},b)
 DEBIAN_ARCH = armeb
 else
@@ -37,6 +39,8 @@ KERNEL_SOURCE   = http://kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${BASEVE
 KERNEL_PATCH    = http://kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.bz2
 KERNEL_SNAPSHOT = http://kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots/patch-${SNAPSHOT}.bz2
 
+MADWIFI_SOURCE   = http://snapshots.madwifi.org/madwifi-ng/madwifi-ng-${MADWIFIVER}.tar.gz
+
 #CROSS_COMPILE = ${DEBIAN_ARCH}-linux-gnu-
 CROSS_COMPILE ?= ${DEBIAN_ARCH}-linux-
 
@@ -46,17 +50,50 @@ else
 CROSS_COMPILE_FLAGS = 
 endif
 
-all: kernel modules
+all: kernel modules usr
 
 kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REVISION} vmlinuz-ds101-${REVISION} vmlinuz-dsmg600-${REVISION}
 ixp400: lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko
 ixp400-eth: lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
+madwifi: lib/modules/${REVISION}/net/ath_hal.ko
 modules: modules-${REVISION}.tar.gz
+usr: usr-${REVISION}.tar.gz
+
+usr-${REVISION}.tar.gz: vmlinuz-${REVISION} \
+	 usr/local/bin/wlanconfig
+	tar zcf usr-${REVISION}.tar.gz usr/local
 
 modules-${REVISION}.tar.gz: vmlinuz-${REVISION} \
 	 lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko \
-	 lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
+	 lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko \
+	 lib/modules/${REVISION}/net/ath_hal.ko
 	tar zcf modules-${REVISION}.tar.gz lib/modules/${REVISION}
+
+lib/modules/${REVISION}/net/ath_hal.ko usr/local/bin/wlanconfig: \
+		madwifi-ng/Makefile \
+		vmlinuz-${REVISION}
+	( cd madwifi-ng ; \
+	  make CROSS_COMPILE=${CROSS_COMPILE} TOOLPATH=${CROSS_COMPILE} \
+		TARGET=xscale-${ENDIAN}e-elf \
+		KERNELPATH=`cd .. ; pwd`/linux-${REVISION} \
+		DESTDIR=`cd .. ; pwd` \
+		all install )
+
+madwifi-ng/Makefile: \
+		downloads/madwifi-ng-${MADWIFIVER}.tar.gz
+	[ -e madwifi-ng ] || \
+	( tar zxf downloads/madwifi-ng-${MADWIFIVER}.tar.gz ; \
+	  mv madwifi-ng-${MADWIFIVER} madwifi-ng ; \
+	  ( cd patches/madwifi ; \
+	    grep -v \# series | \
+	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	  ) | \
+	  patch -d madwifi-ng -p1 )
+
+downloads/madwifi-ng-${MADWIFIVER}.tar.gz :
+	[ -e downloads/madwifi-ng-${MADWIFIVER}.tar.gz ] || \
+	( mkdir -p downloads ; cd downloads ; \
+	  wget ${MADWIFI_SOURCE} )
 
 lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko: \
 		ixp400_eth/Kbuild ixp400_xscale_sw/Makefile \
@@ -73,7 +110,7 @@ ixp400_eth/Kbuild:
 	  unzip ../downloads/GPL_ixp400LinuxEthernetDriverPatch-1_5.zip )
 	( cd patches/ixp400-eth ; \
 	  grep -v \# series | \
-  	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
 	) | \
 	patch -d ixp400_eth -p1
 
@@ -95,12 +132,12 @@ ixp400_xscale_sw/Makefile:
 	unzip downloads/IPL_ixp400NpeLibrary-2_1.zip
 	( cd patches/ixp400 ; \
 	  grep -v \# series | \
-  	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
 	) | \
 	patch -d ixp400_xscale_sw -p1
 	( cd patches/ixp-osal ; \
 	  grep -v \# series | \
-  	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
 	) | \
 	patch -d ixp_osal -p1
 
@@ -186,7 +223,7 @@ linux-${REVISION}/.config: \
 	( tar xjf downloads/linux-${MINORVER}.tar.bz2 ; \
 	  ( cd ${MINORVER}/ ; \
 	    grep -v \# series | \
-  	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
 	  ) | \
 	  patch -d linux-${REVISION} -p1 )
 else
@@ -202,7 +239,7 @@ linux-${REVISION}/.config: \
 	  patch -d linux-${REVISION} -p1 ) ; \
 	  ( cd ${MINORVER}/ ; \
 	    grep -v \# series | \
-  	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
 	  ) | \
 	  patch -d linux-${REVISION} -p1
 else
@@ -218,7 +255,7 @@ linux-${REVISION}/.config: \
 	  patch -d linux-${REVISION} -p1 ) ; \
 	  ( cd ${MINORVER}/ ; \
 	    grep -v \# series | \
-  	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
 	  ) | \
 	  patch -d linux-${REVISION} -p1
 endif
@@ -255,6 +292,7 @@ clobber:
 	rm -rf vmlinuz-* modules-*.tar.gz
 	rm -rf linux-*
 	rm -rf ixp400_xscale_sw ixp_osal ixp400_eth
+	rm -rf madwifi-ng
 	rm -rf lib
 
 .PHONY: all kernel modules clobber
