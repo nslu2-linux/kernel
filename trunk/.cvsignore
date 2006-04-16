@@ -4,7 +4,7 @@ ixp_osal
 linux-*
 madwifi-ng
 modules-*
-user-*
+usr-*
 vmlinuz-*
 lib
 usr
