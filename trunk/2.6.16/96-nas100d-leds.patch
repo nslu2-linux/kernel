@@ -35,7 +35,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 +		.flags		= IXP4XX_GPIO_LOW,
 +	},
 +	{
-+		.name		= "disk-1", /* yellow led */
++		.name		= "disk",   /* yellow led */
 +		.start		= 3,
 +		.end		= 3,
 +		.flags		= IXP4XX_GPIO_LOW,
