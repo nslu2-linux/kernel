@@ -3,7 +3,6 @@
 device-name.patch
 poll-controller.patch
 le.patch
-mac-address.patch
 int-random.patch
 stop-on-rmmod.patch
 continue-if-qmgr-init-fails.patch
