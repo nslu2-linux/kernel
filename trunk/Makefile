@@ -72,6 +72,7 @@ modules-${REVISION}.tar.gz: vmlinuz-${REVISION} \
 lib/modules/${REVISION}/net/ath_hal.ko usr/local/bin/wlanconfig: \
 		madwifi-ng/Makefile \
 		vmlinuz-${REVISION}
+	rm -rf lib/modules/${REVISION}/net
 	( cd madwifi-ng ; \
 	  make CROSS_COMPILE=${CROSS_COMPILE} TOOLPATH=${CROSS_COMPILE} \
 		TARGET=xscale-${ENDIAN}e-elf \
