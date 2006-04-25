@@ -90,6 +90,7 @@ madwifi-ng/Makefile: \
 	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
 	  ) | \
 	  patch -d madwifi-ng -p1 )
+	touch $@
 
 downloads/madwifi-ng-${MADWIFIVER}.tar.gz :
 	[ -e downloads/madwifi-ng-${MADWIFIVER}.tar.gz ] || \
