@@ -2,7 +2,7 @@ copypage-xscale.patch
 10-ixp4xx-fix-irq.patch
 11-mtdpart-redboot-config-byteswap.patch
 15-jffs2-endian-config.patch
-951-ixp4xx-leds-cpu-activity.patch
+#951-ixp4xx-leds-cpu-activity.patch
 45-eeprom-new-notifier.patch
 48-setup-byteswap-cmdline.patch
 50-hwmon-ad741x.patch
