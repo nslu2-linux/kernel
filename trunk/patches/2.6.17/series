@@ -16,7 +16,7 @@ copypage-xscale.patch
 92-nslu2-mac.patch
 94-nslu2-setup.patch
 94-loft-setup.patch    
-96-pata-ixp4xx.patch
+#96-pata-ixp4xx.patch
 96-nas100d-leds.patch
 96-nslu2-leds.patch
 97-ds101.patch

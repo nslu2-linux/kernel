@@ -7,9 +7,11 @@ variation on a standard Avila board
  include/asm-arm/arch-ixp4xx/ixdp425.h |    1 +
  4 files changed, 31 insertions(+), 3 deletions(-)
 
---- linux-nslu2.orig/arch/arm/mach-ixp4xx/Kconfig	2006-02-06 20:37:01.000000000 +0100
-+++ linux-nslu2/arch/arm/mach-ixp4xx/Kconfig	2006-02-06 22:34:20.000000000 +0100
-@@ -25,6 +25,12 @@ config ARCH_AVILA
+Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/Kconfig
+===================================================================
+--- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/Kconfig	2006-06-08 00:13:55.689531584 +0930
++++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/Kconfig	2006-06-08 00:18:57.337674096 +0930
+@@ -25,6 +25,12 @@
  	  Avila Network Platform. For more information on this platform,
  	  see <file:Documentation/arm/IXP4xx>.
  
@@ -21,8 +23,8 @@ variation on a standard Avila board
 +
  config ARCH_ADI_COYOTE
  	bool "Coyote"
- 	help
-@@ -84,7 +90,7 @@ config MACH_NAS100D
+ 	select PCI
+@@ -89,7 +95,7 @@
  #
  config	ARCH_IXDP4XX
  	bool
@@ -31,9 +33,11 @@ variation on a standard Avila board
  	default y
  
  #
---- linux-nslu2.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-02-06 20:37:01.000000000 +0100
-+++ linux-nslu2/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-02-06 22:34:20.000000000 +0100
-@@ -46,7 +46,8 @@ static int __init ixdp425_map_irq(struct
+Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/ixdp425-pci.c
+===================================================================
+--- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-03-20 16:23:29.000000000 +1030
++++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-06-08 00:14:17.149269208 +0930
+@@ -46,7 +46,8 @@
  
  	int irq = -1;
  
@@ -43,7 +47,7 @@ variation on a standard Avila board
  		pin >= 1 && pin <= IXDP425_PCI_IRQ_LINES) {
  		irq = pci_irq_table[(slot + pin - 2) % 4];
  	}
-@@ -66,7 +67,8 @@ struct hw_pci ixdp425_pci __initdata = {
+@@ -66,7 +67,8 @@
  int __init ixdp425_pci_init(void)
  {
  	if (machine_is_ixdp425() || machine_is_ixcdp1100() ||
@@ -53,9 +57,11 @@ variation on a standard Avila board
  		pci_common_init(&ixdp425_pci);
  	return 0;
  }
---- linux-nslu2.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-02-06 20:37:01.000000000 +0100
-+++ linux-nslu2/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-02-06 22:34:20.000000000 +0100
-@@ -176,3 +176,22 @@ MACHINE_START(AVILA, "Gateworks Avila Ne
+Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/ixdp425-setup.c
+===================================================================
+--- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-03-20 16:23:29.000000000 +1030
++++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-06-08 00:19:13.194263528 +0930
+@@ -176,3 +176,21 @@
  MACHINE_END
  #endif
  
@@ -67,7 +73,6 @@ variation on a standard Avila board
 +#ifdef CONFIG_MACH_LOFT
 +MACHINE_START(LOFT, "Giant Shoulder Inc Loft board")
 +	/* Maintainer: Tom Billman <kernel@giantshoulderinc.com> */
-+	.phys_ram	= PHYS_OFFSET,
 +	.phys_io	= IXP4XX_PERIPHERAL_BASE_PHYS,
 +	.io_pg_offst	= ((IXP4XX_PERIPHERAL_BASE_VIRT) >> 18) & 0xfffc,
 +	.map_io		= ixp4xx_map_io,
@@ -78,8 +83,10 @@ variation on a standard Avila board
 +MACHINE_END
 +#endif
 +
---- linux-nslu2.orig/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-02-06 20:37:38.000000000 +0100
-+++ linux-nslu2/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-02-06 22:34:20.000000000 +0100
+Index: linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/ixdp425.h
+===================================================================
+--- linux-2.6.17-rc6.orig/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-03-20 16:23:29.000000000 +1030
++++ linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-06-08 00:14:17.339240328 +0930
 @@ -23,6 +23,7 @@
   * IXDP425 PCI IRQs
   */

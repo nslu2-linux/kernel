@@ -4,9 +4,11 @@
  include/asm-arm/arch-ixp4xx/timex.h |   23 +++--
  4 files changed, 176 insertions(+), 22 deletions(-)
 
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/common.c	2006-02-23 18:27:49.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/common.c	2006-02-23 18:30:49.000000000 +0100
-@@ -247,36 +247,165 @@ void __init ixp4xx_init_irq(void)
+Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/common.c
+===================================================================
+--- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/common.c	2006-06-08 00:00:13.224565264 +0930
++++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/common.c	2006-06-08 00:02:53.645177624 +0930
+@@ -253,36 +253,165 @@
   * IXP4xx timer tick
   * We use OS timer1 on the CPU for the timer tick and the timestamp 
   * counter as a source of real clock ticks to account for missed jiffies.
@@ -181,7 +183,7 @@
  
  	write_sequnlock(&xtime_lock);
  
-@@ -289,17 +418,30 @@ static struct irqaction ixp4xx_timer_irq
+@@ -295,17 +424,30 @@
  	.handler	= ixp4xx_timer_interrupt,
  };
  
@@ -214,14 +216,16 @@
  
  	/* Connect the interrupt handler and enable the interrupt */
  	setup_irq(IRQ_IXP4XX_TIMER1, &ixp4xx_timer_irq);
-@@ -362,4 +504,3 @@ void __init ixp4xx_sys_init(void)
+@@ -368,4 +510,3 @@
  	printk("IXP4xx: Using %luMiB expansion bus window size\n",
  			ixp4xx_exp_bus_size >> 20);
  }
 -
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-02-23 18:27:49.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-02-23 18:30:49.000000000 +0100
-@@ -119,6 +119,11 @@ static void nslu2_power_off(void)
+Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
+===================================================================
+--- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-03-20 16:23:29.000000000 +1030
++++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-08 00:02:53.645177624 +0930
+@@ -119,6 +119,11 @@
  
  static void __init nslu2_init(void)
  {
@@ -233,8 +237,10 @@
  	ixp4xx_sys_init();
  
  	nslu2_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/nslu2.h	2006-02-23 18:27:12.000000000 +0100
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/nslu2.h	2006-02-23 18:30:49.000000000 +0100
+Index: linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/nslu2.h
+===================================================================
+--- linux-2.6.17-rc6.orig/include/asm-arm/arch-ixp4xx/nslu2.h	2006-03-20 16:23:29.000000000 +1030
++++ linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/nslu2.h	2006-06-08 00:02:53.646177472 +0930
 @@ -35,11 +35,6 @@
  #define NSLU2_PCI_INTD_PIN	8
  
@@ -247,8 +253,10 @@
  /* GPIO */
  
  #define NSLU2_GPIO0		0
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/timex.h	2006-02-23 18:27:12.000000000 +0100
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/timex.h	2006-02-23 18:30:49.000000000 +0100
+Index: linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/timex.h
+===================================================================
+--- linux-2.6.17-rc6.orig/include/asm-arm/arch-ixp4xx/timex.h	2006-03-20 16:23:29.000000000 +1030
++++ linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/timex.h	2006-06-08 00:02:53.647177320 +0930
 @@ -6,10 +6,23 @@
  #include <asm/hardware.h>
  

@@ -8,10 +8,12 @@ the original test made slightly more robust.
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
---- linux-2.6.15/drivers/mtd/redboot.c	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.15/drivers/mtd/redboot.c	1970-01-01 00:00:00.000000000 +0000
-@@ -91,14 +91,41 @@ static int parse_redboot_partitions(stru
- 		}
+Index: linux-2.6.17-rc6/drivers/mtd/redboot.c
+===================================================================
+--- linux-2.6.17-rc6.orig/drivers/mtd/redboot.c	2006-06-07 23:50:33.997621144 +0930
++++ linux-2.6.17-rc6/drivers/mtd/redboot.c	2006-06-08 00:00:20.187506736 +0930
+@@ -87,14 +87,41 @@
+ 	for (i = 0; i < numslots; i++) {
  		if (!memcmp(buf[i].name, "FIS directory", 14)) {
  			/* This is apparently the FIS directory entry for the
 -			 * FIS directory itself.  The FIS directory size is
@@ -59,7 +61,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  				int j;
  				for (j = 0; j < numslots && buf[j].name[0] != 0xff; ++j) {
  					/* The unsigned long fields were written with the
-@@ -112,7 +139,11 @@ static int parse_redboot_partitions(stru
+@@ -108,7 +135,11 @@
  					swab32s(&buf[j].desc_cksum);
  					swab32s(&buf[j].file_cksum);
  				}

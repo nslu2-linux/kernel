@@ -1,10 +1,8 @@
----
- arch/arm/mach-ixp4xx/nas100d-setup.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
-
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-03-09 02:14:52.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-03-09 02:16:43.000000000 +0100
-@@ -144,6 +144,12 @@ static void __init nas100d_init(void)
+Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c
+===================================================================
+--- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-08 00:02:48.988885488 +0930
++++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-08 00:02:51.683475848 +0930
+@@ -144,6 +144,12 @@
   * to be reset to 0 (on the first mem=)
   */
  
@@ -17,7 +15,7 @@
  static void __init nas100d_fixup(struct machine_desc *desc,
  		struct tag *tags, char **cmdline, struct meminfo *mi)
  {
-@@ -155,6 +161,11 @@ static void __init nas100d_fixup(struct 
+@@ -155,6 +161,11 @@
  	mi->bank[0].start = 0;
  	mi->bank[0].size = (64*1024*1024);
  	mi->bank[0].node = PHYS_TO_NID(0);

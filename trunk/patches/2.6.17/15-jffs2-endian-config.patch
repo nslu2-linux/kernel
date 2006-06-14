@@ -15,9 +15,11 @@ Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
  fs/jffs2/nodelist.h |    8 +++-----
  2 files changed, 28 insertions(+), 5 deletions(-)
 
---- linux-nslu2.orig/fs/Kconfig	2006-02-06 20:38:09.000000000 +0100
-+++ linux-nslu2/fs/Kconfig	2006-02-06 21:49:07.000000000 +0100
-@@ -1174,6 +1174,31 @@ config JFFS2_CMODE_SIZE
+Index: linux-2.6.17-rc6/fs/Kconfig
+===================================================================
+--- linux-2.6.17-rc6.orig/fs/Kconfig	2006-06-07 23:50:39.766744104 +0930
++++ linux-2.6.17-rc6/fs/Kconfig	2006-06-08 00:00:28.507241944 +0930
+@@ -1169,6 +1169,31 @@
  
  endchoice
  
@@ -49,8 +51,10 @@ Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
  config CRAMFS
  	tristate "Compressed ROM file system support (cramfs)"
  	select ZLIB_INFLATE
---- linux-nslu2.orig/fs/jffs2/nodelist.h	2006-02-06 20:35:36.000000000 +0100
-+++ linux-nslu2/fs/jffs2/nodelist.h	2006-02-06 21:49:07.000000000 +0100
+Index: linux-2.6.17-rc6/fs/jffs2/nodelist.h
+===================================================================
+--- linux-2.6.17-rc6.orig/fs/jffs2/nodelist.h	2006-03-20 16:23:29.000000000 +1030
++++ linux-2.6.17-rc6/fs/jffs2/nodelist.h	2006-06-08 00:00:28.508241792 +0930
 @@ -29,12 +29,10 @@
  #include "os-linux.h"
  #endif

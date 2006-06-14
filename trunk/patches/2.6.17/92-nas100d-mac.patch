@@ -1,8 +1,10 @@
  arch/arm/mach-ixp4xx/nas100d-setup.c |   64 +++++++++++++++++++++++++++++++++++
  1 file changed, 64 insertions(+)
 
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-03-27 03:03:47.000000000 +0200
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-03-27 03:37:23.000000000 +0200
+Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c
+===================================================================
+--- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-08 00:02:51.683475848 +0930
++++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-08 00:02:58.169489824 +0930
 @@ -15,6 +15,9 @@
  #include <linux/kernel.h>
  #include <linux/serial.h>
@@ -13,7 +15,7 @@
  
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
-@@ -110,8 +113,68 @@ static void nas100d_power_off(void)
+@@ -110,8 +113,68 @@
  	gpio_line_set(NAS100D_PO_GPIO, IXP4XX_GPIO_HIGH);
  }
  
