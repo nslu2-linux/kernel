@@ -9,14 +9,10 @@ the 'maclist' code and read out by the ethernet config.
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
----
- drivers/i2c/chips/eeprom.c |   63 ++++++++++++++++++++++++++-------------
- include/linux/eeprom.h     |   71 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/notifier.h   |    3 +
- 3 files changed, 116 insertions(+), 21 deletions(-)
-
---- linux-ixp4xx.orig/drivers/i2c/chips/eeprom.c	2006-03-27 03:03:46.000000000 +0200
-+++ linux-ixp4xx/drivers/i2c/chips/eeprom.c	2006-03-27 03:03:47.000000000 +0200
+Index: linux-2.6.16/drivers/i2c/chips/eeprom.c
+===================================================================
+--- linux-2.6.16.orig/drivers/i2c/chips/eeprom.c	2006-06-07 23:25:18.956942336 +0930
++++ linux-2.6.16/drivers/i2c/chips/eeprom.c	2006-06-07 23:25:36.067341160 +0930
 @@ -25,7 +25,6 @@
      along with this program; if not, write to the Free Software
      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -34,7 +30,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  
  /* Addresses to scan */
  static unsigned short normal_i2c[] = { 0x50, 0x51, 0x52, 0x53, 0x54,
-@@ -42,26 +43,7 @@ static unsigned short normal_i2c[] = { 0
+@@ -42,26 +43,7 @@
  /* Insmod parameters */
  I2C_CLIENT_INSMOD_1(eeprom);
  
@@ -62,7 +58,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  
  static int eeprom_detect(struct i2c_adapter *adapter, int address, int kind);
  static int eeprom_detach_client(struct i2c_client *client);
-@@ -186,6 +168,7 @@ static int eeprom_detect(struct i2c_adap
+@@ -186,6 +168,7 @@
  	data->valid = 0;
  	mutex_init(&data->update_lock);
  	data->nature = UNKNOWN;
@@ -70,7 +66,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  
  	/* Tell the I2C layer a new client has arrived */
  	if ((err = i2c_attach_client(new_client)))
-@@ -207,6 +190,9 @@ static int eeprom_detect(struct i2c_adap
+@@ -207,6 +190,9 @@
  	/* create the sysfs eeprom file */
  	sysfs_create_bin_file(&new_client->dev.kobj, &eeprom_attr);
  
@@ -80,7 +76,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  	return 0;
  
  exit_kfree:
-@@ -228,6 +214,41 @@ static int eeprom_detach_client(struct i
+@@ -228,6 +214,41 @@
  	return 0;
  }
  
@@ -122,8 +118,10 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  static int __init eeprom_init(void)
  {
  	return i2c_add_driver(&eeprom_driver);
+Index: linux-2.6.16/include/linux/eeprom.h
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/include/linux/eeprom.h	2006-03-27 03:03:47.000000000 +0200
++++ linux-2.6.16/include/linux/eeprom.h	2006-06-07 23:25:36.067341160 +0930
 @@ -0,0 +1,71 @@
 +#ifndef _LINUX_EEPROM_H
 +#define _LINUX_EEPROM_H
@@ -196,9 +194,11 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 +extern int unregister_eeprom_notifier(struct notifier_block *nb);
 +
 +#endif /* _LINUX_EEPROM_H */
---- linux-ixp4xx.orig/include/linux/notifier.h	2006-03-27 01:33:10.000000000 +0200
-+++ linux-ixp4xx/include/linux/notifier.h	2006-03-27 03:03:47.000000000 +0200
-@@ -72,5 +72,8 @@ extern int notifier_call_chain(struct no
+Index: linux-2.6.16/include/linux/notifier.h
+===================================================================
+--- linux-2.6.16.orig/include/linux/notifier.h	2006-06-07 23:24:49.378438952 +0930
++++ linux-2.6.16/include/linux/notifier.h	2006-06-07 23:25:36.068341008 +0930
+@@ -72,5 +72,8 @@
  #define CPU_DOWN_FAILED		0x0006 /* CPU (unsigned)v NOT going down */
  #define CPU_DEAD		0x0007 /* CPU (unsigned)v dead */
  

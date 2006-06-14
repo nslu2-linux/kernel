@@ -1,7 +1,7 @@
-Index: linux-2.6.15/include/linux/mtd/doc2000.h
+Index: linux-2.6.16/include/linux/mtd/doc2000.h
 ===================================================================
---- linux-2.6.15.orig/include/linux/mtd/doc2000.h	2006-02-24 11:46:50.000000000 +0100
-+++ linux-2.6.15/include/linux/mtd/doc2000.h	2006-02-24 12:14:18.000000000 +0100
+--- linux-2.6.16.orig/include/linux/mtd/doc2000.h	2006-06-07 23:24:43.574321312 +0930
++++ linux-2.6.16/include/linux/mtd/doc2000.h	2006-06-07 23:25:45.679879832 +0930
 @@ -73,14 +73,29 @@
  #define DoC_Mplus_Toggle		0x1046
  #define DoC_Mplus_DownloadStatus	0x1074

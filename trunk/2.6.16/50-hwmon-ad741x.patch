@@ -1,12 +1,8 @@
----
- drivers/hwmon/Kconfig  |   10 +
- drivers/hwmon/Makefile |    1 
- drivers/hwmon/ad741x.c |  340 +++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 351 insertions(+)
-
---- linux-ixp4xx.orig/drivers/hwmon/Makefile	2006-02-19 17:45:45.000000000 +0100
-+++ linux-ixp4xx/drivers/hwmon/Makefile	2006-02-19 17:46:12.000000000 +0100
-@@ -44,6 +44,7 @@ obj-$(CONFIG_SENSORS_VIA686A)	+= via686a
+Index: linux-2.6.16/drivers/hwmon/Makefile
+===================================================================
+--- linux-2.6.16.orig/drivers/hwmon/Makefile	2006-06-07 23:25:19.086922576 +0930
++++ linux-2.6.16/drivers/hwmon/Makefile	2006-06-07 23:25:37.032194480 +0930
+@@ -45,6 +45,7 @@
  obj-$(CONFIG_SENSORS_VT8231)	+= vt8231.o
  obj-$(CONFIG_SENSORS_W83627EHF)	+= w83627ehf.o
  obj-$(CONFIG_SENSORS_W83L785TS)	+= w83l785ts.o
@@ -14,8 +10,10 @@
  
  ifeq ($(CONFIG_HWMON_DEBUG_CHIP),y)
  EXTRA_CFLAGS += -DDEBUG
+Index: linux-2.6.16/drivers/hwmon/ad741x.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/hwmon/ad741x.c	2006-02-19 17:45:59.000000000 +0100
++++ linux-2.6.16/drivers/hwmon/ad741x.c	2006-06-07 23:25:37.033194328 +0930
 @@ -0,0 +1,340 @@
 +/*
 + * An hwmon driver for the Analog Devices AD7417/18
@@ -357,9 +355,11 @@
 +
 +module_init(ad741x_init);
 +module_exit(ad741x_exit);
---- linux-ixp4xx.orig/drivers/hwmon/Kconfig	2006-02-19 17:45:45.000000000 +0100
-+++ linux-ixp4xx/drivers/hwmon/Kconfig	2006-02-19 17:47:07.000000000 +0100
-@@ -433,6 +433,16 @@ config SENSORS_W83627EHF
+Index: linux-2.6.16/drivers/hwmon/Kconfig
+===================================================================
+--- linux-2.6.16.orig/drivers/hwmon/Kconfig	2006-06-07 23:25:19.025931848 +0930
++++ linux-2.6.16/drivers/hwmon/Kconfig	2006-06-07 23:25:37.034194176 +0930
+@@ -455,6 +455,16 @@
  	  This driver can also be built as a module.  If so, the module
  	  will be called w83627ehf.
  

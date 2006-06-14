@@ -1,61 +1,7 @@
----
- CREDITS                                                    |    5 
- MAINTAINERS                                                |    6 
- arch/arm/Kconfig                                           |    3 
- arch/arm/common/rtctime.c                                  |  108 --
- arch/arm/mach-integrator/time.c                            |   16 
- arch/arm/mach-pxa/generic.c                                |    6 
- arch/arm/mach-sa1100/generic.c                             |    6 
- arch/mips/ddb5xxx/common/rtc_ds1386.c                      |    4 
- arch/mips/dec/time.c                                       |    4 
- arch/mips/ite-boards/generic/time.c                        |    4 
- arch/mips/jmr3927/common/rtc_ds1742.c                      |    4 
- arch/mips/kernel/time.c                                    |   22 
- arch/mips/lasat/setup.c                                    |    4 
- arch/mips/mips-boards/atlas/atlas_setup.c                  |    2 
- arch/mips/mips-boards/malta/malta_setup.c                  |    2 
- arch/mips/momentum/jaguar_atx/setup.c                      |    4 
- arch/mips/momentum/ocelot_3/setup.c                        |    4 
- arch/mips/momentum/ocelot_c/setup.c                        |    4 
- arch/mips/pmc-sierra/yosemite/setup.c                      |    4 
- arch/mips/sgi-ip22/ip22-time.c                             |    4 
- arch/mips/sgi-ip32/ip32-setup.c                            |    4 
- arch/mips/sibyte/swarm/setup.c                             |    8 
- arch/mips/sni/setup.c                                      |    4 
- arch/mips/tx4927/toshiba_rbtx4927/toshiba_rbtx4927_setup.c |    4 
- arch/mips/tx4938/common/rtc_rx5c348.c                      |    4 
- drivers/Kconfig                                            |    2 
- drivers/Makefile                                           |    1 
- drivers/char/Kconfig                                       |    2 
- drivers/i2c/chips/Kconfig                                  |   18 
- drivers/i2c/chips/Makefile                                 |    2 
- drivers/i2c/chips/rtc8564.c                                |  385 -------
- drivers/i2c/chips/rtc8564.h                                |   78 -
- drivers/i2c/chips/x1205.c                                  |  698 -------------
- drivers/rtc/Kconfig                                        |  156 ++
- drivers/rtc/Makefile                                       |   20 
- drivers/rtc/class.c                                        |  145 ++
- drivers/rtc/hctosys.c                                      |   69 +
- drivers/rtc/interface.c                                    |  277 +++++
- drivers/rtc/rtc-dev.c                                      |  382 +++++++
- drivers/rtc/rtc-ds1672.c                                   |  233 ++++
- drivers/rtc/rtc-ep93xx.c                                   |  163 +++
- drivers/rtc/rtc-lib.c                                      |   99 +
- drivers/rtc/rtc-pcf8563.c                                  |  355 ++++++
- drivers/rtc/rtc-proc.c                                     |  162 +++
- drivers/rtc/rtc-rs5c372.c                                  |  295 +++++
- drivers/rtc/rtc-sa1100.c                                   |  392 +++++++
- drivers/rtc/rtc-sysfs.c                                    |  124 ++
- drivers/rtc/rtc-test.c                                     |  205 +++
- drivers/rtc/rtc-x1205.c                                    |  619 +++++++++++
- include/asm-arm/rtc.h                                      |    3 
- include/asm-mips/time.h                                    |   12 
- include/linux/rtc.h                                        |   92 +
- include/linux/x1205.h                                      |   31 
- 53 files changed, 3888 insertions(+), 1372 deletions(-)
-
+Index: linux-2.6.16/drivers/rtc/rtc-lib.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-lib.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-lib.c	2006-06-07 23:25:33.414744416 +0930
 @@ -0,0 +1,99 @@
 +/*
 + * rtc and date/time utility functions
@@ -156,8 +102,10 @@
 +	return 0;
 +}
 +EXPORT_SYMBOL(rtc_tm_to_time);
+Index: linux-2.6.16/drivers/rtc/Makefile
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/Makefile	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/Makefile	2006-06-07 23:25:33.414744416 +0930
 @@ -0,0 +1,20 @@
 +#
 +# Makefile for RTC class/drivers.
@@ -179,8 +127,10 @@
 +obj-$(CONFIG_RTC_DRV_RS5C372)	+= rtc-rs5c372.o
 +obj-$(CONFIG_RTC_DRV_EP93XX)	+= rtc-ep93xx.o
 +obj-$(CONFIG_RTC_DRV_SA1100)	+= rtc-sa1100.o
+Index: linux-2.6.16/drivers/rtc/Kconfig
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/Kconfig	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/Kconfig	2006-06-07 23:25:33.415744264 +0930
 @@ -0,0 +1,156 @@
 +\#
 +# RTC class/drivers configuration
@@ -338,18 +288,22 @@
 +	  will be called rtc-test.
 +
 +endmenu
---- linux-ixp4xx.orig/drivers/Kconfig	2006-03-08 01:59:18.000000000 +0100
-+++ linux-ixp4xx/drivers/Kconfig	2006-03-08 01:59:26.000000000 +0100
-@@ -72,4 +72,6 @@ source "drivers/sn/Kconfig"
+Index: linux-2.6.16/drivers/Kconfig
+===================================================================
+--- linux-2.6.16.orig/drivers/Kconfig	2006-06-07 23:25:16.248354104 +0930
++++ linux-2.6.16/drivers/Kconfig	2006-06-07 23:25:33.415744264 +0930
+@@ -72,4 +72,6 @@
  
  source "drivers/edac/Kconfig"
  
 +source "drivers/rtc/Kconfig"
 +
  endmenu
---- linux-ixp4xx.orig/drivers/Makefile	2006-03-08 01:59:18.000000000 +0100
-+++ linux-ixp4xx/drivers/Makefile	2006-03-08 01:59:26.000000000 +0100
-@@ -56,6 +56,7 @@ obj-$(CONFIG_USB_GADGET)	+= usb/gadget/
+Index: linux-2.6.16/drivers/Makefile
+===================================================================
+--- linux-2.6.16.orig/drivers/Makefile	2006-06-07 23:25:16.254353192 +0930
++++ linux-2.6.16/drivers/Makefile	2006-06-07 23:25:33.416744112 +0930
+@@ -56,6 +56,7 @@
  obj-$(CONFIG_GAMEPORT)		+= input/gameport/
  obj-$(CONFIG_INPUT)		+= input/
  obj-$(CONFIG_I2O)		+= message/
@@ -357,9 +311,11 @@
  obj-$(CONFIG_I2C)		+= i2c/
  obj-$(CONFIG_W1)		+= w1/
  obj-$(CONFIG_HWMON)		+= hwmon/
---- linux-ixp4xx.orig/include/linux/rtc.h	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/include/linux/rtc.h	2006-03-08 01:59:26.000000000 +0100
-@@ -93,8 +93,100 @@ struct rtc_pll_info {
+Index: linux-2.6.16/include/linux/rtc.h
+===================================================================
+--- linux-2.6.16.orig/include/linux/rtc.h	2006-06-07 23:24:50.711236336 +0930
++++ linux-2.6.16/include/linux/rtc.h	2006-06-07 23:25:33.416744112 +0930
+@@ -93,8 +93,100 @@
  #define RTC_PLL_GET	_IOR('p', 0x11, struct rtc_pll_info)  /* Get PLL correction */
  #define RTC_PLL_SET	_IOW('p', 0x12, struct rtc_pll_info)  /* Set PLL correction */
  
@@ -460,8 +416,10 @@
  typedef struct rtc_task {
  	void (*func)(void *private_data);
  	void *private_data;
---- linux-ixp4xx.orig/arch/arm/common/rtctime.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/arm/common/rtctime.c	2006-03-08 01:59:26.000000000 +0100
+Index: linux-2.6.16/arch/arm/common/rtctime.c
+===================================================================
+--- linux-2.6.16.orig/arch/arm/common/rtctime.c	2006-06-07 23:24:50.749230560 +0930
++++ linux-2.6.16/arch/arm/common/rtctime.c	2006-06-07 23:25:33.417743960 +0930
 @@ -20,6 +20,7 @@
  #include <linux/capability.h>
  #include <linux/device.h>
@@ -470,7 +428,7 @@
  
  #include <asm/rtc.h>
  #include <asm/semaphore.h>
-@@ -42,89 +43,6 @@ static struct rtc_ops *rtc_ops;
+@@ -42,89 +43,6 @@
  
  #define rtc_epoch 1900UL
  
@@ -560,7 +518,7 @@
  /*
   * Calculate the next alarm time given the requested alarm time mask
   * and the current time.
-@@ -151,13 +69,13 @@ void rtc_next_alarm_time(struct rtc_time
+@@ -151,13 +69,13 @@
  	}
  }
  
@@ -576,7 +534,7 @@
  {
  	int ret;
  
-@@ -168,7 +86,7 @@ static inline int rtc_set_time(struct rt
+@@ -168,7 +86,7 @@
  	return ret;
  }
  
@@ -585,7 +543,7 @@
  {
  	int ret = -EINVAL;
  	if (ops->read_alarm) {
-@@ -178,7 +96,7 @@ static inline int rtc_read_alarm(struct 
+@@ -178,7 +96,7 @@
  	return ret;
  }
  
@@ -594,7 +552,7 @@
  {
  	int ret = -EINVAL;
  	if (ops->set_alarm)
-@@ -266,7 +184,7 @@ static int rtc_ioctl(struct inode *inode
+@@ -266,7 +184,7 @@
  
  	switch (cmd) {
  	case RTC_ALM_READ:
@@ -603,7 +561,7 @@
  		if (ret)
  			break;
  		ret = copy_to_user(uarg, &alrm.time, sizeof(tm));
-@@ -288,11 +206,11 @@ static int rtc_ioctl(struct inode *inode
+@@ -288,11 +206,11 @@
  		alrm.time.tm_wday = -1;
  		alrm.time.tm_yday = -1;
  		alrm.time.tm_isdst = -1;
@@ -617,7 +575,7 @@
  		if (ret)
  			break;
  		ret = copy_to_user(uarg, &tm, sizeof(tm));
-@@ -310,7 +228,7 @@ static int rtc_ioctl(struct inode *inode
+@@ -310,7 +228,7 @@
  			ret = -EFAULT;
  			break;
  		}
@@ -626,7 +584,7 @@
  		break;
  
  	case RTC_EPOCH_SET:
-@@ -341,11 +259,11 @@ static int rtc_ioctl(struct inode *inode
+@@ -341,11 +259,11 @@
  			ret = -EFAULT;
  			break;
  		}
@@ -640,7 +598,7 @@
  		if (ret)
  			break;
  		ret = copy_to_user(uarg, &alrm, sizeof(alrm));
-@@ -435,7 +353,7 @@ static int rtc_read_proc(char *page, cha
+@@ -435,7 +353,7 @@
  	struct rtc_time tm;
  	char *p = page;
  
@@ -649,7 +607,7 @@
  		p += sprintf(p,
  			"rtc_time\t: %02d:%02d:%02d\n"
  			"rtc_date\t: %04d-%02d-%02d\n"
-@@ -445,7 +363,7 @@ static int rtc_read_proc(char *page, cha
+@@ -445,7 +363,7 @@
  			rtc_epoch);
  	}
  
@@ -658,9 +616,11 @@
  		p += sprintf(p, "alrm_time\t: ");
  		if ((unsigned int)alrm.time.tm_hour <= 24)
  			p += sprintf(p, "%02d:", alrm.time.tm_hour);
---- linux-ixp4xx.orig/include/asm-arm/rtc.h	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/include/asm-arm/rtc.h	2006-03-08 01:59:26.000000000 +0100
-@@ -25,9 +25,6 @@ struct rtc_ops {
+Index: linux-2.6.16/include/asm-arm/rtc.h
+===================================================================
+--- linux-2.6.16.orig/include/asm-arm/rtc.h	2006-06-07 23:24:50.720234968 +0930
++++ linux-2.6.16/include/asm-arm/rtc.h	2006-06-07 23:25:33.418743808 +0930
+@@ -25,9 +25,6 @@
  	int		(*proc)(char *buf);
  };
  
@@ -670,9 +630,11 @@
  void rtc_next_alarm_time(struct rtc_time *, struct rtc_time *, struct rtc_time *);
  void rtc_update(unsigned long, unsigned long);
  int register_rtc(struct rtc_ops *);
---- linux-ixp4xx.orig/drivers/char/Kconfig	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/drivers/char/Kconfig	2006-03-08 01:59:26.000000000 +0100
-@@ -695,7 +695,7 @@ config NVRAM
+Index: linux-2.6.16/drivers/char/Kconfig
+===================================================================
+--- linux-2.6.16.orig/drivers/char/Kconfig	2006-06-07 23:24:50.685240288 +0930
++++ linux-2.6.16/drivers/char/Kconfig	2006-06-07 23:25:33.419743656 +0930
+@@ -695,7 +695,7 @@
  
  config RTC
  	tristate "Enhanced Real Time Clock Support"
@@ -681,9 +643,11 @@
  	---help---
  	  If you say Y here and create a character special file /dev/rtc with
  	  major number 10 and minor number 135 using mknod ("man mknod"), you
---- linux-ixp4xx.orig/arch/arm/Kconfig	2006-03-08 01:59:18.000000000 +0100
-+++ linux-ixp4xx/arch/arm/Kconfig	2006-03-08 01:59:26.000000000 +0100
-@@ -8,6 +8,7 @@ mainmenu "Linux Kernel Configuration"
+Index: linux-2.6.16/arch/arm/Kconfig
+===================================================================
+--- linux-2.6.16.orig/arch/arm/Kconfig	2006-06-07 23:25:16.247354256 +0930
++++ linux-2.6.16/arch/arm/Kconfig	2006-06-07 23:25:33.420743504 +0930
+@@ -8,6 +8,7 @@
  config ARM
  	bool
  	default y
@@ -691,7 +655,7 @@
  	help
  	  The ARM series is a line of low-power-consumption RISC chip designs
  	  licensed by ARM Ltd and targeted at embedded applications and
-@@ -819,6 +820,8 @@ source "drivers/usb/Kconfig"
+@@ -821,6 +822,8 @@
  
  source "drivers/mmc/Kconfig"
  
@@ -700,9 +664,11 @@
  endmenu
  
  source "fs/Kconfig"
---- linux-ixp4xx.orig/arch/arm/mach-integrator/time.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-integrator/time.c	2006-03-08 01:59:26.000000000 +0100
-@@ -40,13 +40,13 @@ static int integrator_set_rtc(void)
+Index: linux-2.6.16/arch/arm/mach-integrator/time.c
+===================================================================
+--- linux-2.6.16.orig/arch/arm/mach-integrator/time.c	2006-06-07 23:24:50.762228584 +0930
++++ linux-2.6.16/arch/arm/mach-integrator/time.c	2006-06-07 23:25:33.420743504 +0930
+@@ -40,13 +40,13 @@
  	return 1;
  }
  
@@ -718,7 +684,7 @@
  {
  	unsigned long time;
  	int ret;
-@@ -62,7 +62,7 @@ static inline int rtc_set_alarm(struct r
+@@ -62,7 +62,7 @@
  	return ret;
  }
  
@@ -727,7 +693,7 @@
  {
  	rtc_time_to_tm(readl(rtc_base + RTC_DR), tm);
  	return 0;
-@@ -76,7 +76,7 @@ static int rtc_read_time(struct rtc_time
+@@ -76,7 +76,7 @@
   * edge of the 1Hz clock, we must write the time one second
   * in advance.
   */
@@ -736,7 +702,7 @@
  {
  	unsigned long time;
  	int ret;
-@@ -90,10 +90,10 @@ static inline int rtc_set_time(struct rt
+@@ -90,10 +90,10 @@
  
  static struct rtc_ops rtc_ops = {
  	.owner		= THIS_MODULE,
@@ -751,9 +717,11 @@
  };
  
  static irqreturn_t arm_rtc_interrupt(int irq, void *dev_id,
---- linux-ixp4xx.orig/arch/mips/ddb5xxx/common/rtc_ds1386.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/ddb5xxx/common/rtc_ds1386.c	2006-03-08 01:59:26.000000000 +0100
-@@ -165,6 +165,6 @@ rtc_ds1386_init(unsigned long base)
+Index: linux-2.6.16/arch/mips/ddb5xxx/common/rtc_ds1386.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/ddb5xxx/common/rtc_ds1386.c	2006-06-07 23:24:50.779226000 +0930
++++ linux-2.6.16/arch/mips/ddb5xxx/common/rtc_ds1386.c	2006-06-07 23:25:33.421743352 +0930
+@@ -165,6 +165,6 @@
  	WRITE_RTC(0xB, byte);
  
  	/* set the function pointers */
@@ -762,9 +730,11 @@
 +	rtc_mips_get_time = rtc_ds1386_get_time;
 +	rtc_mips_set_time = rtc_ds1386_set_time;
  }
---- linux-ixp4xx.orig/arch/mips/dec/time.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/dec/time.c	2006-03-08 01:59:26.000000000 +0100
-@@ -193,8 +193,8 @@ static void dec_ioasic_hpt_init(unsigned
+Index: linux-2.6.16/arch/mips/dec/time.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/dec/time.c	2006-06-07 23:24:50.785225088 +0930
++++ linux-2.6.16/arch/mips/dec/time.c	2006-06-07 23:25:33.421743352 +0930
+@@ -193,8 +193,8 @@
  
  void __init dec_time_init(void)
  {
@@ -775,9 +745,11 @@
  
  	mips_timer_state = dec_timer_state;
  	mips_timer_ack = dec_timer_ack;
---- linux-ixp4xx.orig/arch/mips/ite-boards/generic/time.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/ite-boards/generic/time.c	2006-03-08 01:59:26.000000000 +0100
-@@ -227,8 +227,8 @@ void __init it8172_time_init(void)
+Index: linux-2.6.16/arch/mips/ite-boards/generic/time.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/ite-boards/generic/time.c	2006-06-07 23:24:50.794223720 +0930
++++ linux-2.6.16/arch/mips/ite-boards/generic/time.c	2006-06-07 23:25:33.422743200 +0930
+@@ -227,8 +227,8 @@
  
  	local_irq_restore(flags);
  
@@ -788,9 +760,11 @@
  }
  
  #define ALLINTS (IE_IRQ0 | IE_IRQ1 | IE_IRQ2 | IE_IRQ3 | IE_IRQ4 | IE_IRQ5)
---- linux-ixp4xx.orig/arch/mips/jmr3927/common/rtc_ds1742.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/jmr3927/common/rtc_ds1742.c	2006-03-08 01:59:26.000000000 +0100
-@@ -159,8 +159,8 @@ rtc_ds1742_init(unsigned long base)
+Index: linux-2.6.16/arch/mips/jmr3927/common/rtc_ds1742.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/jmr3927/common/rtc_ds1742.c	2006-06-07 23:24:50.802222504 +0930
++++ linux-2.6.16/arch/mips/jmr3927/common/rtc_ds1742.c	2006-06-07 23:25:33.422743200 +0930
+@@ -159,8 +159,8 @@
  	db_assert((rtc_base & 0xe0000000) == KSEG1);
  
  	/* set the function pointers */
@@ -801,9 +775,11 @@
  
  	/* clear oscillator stop bit */
  	CMOS_WRITE(RTC_READ, RTC_CONTROL);
---- linux-ixp4xx.orig/arch/mips/kernel/time.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/kernel/time.c	2006-03-08 01:59:26.000000000 +0100
-@@ -65,9 +65,9 @@ static int null_rtc_set_time(unsigned lo
+Index: linux-2.6.16/arch/mips/kernel/time.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/kernel/time.c	2006-06-07 23:24:50.812220984 +0930
++++ linux-2.6.16/arch/mips/kernel/time.c	2006-06-07 23:25:33.424742896 +0930
+@@ -65,9 +65,9 @@
  	return 0;
  }
  
@@ -816,7 +792,7 @@
  
  
  /* usecs per counter cycle, shifted to left by 32 bits */
-@@ -438,7 +438,7 @@ irqreturn_t timer_interrupt(int irq, voi
+@@ -440,14 +440,14 @@
  
  	/*
  	 * If we have an externally synchronized Linux clock, then update
@@ -824,8 +800,7 @@
 +	 * CMOS clock accordingly every ~11 minutes. rtc_mips_set_time() has to be
  	 * called as close as possible to 500 ms before the new second starts.
  	 */
- 	write_seqlock(&xtime_lock);
-@@ -446,7 +446,7 @@ irqreturn_t timer_interrupt(int irq, voi
+ 	if (ntp_synced() &&
  	    xtime.tv_sec > last_rtc_update + 660 &&
  	    (xtime.tv_nsec / 1000) >= 500000 - ((unsigned) TICK_SIZE) / 2 &&
  	    (xtime.tv_nsec / 1000) <= 500000 + ((unsigned) TICK_SIZE) / 2) {
@@ -834,7 +809,7 @@
  			last_rtc_update = xtime.tv_sec;
  		} else {
  			/* do it again in 60 s */
-@@ -563,7 +563,7 @@ asmlinkage void ll_local_timer_interrupt
+@@ -565,7 +565,7 @@
   *      b) (optional) calibrate and set the mips_hpt_frequency
   *	    (only needed if you intended to use fixed_rate_gettimeoffset
   *	     or use cpu counter as timer interrupt source)
@@ -843,7 +818,7 @@
   * 3) choose a appropriate gettimeoffset routine.
   * 4) calculate a couple of cached variables for later usage
   * 5) board_timer_setup() -
-@@ -631,10 +631,10 @@ void __init time_init(void)
+@@ -633,10 +633,10 @@
  	if (board_time_init)
  		board_time_init();
  
@@ -857,7 +832,7 @@
  	xtime.tv_nsec = 0;
  
  	set_normalized_timespec(&wall_to_monotonic,
-@@ -770,8 +770,8 @@ void to_tm(unsigned long tim, struct rtc
+@@ -772,8 +772,8 @@
  
  EXPORT_SYMBOL(rtc_lock);
  EXPORT_SYMBOL(to_tm);
@@ -868,9 +843,11 @@
  
  unsigned long long sched_clock(void)
  {
---- linux-ixp4xx.orig/arch/mips/lasat/setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/lasat/setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -174,8 +174,8 @@ void __init plat_setup(void)
+Index: linux-2.6.16/arch/mips/lasat/setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/lasat/setup.c	2006-06-07 23:24:50.818220072 +0930
++++ linux-2.6.16/arch/mips/lasat/setup.c	2006-06-07 23:25:33.424742896 +0930
+@@ -174,8 +174,8 @@
  
  #ifdef CONFIG_DS1603
  	ds1603 = &ds_defs[mips_machtype];
@@ -881,9 +858,11 @@
  #endif
  
  #ifdef DYNAMIC_SERIAL_INIT
---- linux-ixp4xx.orig/arch/mips/mips-boards/atlas/atlas_setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/mips-boards/atlas/atlas_setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -65,7 +65,7 @@ void __init plat_setup(void)
+Index: linux-2.6.16/arch/mips/mips-boards/atlas/atlas_setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/mips-boards/atlas/atlas_setup.c	2006-06-07 23:24:50.823219312 +0930
++++ linux-2.6.16/arch/mips/mips-boards/atlas/atlas_setup.c	2006-06-07 23:25:33.425742744 +0930
+@@ -65,7 +65,7 @@
  
  	board_time_init = mips_time_init;
  	board_timer_setup = mips_timer_setup;
@@ -892,18 +871,22 @@
  }
  
  static void __init serial_init(void)
---- linux-ixp4xx.orig/arch/mips/mips-boards/malta/malta_setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/mips-boards/malta/malta_setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -225,5 +225,5 @@ void __init plat_setup(void)
+Index: linux-2.6.16/arch/mips/mips-boards/malta/malta_setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/mips-boards/malta/malta_setup.c	2006-06-07 23:24:50.828218552 +0930
++++ linux-2.6.16/arch/mips/mips-boards/malta/malta_setup.c	2006-06-07 23:25:33.426742592 +0930
+@@ -225,5 +225,5 @@
  
  	board_time_init = mips_time_init;
  	board_timer_setup = mips_timer_setup;
 -	rtc_get_time = mips_rtc_get_time;
 +	rtc_mips_get_time = mips_rtc_get_time;
  }
---- linux-ixp4xx.orig/arch/mips/momentum/jaguar_atx/setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/momentum/jaguar_atx/setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -228,8 +228,8 @@ void momenco_time_init(void)
+Index: linux-2.6.16/arch/mips/momentum/jaguar_atx/setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/momentum/jaguar_atx/setup.c	2006-06-07 23:24:50.833217792 +0930
++++ linux-2.6.16/arch/mips/momentum/jaguar_atx/setup.c	2006-06-07 23:25:33.426742592 +0930
+@@ -229,8 +229,8 @@
  	mips_hpt_frequency = cpu_clock / 2;
  	board_timer_setup = momenco_timer_setup;
  
@@ -914,9 +897,11 @@
  }
  
  static struct resource mv_pci_io_mem0_resource = {
---- linux-ixp4xx.orig/arch/mips/momentum/ocelot_3/setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/momentum/ocelot_3/setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -215,8 +215,8 @@ void momenco_time_init(void)
+Index: linux-2.6.16/arch/mips/momentum/ocelot_3/setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/momentum/ocelot_3/setup.c	2006-06-07 23:24:50.838217032 +0930
++++ linux-2.6.16/arch/mips/momentum/ocelot_3/setup.c	2006-06-07 23:25:33.427742440 +0930
+@@ -215,8 +215,8 @@
  	mips_hpt_frequency = cpu_clock / 2;
  	board_timer_setup = momenco_timer_setup;
  
@@ -927,9 +912,11 @@
  }
  
  /*
---- linux-ixp4xx.orig/arch/mips/momentum/ocelot_c/setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/momentum/ocelot_c/setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -226,8 +226,8 @@ void momenco_time_init(void)
+Index: linux-2.6.16/arch/mips/momentum/ocelot_c/setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/momentum/ocelot_c/setup.c	2006-06-07 23:24:50.843216272 +0930
++++ linux-2.6.16/arch/mips/momentum/ocelot_c/setup.c	2006-06-07 23:25:33.428742288 +0930
+@@ -227,8 +227,8 @@
  	printk("momenco_time_init cpu_clock=%d\n", cpu_clock);
  	board_timer_setup = momenco_timer_setup;
  
@@ -940,9 +927,11 @@
  }
  
  void __init plat_setup(void)
---- linux-ixp4xx.orig/arch/mips/pmc-sierra/yosemite/setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/pmc-sierra/yosemite/setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -198,8 +198,8 @@ static void __init py_rtc_setup(void)
+Index: linux-2.6.16/arch/mips/pmc-sierra/yosemite/setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/pmc-sierra/yosemite/setup.c	2006-06-07 23:24:50.849215360 +0930
++++ linux-2.6.16/arch/mips/pmc-sierra/yosemite/setup.c	2006-06-07 23:25:33.428742288 +0930
+@@ -198,8 +198,8 @@
  	if (!m48t37_base)
  		printk(KERN_ERR "Mapping the RTC failed\n");
  
@@ -953,9 +942,11 @@
  
  	write_seqlock(&xtime_lock);
  	xtime.tv_sec = m48t37y_get_time();
---- linux-ixp4xx.orig/arch/mips/sgi-ip22/ip22-time.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/sgi-ip22/ip22-time.c	2006-03-08 01:59:26.000000000 +0100
-@@ -212,8 +212,8 @@ static void indy_timer_setup(struct irqa
+Index: linux-2.6.16/arch/mips/sgi-ip22/ip22-time.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/sgi-ip22/ip22-time.c	2006-06-07 23:24:50.855214448 +0930
++++ linux-2.6.16/arch/mips/sgi-ip22/ip22-time.c	2006-06-07 23:25:33.429742136 +0930
+@@ -212,8 +212,8 @@
  void __init ip22_time_init(void)
  {
  	/* setup hookup functions */
@@ -966,9 +957,11 @@
  
  	board_time_init = indy_time_init;
  	board_timer_setup = indy_timer_setup;
---- linux-ixp4xx.orig/arch/mips/sgi-ip32/ip32-setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/sgi-ip32/ip32-setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -91,8 +91,8 @@ void __init plat_setup(void)
+Index: linux-2.6.16/arch/mips/sgi-ip32/ip32-setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/sgi-ip32/ip32-setup.c	2006-06-07 23:24:50.860213688 +0930
++++ linux-2.6.16/arch/mips/sgi-ip32/ip32-setup.c	2006-06-07 23:25:33.429742136 +0930
+@@ -91,8 +91,8 @@
  {
  	board_be_init = ip32_be_init;
  
@@ -979,9 +972,11 @@
  
  	board_time_init = ip32_time_init;
  	board_timer_setup = ip32_timer_setup;
---- linux-ixp4xx.orig/arch/mips/sibyte/swarm/setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/sibyte/swarm/setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -114,14 +114,14 @@ void __init plat_setup(void)
+Index: linux-2.6.16/arch/mips/sibyte/swarm/setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/sibyte/swarm/setup.c	2006-06-07 23:24:50.870212168 +0930
++++ linux-2.6.16/arch/mips/sibyte/swarm/setup.c	2006-06-07 23:25:33.430741984 +0930
+@@ -121,14 +121,14 @@
  
  	if (xicor_probe()) {
  		printk("swarm setup: Xicor 1241 RTC detected.\n");
@@ -1000,9 +995,11 @@
  	}
  
  	printk("This kernel optimized for "
---- linux-ixp4xx.orig/arch/mips/sni/setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/sni/setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -164,8 +164,8 @@ static struct pci_controller sni_control
+Index: linux-2.6.16/arch/mips/sni/setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/sni/setup.c	2006-06-07 23:24:50.876211256 +0930
++++ linux-2.6.16/arch/mips/sni/setup.c	2006-06-07 23:25:33.430741984 +0930
+@@ -164,8 +164,8 @@
  
  static inline void sni_pcimt_time_init(void)
  {
@@ -1013,9 +1010,11 @@
  }
  
  void __init plat_setup(void)
---- linux-ixp4xx.orig/arch/mips/tx4927/toshiba_rbtx4927/toshiba_rbtx4927_setup.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/tx4927/toshiba_rbtx4927/toshiba_rbtx4927_setup.c	2006-03-08 01:59:26.000000000 +0100
-@@ -1036,8 +1036,8 @@ toshiba_rbtx4927_time_init(void)
+Index: linux-2.6.16/arch/mips/tx4927/toshiba_rbtx4927/toshiba_rbtx4927_setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/tx4927/toshiba_rbtx4927/toshiba_rbtx4927_setup.c	2006-06-07 23:24:50.881210496 +0930
++++ linux-2.6.16/arch/mips/tx4927/toshiba_rbtx4927/toshiba_rbtx4927_setup.c	2006-06-07 23:25:33.431741832 +0930
+@@ -1036,8 +1036,8 @@
  
  #ifdef CONFIG_RTC_DS1742
  
@@ -1026,9 +1025,11 @@
  
  	TOSHIBA_RBTX4927_SETUP_DPRINTK(TOSHIBA_RBTX4927_SETUP_TIME_INIT,
  				       ":rtc_ds1742_init()-\n");
---- linux-ixp4xx.orig/arch/mips/tx4938/common/rtc_rx5c348.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/mips/tx4938/common/rtc_rx5c348.c	2006-03-08 01:59:26.000000000 +0100
-@@ -197,6 +197,6 @@ rtc_rx5c348_init(int chipid)
+Index: linux-2.6.16/arch/mips/tx4938/common/rtc_rx5c348.c
+===================================================================
+--- linux-2.6.16.orig/arch/mips/tx4938/common/rtc_rx5c348.c	2006-06-07 23:24:50.886209736 +0930
++++ linux-2.6.16/arch/mips/tx4938/common/rtc_rx5c348.c	2006-06-07 23:25:33.432741680 +0930
+@@ -197,6 +197,6 @@
  		srtc_24h = 1;
  
  	/* set the function pointers */
@@ -1037,9 +1038,11 @@
 +	rtc_mips_get_time = rtc_rx5c348_get_time;
 +	rtc_mips_set_time = rtc_rx5c348_set_time;
  }
---- linux-ixp4xx.orig/include/asm-mips/time.h	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/include/asm-mips/time.h	2006-03-08 01:59:26.000000000 +0100
-@@ -26,14 +26,14 @@ extern spinlock_t rtc_lock;
+Index: linux-2.6.16/include/asm-mips/time.h
+===================================================================
+--- linux-2.6.16.orig/include/asm-mips/time.h	2006-06-07 23:24:50.728233752 +0930
++++ linux-2.6.16/include/asm-mips/time.h	2006-06-07 23:25:33.433741528 +0930
+@@ -26,14 +26,14 @@
  
  /*
   * RTC ops.  By default, they point to no-RTC functions.
@@ -1060,8 +1063,10 @@
  
  /*
   * Timer interrupt functions.
+Index: linux-2.6.16/drivers/rtc/class.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/class.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/class.c	2006-06-07 23:25:33.433741528 +0930
 @@ -0,0 +1,145 @@
 +/*
 + * RTC subsystem, base class
@@ -1208,8 +1213,10 @@
 +MODULE_AUTHOR("Alessandro Zummo <a.zummo@towerteh.it>");
 +MODULE_DESCRIPTION("RTC class support");
 +MODULE_LICENSE("GPL");
+Index: linux-2.6.16/drivers/rtc/interface.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/interface.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/interface.c	2006-06-07 23:25:33.434741376 +0930
 @@ -0,0 +1,277 @@
 +/*
 + * RTC subsystem, interface functions
@@ -1488,8 +1495,10 @@
 +	}
 +	return err;
 +}
+Index: linux-2.6.16/drivers/rtc/hctosys.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/hctosys.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/hctosys.c	2006-06-07 23:25:33.434741376 +0930
 @@ -0,0 +1,69 @@
 +/*
 + * RTC subsystem, initialize system time on startup
@@ -1560,9 +1569,11 @@
 +}
 +
 +late_initcall(rtc_hctosys);
---- linux-ixp4xx.orig/CREDITS	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/CREDITS	2006-03-08 01:59:26.000000000 +0100
-@@ -3741,10 +3741,11 @@ D: Mylex DAC960 PCI RAID driver
+Index: linux-2.6.16/CREDITS
+===================================================================
+--- linux-2.6.16.orig/CREDITS	2006-06-07 23:24:50.891208976 +0930
++++ linux-2.6.16/CREDITS	2006-06-07 23:25:33.436741072 +0930
+@@ -3738,10 +3738,11 @@
  D: Miscellaneous kernel fixes
  
  N: Alessandro Zummo
@@ -1576,9 +1587,11 @@
  S: Italy
  
  N: Marc Zyngier
---- linux-ixp4xx.orig/MAINTAINERS	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/MAINTAINERS	2006-03-08 01:59:26.000000000 +0100
-@@ -2193,6 +2193,12 @@ M:	p_gortmaker@yahoo.com
+Index: linux-2.6.16/MAINTAINERS
+===================================================================
+--- linux-2.6.16.orig/MAINTAINERS	2006-06-07 23:24:50.897208064 +0930
++++ linux-2.6.16/MAINTAINERS	2006-06-07 23:25:33.437740920 +0930
+@@ -2193,6 +2193,12 @@
  L:	linux-kernel@vger.kernel.org
  S:	Maintained
  
@@ -1591,7 +1604,9 @@
  REISERFS FILE SYSTEM
  P:	Hans Reiser
  M:	reiserfs-dev@namesys.com
---- linux-ixp4xx.orig/drivers/i2c/chips/x1205.c	2006-03-08 01:59:09.000000000 +0100
+Index: linux-2.6.16/drivers/i2c/chips/x1205.c
+===================================================================
+--- linux-2.6.16.orig/drivers/i2c/chips/x1205.c	2006-06-07 23:24:50.689239680 +0930
 +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
 @@ -1,698 +0,0 @@
 -/*
@@ -2292,9 +2307,11 @@
 -
 -module_init(x1205_init);
 -module_exit(x1205_exit);
---- linux-ixp4xx.orig/drivers/i2c/chips/Makefile	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/drivers/i2c/chips/Makefile	2006-03-08 01:59:26.000000000 +0100
-@@ -10,10 +10,8 @@ obj-$(CONFIG_SENSORS_M41T00)	+= m41t00.o
+Index: linux-2.6.16/drivers/i2c/chips/Makefile
+===================================================================
+--- linux-2.6.16.orig/drivers/i2c/chips/Makefile	2006-06-07 23:24:50.693239072 +0930
++++ linux-2.6.16/drivers/i2c/chips/Makefile	2006-06-07 23:25:33.438740768 +0930
+@@ -10,10 +10,8 @@
  obj-$(CONFIG_SENSORS_PCA9539)	+= pca9539.o
  obj-$(CONFIG_SENSORS_PCF8574)	+= pcf8574.o
  obj-$(CONFIG_SENSORS_PCF8591)	+= pcf8591.o
@@ -2305,7 +2322,9 @@
  
  ifeq ($(CONFIG_I2C_DEBUG_CHIP),y)
  EXTRA_CFLAGS += -DDEBUG
---- linux-ixp4xx.orig/drivers/i2c/chips/rtc8564.c	2006-03-08 01:59:09.000000000 +0100
+Index: linux-2.6.16/drivers/i2c/chips/rtc8564.c
+===================================================================
+--- linux-2.6.16.orig/drivers/i2c/chips/rtc8564.c	2006-06-07 23:24:50.698238312 +0930
 +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
 @@ -1,385 +0,0 @@
 -/*
@@ -2693,7 +2712,9 @@
 -
 -module_init(rtc8564_init);
 -module_exit(rtc8564_exit);
---- linux-ixp4xx.orig/drivers/i2c/chips/rtc8564.h	2006-03-08 01:59:09.000000000 +0100
+Index: linux-2.6.16/drivers/i2c/chips/rtc8564.h
+===================================================================
+--- linux-2.6.16.orig/drivers/i2c/chips/rtc8564.h	2006-06-07 23:24:50.702237704 +0930
 +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
 @@ -1,78 +0,0 @@
 -/*
@@ -2774,7 +2795,9 @@
 -#define RTC8564_TD_1_60HZ		(0x3)
 -
 -#define I2C_DRIVERID_RTC8564 0xf000
---- linux-ixp4xx.orig/include/linux/x1205.h	2006-03-08 01:59:09.000000000 +0100
+Index: linux-2.6.16/include/linux/x1205.h
+===================================================================
+--- linux-2.6.16.orig/include/linux/x1205.h	2006-06-07 23:24:50.715235728 +0930
 +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
 @@ -1,31 +0,0 @@
 -/*
@@ -2808,9 +2831,11 @@
 -	struct i2c_client_address_data *address_data);
 -
 -#endif /* __LINUX_X1205_H__ */
---- linux-ixp4xx.orig/drivers/i2c/chips/Kconfig	2006-03-08 01:59:09.000000000 +0100
-1+++ linux-ixp4xx/drivers/i2c/chips/Kconfig	2006-03-08 01:59:26.000000000 +0100
-@@ -74,15 +74,6 @@ config SENSORS_RTC8564
+Index: linux-2.6.16/drivers/i2c/chips/Kconfig
+===================================================================
+--- linux-2.6.16.orig/drivers/i2c/chips/Kconfig	2006-06-07 23:24:50.706237096 +0930
++++ linux-2.6.16/drivers/i2c/chips/Kconfig	2006-06-07 23:25:33.439740616 +0930
+@@ -65,15 +65,6 @@
  	  This driver can also be built as a module.  If so, the module
  	  will be called pcf8591.
  
@@ -2826,7 +2851,7 @@
  config ISP1301_OMAP
  	tristate "Philips ISP1301 with OMAP OTG"
  	depends on I2C && ARCH_OMAP_OTG
-@@ -144,13 +135,4 @@ config RTC_X1205_I2C
+@@ -126,13 +117,4 @@
  	  This driver can also be built as a module.  If so, the module
  	  will be called max6875.
  
@@ -2840,8 +2865,10 @@
 -	  will be called x1205.
 -
  endmenu
+Index: linux-2.6.16/drivers/rtc/rtc-sysfs.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-sysfs.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-sysfs.c	2006-06-07 23:25:33.440740464 +0930
 @@ -0,0 +1,124 @@
 +/*
 + * RTC subsystem, sysfs interface
@@ -2967,8 +2994,10 @@
 +MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
 +MODULE_DESCRIPTION("RTC class sysfs interface");
 +MODULE_LICENSE("GPL");
+Index: linux-2.6.16/drivers/rtc/rtc-proc.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-proc.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-proc.c	2006-06-07 23:25:33.440740464 +0930
 @@ -0,0 +1,162 @@
 +/*
 + * RTC subsystem, proc interface
@@ -3132,8 +3161,10 @@
 +MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
 +MODULE_DESCRIPTION("RTC class proc interface");
 +MODULE_LICENSE("GPL");
+Index: linux-2.6.16/drivers/rtc/rtc-dev.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-dev.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-dev.c	2006-06-07 23:25:33.442740160 +0930
 @@ -0,0 +1,382 @@
 +/*
 + * RTC subsystem, dev interface
@@ -3517,8 +3548,10 @@
 +MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
 +MODULE_DESCRIPTION("RTC class dev interface");
 +MODULE_LICENSE("GPL");
+Index: linux-2.6.16/drivers/rtc/rtc-x1205.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-x1205.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-x1205.c	2006-06-07 23:25:33.443740008 +0930
 @@ -0,0 +1,619 @@
 +/*
 + * An i2c driver for the Xicor/Intersil X1205 RTC
@@ -4139,8 +4172,10 @@
 +
 +module_init(x1205_init);
 +module_exit(x1205_exit);
+Index: linux-2.6.16/drivers/rtc/rtc-test.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-test.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-test.c	2006-06-07 23:25:33.444739856 +0930
 @@ -0,0 +1,205 @@
 +/*
 + * An RTC test device/driver
@@ -4347,8 +4382,10 @@
 +
 +module_init(test_init);
 +module_exit(test_exit);
+Index: linux-2.6.16/drivers/rtc/rtc-ds1672.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-ds1672.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-ds1672.c	2006-06-07 23:25:33.444739856 +0930
 @@ -0,0 +1,233 @@
 +/*
 + * An rtc/i2c driver for the Dallas DS1672
@@ -4583,8 +4620,10 @@
 +
 +module_init(ds1672_init);
 +module_exit(ds1672_exit);
+Index: linux-2.6.16/drivers/rtc/rtc-pcf8563.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-pcf8563.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-pcf8563.c	2006-06-07 23:25:33.445739704 +0930
 @@ -0,0 +1,355 @@
 +/*
 + * An I2C driver for the Philips PCF8563 RTC
@@ -4941,8 +4980,10 @@
 +
 +module_init(pcf8563_init);
 +module_exit(pcf8563_exit);
+Index: linux-2.6.16/drivers/rtc/rtc-rs5c372.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-rs5c372.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-rs5c372.c	2006-06-07 23:25:33.446739552 +0930
 @@ -0,0 +1,295 @@
 +/*
 + * An I2C driver for the Ricoh RS5C372 RTC
@@ -5239,8 +5280,10 @@
 +MODULE_DESCRIPTION("Ricoh RS5C372 RTC driver");
 +MODULE_LICENSE("GPL");
 +MODULE_VERSION(DRV_VERSION);
+Index: linux-2.6.16/drivers/rtc/rtc-ep93xx.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-ep93xx.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-ep93xx.c	2006-06-07 23:25:33.447739400 +0930
 @@ -0,0 +1,163 @@
 +/*
 + * A driver for the RTC embedded in the Cirrus Logic EP93XX processors
@@ -5405,8 +5448,10 @@
 +
 +module_init(ep93xx_rtc_init);
 +module_exit(ep93xx_rtc_exit);
+Index: linux-2.6.16/drivers/rtc/rtc-sa1100.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/rtc/rtc-sa1100.c	2006-03-08 01:59:26.000000000 +0100
++++ linux-2.6.16/drivers/rtc/rtc-sa1100.c	2006-06-07 23:25:33.447739400 +0930
 @@ -0,0 +1,392 @@
 +/*
 + * Real Time Clock interface for StrongARM SA1x00 and XScale PXA2xx
@@ -5800,9 +5845,11 @@
 +MODULE_AUTHOR("Richard Purdie <rpurdie@rpsys.net>");
 +MODULE_DESCRIPTION("SA11x0/PXA2xx Realtime Clock Driver (RTC)");
 +MODULE_LICENSE("GPL");
---- linux-ixp4xx.orig/arch/arm/mach-pxa/generic.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-pxa/generic.c	2006-03-08 01:59:26.000000000 +0100
-@@ -319,6 +319,11 @@ void __init pxa_set_ficp_info(struct pxa
+Index: linux-2.6.16/arch/arm/mach-pxa/generic.c
+===================================================================
+--- linux-2.6.16.orig/arch/arm/mach-pxa/generic.c	2006-06-07 23:24:50.767227824 +0930
++++ linux-2.6.16/arch/arm/mach-pxa/generic.c	2006-06-07 23:25:33.448739248 +0930
+@@ -319,6 +319,11 @@
  	pxaficp_device.dev.platform_data = info;
  }
  
@@ -5814,7 +5861,7 @@
  static struct platform_device *devices[] __initdata = {
  	&pxamci_device,
  	&udc_device,
-@@ -329,6 +334,7 @@ static struct platform_device *devices[]
+@@ -329,6 +334,7 @@
  	&pxaficp_device,
  	&i2c_device,
  	&i2s_device,
@@ -5822,9 +5869,11 @@
  };
  
  static int __init pxa_init(void)
---- linux-ixp4xx.orig/arch/arm/mach-sa1100/generic.c	2006-03-08 01:59:09.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-sa1100/generic.c	2006-03-08 01:59:26.000000000 +0100
-@@ -324,6 +324,11 @@ void sa11x0_set_irda_data(struct irda_pl
+Index: linux-2.6.16/arch/arm/mach-sa1100/generic.c
+===================================================================
+--- linux-2.6.16.orig/arch/arm/mach-sa1100/generic.c	2006-06-07 23:24:50.774226760 +0930
++++ linux-2.6.16/arch/arm/mach-sa1100/generic.c	2006-06-07 23:25:33.449739096 +0930
+@@ -324,6 +324,11 @@
  	sa11x0ir_device.dev.platform_data = irda;
  }
  
@@ -5836,7 +5885,7 @@
  static struct platform_device *sa11x0_devices[] __initdata = {
  	&sa11x0udc_device,
  	&sa11x0uart1_device,
-@@ -333,6 +338,7 @@ static struct platform_device *sa11x0_de
+@@ -333,6 +338,7 @@
  	&sa11x0pcmcia_device,
  	&sa11x0fb_device,
  	&sa11x0mtd_device,

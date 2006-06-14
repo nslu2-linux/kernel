@@ -10,16 +10,11 @@ code.
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
----
- drivers/net/Kconfig   |   15 +
- drivers/net/Makefile  |    1 
- drivers/net/maclist.c |  465 ++++++++++++++++++++++++++++++++++++++++++++++++++
- include/net/maclist.h |   49 +++++
- 4 files changed, 530 insertions(+)
-
---- linux-ixp4xx.orig/drivers/net/Kconfig	2006-02-23 18:27:12.000000000 +0100
-+++ linux-ixp4xx/drivers/net/Kconfig	2006-02-23 18:30:54.000000000 +0100
-@@ -177,6 +177,21 @@ config NET_ETHERNET
+Index: linux-2.6.16/drivers/net/Kconfig
+===================================================================
+--- linux-2.6.16.orig/drivers/net/Kconfig	2006-06-07 23:24:46.799830960 +0930
++++ linux-2.6.16/drivers/net/Kconfig	2006-06-07 23:25:40.468672056 +0930
+@@ -177,6 +177,21 @@
  	  kernel: saying N will just cause the configurator to skip all
  	  the questions about Ethernet network cards. If unsure, say N.
  
@@ -41,9 +36,11 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  config MII
  	tristate "Generic Media Independent Interface device support"
  	depends on NET_ETHERNET
---- linux-ixp4xx.orig/drivers/net/Makefile	2006-02-23 18:27:12.000000000 +0100
-+++ linux-ixp4xx/drivers/net/Makefile	2006-02-23 18:30:54.000000000 +0100
-@@ -74,6 +74,7 @@ obj-$(CONFIG_RIONET) += rionet.o
+Index: linux-2.6.16/drivers/net/Makefile
+===================================================================
+--- linux-2.6.16.orig/drivers/net/Makefile	2006-06-07 23:24:46.803830352 +0930
++++ linux-2.6.16/drivers/net/Makefile	2006-06-07 23:25:40.469671904 +0930
+@@ -74,6 +74,7 @@
  # end link order section
  #
  
@@ -51,8 +48,10 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  obj-$(CONFIG_MII) += mii.o
  obj-$(CONFIG_PHYLIB) += phy/
  
+Index: linux-2.6.16/drivers/net/maclist.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/net/maclist.c	2006-02-23 18:30:54.000000000 +0100
++++ linux-2.6.16/drivers/net/maclist.c	2006-06-07 23:25:40.470671752 +0930
 @@ -0,0 +1,465 @@
 +/*
 + * drivers/net/maclist.c
@@ -519,8 +518,10 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 +
 +module_init(maclist_init);
 +module_exit(maclist_exit);
+Index: linux-2.6.16/include/net/maclist.h
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/include/net/maclist.h	2006-02-23 18:30:54.000000000 +0100
++++ linux-2.6.16/include/net/maclist.h	2006-06-07 23:25:40.471671600 +0930
 @@ -0,0 +1,49 @@
 +#ifndef _MACLIST_H
 +#define _MACLIST_H 1

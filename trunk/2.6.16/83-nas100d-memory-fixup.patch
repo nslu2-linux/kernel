@@ -10,8 +10,10 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  arch/arm/mach-ixp4xx/nas100d-setup.c |   33 +++++++++++++++++++++++++++++++++
  1 file changed, 33 insertions(+)
 
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-03-09 02:13:15.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-03-09 02:13:54.000000000 +0100
+Index: linux-2.6.16/arch/arm/mach-ixp4xx/nas100d-setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-07 23:24:47.851671056 +0930
++++ linux-2.6.16/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-07 23:25:38.911908720 +0930
 @@ -19,6 +19,7 @@
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
@@ -20,7 +22,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  
  static struct flash_platform_data nas100d_flash_data = {
  	.map_name		= "cfi_probe",
-@@ -125,11 +126,43 @@ static void __init nas100d_init(void)
+@@ -125,11 +126,43 @@
  	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
  }
  

@@ -1,13 +1,8 @@
----
- drivers/scsi/Kconfig       |   11 +-
- drivers/scsi/Makefile      |    1 
- drivers/scsi/libata-core.c |    4 
- drivers/scsi/pata_ixp4xx.c |  242 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 255 insertions(+), 3 deletions(-)
-
---- linux-ixp4xx.orig/drivers/scsi/Kconfig	2006-02-24 18:13:55.000000000 +0100
-+++ linux-ixp4xx/drivers/scsi/Kconfig	2006-02-24 18:50:19.000000000 +0100
-@@ -903,11 +903,20 @@ config SCSI_PATA_WINBOND
+Index: linux-2.6.16/drivers/scsi/Kconfig
+===================================================================
+--- linux-2.6.16.orig/drivers/scsi/Kconfig	2006-06-07 23:25:09.815332072 +0930
++++ linux-2.6.16/drivers/scsi/Kconfig	2006-06-07 23:25:42.928298136 +0930
+@@ -903,11 +903,20 @@
  	tristate "Winbond SL82C105 PATA support"
  	depends on SCSI_SATA && PCI
  	help
@@ -29,9 +24,11 @@
  
  config SCSI_BUSLOGIC
  	tristate "BusLogic SCSI support"
---- linux-ixp4xx.orig/drivers/scsi/Makefile	2006-02-24 18:13:55.000000000 +0100
-+++ linux-ixp4xx/drivers/scsi/Makefile	2006-02-24 18:16:46.000000000 +0100
-@@ -174,6 +174,7 @@ obj-$(CONFIG_SCSI_PATA_VIA)	+= libata.o 
+Index: linux-2.6.16/drivers/scsi/Makefile
+===================================================================
+--- linux-2.6.16.orig/drivers/scsi/Makefile	2006-06-07 23:25:09.848327056 +0930
++++ linux-2.6.16/drivers/scsi/Makefile	2006-06-07 23:25:42.929297984 +0930
+@@ -174,6 +174,7 @@
  obj-$(CONFIG_SCSI_PATA_WINBOND)	+= libata.o pata_sl82c105.o
  obj-$(CONFIG_SCSI_ATA_GENERIC)	+= libata.o ata_generic.o
  obj-$(CONFIG_SCSI_PATA_LEGACY)	+= libata.o pata_legacy.o
@@ -39,8 +36,10 @@
  
  obj-$(CONFIG_ARM)		+= arm/
  
+Index: linux-2.6.16/drivers/scsi/pata_ixp4xx.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/scsi/pata_ixp4xx.c	2006-02-24 18:43:02.000000000 +0100
++++ linux-2.6.16/drivers/scsi/pata_ixp4xx.c	2006-06-07 23:25:42.929297984 +0930
 @@ -0,0 +1,242 @@
 +/*
 + * pata-ixp4xx.c - Legacy port PATA/SATA controller driver.
@@ -284,9 +283,11 @@
 +
 +module_init(ixp4xx_init);
 +module_exit(ixp4xx_exit);
---- linux-ixp4xx.orig/drivers/scsi/libata-core.c	2006-02-24 18:13:55.000000000 +0100
-+++ linux-ixp4xx/drivers/scsi/libata-core.c	2006-02-24 18:16:46.000000000 +0100
-@@ -2513,8 +2513,8 @@ static void ata_dev_set_xfermode(struct 
+Index: linux-2.6.16/drivers/scsi/libata-core.c
+===================================================================
+--- linux-2.6.16.orig/drivers/scsi/libata-core.c	2006-06-07 23:25:09.819331464 +0930
++++ linux-2.6.16/drivers/scsi/libata-core.c	2006-06-07 23:25:42.934297224 +0930
+@@ -2531,8 +2531,8 @@
  	tf.nsect = dev->xfer_mode;
  
  	if (ata_exec_internal(ap, dev, &tf, DMA_NONE, NULL, 0)) {

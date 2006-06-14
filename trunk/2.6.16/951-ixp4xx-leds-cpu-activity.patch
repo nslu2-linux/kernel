@@ -6,16 +6,10 @@ are idle.
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
----
- arch/arm/kernel/process.c  |   11 
- drivers/leds/Kconfig       |    9 
- drivers/leds/Makefile      |    1 
- drivers/leds/ledtrig-cpu.c |  501 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/leds.h       |    9 
- 5 files changed, 531 insertions(+)
-
---- linux-ixp4xx.orig/arch/arm/kernel/process.c	2006-02-21 00:53:28.000000000 +0100
-+++ linux-ixp4xx/arch/arm/kernel/process.c	2006-02-21 01:03:33.000000000 +0100
+Index: linux-2.6.16/arch/arm/kernel/process.c
+===================================================================
+--- linux-2.6.16.orig/arch/arm/kernel/process.c	2006-06-07 23:24:51.151169456 +0930
++++ linux-2.6.16/arch/arm/kernel/process.c	2006-06-07 23:25:32.785840024 +0930
 @@ -27,6 +27,7 @@
  #include <linux/kallsyms.h>
  #include <linux/init.h>
@@ -24,7 +18,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  #include <linux/elfcore.h>
  
  #include <asm/leds.h>
-@@ -80,6 +81,12 @@ void (*pm_power_off)(void);
+@@ -81,6 +82,12 @@
  EXPORT_SYMBOL(pm_power_off);
  
  /*
@@ -37,7 +31,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
   * This is our default idle handler.  We need to disable
   * interrupts here to ensure we don't miss a wakeup call.
   */
-@@ -120,8 +127,12 @@ void cpu_idle(void)
+@@ -121,8 +128,12 @@
  		if (!idle)
  			idle = default_idle;
  		leds_event(led_idle_start);
@@ -50,9 +44,11 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  		leds_event(led_idle_end);
  		preempt_enable_no_resched();
  		schedule();
---- linux-ixp4xx.orig/drivers/leds/Kconfig	2006-02-21 00:58:36.000000000 +0100
-+++ linux-ixp4xx/drivers/leds/Kconfig	2006-02-21 01:03:33.000000000 +0100
-@@ -66,5 +66,14 @@ config LEDS_TRIGGER_TIMER
+Index: linux-2.6.16/drivers/leds/Kconfig
+===================================================================
+--- linux-2.6.16.orig/drivers/leds/Kconfig	2006-06-07 23:25:16.249353952 +0930
++++ linux-2.6.16/drivers/leds/Kconfig	2006-06-07 23:25:32.786839872 +0930
+@@ -66,5 +66,14 @@
  	  This allows LEDs to be controlled by a programmable timer
  	  via sysfs. If unsure, say Y.
  
@@ -67,15 +63,19 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 +
  endmenu
  
---- linux-ixp4xx.orig/drivers/leds/Makefile	2006-02-21 00:58:36.000000000 +0100
-+++ linux-ixp4xx/drivers/leds/Makefile	2006-02-21 01:03:33.000000000 +0100
-@@ -13,3 +13,4 @@ obj-$(CONFIG_LEDS_TOSA)			+= leds-tosa.o
+Index: linux-2.6.16/drivers/leds/Makefile
+===================================================================
+--- linux-2.6.16.orig/drivers/leds/Makefile	2006-06-07 23:25:16.253353344 +0930
++++ linux-2.6.16/drivers/leds/Makefile	2006-06-07 23:25:32.786839872 +0930
+@@ -13,3 +13,4 @@
  
  # LED Triggers
  obj-$(CONFIG_LEDS_TRIGGER_TIMER)	+= ledtrig-timer.o
 +obj-$(CONFIG_LEDS_TRIGGER_CPU_ACTIVITY)	+= ledtrig-cpu.o
+Index: linux-2.6.16/drivers/leds/ledtrig-cpu.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/leds/ledtrig-cpu.c	2006-02-21 01:08:57.000000000 +0100
++++ linux-2.6.16/drivers/leds/ledtrig-cpu.c	2006-06-07 23:25:32.788839568 +0930
 @@ -0,0 +1,501 @@
 +/*
 + * LEDs CPU activity trigger
@@ -578,9 +578,11 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 +MODULE_AUTHOR("John Bowler <jbowler@acm.org>");
 +MODULE_DESCRIPTION("CPU activity LED trigger");
 +MODULE_LICENSE("MIT");
---- linux-ixp4xx.orig/include/linux/leds.h	2006-02-21 00:54:33.000000000 +0100
-+++ linux-ixp4xx/include/linux/leds.h	2006-02-21 01:03:33.000000000 +0100
-@@ -102,4 +102,13 @@ void led_trigger_event(struct led_trigge
+Index: linux-2.6.16/include/linux/leds.h
+===================================================================
+--- linux-2.6.16.orig/include/linux/leds.h	2006-06-07 23:25:16.256352888 +0930
++++ linux-2.6.16/include/linux/leds.h	2006-06-07 23:25:32.789839416 +0930
+@@ -102,4 +102,13 @@
  #define led_trigger_event(x, y) do {} while(0)
  
  #endif
