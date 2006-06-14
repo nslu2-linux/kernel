@@ -21,7 +21,7 @@
 
 ENDIAN = l
 #ENDIAN = b
-BASEVER  = 2.6.15
+BASEVER  = 2.6.16
 MAJORVER = 2.6
 MINORVER = 2.6.16
 REVISION := $(shell sed -e 's/-git.*//' ${MINORVER}/KERNEL)
@@ -217,6 +217,18 @@ vmlinuz-${REVISION}: linux-${REVISION}/.config
 	rm -f lib/modules/${REVISION}/build lib/modules/${REVISION}/source
 	cp linux-${REVISION}/arch/arm/boot/zImage vmlinuz-${REVISION}
 
+ifeq (${REVISION},${BASEVER})
+linux-${REVISION}/.config: \
+		downloads/linux-${BASEVER}.tar.bz2 \
+		${MINORVER}/series ${MINORVER}/??-*.patch ${MINORVER}/defconfig
+	[ -e linux-${REVISION} ] || \
+	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
+	  ( cd ${MINORVER}/ ; \
+	    grep -v \# series | \
+	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
+	  ) | \
+	  patch -d linux-${REVISION} -p1 )
+else
 ifeq (${REVISION},${MINORVER})
 linux-${REVISION}/.config: \
 		downloads/linux-${MINORVER}.tar.bz2 \
@@ -260,6 +272,7 @@ linux-${REVISION}/.config: \
 	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
 	  ) | \
 	  patch -d linux-${REVISION} -p1
+endif
 endif
 endif
 ifeq (${ENDIAN},b)
