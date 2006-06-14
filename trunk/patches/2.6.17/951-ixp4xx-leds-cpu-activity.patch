@@ -76,7 +76,7 @@ Index: linux-2.6.17-rc6/drivers/leds/ledtrig-cpu.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
 +++ linux-2.6.17-rc6/drivers/leds/ledtrig-cpu.c	2006-06-08 00:00:39.145624664 +0930
-@@ -0,0 +1,501 @@
+@@ -0,0 +1,488 @@
 +/*
 + * LEDs CPU activity trigger
 + *
@@ -191,26 +191,22 @@ Index: linux-2.6.17-rc6/drivers/leds/ledtrig-cpu.c
 +{
 +	int is_blinking = 0;
 +
-+	write_lock(&led->lock);
-+	{
-+		struct cpu_trigger_data *data = led->trigger_data;
++	struct cpu_trigger_data *data = led->trigger_data;
 +
-+		/* Find the new brightness for the LED, if the LED is
-+		 * set to flash then the brightness passed in is the
-+		 * required value.
-+		 */
-+		if (likely(data != 0))
-+			switch (is_active ? data->active : data->idle) {
-+			case cpu_led_off:   brightness = LED_OFF;  break;
-+			case cpu_led_flash: is_blinking = 1;       break;
-+			case cpu_led_on:    brightness = LED_FULL; break;
-+			}
-+		else
-+			brightness = is_active ? LED_FULL : LED_OFF;
++	/* Find the new brightness for the LED, if the LED is
++	 * set to flash then the brightness passed in is the
++	 * required value.
++	 */
++	if (likely(data != 0))
++		switch (is_active ? data->active : data->idle) {
++		case cpu_led_off:   brightness = LED_OFF;  break;
++		case cpu_led_flash: is_blinking = 1;       break;
++		case cpu_led_on:    brightness = LED_FULL; break;
++		}
++	else
++		brightness = is_active ? LED_FULL : LED_OFF;
 +
-+		led_set_brightness(led, brightness);
-+	}
-+	write_unlock(&led->lock);
++	led_set_brightness(led, brightness);
 +
 +	return is_blinking;
 +}
@@ -226,13 +222,9 @@ Index: linux-2.6.17-rc6/drivers/leds/ledtrig-cpu.c
 +	cpu_trigger_led_state  item = cpu_led_invalid, i;
 +	char                  *next;
 +
-+	read_lock(&led->lock);
-+	{
-+		if (likely(led->trigger_data != 0))
-+			item = *(const cpu_trigger_led_state*)(
-+					led->trigger_data + where);
-+	}
-+	read_unlock(&led->lock);
++	if (likely(led->trigger_data != 0))
++		item = *(const cpu_trigger_led_state*)(
++				led->trigger_data + where);
 +
 +	for (i=0, next=buf; i<cpu_led_invalid; ++i) {
 +		const char *name = cpu_trigger_names[i];
@@ -297,14 +289,9 @@ Index: linux-2.6.17-rc6/drivers/leds/ledtrig-cpu.c
 +	} while (1);
 +
 +	led = dev->class_data;
-+	write_lock(&led->lock);
-+	{
-+		if (likely(led->trigger_data != 0))
-+			*(cpu_trigger_led_state*)(
-+					led->trigger_data + where) = value;
-+
-+	}
-+	write_unlock(&led->lock);
++	if (likely(led->trigger_data != 0))
++		*(cpu_trigger_led_state*)(
++				led->trigger_data + where) = value;
 +
 +	return rc;
 +}
@@ -338,7 +325,7 @@ Index: linux-2.6.17-rc6/drivers/leds/ledtrig-cpu.c
 +
 +/*
 + * Activate and deactivate are called on individual LEDs when the
-+ * LED trigger property is changed.  The LED write lock is held.
++ * LED trigger property is changed.
 + */
 +static void leds_cpu_trigger_activate(struct led_classdev *led)
 +{
