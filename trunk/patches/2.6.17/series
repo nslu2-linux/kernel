@@ -3,7 +3,7 @@ copypage-xscale.patch
 11-mtdpart-redboot-config-byteswap.patch
 15-jffs2-endian-config.patch
 #951-ixp4xx-leds-cpu-activity.patch
-45-eeprom-new-notifier.patch
+#45-eeprom-new-notifier.patch
 48-setup-byteswap-cmdline.patch
 50-hwmon-ad741x.patch
 65-loft-config.patch
@@ -15,7 +15,7 @@ copypage-xscale.patch
 92-nas100d-mac.patch
 92-nslu2-mac.patch
 94-nslu2-setup.patch
-94-loft-setup.patch    
+#94-loft-setup.patch    
 #96-pata-ixp4xx.patch
 96-nas100d-leds.patch
 96-nslu2-leds.patch
