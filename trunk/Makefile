@@ -21,11 +21,12 @@
 
 ENDIAN = l
 #ENDIAN = b
-BASEVER  = 2.6.16
 MAJORVER = 2.6
+BASEVER  = 2.6.16
 MINORVER = 2.6.16
-REVISION := $(shell sed -e 's/-git.*//' ${MINORVER}/KERNEL)
-SNAPSHOT := $(shell cat ${MINORVER}/KERNEL)
+PATCHVER = 2.6.16
+REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
+SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
 MADWIFIVER = r1503-20060415
 
@@ -220,67 +221,59 @@ vmlinuz-${REVISION}: linux-${REVISION}/.config
 ifeq (${REVISION},${BASEVER})
 linux-${REVISION}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
-		${MINORVER}/series ${MINORVER}/??-*.patch ${MINORVER}/defconfig
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/defconfig
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
-	  ( cd ${MINORVER}/ ; \
-	    grep -v \# series | \
-	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
-	  ) | \
-	  patch -d linux-${REVISION} -p1 )
+	  cd linux-${REVISION} ; \
+	  ln -s ../patches/${PATCHVER} patches ; \
+	  quilt push -a )
 else
 ifeq (${REVISION},${MINORVER})
 linux-${REVISION}/.config: \
 		downloads/linux-${MINORVER}.tar.bz2 \
-		${MINORVER}/series ${MINORVER}/??-*.patch ${MINORVER}/defconfig
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/defconfig
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${MINORVER}.tar.bz2 ; \
-	  ( cd ${MINORVER}/ ; \
-	    grep -v \# series | \
-	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
-	  ) | \
-	  patch -d linux-${REVISION} -p1 )
+	  cd linux-${REVISION} ; \
+	  ln -s ../patches/${PATCHVER} patches ; \
+	  quilt push -a )
 else
 ifeq (${REVISION},${SNAPSHOT})
 linux-${REVISION}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
-		${MINORVER}/series ${MINORVER}/??-*.patch ${MINORVER}/defconfig
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/defconfig
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
 	  mv linux-${BASEVER} linux-${REVISION} ; \
 	  bzcat downloads/patch-${REVISION}.bz2 | \
-	  patch -d linux-${REVISION} -p1 ) ; \
-	  ( cd ${MINORVER}/ ; \
-	    grep -v \# series | \
-	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
-	  ) | \
-	  patch -d linux-${REVISION} -p1
+	  patch -d linux-${REVISION} -p1 ; \
+	  cd linux-${REVISION} ; \
+	  ln -s ../patches/${PATCHVER} patches ; \
+	  quilt push -a )
 else
 linux-${REVISION}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
 		downloads/patch-${SNAPSHOT}.bz2 \
-		${MINORVER}/series ${MINORVER}/??-*.patch ${MINORVER}/defconfig
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/defconfig
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
 	  mv linux-${BASEVER} linux-${REVISION} ; \
 	  bzcat downloads/patch-${REVISION}.bz2 downloads/patch-${SNAPSHOT}.bz2 | \
-	  patch -d linux-${REVISION} -p1 ) ; \
-	  ( cd ${MINORVER}/ ; \
-	    grep -v \# series | \
-	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
-	  ) | \
-	  patch -d linux-${REVISION} -p1
+	  patch -d linux-${REVISION} -p1 ; \
+	  cd linux-${REVISION} ; \
+	  ln -s ../patches/${PATCHVER} patches ; \
+	  quilt push -a )
 endif
 endif
 endif
 ifeq (${ENDIAN},b)
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/CONFIG_CPU_BIG_ENDIAN=y/' \
-		< ${MINORVER}/defconfig > linux-${REVISION}/.config
+		< patches/${PATCHVER}/defconfig > linux-${REVISION}/.config
 else
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/\# CONFIG_CPU_BIG_ENDIAN is not set/' \
-		< ${MINORVER}/defconfig > linux-${REVISION}/.config
+		< patches/${PATCHVER}/defconfig > linux-${REVISION}/.config
 endif
 
 downloads/linux-${BASEVER}.tar.bz2 :
