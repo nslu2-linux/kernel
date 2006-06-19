@@ -8,10 +8,13 @@ WARNING: "xscale_mc_clear_user_page" [drivers/media/video/video-buf.ko] undefine
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 
+ arch/arm/mm/copypage-xscale.c |    4 ++++
+ 1 files changed, 4 insertions(+)
+
 Index: linux-2.6.17/arch/arm/mm/copypage-xscale.c
 ===================================================================
---- linux-2.6.17.orig/arch/arm/mm/copypage-xscale.c	2006-06-19 11:41:19.865242840 +0930
-+++ linux-2.6.17/arch/arm/mm/copypage-xscale.c	2006-06-19 11:41:21.815946288 +0930
+--- linux-2.6.17.orig/arch/arm/mm/copypage-xscale.c
++++ linux-2.6.17/arch/arm/mm/copypage-xscale.c
 @@ -15,6 +15,7 @@
   */
  #include <linux/init.h>
