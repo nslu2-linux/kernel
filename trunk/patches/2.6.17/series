@@ -5,6 +5,7 @@
 30-nslu2-mac-addr.patch
 40-nas100d-leds.patch
 40-nslu2-leds.patch
+50-leds-arm-cpu-activity.patch
 #11-mtdpart-redboot-config-byteswap.patch
 #15-jffs2-endian-config.patch
 #45-eeprom-new-notifier.patch
@@ -15,7 +16,6 @@
 85-timer.patch
 #91-maclist.patch
 #94-loft-setup.patch    
-951-ixp4xx-leds-cpu-activity.patch
 #96-pata-ixp4xx.patch
 #97-ds101.patch
 #97-ds101-buttons.patch
