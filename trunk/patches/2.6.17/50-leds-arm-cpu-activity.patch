@@ -6,10 +6,10 @@ are idle.
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
-Index: linux-2.6.17-rc6/arch/arm/kernel/process.c
+Index: linux-2.6.17/arch/arm/kernel/process.c
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/kernel/process.c	2006-06-07 23:50:22.195415352 +0930
-+++ linux-2.6.17-rc6/arch/arm/kernel/process.c	2006-06-08 00:00:39.142625120 +0930
+--- linux-2.6.17.orig/arch/arm/kernel/process.c	2006-06-19 11:31:20.555351792 +0930
++++ linux-2.6.17/arch/arm/kernel/process.c	2006-06-19 12:16:52.305062712 +0930
 @@ -27,6 +27,7 @@
  #include <linux/kallsyms.h>
  #include <linux/init.h>
@@ -44,10 +44,10 @@ Index: linux-2.6.17-rc6/arch/arm/kernel/process.c
  		leds_event(led_idle_end);
  		preempt_enable_no_resched();
  		schedule();
-Index: linux-2.6.17-rc6/drivers/leds/Kconfig
+Index: linux-2.6.17/drivers/leds/Kconfig
 ===================================================================
---- linux-2.6.17-rc6.orig/drivers/leds/Kconfig	2006-06-07 23:50:31.840949008 +0930
-+++ linux-2.6.17-rc6/drivers/leds/Kconfig	2006-06-08 00:00:39.143624968 +0930
+--- linux-2.6.17.orig/drivers/leds/Kconfig	2006-06-19 11:31:20.558351336 +0930
++++ linux-2.6.17/drivers/leds/Kconfig	2006-06-19 12:16:52.306062560 +0930
 @@ -87,5 +87,14 @@
  	  This allows LEDs to be controlled by IDE disk activity.
  	  If unsure, say Y.
@@ -63,19 +63,19 @@ Index: linux-2.6.17-rc6/drivers/leds/Kconfig
 +
  endmenu
  
-Index: linux-2.6.17-rc6/drivers/leds/Makefile
+Index: linux-2.6.17/drivers/leds/Makefile
 ===================================================================
---- linux-2.6.17-rc6.orig/drivers/leds/Makefile	2006-06-07 23:50:31.844948400 +0930
-+++ linux-2.6.17-rc6/drivers/leds/Makefile	2006-06-08 00:01:02.732038984 +0930
+--- linux-2.6.17.orig/drivers/leds/Makefile	2006-06-19 11:31:20.561350880 +0930
++++ linux-2.6.17/drivers/leds/Makefile	2006-06-19 12:16:52.307062408 +0930
 @@ -15,3 +15,4 @@
  # LED Triggers
  obj-$(CONFIG_LEDS_TRIGGER_TIMER)	+= ledtrig-timer.o
  obj-$(CONFIG_LEDS_TRIGGER_IDE_DISK)	+= ledtrig-ide-disk.o
 +obj-$(CONFIG_LEDS_TRIGGER_CPU_ACTIVITY)	+= ledtrig-cpu.o
-Index: linux-2.6.17-rc6/drivers/leds/ledtrig-cpu.c
+Index: linux-2.6.17/drivers/leds/ledtrig-cpu.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.17-rc6/drivers/leds/ledtrig-cpu.c	2006-06-08 00:00:39.145624664 +0930
++++ linux-2.6.17/drivers/leds/ledtrig-cpu.c	2006-06-19 12:16:52.308062256 +0930
 @@ -0,0 +1,488 @@
 +/*
 + * LEDs CPU activity trigger
@@ -565,10 +565,10 @@ Index: linux-2.6.17-rc6/drivers/leds/ledtrig-cpu.c
 +MODULE_AUTHOR("John Bowler <jbowler@acm.org>");
 +MODULE_DESCRIPTION("CPU activity LED trigger");
 +MODULE_LICENSE("MIT");
-Index: linux-2.6.17-rc6/include/linux/leds.h
+Index: linux-2.6.17/include/linux/leds.h
 ===================================================================
---- linux-2.6.17-rc6.orig/include/linux/leds.h	2006-06-07 23:50:44.938957808 +0930
-+++ linux-2.6.17-rc6/include/linux/leds.h	2006-06-08 00:01:50.743740096 +0930
+--- linux-2.6.17.orig/include/linux/leds.h	2006-06-19 11:31:20.567349968 +0930
++++ linux-2.6.17/include/linux/leds.h	2006-06-19 12:16:52.309062104 +0930
 @@ -107,4 +107,13 @@
  #define ledtrig_ide_activity() do {} while(0)
  #endif
