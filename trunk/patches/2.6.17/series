@@ -1,13 +1,16 @@
+# Patches numbered <= 10 are for immediate push upstream, and
+# must be all able to be applied independently in any order.
 01-nas100d-leds.patch
-#10-copypage-xscale.patch
+02-nas100d-mac-addr.patch
+10-copypage-xscale.patch
 #11-mtdpart-redboot-config-byteswap.patch
 #12-setup-byteswap-cmdline.patch
 #13-hwmon-ad741x.patch
 #15-jffs2-endian-config.patch
-30-nas100d-mac-addr.patch
-20-nas100d-cmdline-fixup.patch
+#20-nas100d-cmdline-fixup.patch
 #20-nslu2-cmdline-fixup.patch
 #30-nslu2-mac-addr.patch
+40-nas100d-early-uart.patch
 #40-nslu2-leds.patch
 #50-leds-arm-cpu-activity.patch
 #45-eeprom-new-notifier.patch
