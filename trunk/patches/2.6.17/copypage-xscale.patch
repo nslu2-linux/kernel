@@ -1,21 +1,29 @@
-*** linux-2.6.16/arch/arm/mm/copypage-xscale.c-	Mon Mar 27 19:10:25 2006
---- linux-2.6.16/arch/arm/mm/copypage-xscale.c	Sun Mar 26 19:32:53 2006
-***************
-*** 15,20 ****
---- 15,21 ----
-   */
-  #include <linux/init.h>
-  #include <linux/mm.h>
-+ #include <linux/module.h>
-  
-  #include <asm/page.h>
-  #include <asm/pgtable.h>
-***************
-*** 129,131 ****
---- 130,135 ----
-  	.cpu_clear_user_page	= xscale_mc_clear_user_page, 
-  	.cpu_copy_user_page	= xscale_mc_copy_user_page,
-  };
-+ 
-+ EXPORT_SYMBOL(xscale_mc_clear_user_page);
-+ EXPORT_SYMBOL(xscale_mc_copy_user_page);
+The function clear_user_page() is defined in asm/page.h to be
+__cpu_clear_user_page() which on the XScale architecture resolves to
+xscale_mc_clear_user_page - which in turn needs to be exported for the
+kernel modules (such as video-buf.ko) that use it.  Without these
+exports, the video-buf kernel module emits the following warning:
+
+WARNING: "xscale_mc_clear_user_page" [drivers/media/video/video-buf.ko] undefined!
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+
+Index: linux-2.6.17/arch/arm/mm/copypage-xscale.c
+===================================================================
+--- linux-2.6.17.orig/arch/arm/mm/copypage-xscale.c	2006-06-19 11:41:19.865242840 +0930
++++ linux-2.6.17/arch/arm/mm/copypage-xscale.c	2006-06-19 11:41:21.815946288 +0930
+@@ -15,6 +15,7 @@
+  */
+ #include <linux/init.h>
+ #include <linux/mm.h>
++#include <linux/module.h>
+ 
+ #include <asm/page.h>
+ #include <asm/pgtable.h>
+@@ -129,3 +130,6 @@
+ 	.cpu_clear_user_page	= xscale_mc_clear_user_page, 
+ 	.cpu_copy_user_page	= xscale_mc_copy_user_page,
+ };
++
++EXPORT_SYMBOL(xscale_mc_clear_user_page);
++EXPORT_SYMBOL(xscale_mc_copy_user_page);
