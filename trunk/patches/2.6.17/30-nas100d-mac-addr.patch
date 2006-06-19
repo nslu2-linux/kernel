@@ -1,21 +1,22 @@
  arch/arm/mach-ixp4xx/nas100d-setup.c |   64 +++++++++++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+ 1 files changed, 64 insertions(+)
 
 Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:41:28.950861616 +0930
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:42:53.937941616 +0930
-@@ -15,6 +15,9 @@
- #include <linux/kernel.h>
- #include <linux/serial.h>
- #include <linux/serial_8250.h>
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
+@@ -20,6 +20,10 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/flash.h>
+ 
 +#include <linux/mtd/mtd.h>
 +#include <linux/netdevice.h>
 +#include <linux/etherdevice.h>
- 
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -110,8 +113,68 @@
++
+ static struct flash_platform_data nas100d_flash_data = {
+ 	.map_name		= "cfi_probe",
+ 	.width			= 2,
+@@ -109,8 +113,68 @@
  	gpio_line_set(NAS100D_PO_GPIO, IXP4XX_GPIO_HIGH);
  }
  
