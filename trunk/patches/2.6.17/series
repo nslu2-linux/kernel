@@ -3,7 +3,7 @@
 01-nas100d-leds.patch
 02-nas100d-mac-addr.patch
 03-nslu2-leds.patch
-30-nslu2-mac-addr.patch
+04-nslu2-mac-addr.patch
 10-copypage-xscale.patch
 #11-mtdpart-redboot-config-byteswap.patch
 #12-setup-byteswap-cmdline.patch
