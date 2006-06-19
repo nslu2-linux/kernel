@@ -8,10 +8,10 @@ the original test made slightly more robust.
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
-Index: linux-2.6.17-rc6/drivers/mtd/redboot.c
+Index: linux-2.6.17/drivers/mtd/redboot.c
 ===================================================================
---- linux-2.6.17-rc6.orig/drivers/mtd/redboot.c	2006-06-07 23:50:33.997621144 +0930
-+++ linux-2.6.17-rc6/drivers/mtd/redboot.c	2006-06-08 00:00:20.187506736 +0930
+--- linux-2.6.17.orig/drivers/mtd/redboot.c	2006-06-19 12:24:19.833028120 +0930
++++ linux-2.6.17/drivers/mtd/redboot.c	2006-06-19 12:24:27.122919888 +0930
 @@ -87,14 +87,41 @@
  	for (i = 0; i < numslots; i++) {
  		if (!memcmp(buf[i].name, "FIS directory", 14)) {

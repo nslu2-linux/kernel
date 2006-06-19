@@ -1,7 +1,7 @@
-Index: linux-2.6.17-rc6/drivers/hwmon/Makefile
+Index: linux-2.6.17/drivers/hwmon/Makefile
 ===================================================================
---- linux-2.6.17-rc6.orig/drivers/hwmon/Makefile	2006-03-20 16:23:29.000000000 +1030
-+++ linux-2.6.17-rc6/drivers/hwmon/Makefile	2006-06-08 00:02:10.862681552 +0930
+--- linux-2.6.17.orig/drivers/hwmon/Makefile	2006-06-19 12:24:03.400526240 +0930
++++ linux-2.6.17/drivers/hwmon/Makefile	2006-06-19 12:24:49.474521928 +0930
 @@ -44,6 +44,7 @@
  obj-$(CONFIG_SENSORS_VT8231)	+= vt8231.o
  obj-$(CONFIG_SENSORS_W83627EHF)	+= w83627ehf.o
@@ -10,10 +10,10 @@ Index: linux-2.6.17-rc6/drivers/hwmon/Makefile
  
  ifeq ($(CONFIG_HWMON_DEBUG_CHIP),y)
  EXTRA_CFLAGS += -DDEBUG
-Index: linux-2.6.17-rc6/drivers/hwmon/ad741x.c
+Index: linux-2.6.17/drivers/hwmon/ad741x.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.17-rc6/drivers/hwmon/ad741x.c	2006-06-08 00:02:10.864681248 +0930
++++ linux-2.6.17/drivers/hwmon/ad741x.c	2006-06-19 12:24:49.476521624 +0930
 @@ -0,0 +1,340 @@
 +/*
 + * An hwmon driver for the Analog Devices AD7417/18
@@ -355,10 +355,10 @@ Index: linux-2.6.17-rc6/drivers/hwmon/ad741x.c
 +
 +module_init(ad741x_init);
 +module_exit(ad741x_exit);
-Index: linux-2.6.17-rc6/drivers/hwmon/Kconfig
+Index: linux-2.6.17/drivers/hwmon/Kconfig
 ===================================================================
---- linux-2.6.17-rc6.orig/drivers/hwmon/Kconfig	2006-06-07 23:50:30.564143112 +0930
-+++ linux-2.6.17-rc6/drivers/hwmon/Kconfig	2006-06-08 00:02:10.865681096 +0930
+--- linux-2.6.17.orig/drivers/hwmon/Kconfig	2006-06-19 12:24:03.406525328 +0930
++++ linux-2.6.17/drivers/hwmon/Kconfig	2006-06-19 12:24:49.478521320 +0930
 @@ -434,6 +434,16 @@
  	  This driver can also be built as a module.  If so, the module
  	  will be called w83627ehf.

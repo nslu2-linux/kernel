@@ -11,10 +11,10 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  arch/arm/kernel/setup.c |   29 ++++++++++++++++++++++++++++-
  1 file changed, 28 insertions(+), 1 deletion(-)
 
-Index: linux-2.6.17-rc6/arch/arm/kernel/setup.c
+Index: linux-2.6.17/arch/arm/kernel/setup.c
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/kernel/setup.c	2006-06-07 23:50:22.201414440 +0930
-+++ linux-2.6.17-rc6/arch/arm/kernel/setup.c	2006-06-08 00:02:08.619022640 +0930
+--- linux-2.6.17.orig/arch/arm/kernel/setup.c	2006-06-19 12:21:03.439884416 +0930
++++ linux-2.6.17/arch/arm/kernel/setup.c	2006-06-19 12:24:42.622563584 +0930
 @@ -669,7 +669,34 @@
  
  static int __init parse_tag_cmdline(const struct tag *tag)
