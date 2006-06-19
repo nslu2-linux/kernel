@@ -7,20 +7,20 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  arch/arm/mach-ixp4xx/nslu2-setup.c |   45 ++++++++++++++++++++++++++++++++++++-
  1 file changed, 44 insertions(+), 1 deletion(-)
 
-Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-08 00:03:00.632115448 +0930
-+++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-08 00:03:03.190726480 +0930
-@@ -20,6 +20,8 @@
- #include <linux/netdevice.h>
- #include <linux/etherdevice.h>
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:39:38.297683456 +0930
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:39:49.776938344 +0930
+@@ -17,6 +17,8 @@
+ #include <linux/serial.h>
+ #include <linux/serial_8250.h>
  
 +#include <asm/setup.h>
 +#include <asm/memory.h>
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
-@@ -196,11 +198,52 @@
+@@ -130,11 +132,52 @@
  	platform_add_devices(nslu2_devices, ARRAY_SIZE(nslu2_devices));
  }
  

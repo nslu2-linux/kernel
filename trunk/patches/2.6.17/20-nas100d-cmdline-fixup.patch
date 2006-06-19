@@ -12,8 +12,8 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 
 Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:31:21.600192952 +0930
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:33:11.915422488 +0930
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:34:26.781041184 +0930
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:39:45.351611096 +0930
 @@ -19,6 +19,7 @@
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
