@@ -1,10 +1,10 @@
  arch/arm/mach-ixp4xx/nslu2-setup.c |   62 +++++++++++++++++++++++++++++++++++++
  1 file changed, 62 insertions(+)
 
-Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-08 00:02:53.645177624 +0930
-+++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-08 00:03:00.632115448 +0930
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:41:33.560160896 +0930
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:44:17.950169816 +0930
 @@ -16,6 +16,9 @@
  #include <linux/kernel.h>
  #include <linux/serial.h>
@@ -13,9 +13,9 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
 +#include <linux/netdevice.h>
 +#include <linux/etherdevice.h>
  
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -117,6 +120,58 @@
+ #include <asm/setup.h>
+ #include <asm/memory.h>
+@@ -119,8 +122,66 @@
  	gpio_line_set(NSLU2_PO_GPIO, IXP4XX_GPIO_HIGH);
  }
  
@@ -73,11 +73,6 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
 +
  static void __init nslu2_init(void)
  {
- 	/* The NSLU2 has a 33MHz crystal on board - 1.01% different
-@@ -124,6 +179,12 @@
- 	 */
- 	ixp4xx_set_board_tick_rate(66000000);
- 
 +	/* The flash has an ethernet MAC embedded in it which we need,
 +	 * that is all this notifier does.
 +	 */
