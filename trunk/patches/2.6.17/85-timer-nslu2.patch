@@ -1,3 +1,16 @@
+This is the NSLU2-specific part of the two-part series which enables
+the Linksys NSLU2 (which has a 66.0000MHz crystal frequency instead of
+the standard 66.6666MHz for other IXP4xx boards) to keep somewhat
+accurate time.  This patch uses the ixp4xx_set_board_tick_rate API
+which was provided by the previous patch in this two-part series (and
+therefore depends on that first part being already applied).
+
+Signed-off-by: John Bowler <jbowler@acm.org>
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+
+PATCH FOLLOWS
+KernelVersion: 2.6.17
+
  arch/arm/mach-ixp4xx/nslu2-setup.c  |    5 +++++
  include/asm-arm/arch-ixp4xx/nslu2.h |    5 -----
  2 files changed, 5 insertions(+), 5 deletions(-)
@@ -10,7 +23,7 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
  
  static void __init nslu2_init(void)
  {
-+	/* The NSLU2 has a 33MHz crystal on board - 1.01% different
++	/* The NSLU2 has a 66MHz crystal on board - 1.01% different
 +	 * from the typical value.
 +	 */
 +	ixp4xx_set_board_tick_rate(66000000);
