@@ -9,8 +9,8 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 
 Index: linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:39:38.297683456 +0930
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:39:49.776938344 +0930
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:41:19.682270656 +0930
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:41:33.560160896 +0930
 @@ -17,6 +17,8 @@
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
