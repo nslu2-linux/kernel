@@ -1,0 +1,36 @@
+ arch/arm/mach-ixp4xx/nslu2-setup.c  |    5 +++++
+ include/asm-arm/arch-ixp4xx/nslu2.h |    5 -----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
+===================================================================
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nslu2-setup.c
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
+@@ -217,6 +217,11 @@
+ 
+ static void __init nslu2_init(void)
+ {
++	/* The NSLU2 has a 33MHz crystal on board - 1.01% different
++	 * from the typical value.
++	 */
++	ixp4xx_set_board_tick_rate(66000000);
++
+ 	/* The flash has an ethernet MAC embedded in it which we need,
+ 	 * that is all this notifier does.
+ 	 */
+Index: linux-2.6.17/include/asm-arm/arch-ixp4xx/nslu2.h
+===================================================================
+--- linux-2.6.17.orig/include/asm-arm/arch-ixp4xx/nslu2.h
++++ linux-2.6.17/include/asm-arm/arch-ixp4xx/nslu2.h
+@@ -35,11 +35,6 @@
+ #define NSLU2_PCI_INTD_PIN	8
+ 
+ 
+-/* NSLU2 Timer */
+-#define NSLU2_FREQ 66000000
+-#define NSLU2_CLOCK_TICK_RATE (((NSLU2_FREQ / HZ & ~IXP4XX_OST_RELOAD_MASK) + 1) * HZ)
+-#define NSLU2_CLOCK_TICKS_PER_USEC ((NSLU2_CLOCK_TICK_RATE + USEC_PER_SEC/2) / USEC_PER_SEC)
+-
+ /* GPIO */
+ 
+ #define NSLU2_GPIO0		0

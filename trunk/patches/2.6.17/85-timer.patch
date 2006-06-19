@@ -1,14 +1,12 @@
  arch/arm/mach-ixp4xx/common.c       |  165 +++++++++++++++++++++++++++++++++---
- arch/arm/mach-ixp4xx/nslu2-setup.c  |    5 +
- include/asm-arm/arch-ixp4xx/nslu2.h |    5 -
  include/asm-arm/arch-ixp4xx/timex.h |   23 +++--
- 4 files changed, 176 insertions(+), 22 deletions(-)
+ 2 files changed, 171 insertions(+), 17 deletions(-)
 
-Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/common.c
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/common.c
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/common.c	2006-06-08 00:00:13.224565264 +0930
-+++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/common.c	2006-06-08 00:02:53.645177624 +0930
-@@ -253,36 +253,165 @@
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/common.c
++++ linux-2.6.17/arch/arm/mach-ixp4xx/common.c
+@@ -250,36 +250,165 @@
   * IXP4xx timer tick
   * We use OS timer1 on the CPU for the timer tick and the timestamp 
   * counter as a source of real clock ticks to account for missed jiffies.
@@ -183,7 +181,7 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/common.c
  
  	write_sequnlock(&xtime_lock);
  
-@@ -295,17 +424,30 @@
+@@ -292,17 +421,30 @@
  	.handler	= ixp4xx_timer_interrupt,
  };
  
@@ -216,47 +214,15 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/common.c
  
  	/* Connect the interrupt handler and enable the interrupt */
  	setup_irq(IRQ_IXP4XX_TIMER1, &ixp4xx_timer_irq);
-@@ -368,4 +510,3 @@
+@@ -365,4 +507,3 @@
  	printk("IXP4xx: Using %luMiB expansion bus window size\n",
  			ixp4xx_exp_bus_size >> 20);
  }
 -
-Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.17/include/asm-arm/arch-ixp4xx/timex.h
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-03-20 16:23:29.000000000 +1030
-+++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-08 00:02:53.645177624 +0930
-@@ -119,6 +119,11 @@
- 
- static void __init nslu2_init(void)
- {
-+	/* The NSLU2 has a 33MHz crystal on board - 1.01% different
-+	 * from the typical value.
-+	 */
-+	ixp4xx_set_board_tick_rate(66000000);
-+
- 	ixp4xx_sys_init();
- 
- 	nslu2_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
-Index: linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/nslu2.h
-===================================================================
---- linux-2.6.17-rc6.orig/include/asm-arm/arch-ixp4xx/nslu2.h	2006-03-20 16:23:29.000000000 +1030
-+++ linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/nslu2.h	2006-06-08 00:02:53.646177472 +0930
-@@ -35,11 +35,6 @@
- #define NSLU2_PCI_INTD_PIN	8
- 
- 
--/* NSLU2 Timer */
--#define NSLU2_FREQ 66000000
--#define NSLU2_CLOCK_TICK_RATE (((NSLU2_FREQ / HZ & ~IXP4XX_OST_RELOAD_MASK) + 1) * HZ)
--#define NSLU2_CLOCK_TICKS_PER_USEC ((NSLU2_CLOCK_TICK_RATE + USEC_PER_SEC/2) / USEC_PER_SEC)
--
- /* GPIO */
- 
- #define NSLU2_GPIO0		0
-Index: linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/timex.h
-===================================================================
---- linux-2.6.17-rc6.orig/include/asm-arm/arch-ixp4xx/timex.h	2006-03-20 16:23:29.000000000 +1030
-+++ linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/timex.h	2006-06-08 00:02:53.647177320 +0930
+--- linux-2.6.17.orig/include/asm-arm/arch-ixp4xx/timex.h
++++ linux-2.6.17/include/asm-arm/arch-ixp4xx/timex.h
 @@ -6,10 +6,23 @@
  #include <asm/hardware.h>
  

@@ -15,7 +15,8 @@
 #45-eeprom-new-notifier.patch
 #65-loft-config.patch
 #75-dsmg600.patch
-#85-timer.patch
+85-timer.patch
+85-timer-nslu2.patch
 #91-maclist.patch
 #94-loft-setup.patch    
 #96-pata-ixp4xx.patch
