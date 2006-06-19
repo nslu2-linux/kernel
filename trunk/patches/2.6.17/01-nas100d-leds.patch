@@ -11,24 +11,22 @@ Signed-off-by: Rod Whitby <rod@whitby.id.au>
 PATCH FOLLOWS
 KernelVersion: 2.6.17
 
- arch/arm/mach-ixp4xx/nas100d-setup.c |   43 ++++++++++++++++++++++++++++++++++-
- 1 files changed, 42 insertions(+), 1 deletion(-)
+ arch/arm/mach-ixp4xx/nas100d-setup.c |   41 ++++++++++++++++++++++++++++++++++-
+ 1 files changed, 40 insertions(+), 1 deletion(-)
 
 Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
 --- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c
 +++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
-@@ -15,6 +15,9 @@
+@@ -15,6 +15,7 @@
  #include <linux/kernel.h>
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
-+#ifdef CONFIG_LEDS_IXP4XX
 +#include <linux/leds.h>
-+#endif
  
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
-@@ -37,6 +40,36 @@
+@@ -37,6 +38,36 @@
  	.resource		= &nas100d_flash_resource,
  };
  
@@ -65,7 +63,7 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
  static struct ixp4xx_i2c_pins nas100d_i2c_gpio_pins = {
  	.sda_pin		= NAS100D_SDA_PIN,
  	.scl_pin		= NAS100D_SCL_PIN,
-@@ -95,7 +128,9 @@
+@@ -95,7 +126,9 @@
  static struct platform_device *nas100d_devices[] __initdata = {
  	&nas100d_i2c_controller,
  	&nas100d_flash,
@@ -76,7 +74,7 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
  };
  
  static void nas100d_power_off(void)
-@@ -122,6 +157,12 @@
+@@ -122,6 +155,12 @@
  
  	pm_power_off = nas100d_power_off;
  
