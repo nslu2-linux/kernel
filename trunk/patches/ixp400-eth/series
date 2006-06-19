@@ -9,3 +9,4 @@ continue-if-qmgr-init-fails.patch
 debug.patch
 kbuild.patch
 netdev_max_backlog.patch
+module-param.patch

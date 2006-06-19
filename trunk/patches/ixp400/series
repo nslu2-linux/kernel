@@ -8,3 +8,4 @@ rtl8201-support.patch
 ixp400-makefile.patch
 environment.patch
 gcc4.patch
+module-param.patch
