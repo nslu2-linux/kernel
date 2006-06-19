@@ -1,3 +1,17 @@
+This is an IXP4xx timer patch which allows variable crystal
+frequencies for boards which do not have a true 66.6666MHz crystal
+(for example, the Linksys NSLU2 which has a 66.0000MHz crystal).
+The patch provides an API ixp4xx_set_board_tick_rate which may be
+used to correct the actual clock frequency from the board level
+code, and has been developed specifically so the NSLU2 board can be
+enabled along with other IXP4xx-based boards in the same kernel.
+
+Signed-off-by: John Bowler <jbowler@acm.org>
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+
+PATCH FOLLOWS
+KernelVersion: 2.6.17
+
  arch/arm/mach-ixp4xx/common.c       |  165 +++++++++++++++++++++++++++++++++---
  include/asm-arm/arch-ixp4xx/timex.h |   23 +++--
  2 files changed, 171 insertions(+), 17 deletions(-)
