@@ -8,6 +8,9 @@ enable debugging of other device support.
 Signed-off-by: John Bowler <jbowler@acm.org>
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 
+PATCH FOLLOWS
+KernelVersion: 2.6.17
+
  arch/arm/mach-ixp4xx/nslu2-setup.c |   50 ++++++++++++++++++++++++++++++++++++-
  1 files changed, 49 insertions(+), 1 deletion(-)
 

@@ -8,6 +8,9 @@ ethernet device driver to access and use that MAC address.
 Signed-off-by: John Bowler <jbowler@acm.org>
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 
+PATCH FOLLOWS
+KernelVersion: 2.6.17
+
  arch/arm/mach-ixp4xx/nas100d-setup.c |   64 +++++++++++++++++++++++++++++++++++
  1 files changed, 64 insertions(+)
 

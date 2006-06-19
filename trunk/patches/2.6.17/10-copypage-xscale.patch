@@ -8,6 +8,9 @@ WARNING: "xscale_mc_clear_user_page" [drivers/media/video/video-buf.ko] undefine
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 
+PATCH FOLLOWS
+KernelVersion: 2.6.17
+
  arch/arm/mm/copypage-xscale.c |    4 ++++
  1 files changed, 4 insertions(+)
 
