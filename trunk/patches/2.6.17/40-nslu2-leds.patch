@@ -5,10 +5,10 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  arch/arm/mach-ixp4xx/nslu2-setup.c |   51 ++++++++++++++++++++++++++++++++++++-
  1 file changed, 50 insertions(+), 1 deletion(-)
 
-Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-08 00:03:03.190726480 +0930
-+++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-08 00:05:49.236483688 +0930
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:47:56.672918904 +0930
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:49:25.030486512 +0930
 @@ -19,6 +19,9 @@
  #include <linux/mtd/mtd.h>
  #include <linux/netdevice.h>
@@ -70,7 +70,7 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
  	&nslu2_beeper,
  };
  
-@@ -195,7 +233,18 @@
+@@ -190,7 +228,18 @@
  
  	pm_power_off = nslu2_power_off;
  

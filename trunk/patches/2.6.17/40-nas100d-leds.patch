@@ -2,10 +2,10 @@ NEW_LEDS support for the IOMega NAS100D
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
-Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-08 00:02:58.169489824 +0930
-+++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-08 00:05:43.593341576 +0930
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:47:55.997021656 +0930
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:49:16.536777752 +0930
 @@ -18,6 +18,7 @@
  #include <linux/mtd/mtd.h>
  #include <linux/netdevice.h>
