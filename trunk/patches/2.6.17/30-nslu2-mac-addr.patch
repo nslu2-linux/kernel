@@ -1,21 +1,22 @@
  arch/arm/mach-ixp4xx/nslu2-setup.c |   62 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
+ 1 files changed, 62 insertions(+)
 
 Index: linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:41:33.560160896 +0930
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-06-19 11:44:17.950169816 +0930
-@@ -16,6 +16,9 @@
- #include <linux/kernel.h>
- #include <linux/serial.h>
- #include <linux/serial_8250.h>
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nslu2-setup.c
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
+@@ -25,6 +25,10 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/flash.h>
+ 
 +#include <linux/mtd/mtd.h>
 +#include <linux/netdevice.h>
 +#include <linux/etherdevice.h>
- 
- #include <asm/setup.h>
- #include <asm/memory.h>
-@@ -119,8 +122,66 @@
++
+ static struct flash_platform_data nslu2_flash_data = {
+ 	.map_name		= "cfi_probe",
+ 	.width			= 2,
+@@ -159,8 +163,66 @@
  	gpio_line_set(NSLU2_PO_GPIO, IXP4XX_GPIO_HIGH);
  }
  
