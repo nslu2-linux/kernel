@@ -10,10 +10,10 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  arch/arm/mach-ixp4xx/nas100d-setup.c |   33 +++++++++++++++++++++++++++++++++
  1 file changed, 33 insertions(+)
 
-Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-03-20 16:23:29.000000000 +1030
-+++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-08 00:02:48.988885488 +0930
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:31:21.600192952 +0930
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:33:11.915422488 +0930
 @@ -19,6 +19,7 @@
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
@@ -22,7 +22,7 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c
  
  static struct flash_platform_data nas100d_flash_data = {
  	.map_name		= "cfi_probe",
-@@ -125,11 +126,43 @@
+@@ -125,11 +126,54 @@
  	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
  }
  
@@ -44,6 +44,12 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c
 + * to be reset to 0 (on the first mem=)
 + */
 +
++static char nas100d_command_line[] __initdata =
++	"root=/dev/mtdblock2 rootfstype=jffs2 init=/linuxrc "
++	"rtc-pcf8563.probe=0,0x51 "
++	CONFIG_CMDLINE;
++
++
 +static void __init nas100d_fixup(struct machine_desc *desc,
 +		struct tag *tags, char **cmdline, struct meminfo *mi)
 +{
@@ -55,6 +61,11 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c
 +	mi->bank[0].start = 0;
 +	mi->bank[0].size = (64*1024*1024);
 +	mi->bank[0].node = PHYS_TO_NID(0);
++
++	/* A command line in the ATAG list will override this one,
++	 * as is intended.
++	 */
++	strlcpy(*cmdline, nas100d_command_line, COMMAND_LINE_SIZE);
 +}
 +
  MACHINE_START(NAS100D, "Iomega NAS 100d")
