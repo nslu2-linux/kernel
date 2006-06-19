@@ -4,17 +4,17 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 
 Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:47:55.997021656 +0930
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:49:16.536777752 +0930
-@@ -18,6 +18,7 @@
- #include <linux/mtd/mtd.h>
- #include <linux/netdevice.h>
- #include <linux/etherdevice.h>
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 12:34:15.662448280 +0930
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 12:40:57.474363584 +0930
+@@ -15,6 +15,7 @@
+ #include <linux/kernel.h>
+ #include <linux/serial.h>
+ #include <linux/serial_8250.h>
 +#include <linux/leds.h>
  
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
-@@ -41,6 +42,36 @@
+@@ -37,6 +38,36 @@
  	.resource		= &nas100d_flash_resource,
  };
  
@@ -51,30 +51,13 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
  static struct ixp4xx_i2c_pins nas100d_i2c_gpio_pins = {
  	.sda_pin		= NAS100D_SDA_PIN,
  	.scl_pin		= NAS100D_SCL_PIN,
-@@ -99,7 +130,6 @@
- static struct platform_device *nas100d_devices[] __initdata = {
+@@ -96,6 +127,9 @@
  	&nas100d_i2c_controller,
  	&nas100d_flash,
--	&nas100d_uart,
+ 	&nas100d_uart,
++#ifdef CONFIG_LEDS_CLASS
++	&nas100d_leds,
++#endif
  };
  
  static void nas100d_power_off(void)
-@@ -186,7 +216,18 @@
- 
- 	pm_power_off = nas100d_power_off;
- 
-+	/* This is only useful on a modified machine, but it is valuable
-+	 * to have it first in order to see debug messages, and so that
-+	 * it does *not* get removed if platform_add_devices fails!
-+	 */
-+	(void)platform_device_register(&nas100d_uart);
-+
- 	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
-+
-+#ifdef CONFIG_LEDS_CLASS
-+	/* We don't care whether or not this works. */
-+	(void)platform_device_register(&nas100d_leds);
-+#endif
- }
- 
- /*
