@@ -1,3 +1,13 @@
+Some ethernet controllers have no built-in way of obtaining an
+appropriate Ethernet MAC address.  Such controllers have to be
+initialised in a board-specific way, depending on how the allocated
+MAC is stored.  The IOMega NAS100d stores the MAC address in the flash
+memory at a known offset.  This patch enables the built-in ixp400
+ethernet device driver to access and use that MAC address.
+
+Signed-off-by: John Bowler <jbowler@acm.org>
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+
  arch/arm/mach-ixp4xx/nas100d-setup.c |   64 +++++++++++++++++++++++++++++++++++
  1 files changed, 64 insertions(+)
 
@@ -5,7 +15,7 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
 --- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c
 +++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
-@@ -21,6 +21,10 @@
+@@ -23,6 +23,10 @@
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
  
@@ -16,7 +26,7 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
  static struct flash_platform_data nas100d_flash_data = {
  	.map_name		= "cfi_probe",
  	.width			= 2,
-@@ -142,8 +146,68 @@
+@@ -144,8 +148,68 @@
  	gpio_line_set(NAS100D_PO_GPIO, IXP4XX_GPIO_HIGH);
  }
  

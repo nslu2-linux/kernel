@@ -1,3 +1,13 @@
+Some ethernet controllers have no built-in way of obtaining an
+appropriate Ethernet MAC address.  Such controllers have to be
+initialised in a board-specific way, depending on how the allocated
+MAC is stored.  The Linksys NSLU2 stores the MAC address in the flash
+memory at a known offset.  This patch enables the built-in ixp400
+ethernet device driver to access and use that MAC address.
+
+Signed-off-by: John Bowler <jbowler@acm.org>
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+
  arch/arm/mach-ixp4xx/nslu2-setup.c |   62 +++++++++++++++++++++++++++++++++++++
  1 files changed, 62 insertions(+)
 
