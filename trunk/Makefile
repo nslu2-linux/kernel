@@ -22,9 +22,9 @@
 ENDIAN = l
 #ENDIAN = b
 MAJORVER = 2.6
-BASEVER  = 2.6.17
-MINORVER = 2.6.17
-PATCHVER = 2.6.17
+BASEVER  = 2.6.16
+MINORVER = 2.6.16
+PATCHVER = 2.6.16
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
@@ -111,11 +111,9 @@ lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko: \
 ixp400_eth/Kbuild:
 	( mkdir ixp400_eth ; cd ixp400_eth ; \
 	  unzip ../downloads/GPL_ixp400LinuxEthernetDriverPatch-1_5.zip )
-	( cd patches/ixp400-eth ; \
-	  grep -v \# series | \
-	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
-	) | \
-	patch -d ixp400_eth -p1
+	( cd ixp400_eth ; \
+	  ln -s ../patches/ixp400-eth patches ; \
+	  quilt push -a )
 
 lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko: \
 		ixp400_xscale_sw/Makefile vmlinuz-${REVISION}
@@ -133,16 +131,12 @@ lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko: \
 ixp400_xscale_sw/Makefile:
 	unzip downloads/IPL_ixp400AccessLibrary-2_1.zip
 	unzip downloads/IPL_ixp400NpeLibrary-2_1.zip
-	( cd patches/ixp400 ; \
-	  grep -v \# series | \
-	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
-	) | \
-	patch -d ixp400_xscale_sw -p1
-	( cd patches/ixp-osal ; \
-	  grep -v \# series | \
-	  while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
-	) | \
-	patch -d ixp_osal -p1
+	( cd ixp400_xscale_sw ; \
+	  ln -s ../patches/ixp400 patches ; \
+	  quilt push -a )
+	( cd ixp_osal ; \
+	  ln -s ../patches/ixp-osal patches ; \
+	  quilt push -a )
 
 vmlinuz-loft-${REVISION}: vmlinuz-${REVISION}
 ifeq (${ENDIAN},b)
