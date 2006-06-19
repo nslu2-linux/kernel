@@ -4,7 +4,7 @@
 30-nas100d-mac-addr.patch
 30-nslu2-mac-addr.patch
 40-nas100d-leds.patch
-96-nslu2-leds.patch
+40-nslu2-leds.patch
 #11-mtdpart-redboot-config-byteswap.patch
 #15-jffs2-endian-config.patch
 #45-eeprom-new-notifier.patch
