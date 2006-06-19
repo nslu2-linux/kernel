@@ -7,22 +7,22 @@ RedBoot on the nas100d.
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
- arch/arm/mach-ixp4xx/nas100d-setup.c |   33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+ arch/arm/mach-ixp4xx/nas100d-setup.c |   44 +++++++++++++++++++++++++++++++++++
+ 1 files changed, 44 insertions(+)
 
 Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:41:19.774256672 +0930
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-19 11:41:28.950861616 +0930
-@@ -19,6 +19,7 @@
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c
++++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
+@@ -22,6 +22,7 @@
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
 +#include <asm/setup.h>
  
- static struct flash_platform_data nas100d_flash_data = {
- 	.map_name		= "cfi_probe",
-@@ -125,11 +126,54 @@
+ #include <linux/mtd/mtd.h>
+ #include <linux/netdevice.h>
+@@ -230,11 +231,54 @@
  	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
  }
  
