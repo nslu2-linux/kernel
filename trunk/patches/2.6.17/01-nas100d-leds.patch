@@ -2,8 +2,8 @@ This patch implements NEW_LEDS support for the IOMega NAS100d.  The
 NAS100d has three LED indicators, which are the only form of output
 for an unmodified device - there is no keyboard or display on an
 NAS100d.  For an NAS100d which has been modified to bring out the
-serial port console, it is important to register that device
-first separately, to enable debugging of other device support.
+serial port console, it is important to register that device first
+separately, to enable debugging of other device support.
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
