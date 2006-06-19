@@ -18,7 +18,7 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
 --- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c
 +++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
-@@ -23,6 +23,10 @@
+@@ -21,6 +21,10 @@
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
  
@@ -29,7 +29,7 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
  static struct flash_platform_data nas100d_flash_data = {
  	.map_name		= "cfi_probe",
  	.width			= 2,
-@@ -144,8 +148,68 @@
+@@ -142,8 +146,68 @@
  	gpio_line_set(NAS100D_PO_GPIO, IXP4XX_GPIO_HIGH);
  }
  

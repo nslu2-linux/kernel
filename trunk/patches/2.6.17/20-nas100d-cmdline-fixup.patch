@@ -14,7 +14,7 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
 --- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c
 +++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
-@@ -22,6 +22,7 @@
+@@ -20,6 +20,7 @@
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
@@ -22,7 +22,7 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
  
  #include <linux/mtd/mtd.h>
  #include <linux/netdevice.h>
-@@ -230,11 +231,54 @@
+@@ -228,11 +229,54 @@
  	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
  }
  
