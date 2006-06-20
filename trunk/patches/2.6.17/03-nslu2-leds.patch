@@ -1,3 +1,5 @@
+Submitted as http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3597/1
+
 This patch implements NEW_LEDS support for the Linksys NSLU2.  The
 NSLU2 has four LED indicators, which are the only form of output for
 an unmodified device - there is no keyboard or display on an NSLU2.

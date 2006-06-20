@@ -1,3 +1,5 @@
+Submitted as http://lists.arm.linux.org.uk/pipermail/linux-arm-kernel/2006-June/034635.html
+
 This is the NSLU2-specific part of the two-part series which enables
 the Linksys NSLU2 (which has a 66.0000MHz crystal frequency instead of
 the standard 66.6666MHz for other IXP4xx boards) to keep somewhat

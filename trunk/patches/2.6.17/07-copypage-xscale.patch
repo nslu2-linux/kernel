@@ -1,3 +1,5 @@
+Submitted as http://lists.arm.linux.org.uk/pipermail/linux-arm-kernel/2006-June/034647.html
+
 The function clear_user_page() is defined in asm/page.h to be
 __cpu_clear_user_page() which on the XScale architecture resolves to
 xscale_mc_clear_user_page - which in turn needs to be exported for the
