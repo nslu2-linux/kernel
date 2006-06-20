@@ -1,11 +1,11 @@
+Submitted as http://lists.arm.linux.org.uk/pipermail/linux-arm-kernel/2006-June/034667.html
+
 Include a fixup machine start function in nas100d-setup.c to handle
 the command line and memory setup parameters which are not specifiable
 in the boot loader.
 
-TODO: We must check what is actually passed by the stock
-RedBoot on the nas100d.
-
 Signed-off-by: John Bowler <jbowler@acm.org>
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
 
  arch/arm/mach-ixp4xx/nas100d-setup.c |   44 +++++++++++++++++++++++++++++++++++
  1 files changed, 44 insertions(+)
