@@ -10,7 +10,7 @@
 #11-mtdpart-redboot-config-byteswap.patch
 #12-setup-byteswap-cmdline.patch
 #13-hwmon-ad741x.patch
-#15-jffs2-endian-config.patch
+15-jffs2-endian-config.patch
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
 50-leds-arm-cpu-activity.patch
@@ -19,7 +19,3 @@
 #75-dsmg600.patch
 #91-maclist.patch
 #94-loft-setup.patch    
-#96-pata-ixp4xx.patch
-#97-ds101.patch
-#97-ds101-buttons.patch
-#97-ds101-doc.patch
