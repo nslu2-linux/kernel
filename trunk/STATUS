@@ -7,65 +7,52 @@
 [linux-mtd] - patch submitted to the linux-mtd mailing list (because
 	it is not ARM specific.)
 
-00-memory-h-page-shift.patch [ARM patch system]
-	ARM patch 3218/1
-	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3218/1
-	Moved to "applied" - should be in 2.6.16-rc1
+01-nas100d-leds.patch
+02-nas100d-mac-addr.patch
+03-nslu2-leds.patch
+04-nslu2-mac-addr.patch
+	Submitted to ARM patch system.
 
-10-mtdpart-redboot-fis-byteswap.patch [linux-mtd]
-	In MM tree: drives-mtd-redbootc-recognise-a-foreign-byte-sex-partition-table.patch
+05-timer-ixp4xx.patch [RFC submitted to l-a-k]
+06-timer-nslu2.patch [RFC submitted to l-a-k]
+	Posted as RFC on l-a-k, not yet submitted to ARM patch system.
+	May need to be rewritten to use new clocksource support scheduled for 2.6.18
+
+07-copypage-xscale.patch
+	Posted as RFC on l-a-k, not yet submitted to ARM patch system.
+
+11-mtdpart-redboot-config-byteswap.patch
+	To be submitted.
+
+12-setup-byteswap-cmdline.patch
+	What device is this required for?
+
+13-hwmon-ad741x.patch
+	What device is this required for?
 
 15-jffs2-endian-config.patch [linux-mtd]
-	Submitted to linux-mtd
+	Has been submitted to linux-mtd
 	http://lists.infradead.org/pipermail/linux-mtd/2006-January/014740.html
 
-40-rtc-class.patch [RFC on lkml]
-	RTC subsystem with X1205 driver. Requires one more line in udev
-	config:
-
-	ACTION=="add", SUBSYSTEM=="rtc", ENV{MINOR}=="0",       SYMLINK+="rtc"
+20-nas100d-cmdline-fixup.patch
+20-nslu2-cmdline-fixup.patch
+	Don't expect these to be accepted upstream (based on advice from Richard Purdie).
+	For upstream, just submit nslu2 and nas100d defconfig files.
 
 45-eeprom-notifier.patch [Should have an RFC on lkml]
-	To be submitted.
+	To be submitted by Tom Billman or John Bowler.
 
-60-ixp4xx-beeper.patch [driver]
-	Accepted, will be included in 2.6.16.
+50-leds-arm-cpu-activity.patch
+	Discussed with Richard Purdie.  Not yet ready for upstream.
 
-61-nslu2-beeper.patch
-	Must be sent to l-a-k.
+65-loft-config.patch
+	To be submitted by Tom Billman or John Bowler.
 
-75-nslu2-leds.patch [driver]
-	Will not be submitted - to be superceded by new LEDS subsystem.
-
-80-nslu2-io.patch [driver]
-	Unlikely to be submitted - this is a compatibility patch to support
-	existing user space use of the old LED driver.  The new LEDS
-	subsystem will supercede this.
-
-81-nslu2-power.patch [ARM patch system]
-	To be submitted.
-
-82-nas100d-power.patch [ARM patch system]
-	To be submitted.
-
-85-timer.patch [RFC to be submitted to l-a-k]
-	Not yet submitted
-	Will require discussion on l-a-k, as it touches other ixp4xx machines.
+75-dsmg600.patch
+	To be submitted by Tom Billman.
 
 91-maclist.patch [Should be submitted to netdev]
-	Not yet submitted
-
-92-nslu2-maclist.patch [Should be submitted to l-a-k]
-	Depends on 91-maclist.patch being accepted upstream
-
-93-loft-maclist.patch [Should be submitted to l-a-k]
-	Depends on 91-maclist.patch being accepted upstream
+	Is this superceded?
 
 94-loft-setup.patch [ARM patch system]
-	To be submitted.
-
-94-nas100d-setup.patch [ARM patch system]
-	To be submitted.
-
-94-nslu2-setup.patch [ARM patch system]
-	To be submitted.
+	To be submitted by Tom Billman or John Bowler.
