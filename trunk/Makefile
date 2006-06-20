@@ -22,9 +22,9 @@
 ENDIAN = l
 #ENDIAN = b
 MAJORVER = 2.6
-BASEVER  = 2.6.16
-MINORVER = 2.6.16
-PATCHVER = 2.6.16
+BASEVER  = 2.6.17
+MINORVER = 2.6.17
+PATCHVER = 2.6.17
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
@@ -51,23 +51,27 @@ else
 CROSS_COMPILE_FLAGS = 
 endif
 
-all: kernel modules usr
+all: kernel modules
 
 kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REVISION} vmlinuz-ds101-${REVISION} vmlinuz-dsmg600-${REVISION}
 ixp400: lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko
 ixp400-eth: lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
 madwifi: lib/modules/${REVISION}/net/ath_hal.ko
 modules: modules-${REVISION}.tar.gz
+patched: linux-${REVISION}/.config ixp400_xscale_sw/Makefile ixp400_eth/Kbuild 
+
 usr: usr-${REVISION}.tar.gz
 
 usr-${REVISION}.tar.gz: vmlinuz-${REVISION} \
 	 usr/local/bin/wlanconfig
 	tar zcf usr-${REVISION}.tar.gz usr/local
 
+# Add the following depedency if you want madwifi built.
+#	 lib/modules/${REVISION}/net/ath_hal.ko
+
 modules-${REVISION}.tar.gz: vmlinuz-${REVISION} \
 	 lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko \
-	 lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko \
-	 lib/modules/${REVISION}/net/ath_hal.ko
+	 lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
 	tar zcf modules-${REVISION}.tar.gz lib/modules/${REVISION}
 
 lib/modules/${REVISION}/net/ath_hal.ko usr/local/bin/wlanconfig: \
@@ -264,10 +268,19 @@ endif
 endif
 ifeq (${ENDIAN},b)
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/CONFIG_CPU_BIG_ENDIAN=y/' \
+		-e '/CONFIG_JFFS2_NATIVE_ENDIAN=/d' \
+		-e '/CONFIG_JFFS2_BIG_ENDIAN=/d' \
+		-e '/CONFIG_JFFS2_LITTLE_ENDIAN=/d' \
 		< patches/${PATCHVER}/defconfig > linux-${REVISION}/.config
+	echo 'CONFIG_JFFS2_BIG_ENDIAN=y' >> linux-${REVISION}/.config
 else
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/\# CONFIG_CPU_BIG_ENDIAN is not set/' \
+		-e '/CONFIG_JFFS2_NATIVE_ENDIAN=/d' \
+		-e '/CONFIG_JFFS2_BIG_ENDIAN=/d' \
+		-e '/CONFIG_JFFS2_LITTLE_ENDIAN=/d' \
 		< patches/${PATCHVER}/defconfig > linux-${REVISION}/.config
+	# Yes, we do want to keep the jffs2 filesystem big-endian.
+	echo 'CONFIG_JFFS2_BIG_ENDIAN=y' >> linux-${REVISION}/.config
 endif
 
 downloads/linux-${BASEVER}.tar.bz2 :
