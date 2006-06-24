@@ -16,6 +16,7 @@
 50-leds-arm-cpu-activity.patch
 #45-eeprom-new-notifier.patch
 #65-loft-config.patch
-#75-dsmg600.patch
+75-dsmg600.patch
+#76-dsmg600-pwrbtn.patch
 #91-maclist.patch
 #94-loft-setup.patch    
