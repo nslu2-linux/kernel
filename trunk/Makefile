@@ -114,7 +114,7 @@ lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko: \
 
 ixp400_eth/Kbuild:
 	( mkdir ixp400_eth ; cd ixp400_eth ; \
-	  unzip ../downloads/GPL_ixp400LinuxEthernetDriverPatch-1_5.zip )
+	  unzip ../downloads/GPL_ixp400LinuxEthernetDriverPatch-1_5_1.zip )
 	( cd ixp400_eth ; \
 	  ln -s ../patches/ixp400-eth patches ; \
 	  quilt push -a )
@@ -122,18 +122,21 @@ ixp400_eth/Kbuild:
 lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko: \
 		ixp400_xscale_sw/Makefile vmlinuz-${REVISION}
 	( . ixp400_xscale_sw/buildUtils/environment.linux.sh ; \
+	  export linux${endian}e_KERNEL_DIR=`pwd`/linux-${REVISION} ; \
 	  export KERNEL_DIR=`pwd`/linux-${REVISION} ; \
 	  export IX_XSCALE_SW=`pwd`/ixp400_xscale_sw ; \
 	  export IX_TARGET=linux${ENDIAN}e ; \
 	  make -C ixp400_xscale_sw ARCH=arm \
-	    CROSS_COMPILE=${CROSS_COMPILE} ixp400.ko )
+	    CROSS_COMPILE=${CROSS_COMPILE} ixp400 )
 	mkdir -p lib/modules/${REVISION}/kernel/drivers/ixp400
 	cp ixp400_xscale_sw/lib/linux${ENDIAN}e/ixp400.ko \
 		lib/modules/${REVISION}/kernel/drivers/ixp400
 	chmod 644 lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko
 
 ixp400_xscale_sw/Makefile:
-	unzip downloads/IPL_ixp400AccessLibrary-2_1.zip
+	unzip downloads/BSD_ixp400AccessLibrary-2_1.zip
+	( cd ixp_osal ; unzip ../downloads/BSD_ixp400AccessLibrary-2_1_1.zip )
+	cat ixp_osal/BSD_ixp400AccessLibrary-2_1_1.patch | patch -p0
 	unzip downloads/IPL_ixp400NpeLibrary-2_1.zip
 	( cd ixp400_xscale_sw ; \
 	  ln -s ../patches/ixp400 patches ; \
@@ -268,19 +271,22 @@ endif
 endif
 ifeq (${ENDIAN},b)
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/CONFIG_CPU_BIG_ENDIAN=y/' \
-		-e '/CONFIG_JFFS2_NATIVE_ENDIAN=/d' \
-		-e '/CONFIG_JFFS2_BIG_ENDIAN=/d' \
-		-e '/CONFIG_JFFS2_LITTLE_ENDIAN=/d' \
+		-e '/CONFIG_JFFS2_NATIVE_ENDIAN/d' \
+		-e '/CONFIG_JFFS2_BIG_ENDIAN/d' \
+		-e '/CONFIG_JFFS2_LITTLE_ENDIAN/d' \
 		< patches/${PATCHVER}/defconfig > linux-${REVISION}/.config
+	echo '# CONFIG_JFFS2_NATIVE_ENDIAN is not set' >> linux-${REVISION}/.config
 	echo 'CONFIG_JFFS2_BIG_ENDIAN=y' >> linux-${REVISION}/.config
+	echo '# CONFIG_JFFS2_LITTLE_ENDIAN is not set' >> linux-${REVISION}/.config
 else
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/\# CONFIG_CPU_BIG_ENDIAN is not set/' \
-		-e '/CONFIG_JFFS2_NATIVE_ENDIAN=/d' \
-		-e '/CONFIG_JFFS2_BIG_ENDIAN=/d' \
-		-e '/CONFIG_JFFS2_LITTLE_ENDIAN=/d' \
+		-e '/CONFIG_JFFS2_NATIVE_ENDIAN/d' \
+		-e '/CONFIG_JFFS2_BIG_ENDIAN/d' \
+		-e '/CONFIG_JFFS2_LITTLE_ENDIAN/d' \
 		< patches/${PATCHVER}/defconfig > linux-${REVISION}/.config
-	# Yes, we do want to keep the jffs2 filesystem big-endian.
-	echo 'CONFIG_JFFS2_BIG_ENDIAN=y' >> linux-${REVISION}/.config
+	echo '# CONFIG_JFFS2_NATIVE_ENDIAN is not set' >> linux-${REVISION}/.config
+	echo '# CONFIG_JFFS2_BIG_ENDIAN is not set' >> linux-${REVISION}/.config
+	echo 'CONFIG_JFFS2_LITTLE_ENDIAN=y' >> linux-${REVISION}/.config
 endif
 
 downloads/linux-${BASEVER}.tar.bz2 :

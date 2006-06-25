@@ -1,46 +1,25 @@
- os/linux/include/core/IxOsalOs.h     |   17 ++++++++++
+ os/linux/include/core/IxOsalOs.h     |    1 
  os/linux/src/core/IxOsalOsCacheMMU.c |   56 +++++++++++++++++++++++++++++++++++
  os/linux/src/core/IxOsalOsSymbols.c  |    4 ++
- 3 files changed, 76 insertions(+), 1 deletion(-)
+ 3 files changed, 61 insertions(+)
 
---- ixp_osal/os/linux/include/core/IxOsalOs.h	1970-01-01 00:00:00.000000000 +0000
-+++ ixp_osal/os/linux/include/core/IxOsalOs.h	1970-01-01 00:00:00.000000000 +0000
-@@ -56,6 +56,7 @@
- #include <linux/cache.h>
+Index: ixp_osal/os/linux/include/core/IxOsalOs.h
+===================================================================
+--- ixp_osal.orig/os/linux/include/core/IxOsalOs.h
++++ ixp_osal/os/linux/include/core/IxOsalOs.h
+@@ -61,6 +61,7 @@
+ #endif /* IX_OSAL_OS_LINUX_VERSION_2_6 */
  #include <linux/mm.h>
  #include <linux/config.h>
 +#include <linux/version.h>
  #include <asm/pgalloc.h>
  
  /**
-@@ -66,9 +67,23 @@
- 
- #define IX_OSAL_OS_MMU_PHYS_TO_VIRT(addr)  ((addr) ? phys_to_virt((unsigned int)(addr)) : 0)
- 
--#define IX_OSAL_OS_CACHE_INVALIDATE(addr, size)  ( invalidate_dcache_range((__u32)addr, (__u32)addr + size )) 
-+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0))
-+/*
-+ * 2.6 kernels do not export the required cache functions.
-+ */
-+extern void ixOsalCacheInvalidateRange(unsigned long start, unsigned long size);
-+extern void ixOsalCacheFlushRange(unsigned long start, unsigned long size);
-+
-+#define IX_OSAL_OS_CACHE_INVALIDATE(addr, size) \
-+ixOsalCacheInvalidateRange((unsigned long)addr, (unsigned long)addr + size)
-+#define IX_OSAL_OS_CACHE_FLUSH(addr, size) \
-+ixOsalCacheFlushRange((unsigned long)addr, (unsigned long)addr + size )
- 
-+#else
-+
-+#define IX_OSAL_OS_CACHE_INVALIDATE(addr, size)  ( invalidate_dcache_range((__u32)addr, (__u32)addr + size ))
- #define IX_OSAL_OS_CACHE_FLUSH(addr, size) ( clean_dcache_range((__u32)addr, (__u32)addr + size ))
-+#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)) */
- 
- /* Cache preload not available*/
- #define IX_OSAL_OS_CACHE_PRELOAD(addr,size) {}
---- ixp_osal/os/linux/src/core/IxOsalOsCacheMMU.c	1970-01-01 00:00:00.000000000 +0000
-+++ ixp_osal/os/linux/src/core/IxOsalOsCacheMMU.c	1970-01-01 00:00:00.000000000 +0000
-@@ -210,3 +210,59 @@ ixOsalCacheDmaFree (void *ptr)
+Index: ixp_osal/os/linux/src/core/IxOsalOsCacheMMU.c
+===================================================================
+--- ixp_osal.orig/os/linux/src/core/IxOsalOsCacheMMU.c
++++ ixp_osal/os/linux/src/core/IxOsalOsCacheMMU.c
+@@ -210,3 +210,59 @@
  	free_pages ((unsigned int) memptr, order);
      }
  }
@@ -100,9 +79,11 @@
 +#undef IX_CLM
 +
 +#endif /* (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,0)) */
---- ixp_osal/os/linux/src/core/IxOsalOsSymbols.c	1970-01-01 00:00:00.000000000 +0000
-+++ ixp_osal/os/linux/src/core/IxOsalOsSymbols.c	1970-01-01 00:00:00.000000000 +0000
-@@ -64,6 +64,10 @@ EXPORT_SYMBOL (ixOsalMemSet);
+Index: ixp_osal/os/linux/src/core/IxOsalOsSymbols.c
+===================================================================
+--- ixp_osal.orig/os/linux/src/core/IxOsalOsSymbols.c
++++ ixp_osal/os/linux/src/core/IxOsalOsSymbols.c
+@@ -64,6 +64,10 @@
  
  EXPORT_SYMBOL (ixOsalCacheDmaMalloc);
  EXPORT_SYMBOL (ixOsalCacheDmaFree);

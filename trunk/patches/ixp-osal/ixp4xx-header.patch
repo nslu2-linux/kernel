@@ -1,9 +1,11 @@
- os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Base.h |   72 ++++++++++
- os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Sys.h  |   10 -
- 2 files changed, 78 insertions(+), 4 deletions(-)
+ os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Base.h |   80 ++++++++++
+ os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Sys.h  |    2 
+ 2 files changed, 82 insertions(+)
 
---- ixp_osal/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Sys.h	1970-01-01 00:00:00.000000000 +0000
-+++ ixp_osal/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Sys.h	1970-01-01 00:00:00.000000000 +0000
+Index: ixp_osal/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Sys.h
+===================================================================
+--- ixp_osal.orig/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Sys.h
++++ ixp_osal/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Sys.h
 @@ -53,6 +53,8 @@
  #error "Error: IxOsalOsIxp425Sys.h cannot be included directly before IxOsalOsIxp400.h"
  #endif
@@ -11,27 +13,12 @@
 +#include "IxOsalOsIxp425Base.h"
 +
  /* Memory Base Address */
- #define IX_OSAL_IXP400_EXP_BUS_PHYS_BASE       	IXP425_EXP_BUS_BASE2_PHYS
- #define IX_OSAL_IXP400_EXP_BUS_BOOT_PHYS_BASE  	IXP425_EXP_BUS_BASE1_PHYS
-@@ -98,12 +100,12 @@ IxOsalMemoryMap ixOsalGlobalMemoryMap[] 
-      * Queue Manager 
-      */
-     {
--     IX_OSAL_STATIC_MAP,	/* type            */
-+     IX_OSAL_DYNAMIC_MAP,	/* type            */
-      IX_OSAL_IXP400_QMGR_PHYS_BASE,	/* physicalAddress */
-      IX_OSAL_IXP400_QMGR_MAP_SIZE,	/* size            */
--     IX_OSAL_IXP400_QMGR_VIRT_BASE,	/* virtualAddress  */
--     NULL,			/* mapFunction     */
--     NULL,			/* unmapFunction   */
-+     0,				/* virtualAddress  */
-+     ixOsalLinuxMemMap,		/* mapFunction     */
-+     ixOsalLinuxMemUnmap,	/* unmapFunction   */
-      0,				/* refCount        */
-      IX_OSAL_BE | IX_OSAL_LE_DC,	/* endianType      */   
-      "qMgr"			/* name            */
---- ixp_osal/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Base.h	1970-01-01 00:00:00.000000000 +0000
-+++ ixp_osal/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Base.h	1970-01-01 00:00:00.000000000 +0000
+ 
+ #ifdef IX_OSAL_OS_LINUX_VERSION_2_6
+Index: ixp_osal/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Base.h
+===================================================================
+--- /dev/null
++++ ixp_osal/os/linux/include/platforms/ixp400/ixp425/IxOsalOsIxp425Base.h
 @@ -0,0 +1,80 @@
 +/*
 + * Glue for the current linux definitons of this stuff.

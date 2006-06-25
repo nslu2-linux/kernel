@@ -1,33 +1,36 @@
  Kbuild.26 |    2 ++
- Makefile  |   39 ++++++++++++++++++++-------------------
- 2 files changed, 22 insertions(+), 19 deletions(-)
+ Makefile  |   32 +++++++++++++++++++++++---------
+ 2 files changed, 25 insertions(+), 9 deletions(-)
 
  kbuild only patch - do not apply to OpenEmbedded metadata because
  these defines are done in the OE make command line
 
---- ixp400_xscale_sw/Makefile	1970-01-01 00:00:00.000000000 +0000
-+++ ixp400_xscale_sw/Makefile	1970-01-01 00:00:00.000000000 +0000
+Index: ixp400_xscale_sw/Makefile
+===================================================================
+--- ixp400_xscale_sw.orig/Makefile
++++ ixp400_xscale_sw/Makefile
 @@ -54,7 +54,7 @@
  # Components that work only for a subset of platforms
  # should be added to the relevant *_COMPONENTS lists.
  #
--BI_ENDIAN_COMPONENTS := atmdAcc atmm atmsch qmgr npeMh npeDl ethAcc ethDB ethMii hssAcc usb uartAcc featureCtrl ossl osServices 
+-BI_ENDIAN_COMPONENTS := atmdAcc atmm atmsch qmgr npeMh npeDl ethAcc ethDB ethMii hssAcc uartAcc usb featureCtrl ossl osServices 
 +BI_ENDIAN_COMPONENTS := qmgr npeMh npeDl ethAcc ethDB ethMii featureCtrl osServices
  
  
  #Components only applicable to ixp46x
-@@ -64,8 +64,8 @@ ixp46X_BI_ENDIAN_COMPONENTS := timeSyncA
- vxbe_COMPONENTS := $(BI_ENDIAN_COMPONENTS) perfProfAcc dmaAcc
- vxle_COMPONENTS := $(BI_ENDIAN_COMPONENTS) perfProfAcc
- vxsim_COMPONENTS := $(BI_ENDIAN_COMPONENTS) dmaAcc
--linuxbe_COMPONENTS := $(BI_ENDIAN_COMPONENTS) perfProfAcc dmaAcc oslinux
--linuxle_COMPONENTS := $(BI_ENDIAN_COMPONENTS) perfProfAcc oslinux
-+linuxbe_COMPONENTS := $(BI_ENDIAN_COMPONENTS) dmaAcc oslinux
+@@ -69,6 +69,11 @@
+ else
+ linuxbe_COMPONENTS := $(BI_ENDIAN_COMPONENTS) dmaAcc oslinux perfProfAcc
+ endif
++ifeq ($(IX_LINUXVER),2.6)
 +linuxle_COMPONENTS := $(BI_ENDIAN_COMPONENTS) oslinux
++else
++linuxle_COMPONENTS := $(BI_ENDIAN_COMPONENTS) oslinux perfProfAcc
++endif
  
  #The lists below contain the set of components available for each target platform
  # specific to the ixp46X device
-@@ -156,7 +156,7 @@ endif
+@@ -164,7 +169,7 @@
  ################################################################
  # Linux kernel source
  
@@ -36,7 +39,7 @@
  
  ################################################################
  # Inclusion of common Makefile
-@@ -251,11 +251,12 @@ OBJDUMP := objdump$(VX_TOOL_SUFFIX)
+@@ -264,11 +269,12 @@
  else # IX_TARGET_OS == vxworks
  
  # Linux tool names
@@ -54,16 +57,16 @@
  
  LD := $(LINUX_CROSS_COMPILE)ld
  CC := $(LINUX_CROSS_COMPILE)gcc
-@@ -304,6 +305,8 @@ ifndef IX_INCLUDE_MICROCODE
+@@ -329,6 +335,8 @@
  CFLAGS += -DIX_NPEDL_READ_MICROCODE_FROM_FILE
- endif
+ 
  
 +CFLAGS += -DIX_UPTOPIAMODE=0 -DIX_MPHY=1 -DIX_MPHYSINGLEPORT
 +
  # Linux linker flags
  LDFLAGS := -r
  
-@@ -1306,13 +1309,13 @@ ifeq ($(IX_DEVICE),ixp46X)
+@@ -1370,13 +1378,13 @@
  libIxp400 : $(OBJ_DIR)/libIxp400.a $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE)
  
  $(OBJ_DIR)/libIxp400.a : $(COMPONENT_OBJ) $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE) 
@@ -79,7 +82,7 @@
  	$(AR) rvs $(OBJ_DIR)/libIxp425.a $^
  endif
  
-@@ -1329,6 +1332,12 @@ $(OBJ_DIR)/ixp400.o: $(COMPONENTS:%=$(OB
+@@ -1406,6 +1414,12 @@
  	$(LD) $(LDFLAGS) $^ -o $@
  endif
  
@@ -92,8 +95,10 @@
  
  
  ################################################################
---- ixp400_xscale_sw/Kbuild.26	1970-01-01 00:00:00.000000000 +0000
-+++ ixp400_xscale_sw/Kbuild.26	1970-01-01 00:00:00.000000000 +0000
+Index: ixp400_xscale_sw/Kbuild.26
+===================================================================
+--- /dev/null
++++ ixp400_xscale_sw/Kbuild.26
 @@ -0,0 +1,2 @@
 +obj-m           := ixp400.o
 +ixp400-y        := ixp400_bin.o
