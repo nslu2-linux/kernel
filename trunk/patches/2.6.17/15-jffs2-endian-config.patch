@@ -1,3 +1,4 @@
+This patch has been accepted into the linux-mtd CVS repository.
 Submitted as http://lists.infradead.org/pipermail/linux-mtd/2006-January/014740.html
 
 This patch allows the endianness of the JFSS2 filesystem to be

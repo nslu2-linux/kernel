@@ -1,3 +1,4 @@
+Rejected by upstream - we have been told to do this in a shim prepended to the kernel.
 Submitted as http://lists.arm.linux.org.uk/pipermail/linux-arm-kernel/2006-June/034667.html
 
 Include a fixup machine start function in nslu2-setup.c to handle
