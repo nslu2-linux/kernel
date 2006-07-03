@@ -79,7 +79,7 @@ lib/modules/${REVISION}/net/ath_hal.ko usr/local/bin/wlanconfig: \
 		vmlinuz-${REVISION}
 	rm -rf lib/modules/${REVISION}/net
 	( cd madwifi-ng ; \
-	  make CROSS_COMPILE=${CROSS_COMPILE} TOOLPATH=${CROSS_COMPILE} \
+	  ${MAKE} CROSS_COMPILE=${CROSS_COMPILE} TOOLPATH=${CROSS_COMPILE} \
 		TARGET=xscale-${ENDIAN}e-elf \
 		KERNELPATH=`cd .. ; pwd`/linux-${REVISION} \
 		DESTDIR=`cd .. ; pwd` \
@@ -106,7 +106,7 @@ lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko: \
 		ixp400_eth/Kbuild ixp400_xscale_sw/Makefile \
 		vmlinuz-${REVISION}
 	( cd ixp400_eth ; \
-	  make -C `cd .. ; pwd`/linux-${REVISION} ARCH=arm \
+	  ${MAKE} -C `cd .. ; pwd`/linux-${REVISION} ARCH=arm \
 		CROSS_COMPILE=${CROSS_COMPILE} M=`pwd` )
 	mkdir -p lib/modules/${REVISION}/kernel/drivers/net
 	cp ixp400_eth/ixp400_eth.ko lib/modules/${REVISION}/kernel/drivers/net
@@ -126,7 +126,7 @@ lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko: \
 	  export KERNEL_DIR=`pwd`/linux-${REVISION} ; \
 	  export IX_XSCALE_SW=`pwd`/ixp400_xscale_sw ; \
 	  export IX_TARGET=linux${ENDIAN}e ; \
-	  make -C ixp400_xscale_sw ARCH=arm \
+	  ${MAKE} -C ixp400_xscale_sw ARCH=arm \
 	    CROSS_COMPILE=${CROSS_COMPILE} ixp400 )
 	mkdir -p lib/modules/${REVISION}/kernel/drivers/ixp400
 	cp ixp400_xscale_sw/lib/linux${ENDIAN}e/ixp400.ko \
@@ -213,11 +213,14 @@ endif
 
 vmlinuz-${REVISION}: linux-${REVISION}/.config
 	( cd linux-${REVISION} ; \
-	  make ${CROSS_COMPILE_FLAGS} ARCH=arm bzImage modules )
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm bzImage modules )
 	( cd linux-${REVISION} ; \
-	  INSTALL_MOD_PATH=".." make ${CROSS_COMPILE_FLAGS} ARCH=arm modules_install )
+	  INSTALL_MOD_PATH=".." ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm modules_install )
 	rm -f lib/modules/${REVISION}/build lib/modules/${REVISION}/source
 	cp linux-${REVISION}/arch/arm/boot/zImage vmlinuz-${REVISION}
+
+menuconfig: linux-${REVISION}/.config
+	${MAKE} -C linux-${REVISION} ARCH=arm CROSS_COMPILE=${CROSS_COMPILE} menuconfig
 
 ifeq (${REVISION},${BASEVER})
 linux-${REVISION}/.config: \
@@ -316,6 +319,6 @@ clobber:
 	rm -rf madwifi-ng
 	rm -rf lib usr
 
-.PHONY: all kernel modules clobber
+.PHONY: all kernel menuconfig modules clobber
 
 # End of Makefile
