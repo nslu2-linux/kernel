@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.16
-# Tue Mar 21 13:57:18 2006
+# Fri Apr  7 02:45:02 2006
 #
 CONFIG_ARM=y
 CONFIG_MMU=y
@@ -1361,7 +1361,7 @@ CONFIG_USB_KBD=m
 # CONFIG_USB_MTOUCH is not set
 # CONFIG_USB_ITMTOUCH is not set
 # CONFIG_USB_EGALAX is not set
-# CONFIG_USB_YEALINK is not set
+CONFIG_USB_YEALINK=m
 # CONFIG_USB_XPAD is not set
 # CONFIG_USB_ATI_REMOTE is not set
 # CONFIG_USB_ATI_REMOTE2 is not set
