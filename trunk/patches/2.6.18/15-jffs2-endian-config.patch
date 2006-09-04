@@ -20,9 +20,9 @@ Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
 
 Index: linux-2.6.17/fs/Kconfig
 ===================================================================
---- linux-2.6.17.orig/fs/Kconfig	2006-06-19 12:19:09.360227160 +0930
-+++ linux-2.6.17/fs/Kconfig	2006-06-19 12:24:53.405924264 +0930
-@@ -1169,6 +1169,31 @@
+--- linux-2.6.17.orig/fs/Kconfig	2006-09-05 00:52:16.000000000 +0200
++++ linux-2.6.17/fs/Kconfig	2006-09-05 01:15:38.000000000 +0200
+@@ -1230,6 +1230,31 @@
  
  endchoice
  
@@ -56,9 +56,9 @@ Index: linux-2.6.17/fs/Kconfig
  	select ZLIB_INFLATE
 Index: linux-2.6.17/fs/jffs2/nodelist.h
 ===================================================================
---- linux-2.6.17.orig/fs/jffs2/nodelist.h	2006-06-19 12:19:09.363226704 +0930
-+++ linux-2.6.17/fs/jffs2/nodelist.h	2006-06-19 12:24:53.406924112 +0930
-@@ -29,12 +29,10 @@
+--- linux-2.6.17.orig/fs/jffs2/nodelist.h	2006-09-05 00:52:17.000000000 +0200
++++ linux-2.6.17/fs/jffs2/nodelist.h	2006-09-05 01:15:38.000000000 +0200
+@@ -30,12 +30,10 @@
  #include "os-linux.h"
  #endif
  
@@ -72,7 +72,7 @@ Index: linux-2.6.17/fs/jffs2/nodelist.h
  #define cpu_to_je16(x) ((jint16_t){x})
  #define cpu_to_je32(x) ((jint32_t){x})
  #define cpu_to_jemode(x) ((jmode_t){os_to_jffs2_mode(x)})
-@@ -42,7 +40,7 @@
+@@ -43,7 +41,7 @@
  #define je16_to_cpu(x) ((x).v16)
  #define je32_to_cpu(x) ((x).v32)
  #define jemode_to_cpu(x) (jffs2_to_os_mode((x).m))
@@ -81,7 +81,7 @@ Index: linux-2.6.17/fs/jffs2/nodelist.h
  #define cpu_to_je16(x) ((jint16_t){cpu_to_be16(x)})
  #define cpu_to_je32(x) ((jint32_t){cpu_to_be32(x)})
  #define cpu_to_jemode(x) ((jmode_t){cpu_to_be32(os_to_jffs2_mode(x))})
-@@ -50,7 +48,7 @@
+@@ -51,7 +49,7 @@
  #define je16_to_cpu(x) (be16_to_cpu(x.v16))
  #define je32_to_cpu(x) (be32_to_cpu(x.v32))
  #define jemode_to_cpu(x) (be32_to_cpu(jffs2_to_os_mode((x).m)))

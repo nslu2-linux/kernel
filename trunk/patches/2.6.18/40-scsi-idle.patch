@@ -1,8 +1,8 @@
 Index: linux-2.6.17/drivers/scsi/sd.c
 ===================================================================
---- linux-2.6.17.orig/drivers/scsi/sd.c	2006-06-18 03:49:35.000000000 +0200
-+++ linux-2.6.17/drivers/scsi/sd.c	2006-09-04 22:54:05.000000000 +0200
-@@ -351,6 +351,9 @@
+--- linux-2.6.17.orig/drivers/scsi/sd.c	2006-09-05 00:52:10.000000000 +0200
++++ linux-2.6.17/drivers/scsi/sd.c	2006-09-05 01:16:03.000000000 +0200
+@@ -376,6 +376,9 @@
  			    "count=%d\n", disk->disk_name,
  			 (unsigned long long)block, this_count));
  
@@ -12,7 +12,7 @@ Index: linux-2.6.17/drivers/scsi/sd.c
  	if (!sdp || !scsi_device_online(sdp) ||
   	    block + rq->nr_sectors > get_capacity(disk)) {
  		SCSI_LOG_HLQUEUE(2, printk("Finishing %ld sectors\n", 
-@@ -681,6 +684,8 @@
+@@ -705,6 +708,8 @@
  		case SCSI_IOCTL_GET_IDLUN:
  		case SCSI_IOCTL_GET_BUS_NUMBER:
  			return scsi_ioctl(sdp, cmd, p);
@@ -23,8 +23,8 @@ Index: linux-2.6.17/drivers/scsi/sd.c
  			if (error != -ENOTTY)
 Index: linux-2.6.17/include/scsi/scsi_device.h
 ===================================================================
---- linux-2.6.17.orig/include/scsi/scsi_device.h	2006-06-18 03:49:35.000000000 +0200
-+++ linux-2.6.17/include/scsi/scsi_device.h	2006-09-04 22:54:05.000000000 +0200
+--- linux-2.6.17.orig/include/scsi/scsi_device.h	2006-09-05 00:33:21.000000000 +0200
++++ linux-2.6.17/include/scsi/scsi_device.h	2006-09-05 01:16:03.000000000 +0200
 @@ -134,6 +134,7 @@
  	atomic_t ioerr_cnt;
  
@@ -35,8 +35,8 @@ Index: linux-2.6.17/include/scsi/scsi_device.h
  	struct class_device	sdev_classdev;
 Index: linux-2.6.17/include/scsi/scsi_ioctl.h
 ===================================================================
---- linux-2.6.17.orig/include/scsi/scsi_ioctl.h	2006-06-18 03:49:35.000000000 +0200
-+++ linux-2.6.17/include/scsi/scsi_ioctl.h	2006-09-04 22:54:05.000000000 +0200
+--- linux-2.6.17.orig/include/scsi/scsi_ioctl.h	2006-09-05 00:33:21.000000000 +0200
++++ linux-2.6.17/include/scsi/scsi_ioctl.h	2006-09-05 01:16:03.000000000 +0200
 @@ -7,6 +7,7 @@
  #define SCSI_IOCTL_SYNC 4			/* Request synchronous parameters */
  #define SCSI_IOCTL_START_UNIT 5
