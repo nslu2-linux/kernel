@@ -1,6 +1,7 @@
-diff -Naur linux-2.6.17/arch/arm/mach-ixp4xx.orig/dsmg600-pci.c linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-pci.c
---- linux-2.6.17/arch/arm/mach-ixp4xx.orig/dsmg600-pci.c	1969-12-31 18:00:00.000000000 -0600
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-pci.c	2006-06-23 21:40:55.000000000 -0500
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-pci.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-pci.c	2006-09-05 02:11:26.000000000 +0200
 @@ -0,0 +1,74 @@
 +/*
 + * DSM-G600 board-level PCI initialization
@@ -76,9 +77,10 @@ diff -Naur linux-2.6.17/arch/arm/mach-ixp4xx.orig/dsmg600-pci.c linux-2.6.17/arc
 +}
 +
 +subsys_initcall(dsmg600_pci_init);
-diff -Naur linux-2.6.17/arch/arm/mach-ixp4xx.orig/dsmg600-power.c linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-power.c
---- linux-2.6.17/arch/arm/mach-ixp4xx.orig/dsmg600-power.c	1969-12-31 18:00:00.000000000 -0600
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-power.c	2006-06-24 00:46:12.000000000 -0500
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-power.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-power.c	2006-09-05 02:11:26.000000000 +0200
 @@ -0,0 +1,69 @@
 +/*
 + * arch/arm/mach-ixp4xx/dsmg600-power.c
@@ -149,9 +151,10 @@ diff -Naur linux-2.6.17/arch/arm/mach-ixp4xx.orig/dsmg600-power.c linux-2.6.17/a
 +MODULE_AUTHOR("Michael Westerhof <mwester@dls.net>");
 +MODULE_DESCRIPTION("DSM-G600 Power/Reset driver");
 +MODULE_LICENSE("GPL");
-diff -Naur linux-2.6.17/arch/arm/mach-ixp4xx.orig/dsmg600-setup.c linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-setup.c
---- linux-2.6.17/arch/arm/mach-ixp4xx.orig/dsmg600-setup.c	1969-12-31 18:00:00.000000000 -0600
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-setup.c	2006-06-23 21:48:33.000000000 -0500
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-setup.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.17/arch/arm/mach-ixp4xx/dsmg600-setup.c	2006-09-05 02:11:26.000000000 +0200
 @@ -0,0 +1,176 @@
 +/*
 + * DSM-G600 board-setup
@@ -329,10 +332,11 @@ diff -Naur linux-2.6.17/arch/arm/mach-ixp4xx.orig/dsmg600-setup.c linux-2.6.17/a
 +	.timer          = &ixp4xx_timer,
 +	.init_machine	= dsmg600_init,
 +MACHINE_END
-diff -Naur linux-2.6.17/arch/arm/mach-ixp4xx.orig/Kconfig linux-2.6.17/arch/arm/mach-ixp4xx/Kconfig
---- linux-2.6.17/arch/arm/mach-ixp4xx.orig/Kconfig	2006-06-23 23:08:53.000000000 -0500
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/Kconfig	2006-06-23 21:21:17.000000000 -0500
-@@ -84,6 +84,15 @@
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/Kconfig
+===================================================================
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/Kconfig	2006-09-05 00:51:14.000000000 +0200
++++ linux-2.6.17/arch/arm/mach-ixp4xx/Kconfig	2006-09-05 02:11:26.000000000 +0200
+@@ -81,6 +81,15 @@
  	  NAS 100d device. For more information on this platform,
  	  see http://www.nslu2-linux.org/wiki/NAS100d/HomePage
  
@@ -348,18 +352,21 @@ diff -Naur linux-2.6.17/arch/arm/mach-ixp4xx.orig/Kconfig linux-2.6.17/arch/arm/
  #
  # Avila and IXDP share the same source for now. Will change in future
  #
-diff -Naur linux-2.6.17/arch/arm/mach-ixp4xx.orig/Makefile linux-2.6.17/arch/arm/mach-ixp4xx/Makefile
---- linux-2.6.17/arch/arm/mach-ixp4xx.orig/Makefile	2006-06-23 23:08:53.000000000 -0500
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/Makefile	2006-06-23 21:22:41.000000000 -0500
-@@ -11,4 +11,4 @@
- obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-pci.o gtwx5715-setup.o
- obj-$(CONFIG_MACH_NSLU2)	+= nslu2-pci.o nslu2-setup.o nslu2-power.o
- obj-$(CONFIG_MACH_NAS100D)	+= nas100d-pci.o nas100d-setup.o nas100d-power.o
--
-+obj-$(CONFIG_MACH_DSMG600)	+= dsmg600-pci.o dsmg600-setup.o dsmg600-power.o
-diff -Naur linux-2.6.17/include/asm-arm/arch-ixp4xx.orig/dsmg600.h linux-2.6.17/include/asm-arm/arch-ixp4xx/dsmg600.h
---- linux-2.6.17/include/asm-arm/arch-ixp4xx.orig/dsmg600.h	1969-12-31 18:00:00.000000000 -0600
-+++ linux-2.6.17/include/asm-arm/arch-ixp4xx/dsmg600.h	2006-06-24 00:39:05.000000000 -0500
+Index: linux-2.6.17/arch/arm/mach-ixp4xx/Makefile
+===================================================================
+--- linux-2.6.17.orig/arch/arm/mach-ixp4xx/Makefile	2006-09-05 00:51:14.000000000 +0200
++++ linux-2.6.17/arch/arm/mach-ixp4xx/Makefile	2006-09-05 02:13:24.000000000 +0200
+@@ -20,5 +20,6 @@
+ obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
+ obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
+ obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
++obj-$(CONFIG_MACH_DSMG600)      += dsmg600-pci.o dsmg600-setup.o dsmg600-power.o
+ 
+ obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
+Index: linux-2.6.17/include/asm-arm/arch-ixp4xx/dsmg600.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.17/include/asm-arm/arch-ixp4xx/dsmg600.h	2006-09-05 02:11:26.000000000 +0200
 @@ -0,0 +1,73 @@
 +/*
 + * DSM-G600 platform specific definitions
@@ -434,9 +441,10 @@ diff -Naur linux-2.6.17/include/asm-arm/arch-ixp4xx.orig/dsmg600.h linux-2.6.17/
 +
 +#define DSMG600_LED_WLAN	DSMG600_GPIO14
 +#define DSMG600_LED_WLAN_BM	(1L << DSMG600_LED_WLAN)
-diff -Naur linux-2.6.17/include/asm-arm/arch-ixp4xx.orig/hardware.h linux-2.6.17/include/asm-arm/arch-ixp4xx/hardware.h
---- linux-2.6.17/include/asm-arm/arch-ixp4xx.orig/hardware.h	2006-06-23 23:04:16.000000000 -0500
-+++ linux-2.6.17/include/asm-arm/arch-ixp4xx/hardware.h	2006-06-23 21:24:33.000000000 -0500
+Index: linux-2.6.17/include/asm-arm/arch-ixp4xx/hardware.h
+===================================================================
+--- linux-2.6.17.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-09-05 00:33:20.000000000 +0200
++++ linux-2.6.17/include/asm-arm/arch-ixp4xx/hardware.h	2006-09-05 02:11:26.000000000 +0200
 @@ -46,5 +46,6 @@
  #include "prpmc1100.h"
  #include "nslu2.h"
@@ -444,9 +452,10 @@ diff -Naur linux-2.6.17/include/asm-arm/arch-ixp4xx.orig/hardware.h linux-2.6.17
 +#include "dsmg600.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
-diff -Naur linux-2.6.17/include/asm-arm/arch-ixp4xx.orig/irqs.h linux-2.6.17/include/asm-arm/arch-ixp4xx/irqs.h
---- linux-2.6.17/include/asm-arm/arch-ixp4xx.orig/irqs.h	2006-06-23 23:04:16.000000000 -0500
-+++ linux-2.6.17/include/asm-arm/arch-ixp4xx/irqs.h	2006-06-23 21:26:42.000000000 -0500
+Index: linux-2.6.17/include/asm-arm/arch-ixp4xx/irqs.h
+===================================================================
+--- linux-2.6.17.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-09-05 00:33:20.000000000 +0200
++++ linux-2.6.17/include/asm-arm/arch-ixp4xx/irqs.h	2006-09-05 02:11:26.000000000 +0200
 @@ -109,4 +109,14 @@
  #define        IRQ_NAS100D_PCI_INTD    IRQ_IXP4XX_GPIO8
  #define        IRQ_NAS100D_PCI_INTE    IRQ_IXP4XX_GPIO7
