@@ -1,6 +1,6 @@
 # Patches numbered <= 10 are for immediate push upstream, and
 # must be all able to be applied independently in any order.
-01-nas100d-leds.patch
+patch-2.6.18-rc6
 02-nas100d-mac-addr.patch
 03-nslu2-leds.patch
 04-nslu2-mac-addr.patch
