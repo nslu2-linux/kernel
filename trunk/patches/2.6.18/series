@@ -5,7 +5,7 @@ patch-2.6.18-rc6
 02-nas100d-mac-addr.patch
 04-nslu2-mac-addr.patch
 ##05-timer-ixp4xx.patch
-06-timer-nslu2.patch
+##06-timer-nslu2.patch
 07-copypage-xscale.patch
 #11-mtdpart-redboot-config-byteswap.patch
 #12-setup-byteswap-cmdline.patch
