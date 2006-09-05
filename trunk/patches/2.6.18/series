@@ -19,5 +19,7 @@ patch-2.6.18-rc6
 #65-loft-config.patch
 75-dsmg600.patch
 76-dsmg600-pwrbtn.patch
+77-velocity-module.patch
+78-velocity-BE.patch
 #91-maclist.patch
 #94-loft-setup.patch    
