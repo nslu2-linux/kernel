@@ -1,0 +1,45 @@
+--- a/arch/arm/mach-ixp4xx/nslu2-setup.c.orig	2006-09-10 17:54:28.000000000 +0100
++++ b/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-09-10 18:35:39.000000000 +0100
+@@ -143,6 +143,32 @@
+ 	.resource		= nslu2_uart_resources,
+ };
+ 
++#ifdef CONFIG_IXP4XX_MAC
++
++static struct resource res_mac0 = {
++	.start		= IXP4XX_EthB_BASE_PHYS,
++	.end		= IXP4XX_EthB_BASE_PHYS + 0x1ff,
++	.flags          = IORESOURCE_MEM,
++};
++
++static struct mac_plat_info plat_mac0 = {
++	.npe_id		= 1, #NPE-B
++	.phy_id		= 1,
++	.eth_id		= 0,
++	.rxq_id		= 27,
++	.txq_id		= 24,
++};
++
++static struct platform_device mac0 = {
++	.name           = "ixp4xx_mac",
++	.id             = 0,
++	.dev.platform_data = &plat_mac0,
++	.num_resources  = 1,
++	.resource       = &res_mac0,
++};
++
++#endif
++
+ static struct platform_device *nslu2_devices[] __initdata = {
+ 	&nslu2_i2c_controller,
+ 	&nslu2_flash,
+@@ -150,6 +176,9 @@
+ #ifdef CONFIG_LEDS_IXP4XX
+ 	&nslu2_leds,
+ #endif
++#ifdef CONFIG_IXP4XX_MAC
++	&mac0
++#endif
+ };
+ 
+ static void nslu2_power_off(void)
