@@ -1,7 +1,6 @@
 # Patches numbered <= 10 are for immediate push upstream, and
 # must be all able to be applied independently in any order.
 # Patches with # are patches that need reworking
-#libata-dev.patch
 02-nas100d-mac-addr.patch
 04-nslu2-mac-addr.patch
 #05-timer-ixp4xx.patch
@@ -21,5 +20,3 @@
 #76-dsmg600-pwrbtn.patch
 77-velocity-module.patch
 78-velocity-BE.patch
-96-pata-ixp4xx.patch
-#98-add-ata-Kconfig.patch

@@ -13,17 +13,18 @@
 
 05-timer-ixp4xx.patch
 06-timer-nslu2.patch
-	Rejected by upstream, rewrite awaits ARM arch ported to new clocksource system
+	Rejected by upstream, rewrite awaits ARM arch change to new clocksource system
 
 07-copypage-xscale.patch
 	Posted as RFC on l-a-k, not yet submitted to ARM patch system.
 
 11-mtdpart-redboot-config-byteswap.patch
-	Needs to be refreshed.
+	Needs to be refreshed for 2.6.18.
 
 15-jffs2-endian-config.patch [linux-mtd]
 	Has been submitted to linux-mtd
 	http://lists.infradead.org/pipermail/linux-mtd/2006-January/014740.html
+	No response in 6 months - resubmit?
 
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
@@ -34,4 +35,4 @@
 	Discussed with Richard Purdie.  Not yet ready for upstream.
 
 75-dsmg600.patch
-	Needs to be refreshed.
+	Needs to be refreshed for 2.6.18.
