@@ -21,5 +21,7 @@
 76-dsmg600-pwrbtn.patch
 77-velocity-module.patch
 78-velocity-BE.patch
+git-libata-all.patch
 #91-maclist.patch
 #94-loft-setup.patch    
+96-pata-ixp4xx.patch
