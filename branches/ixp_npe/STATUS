@@ -7,28 +7,19 @@
 [linux-mtd] - patch submitted to the linux-mtd mailing list (because
 	it is not ARM specific.)
 
-01-nas100d-leds.patch
 02-nas100d-mac-addr.patch
-03-nslu2-leds.patch
 04-nslu2-mac-addr.patch
-	Submitted to ARM patch system.
+	Rejected by upstream
 
-05-timer-ixp4xx.patch [RFC submitted to l-a-k]
-06-timer-nslu2.patch [RFC submitted to l-a-k]
-	Posted as RFC on l-a-k, not yet submitted to ARM patch system.
-	May need to be rewritten to use new clocksource support scheduled for 2.6.18
+05-timer-ixp4xx.patch
+06-timer-nslu2.patch
+	Rejected by upstream, rewrite awaits ARM arch ported to new clocksource system
 
 07-copypage-xscale.patch
 	Posted as RFC on l-a-k, not yet submitted to ARM patch system.
 
 11-mtdpart-redboot-config-byteswap.patch
-	To be submitted.
-
-12-setup-byteswap-cmdline.patch
-	What device is this required for?
-
-13-hwmon-ad741x.patch
-	What device is this required for?
+	Needs to be refreshed.
 
 15-jffs2-endian-config.patch [linux-mtd]
 	Has been submitted to linux-mtd
@@ -39,20 +30,8 @@
 	Don't expect these to be accepted upstream (based on advice from Richard Purdie).
 	For upstream, just submit nslu2 and nas100d defconfig files.
 
-45-eeprom-notifier.patch [Should have an RFC on lkml]
-	To be submitted by Tom Billman or John Bowler.
-
 50-leds-arm-cpu-activity.patch
 	Discussed with Richard Purdie.  Not yet ready for upstream.
 
-65-loft-config.patch
-	To be submitted by Tom Billman or John Bowler.
-
 75-dsmg600.patch
-	To be submitted by Tom Billman.
-
-91-maclist.patch [Should be submitted to netdev]
-	Is this superceded?
-
-94-loft-setup.patch [ARM patch system]
-	To be submitted by Tom Billman or John Bowler.
+	Needs to be refreshed.
