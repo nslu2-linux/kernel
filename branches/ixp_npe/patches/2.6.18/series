@@ -22,4 +22,4 @@ libata-dev.patch
 77-velocity-module.patch
 78-velocity-BE.patch
 96-pata-ixp4xx.patch
-
+98-add-ata-Kconfig.patch
