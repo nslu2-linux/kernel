@@ -1,0 +1,8 @@
+This branch is here to allow initial testing of the IXP_NPE driver.
+
+STATUS
+2.6.18-rc6 + IXP_NPE builds (without DSM-G600 patches applied)
+Kernel needs testing and timer patches need refreshing
+
+ISSUES
+Makefile appears to be broken at module compressing phase. This problem is currently cosmetic.
