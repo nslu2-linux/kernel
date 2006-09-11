@@ -5,17 +5,13 @@
  drivers/scsi/pata_ixp4xx.c |  242 +++++++++++++++++++++++++++++++++++++++++++++
  4 files changed, 255 insertions(+), 3 deletions(-)
 
---- linux-ixp4xx.orig/drivers/scsi/Kconfig	2006-02-24 18:13:55.000000000 +0100
-+++ linux-ixp4xx/drivers/scsi/Kconfig	2006-02-24 18:50:19.000000000 +0100
-@@ -903,11 +903,20 @@ config SCSI_PATA_WINBOND
- 	tristate "Winbond SL82C105 PATA support"
- 	depends on SCSI_SATA && PCI
- 	help
--	  This option enables support for SL82C105 PATA devices found in the
-+	  This option enables support for SL82C105 PATAll devices found in the
- 	  Netwinder and some other systems
- 
- 	  If unsure, say N.
+Index: linux-2.6.18-rc6/drivers/scsi/Kconfig
+===================================================================
+--- linux-2.6.18-rc6.orig/drivers/scsi/Kconfig	2006-09-11 21:59:54.000000000 +0200
++++ linux-2.6.18-rc6/drivers/scsi/Kconfig	2006-09-11 22:06:45.000000000 +0200
+@@ -481,6 +481,16 @@
+ 	  To compile this driver as a module, choose M here; the module
+ 	  will be called hptiop. If unsure, say N.
  
 +config SCSI_PATA_IXP4XX
 +	tristate "IXP4XX Compact FLash support"
@@ -26,21 +22,30 @@
 +
 +	  If unsure, say N.
 +
- 
++
  config SCSI_BUSLOGIC
  	tristate "BusLogic SCSI support"
---- linux-ixp4xx.orig/drivers/scsi/Makefile	2006-02-24 18:13:55.000000000 +0100
-+++ linux-ixp4xx/drivers/scsi/Makefile	2006-02-24 18:16:46.000000000 +0100
-@@ -174,6 +174,7 @@ obj-$(CONFIG_SCSI_PATA_VIA)	+= libata.o 
- obj-$(CONFIG_SCSI_PATA_WINBOND)	+= libata.o pata_sl82c105.o
- obj-$(CONFIG_SCSI_ATA_GENERIC)	+= libata.o ata_generic.o
- obj-$(CONFIG_SCSI_PATA_LEGACY)	+= libata.o pata_legacy.o
+ 	depends on (PCI || ISA || MCA) && SCSI && ISA_DMA_API
+Index: linux-2.6.18-rc6/drivers/scsi/Makefile
+===================================================================
+--- linux-2.6.18-rc6.orig/drivers/scsi/Makefile	2006-09-11 21:59:54.000000000 +0200
++++ linux-2.6.18-rc6/drivers/scsi/Makefile	2006-09-11 22:06:18.000000000 +0200
+@@ -123,9 +123,11 @@
+ obj-$(CONFIG_SCSI_IPR)		+= ipr.o
+ obj-$(CONFIG_SCSI_IBMVSCSI)	+= ibmvscsi/
+ obj-$(CONFIG_SCSI_HPTIOP)	+= hptiop.o
 +obj-$(CONFIG_SCSI_PATA_IXP4XX)	+= libata.o pata_ixp4xx.o
  
  obj-$(CONFIG_ARM)		+= arm/
  
++
+ obj-$(CONFIG_CHR_DEV_ST)	+= st.o
+ obj-$(CONFIG_CHR_DEV_OSST)	+= osst.o
+ obj-$(CONFIG_BLK_DEV_SD)	+= sd_mod.o
+Index: linux-2.6.18-rc6/drivers/scsi/pata_ixp4xx.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/scsi/pata_ixp4xx.c	2006-02-24 18:43:02.000000000 +0100
++++ linux-2.6.18-rc6/drivers/scsi/pata_ixp4xx.c	2006-09-11 22:00:14.000000000 +0200
 @@ -0,0 +1,242 @@
 +/*
 + * pata-ixp4xx.c - Legacy port PATA/SATA controller driver.
@@ -284,16 +289,3 @@
 +
 +module_init(ixp4xx_init);
 +module_exit(ixp4xx_exit);
---- linux-ixp4xx.orig/drivers/scsi/libata-core.c	2006-02-24 18:13:55.000000000 +0100
-+++ linux-ixp4xx/drivers/scsi/libata-core.c	2006-02-24 18:16:46.000000000 +0100
-@@ -2513,8 +2513,8 @@ static void ata_dev_set_xfermode(struct 
- 	tf.nsect = dev->xfer_mode;
- 
- 	if (ata_exec_internal(ap, dev, &tf, DMA_NONE, NULL, 0)) {
--		printk(KERN_ERR "ata%u: failed to set xfermode, disabled\n",
--		       ap->id);
-+		printk(KERN_ERR "ata%u: failed to set xfermode (0x%02x), disabled\n",
-+		       ap->id, dev->xfer_mode);
- 		ata_port_disable(ap);
- 	}
- 
