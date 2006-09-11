@@ -5,15 +5,10 @@
 #  Based on the great work done in OpenEmbedded for the Linksys NSLU2
 #    written by the nslu2-linux development community.
 #
-#  This builds the kernel in the linux-${REVISION} directory
-#  and builds the ixp400 and ixp425-eth kernel modules.
+#  This builds the kernel in the linux-${REVISION} directory.
 #  It then installs all the kernel modules in lib
 #  and creates a tarball there containing all the modules 
 #  under the lib/modules/${REVISION} directory.
-#
-#  N.B. No downloads are provided with this script
-#  The Intel files need to be obtained from Intel in
-#  the proper manner (including agreeing to the licensing).
 #
 #  N.B. You may need to change your crosstool path
 #
@@ -24,7 +19,7 @@ ENDIAN = l
 MAJORVER = 2.6
 BASEVER  = 2.6.17
 MINORVER = 2.6.17
-PATCHVER = 2.6.17
+PATCHVER = 2.6.18
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
@@ -54,11 +49,9 @@ endif
 all: kernel modules
 
 kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REVISION} vmlinuz-ds101-${REVISION} vmlinuz-dsmg600-${REVISION}
-ixp400: lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko
-ixp400-eth: lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
 madwifi: lib/modules/${REVISION}/net/ath_hal.ko
 modules: modules-${REVISION}.tar.gz
-patched: linux-${REVISION}/.config ixp400_xscale_sw/Makefile ixp400_eth/Kbuild 
+patched: linux-${REVISION}/.config 
 
 usr: usr-${REVISION}.tar.gz
 
@@ -70,8 +63,6 @@ usr-${REVISION}.tar.gz: vmlinuz-${REVISION} \
 #	 lib/modules/${REVISION}/net/ath_hal.ko
 
 modules-${REVISION}.tar.gz: vmlinuz-${REVISION} \
-	 lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko \
-	 lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
 	tar zcf modules-${REVISION}.tar.gz lib/modules/${REVISION}
 
 lib/modules/${REVISION}/net/ath_hal.ko usr/local/bin/wlanconfig: \
@@ -101,49 +92,6 @@ downloads/madwifi-ng-${MADWIFIVER}.tar.gz :
 	[ -e downloads/madwifi-ng-${MADWIFIVER}.tar.gz ] || \
 	( mkdir -p downloads ; cd downloads ; \
 	  wget ${MADWIFI_SOURCE} )
-
-lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko: \
-		ixp400_eth/Kbuild ixp400_xscale_sw/Makefile \
-		vmlinuz-${REVISION}
-	( cd ixp400_eth ; \
-	  ${MAKE} -C `cd .. ; pwd`/linux-${REVISION} ARCH=arm \
-		CROSS_COMPILE=${CROSS_COMPILE} M=`pwd` )
-	mkdir -p lib/modules/${REVISION}/kernel/drivers/net
-	cp ixp400_eth/ixp400_eth.ko lib/modules/${REVISION}/kernel/drivers/net
-	chmod 644 lib/modules/${REVISION}/kernel/drivers/net/ixp400_eth.ko
-
-ixp400_eth/Kbuild:
-	( mkdir ixp400_eth ; cd ixp400_eth ; \
-	  unzip ../downloads/GPL_ixp400LinuxEthernetDriverPatch-1_5_1.zip )
-	( cd ixp400_eth ; \
-	  ln -s ../patches/ixp400-eth patches ; \
-	  quilt push -a )
-
-lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko: \
-		ixp400_xscale_sw/Makefile vmlinuz-${REVISION}
-	( . ixp400_xscale_sw/buildUtils/environment.linux.sh ; \
-	  export linux${endian}e_KERNEL_DIR=`pwd`/linux-${REVISION} ; \
-	  export KERNEL_DIR=`pwd`/linux-${REVISION} ; \
-	  export IX_XSCALE_SW=`pwd`/ixp400_xscale_sw ; \
-	  export IX_TARGET=linux${ENDIAN}e ; \
-	  ${MAKE} -C ixp400_xscale_sw ARCH=arm \
-	    CROSS_COMPILE=${CROSS_COMPILE} ixp400 )
-	mkdir -p lib/modules/${REVISION}/kernel/drivers/ixp400
-	cp ixp400_xscale_sw/lib/linux${ENDIAN}e/ixp400.ko \
-		lib/modules/${REVISION}/kernel/drivers/ixp400
-	chmod 644 lib/modules/${REVISION}/kernel/drivers/ixp400/ixp400.ko
-
-ixp400_xscale_sw/Makefile:
-	unzip downloads/BSD_ixp400AccessLibrary-2_1.zip
-	( cd ixp_osal ; unzip ../downloads/BSD_ixp400AccessLibrary-2_1_1.zip )
-	cat ixp_osal/BSD_ixp400AccessLibrary-2_1_1.patch | patch -p0
-	unzip downloads/IPL_ixp400NpeLibrary-2_1.zip
-	( cd ixp400_xscale_sw ; \
-	  ln -s ../patches/ixp400 patches ; \
-	  quilt push -a )
-	( cd ixp_osal ; \
-	  ln -s ../patches/ixp-osal patches ; \
-	  quilt push -a )
 
 vmlinuz-loft-${REVISION}: vmlinuz-${REVISION}
 ifeq (${ENDIAN},b)
@@ -315,7 +263,6 @@ downloads:
 clobber:
 	rm -rf vmlinuz-* modules-*.tar.gz usr-*.tar.gz
 	rm -rf linux-*
-	rm -rf ixp400_xscale_sw ixp_osal ixp400_eth
 	rm -rf madwifi-ng
 	rm -rf lib usr
 
