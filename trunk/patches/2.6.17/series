@@ -10,7 +10,6 @@
 #11-mtdpart-redboot-config-byteswap.patch
 #12-setup-byteswap-cmdline.patch
 #13-hwmon-ad741x.patch
-14-nslu2-irq-fix.patch
 15-jffs2-endian-config.patch
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
