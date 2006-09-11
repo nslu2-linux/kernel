@@ -1,7 +1,6 @@
 # Patches numbered <= 10 are for immediate push upstream, and
 # must be all able to be applied independently in any order.
 # Patches with ## are patches that need reworking
-patch-2.6.18-rc6
 02-nas100d-mac-addr.patch
 04-nslu2-mac-addr.patch
 ##05-timer-ixp4xx.patch
