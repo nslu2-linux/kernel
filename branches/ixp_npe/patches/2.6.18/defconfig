@@ -676,7 +676,7 @@ CONFIG_ISCSI_TCP=m
 #
 # Serial ATA (prod) and Parallel ATA (experimental) drivers
 #
-CONFIG_ATA=y
+# CONFIG_ATA=y
 # CONFIG_SATA_AHCI is not set
 # CONFIG_SATA_SVW is not set
 # CONFIG_ATA_PIIX is not set
@@ -694,7 +694,7 @@ CONFIG_ATA=y
 # CONFIG_SATA_VITESSE is not set
 # CONFIG_PATA_ALI is not set
 # CONFIG_PATA_AMD is not set
-CONFIG_PATA_ARTOP=y
+# CONFIG_PATA_ARTOP=y
 # CONFIG_PATA_ATIIXP is not set
 # CONFIG_PATA_CMD64X is not set
 # CONFIG_PATA_CS5520 is not set
