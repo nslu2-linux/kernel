@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18-rc6
-# Tue Sep 12 14:03:02 2006
+# Tue Sep 12 15:08:45 2006
 #
 CONFIG_ARM=y
 CONFIG_MMU=y
@@ -204,6 +204,7 @@ CONFIG_CMDLINE=" noirqdebug console=ttyS0,115200n8"
 # At least one emulation must be selected
 #
 CONFIG_FPE_NWFPE=y
+# CONFIG_FPE_NWFPE_XP is not set
 # CONFIG_FPE_FASTFPE is not set
 
 #
