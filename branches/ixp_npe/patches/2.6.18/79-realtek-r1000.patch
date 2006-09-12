@@ -1,0 +1,33 @@
+Index: linux-2.6.17/drivers/net/Kconfig
+===================================================================
+--- linux-2.6.17.orig/drivers/net/Kconfig	2006-09-13 01:44:25.000000000 +0200
++++ linux-2.6.17/drivers/net/Kconfig	2006-09-13 01:44:26.000000000 +0200
+@@ -2010,6 +2010,16 @@
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called yellowfin.  This is recommended.
+ 
++config R1000
++	tristate "Realtek gigabit ethernet support"
++	depends on PCI
++	select CRC32
++	---help---
++	  Say Y here if you have a Realtek PCI Gigabit Ethernet adapter.
++
++	  To compile this driver as a module, choose M here: the module
++	  will be called r1000.
++
+ config R8169
+ 	tristate "Realtek 8169 gigabit ethernet support"
+ 	depends on PCI
+Index: linux-2.6.17/drivers/net/Makefile
+===================================================================
+--- linux-2.6.17.orig/drivers/net/Makefile	2006-09-13 01:44:25.000000000 +0200
++++ linux-2.6.17/drivers/net/Makefile	2006-09-13 01:44:26.000000000 +0200
+@@ -192,6 +192,7 @@
+ obj-$(CONFIG_TUN) += tun.o
+ obj-$(CONFIG_NET_NETX) += netx-eth.o
+ obj-$(CONFIG_DL2K) += dl2k.o
++obj-$(CONFIG_R1000) += r1000_n.o r1000_ioctl.o
+ obj-$(CONFIG_R8169) += r8169.o
+ obj-$(CONFIG_AMD8111_ETH) += amd8111e.o
+ obj-$(CONFIG_IBMVETH) += ibmveth.o
