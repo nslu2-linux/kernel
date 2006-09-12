@@ -1,0 +1,7 @@
+IXP4xx QMgr, NPE & MAC drivers added (modules)
+evdev, Ethernet MII, HW Random IXP4xx, I2C-Chardev now compiled as modules
+RS5C372 and M48T86 RTC drivers removed
+Netwinder FPE emulation replaced with FastFPE
+Support added for pcf8574 i2c device (module)
+SquashFS patch added but support not built
+All other suggestions to reduce space welcome :)

@@ -1,3 +1,0 @@
-evdev, Ethernet MII, HW Random IXP4xx, I2C-Chardev now compiled as modules
-RS5C372 and M48T86 RTC drivers removed
-All other suggestions welcome :)

@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18-rc6
-# Tue Sep 12 00:07:29 2006
+# Tue Sep 12 12:10:10 2006
 #
 CONFIG_ARM=y
 CONFIG_MMU=y
@@ -202,9 +202,8 @@ CONFIG_CMDLINE=" noirqdebug console=ttyS0,115200n8"
 #
 # At least one emulation must be selected
 #
-CONFIG_FPE_NWFPE=y
-# CONFIG_FPE_NWFPE_XP is not set
-# CONFIG_FPE_FASTFPE is not set
+# CONFIG_FPE_NWFPE is not set
+CONFIG_FPE_FASTFPE=y
 
 #
 # Userspace binary formats
@@ -1632,6 +1631,7 @@ CONFIG_JFFS2_RTIME=y
 CONFIG_JFFS2_BIG_ENDIAN=y
 # CONFIG_JFFS2_LITTLE_ENDIAN is not set
 # CONFIG_CRAMFS is not set
+# CONFIG_SQUASHFS is not set
 # CONFIG_VXFS_FS is not set
 # CONFIG_HPFS_FS is not set
 # CONFIG_QNX4FS_FS is not set
