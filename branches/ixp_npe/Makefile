@@ -62,7 +62,7 @@ usr-${REVISION}.tar.gz: vmlinuz-${REVISION} \
 # Add the following depedency if you want madwifi built.
 #	 lib/modules/${REVISION}/net/ath_hal.ko
 
-modules-${REVISION}.tar.gz: vmlinuz-${REVISION} \
+modules-${REVISION}.tar.gz: vmlinuz-${REVISION}
 	tar zcf modules-${REVISION}.tar.gz lib/modules/${REVISION}
 
 lib/modules/${REVISION}/net/ath_hal.ko usr/local/bin/wlanconfig: \
