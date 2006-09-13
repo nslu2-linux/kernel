@@ -2,7 +2,7 @@
 # Patches numbered 01 to 10 are for immediate push upstream, and
 # must be all able to be applied independently in any order.
 # Patches marked with # need reworking and are currently disabled
-00-squashfs3.1.patch
+#00-squashfs3.1.patch
 02-nas100d-mac-addr.patch
 04-nslu2-mac-addr.patch
 #05-timer-ixp4xx.patch
