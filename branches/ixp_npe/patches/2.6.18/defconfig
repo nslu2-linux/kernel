@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.18-rc6
-# Tue Sep 12 15:08:45 2006
+# Linux kernel version: 2.6.18-rc7
+# Wed Sep 13 15:39:36 2006
 #
 CONFIG_ARM=y
 CONFIG_MMU=y
@@ -782,6 +782,8 @@ CONFIG_NET_PCI=y
 # CONFIG_HAMACHI is not set
 # CONFIG_YELLOWFIN is not set
 CONFIG_R8169=m
+# CONFIG_R8169_NAPI is not set
+CONFIG_R8169_VLAN=y
 # CONFIG_SIS190 is not set
 # CONFIG_SKGE is not set
 # CONFIG_SKY2 is not set
@@ -1119,7 +1121,7 @@ CONFIG_LEDS_TRIGGER_CPU_ACTIVITY=y
 CONFIG_VIDEO_DEV=m
 CONFIG_VIDEO_V4L1=y
 CONFIG_VIDEO_V4L1_COMPAT=y
-CONFIG_VIDEO_V4L2=m
+CONFIG_VIDEO_V4L2=y
 
 #
 # Video Capture Adapters
