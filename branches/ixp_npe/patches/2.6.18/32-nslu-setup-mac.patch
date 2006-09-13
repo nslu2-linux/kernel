@@ -4,7 +4,7 @@
  	.resource		= nslu2_uart_resources,
  };
  
-+#ifdef CONFIG_IXP4XX_MAC
++//#ifdef CONFIG_IXP4XX_MAC
 +
 +static struct resource res_mac0 = {
 +	.start		= IXP4XX_EthB_BASE_PHYS,
@@ -28,7 +28,7 @@
 +	.resource       = &res_mac0,
 +};
 +
-+#endif
++//#endif
 +
  static struct platform_device *nslu2_devices[] __initdata = {
  	&nslu2_i2c_controller,
@@ -37,9 +37,9 @@
  #ifdef CONFIG_LEDS_IXP4XX
  	&nslu2_leds,
  #endif
-+#ifdef CONFIG_IXP4XX_MAC
++//#ifdef CONFIG_IXP4XX_MAC
 +	&mac0
-+#endif
++//#endif
  };
  
  static void nslu2_power_off(void)

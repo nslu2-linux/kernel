@@ -10,7 +10,6 @@
 07-copypage-xscale.patch
 #11-mtdpart-redboot-config-byteswap.patch
 13-zd1211-arm-fix.patch
-14-nslu2-irq-fix.patch #now fixed upstream
 15-jffs2-endian-config.patch
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
