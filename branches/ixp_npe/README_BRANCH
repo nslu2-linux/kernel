@@ -1,9 +1,10 @@
 This branch is here to allow initial testing of the IXP_NPE driver.
 
 STATUS
-2.6.18-rc6 + IXP_NPE builds (without DSM-G600 patches applied)
-Kernel needs testing and timer patches need refreshing
+2.6.18-rc7 + IXP_NPE builds
+IXP_NPE driver functions in SlugOS 4.0 HEAD
 CONFIG_CHANGES documents defconfig adjustments
 
 ISSUES
-Makefile appears to be broken at module compressing phase. This problem is currently cosmetic.
+Filesystem modules fail with "Unknown symbol" errors
+Timer & DSM-G600 patches need refreshing
