@@ -14,8 +14,10 @@
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
 30-ixp4xx-0.1.0-driver.patch
-31-ixp4xx-0.1.0-localfixes.patch
-32-nslu-setup-mac.patch
+31-ixp4xx-0.1.0-fix-compiler-issues.patch
+32-ixp4xx-0.1.0-fix-MAC-address-setting.patch
+36-ixp4xx-0.1.0-localfixes.patch
+37-nslu-setup-mac.patch
 40-scsi-idle.patch
 50-leds-arm-cpu-activity.patch
 #75-dsmg600.patch
