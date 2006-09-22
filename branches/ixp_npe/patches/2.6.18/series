@@ -7,7 +7,6 @@
 04-nslu2-mac-addr.patch
 #05-timer-ixp4xx.patch
 #06-timer-nslu2.patch
-07-copypage-xscale.patch
 #11-mtdpart-redboot-config-byteswap.patch
 13-zd1211-arm-fix.patch
 15-jffs2-endian-config.patch
