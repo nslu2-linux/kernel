@@ -5,5 +5,4 @@ RS5C372 and M48T86 RTC drivers removed
 Support added for pcf8574 i2c device (module)
 SquashFS patch added but support not built
 r8169 module added for Thecus N2100
-zd1211rw driver removed due to GCC 4.1.1 compile failure (emailed to developer)
 All other suggestions to reduce space welcome :)

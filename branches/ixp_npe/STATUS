@@ -11,13 +11,6 @@
 04-nslu2-mac-addr.patch
 	Rejected by upstream
 
-05-timer-ixp4xx.patch
-06-timer-nslu2.patch
-	Rejected by upstream, rewrite awaits ARM arch change to new clocksource system
-
-07-copypage-xscale.patch
-	Posted as RFC on l-a-k, not yet submitted to ARM patch system.
-
 11-mtdpart-redboot-config-byteswap.patch
 	Needs to be refreshed for 2.6.18.
 
