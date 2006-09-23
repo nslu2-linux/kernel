@@ -1,0 +1,29 @@
+Index: linux-2.6.16/arch/arm/mach-ixp4xx/nas100d-setup.c
+===================================================================
+--- linux-2.6.16.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-07 23:25:38.911908720 +0930
++++ linux-2.6.16/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-06-07 23:25:39.401834240 +0930
+@@ -144,6 +144,12 @@
+  * to be reset to 0 (on the first mem=)
+  */
+ 
++static char nas100d_command_line[] __initdata =
++	"root=/dev/mtdblock2 rootfstype=jffs2 init=/linuxrc "
++	"rtc-pcf8563.probe=0,0x51 "
++	CONFIG_CMDLINE;
++
++
+ static void __init nas100d_fixup(struct machine_desc *desc,
+ 		struct tag *tags, char **cmdline, struct meminfo *mi)
+ {
+@@ -155,6 +161,11 @@
+ 	mi->bank[0].start = 0;
+ 	mi->bank[0].size = (64*1024*1024);
+ 	mi->bank[0].node = PHYS_TO_NID(0);
++
++	/* A command line in the ATAG list will override this one,
++	 * as is intended.
++	 */
++	strlcpy(*cmdline, nas100d_command_line, COMMAND_LINE_SIZE);
+ }
+ 
+ MACHINE_START(NAS100D, "Iomega NAS 100d")
