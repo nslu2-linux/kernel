@@ -1,0 +1,25 @@
+diff --git a/drivers/net/ixp4xx/mac_driver.c b/drivers/net/ixp4xx/mac_driver.c
+index 802695e..b3c4d95 100644
+--- a/drivers/net/ixp4xx/mac_driver.c
++++ b/drivers/net/ixp4xx/mac_driver.c
+@@ -84,8 +84,7 @@ static void mac_set_uniaddr(struct net_d
+ 	npe_mh_setportaddr(npe, mac->plat, dev->dev_addr);
+ 	npe_mh_disable_firewall(npe, mac->plat);
+ 	for (i=0; i<dev->addr_len; i++)
+-		mac_write_reg(mac, MAC_UNI_ADDR + 4 * i,
+-				dev->dev_addr[i]);
++		mac_write_reg(mac, MAC_UNI_ADDR + i, dev->dev_addr[i]);
+ }
+ 
+ static void update_duplex_mode(struct net_device *dev)
+@@ -173,8 +172,8 @@ static void ixmac_set_rx_mode (struct ne
+ 			aclear[j] = aset[j] | ~aclear[j];
+ 		}
+ 		for (i=0; i<dev->addr_len; i++) {
+-			mac_write_reg(mac, MAC_ADDR + 4*i, aset[i]);
+-			mac_write_reg(mac, MAC_ADDR_MASK + 4*i,
++			mac_write_reg(mac, MAC_ADDR + i, aset[i]);
++			mac_write_reg(mac, MAC_ADDR_MASK + i,
+ 					aset[i]);
+ 		}
+ 	}
