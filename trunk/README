@@ -1,0 +1,11 @@
+This branch is here to allow initial testing of the IXP_NPE driver.
+
+STATUS
+2.6.18 + IXP_NPE builds
+IXP_NPE driver functions in SlugOS 4.0 HEAD
+CONFIG_CHANGES documents defconfig adjustments
+
+ISSUES
+Filesystem modules fail with "Unknown symbol" errors
+DSM-G600 & Loft patches need refreshing
+Clocksource IXP4xx patches need to be included
