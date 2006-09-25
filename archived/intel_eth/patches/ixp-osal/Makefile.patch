@@ -1,0 +1,16 @@
+ Makefile |    2 +-
+ 1 files changed, 1 insertion(+), 1 deletion(-)
+
+Index: ixp_osal/Makefile
+===================================================================
+--- ixp_osal.orig/Makefile
++++ ixp_osal/Makefile
+@@ -187,7 +187,7 @@
+ INCLUDE_DIRS = include $(OSAL_DIRS:%=$(MAIN_INC_PREFIX)/%) $(OSAL_DIRS:%=$(OS_INC_PREFIX)/%)  
+ 
+ ifeq ($(IX_OSAL_MK_HOST_OS), linux)
+-INCLUDE_DIRS += $(LINUX_SRC)/include/asm-arm/arch-ixp425/
++INCLUDE_DIRS += $(LINUX_SRC)/include/asm-arm/arch-ixp4xx/
+ endif
+ 
+ CFLAGS += $(INCLUDE_DIRS:%=-I%) 

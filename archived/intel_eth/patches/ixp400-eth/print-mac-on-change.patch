@@ -1,0 +1,80 @@
+---
+ ixp400_eth.c |   64 +++++++++++++++++++++++++++++------------------------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
+
+--- ixp425.orig/ixp400_eth.c	2005-12-01 20:01:00.000000000 +0100
++++ ixp425/ixp400_eth.c	2006-03-27 03:34:10.000000000 +0200
+@@ -3047,41 +3047,41 @@ static int phy_init(void)
+ /* set port MAC addr and update the dev struct if successfull */
+ static int set_mac_address(struct net_device *dev, void *addr)
+ {
+-    int res;
+-    IxEthAccMacAddr npeMacAddr;
+-    struct sockaddr *saddr = (struct sockaddr *)addr;
+-#if IS_KERNEL26
+-    priv_data_t *priv = netdev_priv(dev);
+-#else
+-    priv_data_t *priv = dev->priv;
+-#endif
++	int res;
++	IxEthAccMacAddr npeMacAddr;
++	struct sockaddr *saddr = (struct sockaddr *)addr;
++#if IS_KERNEL26
++	priv_data_t *priv = netdev_priv(dev);
++#else
++	priv_data_t *priv = dev->priv;
++#endif
++
++	/* Get MAC addr from parameter */
++	memcpy(&npeMacAddr.macAddress, &saddr->sa_data[0],
++		IX_IEEE803_MAC_ADDRESS_SIZE);
++
++	P_INFO("%s: setting hw address %2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x for port %d\n",
++		dev->name,
++		(unsigned) npeMacAddr.macAddress[0],
++		(unsigned) npeMacAddr.macAddress[1],
++		(unsigned) npeMacAddr.macAddress[2],
++		(unsigned) npeMacAddr.macAddress[3],
++		(unsigned) npeMacAddr.macAddress[4],
++		(unsigned) npeMacAddr.macAddress[5],
++		priv->port_id);
+ 
+-    /* Get MAC addr from parameter */
+-    memcpy(&npeMacAddr.macAddress,
+-	   &saddr->sa_data[0],
+-	   IX_IEEE803_MAC_ADDRESS_SIZE);
+-
+-    /* Set MAC addr in h/w (ethAcc checks for MAC address to be valid) */
+-    if ((res = ixEthAccPortUnicastMacAddressSet(priv->port_id, &npeMacAddr)))
+-    {
+-        P_VERBOSE("%s: Failed to set MAC address %2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x for port %d\n",
+-	       dev->name,
+-	       (unsigned)npeMacAddr.macAddress[0],
+-	       (unsigned)npeMacAddr.macAddress[1],
+-	       (unsigned)npeMacAddr.macAddress[2],
+-	       (unsigned)npeMacAddr.macAddress[3],
+-	       (unsigned)npeMacAddr.macAddress[4],
+-	       (unsigned)npeMacAddr.macAddress[5],
+-	       priv->port_id);
+-        return convert_error_ethAcc(res);
+-    }
++	/* Set MAC addr in h/w (ethAcc checks for MAC address to be valid) */
++	if ((res = ixEthAccPortUnicastMacAddressSet(priv->port_id, &npeMacAddr)))
++	{
++		P_ERROR("%s: failed to set mac addr.\n", dev->name);
++		return convert_error_ethAcc(res);
++	}
+ 
+-    /* update dev struct */
+-    memcpy(dev->dev_addr, 
+-	   &saddr->sa_data[0],
+-	   IX_IEEE803_MAC_ADDRESS_SIZE);
++	/* update dev struct */
++	memcpy(dev->dev_addr, &saddr->sa_data[0],
++		IX_IEEE803_MAC_ADDRESS_SIZE);
+ 
+-    return 0;
++	return 0;
+ }
+ 
+ #ifdef CONFIG_NET_POLL_CONTROLLER

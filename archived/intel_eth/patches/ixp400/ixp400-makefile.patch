@@ -1,0 +1,104 @@
+ Kbuild.26 |    2 ++
+ Makefile  |   32 +++++++++++++++++++++++---------
+ 2 files changed, 25 insertions(+), 9 deletions(-)
+
+ kbuild only patch - do not apply to OpenEmbedded metadata because
+ these defines are done in the OE make command line
+
+Index: ixp400_xscale_sw/Makefile
+===================================================================
+--- ixp400_xscale_sw.orig/Makefile
++++ ixp400_xscale_sw/Makefile
+@@ -54,7 +54,7 @@
+ # Components that work only for a subset of platforms
+ # should be added to the relevant *_COMPONENTS lists.
+ #
+-BI_ENDIAN_COMPONENTS := atmdAcc atmm atmsch qmgr npeMh npeDl ethAcc ethDB ethMii hssAcc uartAcc usb featureCtrl ossl osServices 
++BI_ENDIAN_COMPONENTS := qmgr npeMh npeDl ethAcc ethDB ethMii featureCtrl osServices
+ 
+ 
+ #Components only applicable to ixp46x
+@@ -69,6 +69,11 @@
+ else
+ linuxbe_COMPONENTS := $(BI_ENDIAN_COMPONENTS) dmaAcc oslinux perfProfAcc
+ endif
++ifeq ($(IX_LINUXVER),2.6)
++linuxle_COMPONENTS := $(BI_ENDIAN_COMPONENTS) oslinux
++else
++linuxle_COMPONENTS := $(BI_ENDIAN_COMPONENTS) oslinux perfProfAcc
++endif
+ 
+ #The lists below contain the set of components available for each target platform
+ # specific to the ixp46X device
+@@ -164,7 +169,7 @@
+ ################################################################
+ # Linux kernel source
+ 
+-LINUX_SRC := $($(IX_TARGET)_KERNEL_DIR)
++LINUX_SRC := $(KERNEL_DIR)
+ 
+ ################################################################
+ # Inclusion of common Makefile
+@@ -264,11 +269,12 @@
+ else # IX_TARGET_OS == vxworks
+ 
+ # Linux tool names
+-ifeq ($(IX_TARGET), linuxbe)
+-LINUX_CROSS_COMPILE := $(HARDHAT_BASE)/devkit/arm/xscale_be/bin/xscale_be-
+-else
+-LINUX_CROSS_COMPILE := $(HARDHAT_BASE)/devkit/arm/xscale_le/bin/xscale_le-
+-endif
++#ifeq ($(IX_TARGET), linuxbe)
++#LINUX_CROSS_COMPILE := $(HARDHAT_BASE)/devkit/arm/xscale_be/bin/xscale_be-
++#else
++#LINUX_CROSS_COMPILE := $(HARDHAT_BASE)/devkit/arm/xscale_le/bin/xscale_le-
++#endif
++LINUX_CROSS_COMPILE := $(CROSS_COMPILE)
+ 
+ LD := $(LINUX_CROSS_COMPILE)ld
+ CC := $(LINUX_CROSS_COMPILE)gcc
+@@ -329,6 +335,8 @@
+ CFLAGS += -DIX_NPEDL_READ_MICROCODE_FROM_FILE
+ 
+ 
++CFLAGS += -DIX_UTOPIAMODE=0 -DIX_MPHY=1 -DIX_MPHYSINGLEPORT
++
+ # Linux linker flags
+ LDFLAGS := -r
+ 
+@@ -1370,13 +1378,13 @@
+ libIxp400 : $(OBJ_DIR)/libIxp400.a $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE)
+ 
+ $(OBJ_DIR)/libIxp400.a : $(COMPONENT_OBJ) $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE) 
+-	$(MAKEFILE_TRACE) Building Ixp400 library containing components $(COMPONENTS:%=\"%\")
++	$(MAKEFILE_TRACE) Building Ixp400 library containing components $(COMPONENTS:%=\"%\") #"
+ 	$(AR) rvs $(OBJ_DIR)/libIxp400.a $^
+ else
+ libIxp400 : $(OBJ_DIR)/libIxp425.a $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE)
+ 
+ $(OBJ_DIR)/libIxp425.a : $(COMPONENT_OBJ) $(NPE_PRODUCTION_HEADER_OBJ) $(OSAL_MODULE)
+-	$(MAKEFILE_TRACE) Building Ixp400 library containing components $(COMPONENTS:%=\"%\")
++	$(MAKEFILE_TRACE) Building Ixp400 library containing components $(COMPONENTS:%=\"%\") #"
+ 	$(AR) rvs $(OBJ_DIR)/libIxp425.a $^
+ endif
+ 
+@@ -1406,6 +1414,12 @@
+ 	$(LD) $(LDFLAGS) $^ -o $@
+ endif
+ 
++$(OBJ_DIR)/ixp400_bin.o_shipped: $(OBJ_DIR)/ixp400.o
++	cp $(OBJ_DIR)/ixp400.o $(OBJ_DIR)/ixp400_bin.o_shipped
++
++ixp400.ko : $(OBJ_DIR)/ixp400_bin.o_shipped
++	cp Kbuild.26 $(OBJ_DIR)/Kbuild
++	make ARCH=arm CROSS_COMPILE=$(CROSS_COMPILE) -C $(LINUX_SRC) M=$(IX_XSCALE_SW)/$(OBJ_DIR)
+ 
+ 
+ ################################################################
+Index: ixp400_xscale_sw/Kbuild.26
+===================================================================
+--- /dev/null
++++ ixp400_xscale_sw/Kbuild.26
+@@ -0,0 +1,2 @@
++obj-m           := ixp400.o
++ixp400-y        := ixp400_bin.o

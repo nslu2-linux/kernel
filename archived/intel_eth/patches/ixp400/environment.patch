@@ -1,0 +1,43 @@
+ buildUtils/environment.linux.sh |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+ kbuild only patch - do not apply to OpenEmbedded metadata because
+ these defines are done in the OE make command line
+
+--- ixp400_xscale_sw/buildUtils/environment.linux.sh	1970-01-01 00:00:00.000000000 +0000
++++ ixp400_xscale_sw/buildUtils/environment.linux.sh	1970-01-01 00:00:00.000000000 +0000
+@@ -39,17 +39,14 @@
+ # @par
+ # -- End Intel Copyright Notice --
+ # Change the following line to point to your linux kernel source tree
+-linuxbe_KERNEL_DIR=/path/to/the/be/os/linux-2.4
+-linuxle_KERNEL_DIR=/path/to/the/le/os/linux-2.4
+-
+-# Change the following line to point to the root of your Monta Vista install
+-HARDHAT_BASE=/opt/montavista/pro
++KERNEL_DIR=/usr/src/linux-nslu2
+ 
+ # You may want to edit the following to point to your ixp400_xscale_sw
+ # directory. Otherwise you must source this file from that directory.
+-IX_XSCALE_SW=/path/to/the/ixp400_xscale_sw
++IX_XSCALE_SW=/usr/src/ixp400_xscale_sw
+ 
+-PATH=/usr/bin:$HARDHAT_BASE/host/bin:$HARDHAT_BASE/devkit/arm/xscale_be/bin:$HARDHAT_BASE/devkit/arm/xscale_le/bin:$PATH
++# Be sure you compiler's path is included
++PATH=$PATH:/opt/crosstool/armv5b-softfloat-linux/gcc-3.3.4-glibc-2.2.5/bin
+ 
+ #NOTE: All flag definitions below are case sensitive
+ 
+@@ -63,7 +60,10 @@ IX_PLATFORM=ixdp42x
+ 
+ # For Big endian, set IX_TARGET to linuxbe
+ # For Little endian, set IX_TARGET to linuxle
+-IX_TARGET=linuxbe
++IX_TARGET=linuxle
++
++# Always include microcode for now
++IX_INCLUDE_MICROCODE=1
+ 
++export KERNEL_DIR IX_XSCALE_SW PATH IX_DEVICE IX_PLATFORM IX_TARGET IX_INCLUDE_MICROCODE
+ 
+-export linuxbe_KERNEL_DIR linuxle_KERNEL_DIR HARDHAT_BASE IX_XSCALE_SW PATH IX_DEVICE IX_PLATFORM IX_TARGET
