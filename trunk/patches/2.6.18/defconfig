@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18
-# Mon Sep 25 11:20:04 2006
+# Mon Sep 25 15:47:02 2006
 #
 CONFIG_ARM=y
 CONFIG_MMU=y
@@ -473,7 +473,7 @@ CONFIG_WIRELESS_EXT=y
 #
 CONFIG_STANDALONE=y
 CONFIG_PREVENT_FIRMWARE_BUILD=y
-CONFIG_FW_LOADER=y
+CONFIG_FW_LOADER=m
 # CONFIG_SYS_HYPERVISOR is not set
 
 #
