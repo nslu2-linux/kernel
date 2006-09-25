@@ -1,0 +1,79 @@
+Fixes in this patch:
+  - endian issue during LE download
+  - /dev/ name changed from "ucode_dl" to "ixp4xx_ucode"
+  - support firmware_class as module
+
+--- a/drivers/net/ixp4xx/ucode_dl.c	7 Sep 2006 14:59:35 -0000	1.1
++++ b/drivers/net/ixp4xx/ucode_dl.c	25 Sep 2006 10:56:15 -0000
+@@ -15,6 +15,7 @@
+ #include <linux/init.h>
+ #include <linux/slab.h>
+ #include <linux/firmware.h>
++#include <linux/dma-mapping.h>
+ #include <asm/uaccess.h>
+ #include <asm/io.h>
+ 
+@@ -121,6 +122,8 @@
+ static int match_by_npeid(struct device *dev, void *id)
+ {
+ 	struct npe_info *npe = dev_get_drvdata(dev);
++	if (!npe->plat)
++		return 0;
+ 	return (npe->plat->id == *(int*)id);
+ }
+ 
+@@ -136,10 +139,9 @@
+ 	struct dl_codeblock *cb;
+ 	struct npe_info *npe;
+ 	int ret=0;
+-	u32 imgid = be32_to_cpu(image->id);
+ 
+ 	if (!dev) {
+-		dev = get_npe_by_id( (imgid >> 24) & 0xf);
++		dev = get_npe_by_id( (image->id >> 24) & 0xf);
+ 		put_device(dev);
+ 	}
+ 	if (!dev)
+@@ -167,7 +169,7 @@
+ 		if ((ret = download_block(npe, cb, blk->type)))
+ 			return ret;
+ 	}
+-	*(u32*)npe->img_info = imgid;
++	*(u32*)npe->img_info = cpu_to_be32(image->id);
+ 	npe_start(npe);
+ 
+ 	printk(KERN_INFO "Image loaded to %s Func:%x, Rel: %x:%x, Status: %x\n",
+@@ -252,7 +254,8 @@
+ 
+ static void npe_firmware_probe(struct device *dev)
+ {
+-#if defined(CONFIG_FW_LOADER) && defined(MODULE)
++#if (defined(CONFIG_FW_LOADER) || defined(CONFIG_FW_LOADER_MODULE)) \
++	&& defined(MODULE)
+ 	const struct firmware *fw_entry;
+ 	struct npe_info *npe = dev_get_drvdata(dev);
+ 	struct dl_image *image;
+@@ -352,11 +355,13 @@
+ 		goto out_rel;
+ 	}
+ 
+-	npe->plat = plat;
++	pdev->dev.coherent_dma_mask = DMA_31BIT_MASK;
++
+ 	platform_set_drvdata(pdev, npe);
+ 
+ 	device_create_file(&pdev->dev, &dev_attr_state);
+ 
++	npe->plat = plat;
+ 	disable_npe_irq(npe);
+ 	if (! (npe_status(npe) & IX_NPEDL_EXCTL_STATUS_RUN))
+ 		npe_firmware_probe(&pdev->dev);
+@@ -379,7 +384,7 @@
+ 
+ static struct miscdevice ucode_dl_dev = {
+ 	.minor	= MICROCODE_MINOR,
+-	.name	= "ucode_dl",
++	.name	= "ixp4xx_ucode",
+ 	.fops	= &ucode_dl_fops,
+ };
+ 
