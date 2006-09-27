@@ -1,0 +1,54 @@
+diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/mac_driver.c linux-2.6.18/drivers/net/ixp4xx/mac_driver.c
+--- linux-2.6.18.orig/drivers/net/ixp4xx/mac_driver.c	2006-09-27 16:05:35.883360750 +0000
++++ linux-2.6.18/drivers/net/ixp4xx/mac_driver.c	2006-09-27 16:07:09.581216500 +0000
+@@ -116,6 +116,7 @@
+ 	struct sk_buff *skb;
+ 
+ 	queue_ack_irq(queue);
++	printk("IXP: Packet in %s\n",__FUNCTION__);
+ 	skb = queue_return_skb(queue);
+ 	while (skb) {
+ 		int rc;
+@@ -143,6 +144,7 @@
+ void irqcb_txdone(struct qm_queue *queue)
+ {
+ 	queue_ack_irq(queue);
++	printk("IXP: Packet in %s\n",__FUNCTION__);
+ 	while (queue_drain(queue));
+ }
+ 
+diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/qmgr_eth.c linux-2.6.18/drivers/net/ixp4xx/qmgr_eth.c
+--- linux-2.6.18.orig/drivers/net/ixp4xx/qmgr_eth.c	2006-09-27 16:05:35.807356000 +0000
++++ linux-2.6.18/drivers/net/ixp4xx/qmgr_eth.c	2006-09-27 16:07:02.356765000 +0000
+@@ -50,6 +50,7 @@
+ 	cont->ctl.eth.phys_addr = cpu_to_be32(
+ 		dma_map_single(queue->dev, skb->data, skb->len, DMA_TO_DEVICE));
+ 
++	printk("SEND PHYS: 0x%08x\n", cont->phys);
+ 	queue_put_entry(queue, cpu_to_be32(cont->phys));
+ 
+ 	stat = (*(qmgr->addr + QUE_UO_STAT0 + (queue->id >> 4))	>>
+@@ -85,6 +86,7 @@
+ 	cont->ctl.eth.phys_addr = cpu_to_be32(
+ 		dma_map_single(queue->dev, skb->data, len, DMA_FROM_DEVICE));
+ 
++	printk("PREPARE PHYS: 0x%08x\n", cont->phys);
+ 	queue_put_entry(queue, cpu_to_be32(cont->phys));
+ 
+ 	/* TODO: check quelen ?
+@@ -100,6 +102,7 @@
+ 
+ 	if (!phys)
+ 		return 0;
++	printk("DRAIN PHYS: 0x%08x\n", phys);
+ 	cont = dma_to_virt(queue->dev, phys);
+ 	cont = cont->virt;
+ 	dev_kfree_skb_any(cont->h.skb);
+@@ -117,6 +120,7 @@
+ 	if (!phys)
+ 		return NULL;
+ 
++	printk("RECV PHYS: 0x%08x\n", phys);
+ 	cont = dma_to_virt(queue->dev, phys);
+ 	cont = cont->virt;
+ 	skb = cont->h.skb;
