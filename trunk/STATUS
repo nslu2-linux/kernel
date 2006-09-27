@@ -11,9 +11,6 @@
 04-nslu2-mac-addr.patch
 	Rejected by upstream
 
-11-mtdpart-redboot-config-byteswap.patch
-	Needs to be refreshed for 2.6.18.
-
 15-jffs2-endian-config.patch [linux-mtd]
 	Has been submitted to linux-mtd
 	http://lists.infradead.org/pipermail/linux-mtd/2006-January/014740.html
