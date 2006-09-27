@@ -1,0 +1,38 @@
+--- linux-2.6.18.orig/drivers/net/ixp4xx/qmgr_eth.c	2006-09-27 20:18:29.082848544 +0200
++++ linux-2.6.18/drivers/net/ixp4xx/qmgr_eth.c	2006-09-27 20:17:13.984265264 +0200
+@@ -51,7 +51,7 @@
+ 		dma_map_single(queue->dev, skb->data, skb->len, DMA_TO_DEVICE));
+ 
+ 	printk("SEND PHYS: 0x%08x\n", cont->phys);
+-	queue_put_entry(queue, cpu_to_be32(cont->phys));
++	queue_put_entry(queue, cont->phys);
+ 
+ 	stat = (*(qmgr->addr + QUE_UO_STAT0 + (queue->id >> 4))	>>
+ 			(queue->id & 0xf)<<1) & 3;
+@@ -87,7 +87,7 @@
+ 		dma_map_single(queue->dev, skb->data, len, DMA_FROM_DEVICE));
+ 
+ 	printk("PREPARE PHYS: 0x%08x\n", cont->phys);
+-	queue_put_entry(queue, cpu_to_be32(cont->phys));
++	queue_put_entry(queue, cont->phys);
+ 
+ 	/* TODO: check quelen ?
+ 	 * The current use guarantees that this queues will never overflow.
+@@ -97,7 +97,7 @@
+ 
+ int queue_drain(struct qm_queue *queue)
+ {
+-	u32 phys = be32_to_cpu(*queue->acc_reg) & ~0xf;
++	u32 phys = *queue->acc_reg & ~0xf;
+ 	struct npe_cont *cont;
+ 
+ 	if (!phys)
+@@ -112,7 +112,7 @@
+ 
+ struct sk_buff *queue_return_skb(struct qm_queue *queue)
+ {
+-	u32 phys = be32_to_cpu(*queue->acc_reg) & ~0xf;
++	u32 phys = *queue->acc_reg & ~0xf;
+ 	struct sk_buff *skb;
+ 	struct npe_cont *cont;
+ 	int len, buflen;
