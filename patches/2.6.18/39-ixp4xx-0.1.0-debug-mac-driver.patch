@@ -1,0 +1,18 @@
+--- linux-2.6.18.orig/drivers/net/ixp4xx/mac_driver.c	2006-09-27 07:27:39.009006250 +0000
++++ linux-2.6.18/drivers/net/ixp4xx/mac_driver.c	2006-09-27 07:28:31.696299000 +0000
+@@ -116,6 +116,7 @@
+ 	struct sk_buff *skb;
+ 
+ 	queue_ack_irq(queue);
++	printk("IXP: Packet in %s\n",__FUNCTION__);
+ 	skb = queue_return_skb(queue);
+ 	while (skb) {
+ 		int rc;
+@@ -143,6 +144,7 @@
+ void irqcb_txdone(struct qm_queue *queue)
+ {
+ 	queue_ack_irq(queue);
++	printk("IXP: Packet in %s\n",__FUNCTION__);
+ 	while (queue_drain(queue));
+ }
+ 
