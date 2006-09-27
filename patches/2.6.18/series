@@ -14,7 +14,7 @@
 32-ixp4xx-0.1.0-fix-MAC-address-setting.patch
 33-ixp4xx-0.1.0-fixup-ucode_dl.patch
 34-ixp4xx-0.1.0-fix-qmgr-LE.patch
-36-ixp4xx-0.1.0-localfixes.patch
+35-ixp4xx-0.1.0-more-LE-fixes.patch
 37-nslu-setup-mac.patch
 39-ixp4xx-0.1.0-debug-mac-driver.patch
 40-scsi-idle.patch
