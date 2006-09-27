@@ -16,6 +16,7 @@
 34-ixp4xx-0.1.0-fix-qmgr-LE.patch
 36-ixp4xx-0.1.0-localfixes.patch
 37-nslu-setup-mac.patch
+39-ixp4xx-0.1.0-debug-mac-driver.patch
 40-scsi-idle.patch
 50-leds-arm-cpu-activity.patch
 #75-dsmg600.patch
