@@ -7,9 +7,9 @@
 [linux-mtd] - patch submitted to the linux-mtd mailing list (because
 	it is not ARM specific.)
 
-02-nas100d-mac-addr.patch
-04-nslu2-mac-addr.patch
-	Rejected by upstream
+11-nslu2-mac-addr.patch
+12-nas100d-mac-addr.patch
+	Rejected by upstream (told to do in userspace)
 
 15-jffs2-endian-config.patch [linux-mtd]
 	Has been submitted to linux-mtd
