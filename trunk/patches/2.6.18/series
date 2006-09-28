@@ -12,15 +12,7 @@
 28-nslu2-setup-mac.patch
 29-nas100d-setup-mac.patch
 30-ixp4xx-0.1.0-driver.patch
-31-ixp4xx-0.1.0-fix-compiler-issues.patch
-32-ixp4xx-0.1.0-fix-MAC-address-setting.patch
-33-ixp4xx-0.1.0-fixup-ucode_dl.patch
-34-ixp4xx-0.1.0-fix-qmgr-LE.patch
-35-ixp4xx-0.1.0-more-LE-fixes.patch
-36-ixp4xx-0.1.0-debug-LE.patch
-37-ixp4xx-0.1.0-try-not-byteswapping.patch
-38-ixp4xx-0.1.0-set-address-coherent-1.patch
-39-ixp4xx-0.1.0-set-address-coherent-2.patch
+31-ixp4xx-0.1.0-fixes-x1.patch
 40-scsi-idle.patch
 50-leds-arm-cpu-activity.patch
 ##75-dsmg600.patch
