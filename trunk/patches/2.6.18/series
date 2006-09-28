@@ -2,9 +2,8 @@
 # Patches numbered 01 to 10 are for immediate push upstream, and
 # must be all able to be applied independently in any order.
 # Patches marked with ## need reworking and are currently disabled
-#00-squashfs3.1.patch
-02-nas100d-mac-addr.patch
-04-nslu2-mac-addr.patch
+11-nslu2-mac-addr.patch
+12-nas100d-mac-addr.patch
 13-zd1211-arm-fix.patch
 15-jffs2-endian-config.patch
 20-nas100d-cmdline-fixup.patch
