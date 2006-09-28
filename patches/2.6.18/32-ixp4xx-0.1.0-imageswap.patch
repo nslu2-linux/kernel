@@ -22,7 +22,7 @@
  			void *data;
 -			if (u.image->magic != DL_MAGIC) {
 +			if (u.image->magic == DL_MAGIC_SWAP) {
-+				printk(KERN_INFO "swapped image found\n");
++				printk(KERN_INFO "Byteswapped Microcode found\n");
 +				u.image->id = swab32(u.image->id);
 +				u.image->size = swab32(u.image->size);
 +			} else if (u.image->magic != DL_MAGIC) {
@@ -60,7 +60,7 @@
  		goto out;
  	}
 +	if (image->magic == DL_MAGIC_SWAP) {
-+		printk(KERN_INFO "Byteswapped image found\n");
++		printk(KERN_INFO "Byteswapped Microcode found\n");
 +		image->id = swab32(image->id);
 +		image->size = swab32(image->size);
 +	} else if (image->magic != DL_MAGIC) {
