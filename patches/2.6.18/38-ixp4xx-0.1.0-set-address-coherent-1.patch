@@ -1,0 +1,67 @@
+--- linux-2.6.18.orig/drivers/net/ixp4xx/qmgr_eth.c	2006-09-28 08:37:07.000000000 +0200
++++ linux-2.6.18/drivers/net/ixp4xx/qmgr_eth.c	2006-09-28 14:31:22.010248352 +0200
+@@ -43,12 +43,21 @@
+ 		return 0;
+ 
+ 	cont->h.skb = skb;
++#ifndef __ARMEB__
++	/* swap the payload of the SKB */
++	{
++		u32 *p = (u32*)((unsigned)skb->data & ~0x3);
++		u32 *e = (u32*)(((unsigned)skb->data + skb->len + 3) & ~0x3);
++		while (p < e)
++			*p = cpu_to_be32(*p), ++p;
++	}
++#endif
+ 	/* fill the NPE information record */
+ 	cont->ctl.eth.next = 0;
+-	cont->ctl.eth.buf_len = cpu_to_be16(skb->end - skb->head);
+-	cont->ctl.eth.pkt_len = cpu_to_be16(skb->len);
+-	cont->ctl.eth.phys_addr = cpu_to_be32(
+-		dma_map_single(queue->dev, skb->data, skb->len, DMA_TO_DEVICE));
++	cont->ctl.eth.buf_len = skb->end - skb->head;
++	cont->ctl.eth.pkt_len = skb->len;
++	cont->ctl.eth.phys_addr =
++		dma_map_single(queue->dev, skb->data, skb->len, DMA_TO_DEVICE);
+ 
+ 	printk("SEND PHYS: 0x%08x\n", cont->phys);
+ 	queue_put_entry(queue, cont->phys);
+@@ -81,10 +90,10 @@
+ 	skb->dev = dev;
+ 	cont->h.skb = skb;
+ 	cont->ctl.eth.next = 0;
+-	cont->ctl.eth.buf_len = cpu_to_be16(len);
++	cont->ctl.eth.buf_len = len;
+ 	cont->ctl.eth.pkt_len = 0;
+-	cont->ctl.eth.phys_addr = cpu_to_be32(
+-		dma_map_single(queue->dev, skb->data, len, DMA_FROM_DEVICE));
++	cont->ctl.eth.phys_addr =
++		dma_map_single(queue->dev, skb->data, len, DMA_FROM_DEVICE);
+ 
+ 	printk("PREPARE PHYS: 0x%08x\n", cont->phys);
+ 	queue_put_entry(queue, cont->phys);
+@@ -124,12 +133,21 @@
+ 	cont = dma_to_virt(queue->dev, phys);
+ 	cont = cont->virt;
+ 	skb = cont->h.skb;
+-	buflen = be16_to_cpu(cont->ctl.eth.buf_len);
+-	len = be16_to_cpu(cont->ctl.eth.pkt_len);
+-	dma_unmap_single(queue->dev, be32_to_cpu(cont->ctl.eth.phys_addr),
++	buflen = cont->ctl.eth.buf_len;
++	len = cont->ctl.eth.pkt_len;
++	dma_unmap_single(queue->dev, cont->ctl.eth.phys_addr,
+ 			buflen,	DMA_FROM_DEVICE);
+ 	qmgr_return_cont(dev_get_drvdata(queue->dev), cont);
+ 	skb_put(skb, len);
++#ifndef __ARMEB__
++	/* swap the payload of the SKB */
++	{
++		u32 *p = (u32*)((unsigned)skb->data & ~0x3);
++		u32 *e = (u32*)(((unsigned)skb->data + skb->len + 3) & ~0x3);
++		while (p < e)
++			*p = cpu_to_be32(*p), ++p;
++	}
++#endif
+ 	return skb;
+ }
+ 
