@@ -13,6 +13,7 @@
 29-nas100d-setup-mac.patch
 30-ixp4xx-0.1.0-driver.patch
 31-ixp4xx-0.1.0-fixes-x1.patch
+32-ixp4xx-0.1.0-imageswap.patch
 40-scsi-idle.patch
 50-leds-arm-cpu-activity.patch
 ##75-dsmg600.patch
