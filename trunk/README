@@ -2,7 +2,7 @@ This branch is here to allow initial testing of the IXP_NPE driver.
 
 STATUS
 2.6.18 + IXP_NPE builds
-IXP_NPE driver functions in SlugOS 4.0 HEAD Big-Endian only
+IXP_NPE driver functions in SlugOS 4.0 HEAD BE & LE
 CONFIG_CHANGES documents defconfig adjustments
 
 ISSUES
