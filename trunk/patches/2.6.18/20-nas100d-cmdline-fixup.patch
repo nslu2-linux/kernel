@@ -11,19 +11,19 @@ Signed-off-by: Rod Whitby <rod@whitby.id.au>
  arch/arm/mach-ixp4xx/nas100d-setup.c |   44 +++++++++++++++++++++++++++++++++++
  1 files changed, 44 insertions(+)
 
-Index: linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nas100d-setup.c
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/nas100d-setup.c
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-09-20 05:42:06.000000000 +0200
++++ linux-2.6.18/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-10-02 00:35:15.000000000 +0200
 @@ -20,6 +20,7 @@
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
 +#include <asm/setup.h>
  
- #include <linux/mtd/mtd.h>
- #include <linux/netdevice.h>
-@@ -228,11 +229,54 @@
+ static struct flash_platform_data nas100d_flash_data = {
+ 	.map_name		= "cfi_probe",
+@@ -164,11 +165,54 @@
  	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
  }
  

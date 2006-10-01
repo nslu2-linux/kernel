@@ -1,7 +1,8 @@
-diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/nas100d-setup.c linux-2.6.18/arch/arm/mach-ixp4xx/nas100d-setup.c
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-09-28 14:59:01.790938000 +0000
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-09-28 14:55:48.622865750 +0000
-@@ -128,12 +128,35 @@
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/nas100d-setup.c
+===================================================================
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-10-02 00:35:15.000000000 +0200
++++ linux-2.6.18/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-10-02 00:35:21.000000000 +0200
+@@ -124,12 +124,35 @@
  	.resource		= nas100d_uart_resources,
  };
  
