@@ -3,11 +3,8 @@
 # must be all able to be applied independently in any order.
 # Patches marked with ## need reworking and are currently disabled
 
+13-zd1211rw-various-fixes.patch
 13-zd1211rw-arm-fix.patch
-#13-zd1211rw-led-support.patch
-13-zd1211rw-workqueue.patch   
-13-zd1211rw-remove-wrong-assertions.patch
-13-zd1211rw-16bit-writes.patch
 15-jffs2-endian-config.patch
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
