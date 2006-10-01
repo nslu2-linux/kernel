@@ -11,10 +11,10 @@ Signed-off-by: Rod Whitby <rod@whitby.id.au>
  arch/arm/mach-ixp4xx/nslu2-setup.c |   45 ++++++++++++++++++++++++++++++++++++-
  1 files changed, 44 insertions(+), 1 deletion(-)
 
-Index: linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.17.orig/arch/arm/mach-ixp4xx/nslu2-setup.c
-+++ linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-10-01 23:11:32.000000000 +0200
++++ linux-2.6.18/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-10-01 23:12:35.000000000 +0200
 @@ -19,6 +19,8 @@
  #include <linux/serial_8250.h>
  #include <linux/leds.h>
@@ -24,7 +24,7 @@ Index: linux-2.6.17/arch/arm/mach-ixp4xx/nslu2-setup.c
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
-@@ -243,11 +245,52 @@
+@@ -176,11 +178,52 @@
  	platform_add_devices(nslu2_devices, ARRAY_SIZE(nslu2_devices));
  }
  

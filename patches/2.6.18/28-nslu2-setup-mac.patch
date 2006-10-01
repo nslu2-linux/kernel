@@ -1,7 +1,8 @@
-diff -Naur a/arch/arm/mach-ixp4xx/nslu2-setup.c b/arch/arm/mach-ixp4xx/nslu2-setup.c
---- a/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-09-13 15:30:02.000000000 +0100
-+++ b/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-09-13 15:31:38.000000000 +0100
-@@ -143,6 +143,28 @@
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/nslu2-setup.c
+===================================================================
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-10-01 23:12:35.000000000 +0200
++++ linux-2.6.18/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-10-01 23:12:40.000000000 +0200
+@@ -139,6 +139,28 @@
  	.resource		= nslu2_uart_resources,
  };
  
@@ -30,7 +31,7 @@ diff -Naur a/arch/arm/mach-ixp4xx/nslu2-setup.c b/arch/arm/mach-ixp4xx/nslu2-set
  static struct platform_device *nslu2_devices[] __initdata = {
  	&nslu2_i2c_controller,
  	&nslu2_flash,
-@@ -150,6 +172,7 @@
+@@ -146,6 +168,7 @@
  #ifdef CONFIG_LEDS_IXP4XX
  	&nslu2_leds,
  #endif
