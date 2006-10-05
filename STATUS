@@ -63,12 +63,6 @@
 79-rtl811sb-fix.patch
 	From lennert. Sent upstream but apparently not yet applied.
 
-96-fsg3-support.patch
-	Needs to be refreshed for 2.6.18/19
-
-97-fsg3-fix-setup.patch
-	Needs to be refreshed for 2.6.18/19
-
 98-sata_via-add-pata.patch
 	Waiting for feedback from Jeff Garzik
 
