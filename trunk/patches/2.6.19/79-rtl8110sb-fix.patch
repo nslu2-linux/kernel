@@ -12,11 +12,11 @@ the error recovery logic that subsequently runs causes the chip to stop
 working at all.
 
 
-Index: linux-2.6.18-rc4/drivers/net/r8169.c
+Index: linux-2.6.19-rc1/drivers/net/r8169.c
 ===================================================================
---- linux-2.6.18-rc4.orig/drivers/net/r8169.c
-+++ linux-2.6.18-rc4/drivers/net/r8169.c
-@@ -484,7 +484,7 @@ static int rtl8169_poll(struct net_devic
+--- linux-2.6.19-rc1.orig/drivers/net/r8169.c	2006-10-06 00:24:16.000000000 +0200
++++ linux-2.6.19-rc1/drivers/net/r8169.c	2006-10-06 00:50:42.000000000 +0200
+@@ -491,7 +491,7 @@
  #endif
  
  static const u16 rtl8169_intr_mask =
@@ -25,17 +25,7 @@ Index: linux-2.6.18-rc4/drivers/net/r8169.c
  static const u16 rtl8169_napi_event =
  	RxOK | RxOverflow | RxFIFOOver | TxOK | TxErr;
  static const unsigned int rtl8169_rx_config =
-@@ -1825,8 +1825,8 @@ rtl8169_hw_start(struct net_device *dev)
- 	 */
- 	RTL_W16(IntrMitigate, 0x0000);
- 
--	RTL_W32(TxDescStartAddrLow, ((u64) tp->TxPhyAddr & DMA_32BIT_MASK));
- 	RTL_W32(TxDescStartAddrHigh, ((u64) tp->TxPhyAddr >> 32));
-+	RTL_W32(TxDescStartAddrLow, ((u64) tp->TxPhyAddr & DMA_32BIT_MASK));
- 	RTL_W32(RxDescAddrLow, ((u64) tp->RxPhyAddr & DMA_32BIT_MASK));
- 	RTL_W32(RxDescAddrHigh, ((u64) tp->RxPhyAddr >> 32));
- 	RTL_W8(Cfg9346, Cfg9346_Lock);
-@@ -2527,10 +2527,12 @@ rtl8169_interrupt(int irq, void *dev_ins
+@@ -2622,10 +2622,12 @@
  		if (!(status & rtl8169_intr_mask))
  			break;
  
