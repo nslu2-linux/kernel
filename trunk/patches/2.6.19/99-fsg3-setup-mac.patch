@@ -1,11 +1,12 @@
-diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.18/arch/arm/mach-ixp4xx/fsg-setup.c
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-03 04:06:03.000000000 -0700
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-03 04:13:12.000000000 -0700
+Index: linux-2.6.19-rc1/arch/arm/mach-ixp4xx/fsg-setup.c
+===================================================================
+--- linux-2.6.19-rc1.orig/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-06 01:25:25.000000000 +0200
++++ linux-2.6.19-rc1/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-06 01:28:19.000000000 +0200
 @@ -94,10 +94,57 @@
  	.resource	= &fsg_uart_resource,
  };
  
-+/* MACs */
++ /* MACs */
 +static struct resource res_mac0 = {
 +        .start          = IXP4XX_EthB_BASE_PHYS,
 +        .end            = IXP4XX_EthB_BASE_PHYS + 0x1ff,
@@ -41,7 +42,7 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.18/arch/
 +        .num_resources  = 1,
 +        .resource       = &res_mac0,
 +};
-+        
++
 +static struct platform_device mac1 = {
 +        .name           = "ixp4xx_mac",
 +        .id             = 1,
@@ -51,12 +52,12 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.18/arch/
 +};
 +
  static struct platform_device *fsg_devices[] __initdata = {
- 	&fsg_i2c_controller, 
+ 	&fsg_i2c_controller,
  	&fsg_flash,
 -	&fsg_uart
-+	&fsg_uart,
-+	&mac0,
-+	&mac1,
++       &fsg_uart,
++       &mac0,
++       &mac1,
  };
  
  #ifdef CONFIG_LEDS_CLASS
