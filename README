@@ -7,4 +7,4 @@ CONFIG_CHANGES documents defconfig adjustments
 
 ISSUES
 DSM-G600 & Loft patches need refreshing
-Clocksource IXP4xx patches need to be included
+[DONE] Clocksource IXP4xx patches need to be included 
