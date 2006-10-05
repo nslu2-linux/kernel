@@ -1,0 +1,270 @@
+--- kernel-wo-fsg3/drivers/scsi/sata_via.c	2006-06-29 21:16:43.000000000 +0300
++++ kernel-with-fsg3/drivers/scsi/sata_via.c	2006-06-30 22:02:13.000000000 +0300
+@@ -30,8 +30,6 @@
+  *  Hardware documentation available under NDA.
+  *
+  *
+- *  To-do list:
+- *  - VT6421 PATA support
+  *
+  */
+ 
+@@ -63,7 +61,7 @@
+ 	PORT0			= (1 << 1),
+ 	PORT1			= (1 << 0),
+ 	ALL_PORTS		= PORT0 | PORT1,
+-	N_PORTS			= 2,
++	N_PORTS			= 3,
+ 
+ 	NATIVE_MODE_ALL		= (1 << 7) | (1 << 6) | (1 << 5) | (1 << 4),
+ 
+@@ -78,7 +76,7 @@
+ static const struct pci_device_id svia_pci_tbl[] = {
+ 	{ 0x1106, 0x3149, PCI_ANY_ID, PCI_ANY_ID, 0, 0, vt6420 },
+ 	{ 0x1106, 0x3249, PCI_ANY_ID, PCI_ANY_ID, 0, 0, vt6421 },
+-
++	{ 0x1106, 0x0591, PCI_ANY_ID, PCI_ANY_ID, 0, 0, vt6420 },
+ 	{ }	/* terminate list */
+ };
+ 
+@@ -108,8 +106,15 @@
+ 	.bios_param		= ata_std_bios_param,
+ };
+ 
++
++static void via_pata_phy_reset(struct ata_port *ap);
++static void via_pata_set_piomode (struct ata_port *ap, struct ata_device *adev);
++static void via_pata_set_dmamode (struct ata_port *ap, struct ata_device *adev);
++
+ static const struct ata_port_operations svia_sata_ops = {
+ 	.port_disable		= ata_port_disable,
++	.set_piomode		= via_pata_set_piomode,
++	.set_dmamode		= via_pata_set_dmamode,
+ 
+ 	.tf_load		= ata_tf_load,
+ 	.tf_read		= ata_tf_read,
+@@ -117,7 +122,7 @@
+ 	.exec_command		= ata_exec_command,
+ 	.dev_select		= ata_std_dev_select,
+ 
+-	.phy_reset		= sata_phy_reset,
++	.phy_reset		= via_pata_phy_reset,
+ 
+ 	.bmdma_setup            = ata_bmdma_setup,
+ 	.bmdma_start            = ata_bmdma_start,
+@@ -133,9 +138,6 @@
+ 	.irq_handler		= ata_interrupt,
+ 	.irq_clear		= ata_bmdma_irq_clear,
+ 
+-	.scr_read		= svia_scr_read,
+-	.scr_write		= svia_scr_write,
+-
+ 	.port_start		= ata_port_start,
+ 	.port_stop		= ata_port_stop,
+ 	.host_stop		= ata_host_stop,
+@@ -150,6 +152,15 @@
+ 	.port_ops	= &svia_sata_ops,
+ };
+ 
++static struct ata_port_info via287_port_info = {
++	.sht		= &svia_sht,
++	.host_flags	= ATA_FLAG_SLAVE_POSS | ATA_FLAG_SRST | ATA_FLAG_NO_LEGACY,
++	.pio_mask	= 0x1f,
++	.mwdma_mask	= 0x07,
++	.udma_mask	= 0x7f,
++	.port_ops	= &svia_sata_ops,
++};
++
+ MODULE_AUTHOR("Jeff Garzik");
+ MODULE_DESCRIPTION("SCSI low-level driver for VIA SATA controllers");
+ MODULE_LICENSE("GPL");
+@@ -194,16 +205,12 @@
+ {
+ 	unsigned long reg_addr = pci_resource_start(pdev, port);
+ 	unsigned long bmdma_addr = pci_resource_start(pdev, 4) + (port * 8);
+-	unsigned long scr_addr;
+ 
+ 	probe_ent->port[port].cmd_addr = reg_addr;
+ 	probe_ent->port[port].altstatus_addr =
+ 	probe_ent->port[port].ctl_addr = (reg_addr + 8) | ATA_PCI_CTL_OFS;
+ 	probe_ent->port[port].bmdma_addr = bmdma_addr;
+ 
+-	scr_addr = vt6421_scr_addr(pci_resource_start(pdev, 5), port);
+-	probe_ent->port[port].scr_addr = scr_addr;
+-
+ 	ata_std_ports(&probe_ent->port[port]);
+ }
+ 
+@@ -238,7 +245,7 @@
+ 	INIT_LIST_HEAD(&probe_ent->node);
+ 
+ 	probe_ent->sht		= &svia_sht;
+-	probe_ent->host_flags	= ATA_FLAG_SATA | ATA_FLAG_SATA_RESET |
++	probe_ent->host_flags	= ATA_FLAG_SLAVE_POSS | ATA_FLAG_SRST |
+ 				  ATA_FLAG_NO_LEGACY;
+ 	probe_ent->port_ops	= &svia_sata_ops;
+ 	probe_ent->n_ports	= N_PORTS;
+@@ -253,6 +260,163 @@
+ 
+ 	return probe_ent;
+ }
++/* add functions for pata */
++
++
++/**
++ *	via_pata_cbl_detect - Probe host controller cable detect info
++ *	@ap: Port for which cable detect info is desired
++ *
++ *	Read 80c cable indicator from ATA PCI device's PCI config
++ *	register.  This register is normally set by firmware (BIOS).
++ *
++ *	LOCKING:
++ *	None (inherited from caller).
++ */
++static void via_pata_cbl_detect(struct ata_port *ap)
++{
++	struct pci_dev *pdev = to_pci_dev(ap->host_set->dev);
++	int cfg_addr;
++	u8 tmp;
++
++	if (ap->port_no == 2) { /* PATA channel in VT6421 */
++		ap->cbl = ATA_CBL_PATA80;
++		cfg_addr = 0xB3;
++		pci_read_config_byte(pdev, cfg_addr, &tmp);
++		if (tmp & 0x10) { /* 40pin cable */
++			ap->cbl = ATA_CBL_PATA40;
++		} else { /* 80pin cable */
++			ap->cbl = ATA_CBL_PATA80;
++		}
++	} else { /* channel 0 and 1 are SATA channels */
++		ap->cbl = ATA_CBL_SATA;
++	}
++
++	return;
++}
++
++/**
++ *	via_pata_phy_reset - Probe specified port on PATA host controller
++ *	@ap: Port to probe
++ *
++ *	Probe PATA phy.
++ *
++ *	LOCKING:
++ *	None (inherited from caller).
++ */
++
++static void via_pata_phy_reset(struct ata_port *ap)
++{
++	via_pata_cbl_detect(ap);
++
++	ata_port_probe(ap);
++
++	ata_bus_reset(ap);
++}
++
++
++/**
++ *	via_pata_set_piomode - Initialize host controller PATA PIO timings
++ *	@ap: Port whose timings we are configuring
++ *	@adev: um
++ *	@pio: PIO mode, 0 - 4
++ *
++ *	Set PIO mode for device, in host controller PCI config space.
++ *
++ *	LOCKING:
++ *	None (inherited from caller).
++ */
++
++static void via_pata_set_piomode (struct ata_port *ap, struct ata_device *adev)
++{
++	struct pci_dev *dev	= to_pci_dev(ap->host_set->dev);
++
++	u8 cfg_byte;
++	int cfg_addr;
++
++	if (ap->port_no != 2) { /* SATA channel in VT6421 */
++		/* no need to set */
++		return;
++	}
++
++
++ 	cfg_addr = 0xAB;
++	switch (adev->pio_mode & 0x07) {
++		case 0:
++			cfg_byte = 0xa8;
++			break;
++		case 1:
++			cfg_byte = 0x65;
++			break;
++		case 2:
++			cfg_byte = 0x65;
++			break;
++		case 3:
++			cfg_byte = 0x31;
++			break;
++		case 4:
++			cfg_byte = 0x20;
++			break;
++		default:
++			cfg_byte = 0x20;
++	}
++
++	pci_write_config_byte (dev, cfg_addr, cfg_byte);
++}
++
++/**
++ *	via_pata_set_dmamode - Initialize host controller PATA PIO timings
++ *	@ap: Port whose timings we are configuring
++ *	@adev: um
++ *	@udma: udma mode, 0 - 6
++ *
++ *	Set UDMA mode for device, in host controller PCI config space.
++ *
++ *	LOCKING:
++ *	None (inherited from caller).
++ */
++
++static void via_pata_set_dmamode (struct ata_port *ap, struct ata_device *adev)
++{
++	struct pci_dev *dev	= to_pci_dev(ap->host_set->dev);
++
++	u8 cfg_byte;
++	int cfg_addr;
++
++	if (ap->port_no != 2) { /* SATA channel in VT6421 */
++		/* no need to set */
++		return;
++	}
++
++ 	cfg_addr = 0xB3;
++	switch (adev->dma_mode & 0x07) {
++		case 0:
++			cfg_byte = 0xee;
++			break;	
++		case 1:
++			cfg_byte = 0xe8;
++			break;	
++		case 2:
++			cfg_byte = 0xe6;
++			break;	
++		case 3:
++			cfg_byte = 0xe4;
++			break;	
++		case 4:
++			cfg_byte = 0xe2;
++			break;	
++		case 5:
++			cfg_byte = 0xe1;
++			break;	
++		case 6:
++			cfg_byte = 0xe0;
++			break;	
++		default:
++			cfg_byte = 0xe0;
++	}
++
++	pci_write_config_byte (dev, cfg_addr, cfg_byte);
++}
+ 
+ static void svia_configure(struct pci_dev *pdev)
+ {

@@ -1,0 +1,62 @@
+diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.18/arch/arm/mach-ixp4xx/fsg-setup.c
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-03 04:06:03.000000000 -0700
++++ linux-2.6.18/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-03 04:13:12.000000000 -0700
+@@ -94,10 +94,57 @@
+ 	.resource	= &fsg_uart_resource,
+ };
+ 
++/* MACs */
++static struct resource res_mac0 = {
++        .start          = IXP4XX_EthB_BASE_PHYS,
++        .end            = IXP4XX_EthB_BASE_PHYS + 0x1ff,
++        .flags          = IORESOURCE_MEM,
++};
++
++static struct resource res_mac1 = {
++        .start          = IXP4XX_EthC_BASE_PHYS,
++        .end            = IXP4XX_EthC_BASE_PHYS + 0x1ff,
++        .flags          = IORESOURCE_MEM,
++};
++
++static struct mac_plat_info plat_mac0 = {
++        .npe_id         = 1,
++        .phy_id         = 5,
++        .eth_id         = 0,
++        .rxq_id         = 27,
++        .txq_id         = 24,
++};
++
++static struct mac_plat_info plat_mac1 = {
++        .npe_id         = 2,
++        .phy_id         = 4,
++        .eth_id         = 1,
++        .rxq_id         = 28,
++        .txq_id         = 25,
++};
++
++static struct platform_device mac0 = {
++        .name           = "ixp4xx_mac",
++        .id             = 0,
++        .dev.platform_data = &plat_mac0,
++        .num_resources  = 1,
++        .resource       = &res_mac0,
++};
++        
++static struct platform_device mac1 = {
++        .name           = "ixp4xx_mac",
++        .id             = 1,
++        .dev.platform_data = &plat_mac1,
++        .num_resources  = 1,
++        .resource       = &res_mac1,
++};
++
+ static struct platform_device *fsg_devices[] __initdata = {
+ 	&fsg_i2c_controller, 
+ 	&fsg_flash,
+-	&fsg_uart
++	&fsg_uart,
++	&mac0,
++	&mac1,
+ };
+ 
+ #ifdef CONFIG_LEDS_CLASS
