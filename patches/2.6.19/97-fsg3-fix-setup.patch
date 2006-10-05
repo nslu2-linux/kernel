@@ -1,6 +1,7 @@
-diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-pci.c linux-2.6.18/arch/arm/mach-ixp4xx/fsg-pci.c
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-pci.c	2006-10-03 03:55:46.000000000 -0700
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/fsg-pci.c	2006-10-03 03:58:24.000000000 -0700
+Index: linux-2.6.19-rc1/arch/arm/mach-ixp4xx/fsg-pci.c
+===================================================================
+--- linux-2.6.19-rc1.orig/arch/arm/mach-ixp4xx/fsg-pci.c	2006-10-06 01:20:50.000000000 +0200
++++ linux-2.6.19-rc1/arch/arm/mach-ixp4xx/fsg-pci.c	2006-10-06 01:23:52.000000000 +0200
 @@ -15,6 +15,7 @@
  #include <linux/kernel.h>
  #include <linux/pci.h>
@@ -9,9 +10,10 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-pci.c linux-2.6.18/arch/ar
  
  #include <asm/mach-types.h>
  #include <asm/hardware.h>
-diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.18/arch/arm/mach-ixp4xx/fsg-setup.c
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-03 03:55:46.000000000 -0700
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-03 04:02:25.000000000 -0700
+Index: linux-2.6.19-rc1/arch/arm/mach-ixp4xx/fsg-setup.c
+===================================================================
+--- linux-2.6.19-rc1.orig/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-06 01:22:40.000000000 +0200
++++ linux-2.6.19-rc1/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-06 01:25:25.000000000 +0200
 @@ -118,93 +118,8 @@
  };
  #endif
@@ -59,7 +61,7 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.18/arch/
 -static int fsg_netdev_event(struct notifier_block *this,
 -				unsigned long event, void *ptr)
 -{
--        
+-
 -struct net_device *dev = ptr;
 -
 -	/* identify the ixp4xx eth by mac 00:02:b3:xx:xx:xx */
