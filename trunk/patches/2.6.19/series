@@ -17,7 +17,6 @@
 76-dsmg600-pwrbtn.patch
 77-velocity-module.patch
 ##78-velocity-BE.patch
-79-rtl8110sb-fix.patch
 96-fsg3-support.patch
 97-fsg3-fix-setup.patch
 98-fsg3-setup-mac.patch
