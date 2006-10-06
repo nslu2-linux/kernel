@@ -1,0 +1,11 @@
+--- linux-2.6.19-rc1.orig/arch/arm/Kconfig	2006-10-06 07:06:30.000000000 -0700
++++ linux-2.6.19-rc1/arch/arm/Kconfig	2006-10-06 07:02:41.000000000 -0700
+@@ -879,6 +879,8 @@
+ 
+ source "drivers/scsi/Kconfig"
+ 
++source "drivers/ata/Kconfig"
++
+ source "drivers/md/Kconfig"
+ 
+ source "drivers/message/fusion/Kconfig"
