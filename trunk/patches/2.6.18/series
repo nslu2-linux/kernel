@@ -15,12 +15,6 @@
 34-increase-entropy-pools.patch
 40-scsi-idle.patch
 50-leds-arm-cpu-activity.patch
-75-dsmg600.patch
-76-dsmg600-pwrbtn.patch
-77-velocity-module.patch
-78-velocity-BE.patch
 79-rtl8110sb-fix.patch
 96-fsg3-support.patch
-97-fsg3-fix-setup.patch
-##98-sata_via-add-pata.patch
-99-fsg3-setup-mac.patch
+##99-sata_via-add-pata.patch
