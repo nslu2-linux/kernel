@@ -7,12 +7,6 @@
 [linux-mtd] - patch submitted to the linux-mtd mailing list (because
 	it is not ARM specific.)
 
-13-zd1211rw-arm-fix.patch 
-	No idea where this came from, not in latest mainstream driver.
-
-14-zd1211rw-various-fixes.patch
-	Is in mainstream kernel since 2.6.19-git6
-
 15-jffs2-endian-config.patch [linux-mtd]
 	Has been submitted to linux-mtd
 	http://lists.infradead.org/pipermail/linux-mtd/2006-January/014740.html
@@ -24,17 +18,14 @@
 	For upstream, just submit nslu2 and nas100d defconfig files.
 
 28-nslu2-setup-mac.patch
-	?
+	Setup required for ixp4xx mac driver on nslu2.
 
 29-nas100d-setup-mac.patch
-	?
+	Setup required for ixp4xx mac driver on NAS-100D.
 
 30-ixp4xx-driver-0.2.0-driver.patch
 	driver being actively developed. Developer will probably push
 	upstream when properly tested.
-
-33-ixp4xx-clocksource.patch
-	Is in mainstream kernel since 2.6.19-rc1
 
 34-increase-entropy-pools.patch
 	No reason to push upstream. Only for use on ixp4xx hardware in
@@ -60,9 +51,6 @@
 78-velocity-BE.patch
 	Does not apply cleanly.
 
-79-rtl811sb-fix.patch
-	From lennert. Sent upstream but apparently not yet applied.
-
-98-sata_via-add-pata.patch
+99-sata_via-add-pata.patch
 	Waiting for feedback from Jeff Garzik
 
