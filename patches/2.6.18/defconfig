@@ -804,7 +804,7 @@ CONFIG_R8169_VLAN=y
 # CONFIG_SKGE is not set
 # CONFIG_SKY2 is not set
 # CONFIG_SK98LIN is not set
-CONFIG_VIA_VELOCITY=m
+# CONFIG_VIA_VELOCITY is not set
 # CONFIG_TIGON3 is not set
 # CONFIG_BNX2 is not set
 
