@@ -1,8 +1,7 @@
-Index: linux-2.6.18/drivers/net/wireless/zd1211rw/zd_usb.c
-===================================================================
---- linux-2.6.18.orig/drivers/net/wireless/zd1211rw/zd_usb.c	2006-10-02 00:51:44.000000000 +0200
-+++ linux-2.6.18/drivers/net/wireless/zd1211rw/zd_usb.c	2006-10-02 00:51:46.000000000 +0200
-@@ -574,7 +574,7 @@
+diff -Naur linux-2.6.18.orig/drivers/net/wireless/zd1211rw/zd_usb.c linux-2.6.18/drivers/net/wireless/zd1211rw/zd_usb.c
+--- linux-2.6.18.orig/drivers/net/wireless/zd1211rw/zd_usb.c	2006-10-10 02:14:31.000000000 -0700
++++ linux-2.6.18/drivers/net/wireless/zd1211rw/zd_usb.c	2006-10-10 02:13:35.000000000 -0700
+@@ -527,7 +527,7 @@
  {
  	int i;
  	struct zd_mac *mac = zd_usb_to_mac(usb);
