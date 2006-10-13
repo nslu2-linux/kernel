@@ -1,0 +1,44 @@
+diff -Naur linux-2.6.19-rc2.orig/arch/arm/mach-ixp4xx/common.c linux-2.6.19-rc2/arch/arm/mach-ixp4xx/common.c
+--- linux-2.6.19-rc2.orig/arch/arm/mach-ixp4xx/common.c	2006-10-13 10:18:16.000000000 -0700
++++ linux-2.6.19-rc2/arch/arm/mach-ixp4xx/common.c	2006-10-13 10:19:38.000000000 -0700
+@@ -13,7 +13,6 @@
+  * warranty of any kind, whether express or implied.
+  */
+ 
+-#include <linux/config.h>
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
+ #include <linux/init.h>
+diff -Naur linux-2.6.19-rc2.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c linux-2.6.19-rc2/drivers/net/ixp4xx/ixp4xx_qmgr.c
+--- linux-2.6.19-rc2.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-13 10:18:24.000000000 -0700
++++ linux-2.6.19-rc2/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-13 10:20:32.000000000 -0700
+@@ -6,7 +6,6 @@
+  * This file is released under the GPLv2
+  */
+ 
+-#include <linux/config.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+diff -Naur linux-2.6.19-rc2.orig/drivers/net/ixp4xx/mac_driver.c linux-2.6.19-rc2/drivers/net/ixp4xx/mac_driver.c
+--- linux-2.6.19-rc2.orig/drivers/net/ixp4xx/mac_driver.c	2006-10-13 10:18:24.000000000 -0700
++++ linux-2.6.19-rc2/drivers/net/ixp4xx/mac_driver.c	2006-10-13 10:20:46.000000000 -0700
+@@ -6,7 +6,6 @@
+  * This file is released under the GPLv2
+  */
+ 
+-#include <linux/config.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+diff -Naur linux-2.6.19-rc2.orig/drivers/net/ixp4xx/ucode_dl.c linux-2.6.19-rc2/drivers/net/ixp4xx/ucode_dl.c
+--- linux-2.6.19-rc2.orig/drivers/net/ixp4xx/ucode_dl.c	2006-10-13 10:18:24.000000000 -0700
++++ linux-2.6.19-rc2/drivers/net/ixp4xx/ucode_dl.c	2006-10-13 10:20:58.000000000 -0700
+@@ -6,7 +6,6 @@
+  * This file is released under the GPLv2
+  */
+ 
+-#include <linux/config.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/miscdevice.h>

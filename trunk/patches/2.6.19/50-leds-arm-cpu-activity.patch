@@ -1,7 +1,6 @@
-Index: linux-2.6.19-rc1/arch/arm/kernel/process.c
-===================================================================
---- linux-2.6.19-rc1.orig/arch/arm/kernel/process.c	2006-10-06 00:23:16.000000000 +0200
-+++ linux-2.6.19-rc1/arch/arm/kernel/process.c	2006-10-06 00:26:59.000000000 +0200
+diff -Naur linux-2.6.19-rc2.orig/arch/arm/kernel/process.c linux-2.6.19-rc2/arch/arm/kernel/process.c
+--- linux-2.6.19-rc2.orig/arch/arm/kernel/process.c	2006-10-13 12:27:28.000000000 -0700
++++ linux-2.6.19-rc2/arch/arm/kernel/process.c	2006-10-13 10:24:35.000000000 -0700
 @@ -26,6 +26,7 @@
  #include <linux/kallsyms.h>
  #include <linux/init.h>
@@ -36,10 +35,9 @@ Index: linux-2.6.19-rc1/arch/arm/kernel/process.c
  		leds_event(led_idle_end);
  		preempt_enable_no_resched();
  		schedule();
-Index: linux-2.6.19-rc1/drivers/leds/Kconfig
-===================================================================
---- linux-2.6.19-rc1.orig/drivers/leds/Kconfig	2006-09-20 05:42:06.000000000 +0200
-+++ linux-2.6.19-rc1/drivers/leds/Kconfig	2006-10-06 00:26:59.000000000 +0200
+diff -Naur linux-2.6.19-rc2.orig/drivers/leds/Kconfig linux-2.6.19-rc2/drivers/leds/Kconfig
+--- linux-2.6.19-rc2.orig/drivers/leds/Kconfig	2006-10-13 12:27:28.000000000 -0700
++++ linux-2.6.19-rc2/drivers/leds/Kconfig	2006-10-13 10:24:35.000000000 -0700
 @@ -109,5 +109,14 @@
  	  load average.
  	  If unsure, say Y.
@@ -55,20 +53,18 @@ Index: linux-2.6.19-rc1/drivers/leds/Kconfig
 +
  endmenu
  
-Index: linux-2.6.19-rc1/drivers/leds/Makefile
-===================================================================
---- linux-2.6.19-rc1.orig/drivers/leds/Makefile	2006-09-20 05:42:06.000000000 +0200
-+++ linux-2.6.19-rc1/drivers/leds/Makefile	2006-10-06 00:26:59.000000000 +0200
+diff -Naur linux-2.6.19-rc2.orig/drivers/leds/Makefile linux-2.6.19-rc2/drivers/leds/Makefile
+--- linux-2.6.19-rc2.orig/drivers/leds/Makefile	2006-10-13 12:27:28.000000000 -0700
++++ linux-2.6.19-rc2/drivers/leds/Makefile	2006-10-13 10:24:35.000000000 -0700
 @@ -18,3 +18,4 @@
  obj-$(CONFIG_LEDS_TRIGGER_TIMER)	+= ledtrig-timer.o
  obj-$(CONFIG_LEDS_TRIGGER_IDE_DISK)	+= ledtrig-ide-disk.o
  obj-$(CONFIG_LEDS_TRIGGER_HEARTBEAT)	+= ledtrig-heartbeat.o
 +obj-$(CONFIG_LEDS_TRIGGER_CPU_ACTIVITY)	+= ledtrig-cpu.o
-Index: linux-2.6.19-rc1/drivers/leds/ledtrig-cpu.c
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc1/drivers/leds/ledtrig-cpu.c	2006-10-06 00:26:59.000000000 +0200
-@@ -0,0 +1,488 @@
+diff -Naur linux-2.6.19-rc2.orig/drivers/leds/ledtrig-cpu.c linux-2.6.19-rc2/drivers/leds/ledtrig-cpu.c
+--- linux-2.6.19-rc2.orig/drivers/leds/ledtrig-cpu.c	1969-12-31 16:00:00.000000000 -0800
++++ linux-2.6.19-rc2/drivers/leds/ledtrig-cpu.c	2006-10-13 12:27:51.000000000 -0700
+@@ -0,0 +1,487 @@
 +/*
 + * LEDs CPU activity trigger
 + *
@@ -102,7 +98,6 @@ Index: linux-2.6.19-rc1/drivers/leds/ledtrig-cpu.c
 + *
 + */
 +
-+#include <linux/config.h>
 +#include <linux/ctype.h>
 +#include <linux/kernel.h>
 +#include <linux/module.h>
@@ -557,10 +552,9 @@ Index: linux-2.6.19-rc1/drivers/leds/ledtrig-cpu.c
 +MODULE_AUTHOR("John Bowler <jbowler@acm.org>");
 +MODULE_DESCRIPTION("CPU activity LED trigger");
 +MODULE_LICENSE("MIT");
-Index: linux-2.6.19-rc1/include/linux/leds.h
-===================================================================
---- linux-2.6.19-rc1.orig/include/linux/leds.h	2006-10-06 00:25:13.000000000 +0200
-+++ linux-2.6.19-rc1/include/linux/leds.h	2006-10-06 00:26:59.000000000 +0200
+diff -Naur linux-2.6.19-rc2.orig/include/linux/leds.h linux-2.6.19-rc2/include/linux/leds.h
+--- linux-2.6.19-rc2.orig/include/linux/leds.h	2006-10-13 12:27:28.000000000 -0700
++++ linux-2.6.19-rc2/include/linux/leds.h	2006-10-13 10:24:35.000000000 -0700
 @@ -110,4 +110,13 @@
  #define ledtrig_ide_activity() do {} while(0)
  #endif
