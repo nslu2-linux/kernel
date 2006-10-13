@@ -1,11 +1,13 @@
 This branch is here to allow initial testing of the IXP_NPE driver.
 
 STATUS
-2.6.18 + IXP_NPE builds
-IXP_NPE driver functions in SlugOS 4.0 HEAD BE & LE
+2.6.18 + IXP_NPE 0.2.0 builds
+IXP_NPE driver functions in SlugOS 4.0 HEAD BE & LE on NSLU2.
+Should fully support NSLU2, NAS-100D
 
-2.6.19-rc1-git3 + IXP_NPE builds
+2.6.19-rc2 + IXP_NPE 0.2.0 builds (some cleanups required)
 Currently untested
+Should fully support NSLU2, NAS-100D, DSM-G600
 
 ISSUES
-DSM-G600 & Loft patches need refreshing
+DSM-G600 & Loft patches need some refreshing on 2.6.19
