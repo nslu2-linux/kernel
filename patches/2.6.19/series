@@ -9,7 +9,7 @@
 28-nslu2-setup-mac.patch
 29-nas100d-setup-mac.patch
 30-ixp4xx-0.2.0-driver.patch
-31-ixp4xx-config-h-removal.patch
+31-ixp4xx-2.6.19-cleanup.patch
 34-increase-entropy-pools.patch
 40-scsi-idle.patch
 50-leds-arm-cpu-activity.patch
