@@ -1,7 +1,7 @@
 This branch is here to allow initial testing of the IXP_NPE driver.
 
 STATUS
-2.6.18 + IXP_NPE 0.2.0 builds
+2.6.18.1 + IXP_NPE 0.2.0 builds
 IXP_NPE driver functions in SlugOS 4.0 HEAD BE & LE on NSLU2.
 Should fully support NSLU2, NAS-100D
 
