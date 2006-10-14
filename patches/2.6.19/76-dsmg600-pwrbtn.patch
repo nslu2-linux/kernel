@@ -15,7 +15,7 @@ diff -Naur linux-2.6.19-rc2.orig/arch/arm/mach-ixp4xx/dsmg600-power.c linux-2.6.
 +/* Must hold the button down for at least this many counts to be processed */
 +#define PBUTTON_HOLDDOWN_COUNT 4
 +
-+static irqreturn_t dsmg600_power_handler(int irq, void *dev_id, struct pt_regs *regs)
++static irqreturn_t dsmg600_power_handler(int irq, void *dev_id)
 +	{
 +	/* This routine is called twice per second to check the
 +	 * state of the power button.
