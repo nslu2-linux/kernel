@@ -14,8 +14,10 @@
 
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
-	Don't expect these to be accepted upstream (based on advice from Richard Purdie).
+	Don't expect these to be accepted upstream (based on advice from 
+	Richard Purdie).
 	For upstream, just submit nslu2 and nas100d defconfig files.
+	Should be removed for SlugOS 4.x, as APEX should handle cmdline.
 
 28-nslu2-setup-mac.patch
 	Setup required for ixp4xx mac driver on nslu2.
@@ -26,6 +28,10 @@
 30-ixp4xx-driver-0.2.0-driver.patch
 	driver being actively developed. Developer will probably push
 	upstream when properly tested.
+
+31-ixp4xx-2.6.19-cleanup.patch
+	local cleanups to remove config.h includes and make ixp_qmgr
+	compatible with new IRQ system.
 
 34-increase-entropy-pools.patch
 	No reason to push upstream. Only for use on ixp4xx hardware in
@@ -40,17 +46,19 @@
 	Discussed with Richard Purdie.  Not yet ready for upstream.
 
 75-dsmg600.patch
-	Needs to be refreshed for 2.6.18.
+	Refreshed for 2.6.19 but untested.
 
 76-dsmg600-pwrbtn.patch
-	Needs to be refreshed for 2.6.18
+	Needs to be refreshed for 2.6.19.
 
 77-velocity-module.patch
-	?
+	Exports an extra symbol required for the velocity driver.
 
 78-velocity-BE.patch
 	Does not apply cleanly.
 
-99-sata_via-add-pata.patch
-	Waiting for feedback from Jeff Garzik
+96-fsg3-support.patch
+	Untested, should allow all functionality except PATA & wireless.
 
+99-sata_via-add-pata.patch
+	Waiting for feedback from Jeff Garzik.

@@ -3,6 +3,7 @@
 # must be all able to be applied independently in any order.
 # Patches marked with ## need reworking and are currently disabled
 
+00-linux-2.6.18.1.patch
 13-zd1211rw-arm-fix.patch
 14-zd1211rw-various-fixes.patch
 15-jffs2-endian-config.patch
