@@ -79,15 +79,6 @@ diff --git a/Makefile b/Makefile
 index edfc2fd..b803595 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1,7 +1,7 @@
- VERSION = 2
- PATCHLEVEL = 6
- SUBLEVEL = 18
--EXTRAVERSION =
-+EXTRAVERSION = .1
- NAME=Avast! A bilge rat!
- 
- # *DOCUMENTATION*
 @@ -894,6 +894,9 @@ export INSTALL_HDR_PATH
  
  PHONY += headers_install
