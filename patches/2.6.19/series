@@ -13,6 +13,7 @@
 32-ixp4xx-net-driver-fix-qmgr.patch
 34-increase-entropy-pools.patch
 40-scsi-idle.patch
+45-eeprom-new-notifier.patch
 50-leds-arm-cpu-activity.patch
 74-add-arm-ata-support.patch
 75-dsmg600-support.patch
