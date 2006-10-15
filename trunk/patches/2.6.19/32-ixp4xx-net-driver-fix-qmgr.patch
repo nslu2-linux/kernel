@@ -1,9 +1,10 @@
----
- drivers/net/ixp4xx/ixp4xx_qmgr.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- linux-ixp4xx.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-15 17:47:02.000000000 +0200
-+++ linux-ixp4xx/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-15 18:24:45.000000000 +0200
+---
+ drivers/net/ixp4xx/ixp4xx_qmgr.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+--- linux-ixp4xx.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-15 18:52:35.000000000 +0200
++++ linux-ixp4xx/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-15 18:54:32.000000000 +0200
 @@ -107,7 +107,7 @@ static int get_free_qspace(struct qm_qmg
  	return -1;
  }
@@ -33,12 +34,3 @@
  
  	/* Mask out old watermarks */
  	val = queue_read_cfg_reg(queue) & ~0xfc000000;
-@@ -186,7 +186,7 @@ int queue_disable_irq(struct qm_queue *q
- 	return 0;
- }
- 
--static irqreturn_t irq_qm1(int irq, void *dev_id, struct pt_regs *regs)
-+static irqreturn_t irq_qm1(int irq, void *dev_id)
- {
- 	struct qm_qmgr *qmgr = dev_id;
- 	int offs, reg;
