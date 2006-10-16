@@ -1,6 +1,10 @@
-diff -Naur linux-2.6.19-rc2.orig/arch/arm/mach-ixp4xx/common.c linux-2.6.19-rc2/arch/arm/mach-ixp4xx/common.c
---- linux-2.6.19-rc2.orig/arch/arm/mach-ixp4xx/common.c	2006-10-13 15:37:15.000000000 -0700
-+++ linux-2.6.19-rc2/arch/arm/mach-ixp4xx/common.c	2006-10-13 15:39:11.000000000 -0700
+---
+ arch/arm/mach-ixp4xx/common.c    |    1 -
+ drivers/net/ixp4xx/ixp4xx_qmgr.c |    2 +-
+ 2 files changed, 1 insertion(+), 2 deletions(-)
+
+--- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/common.c	2006-10-16 16:14:43.000000000 +0200
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/common.c	2006-10-16 16:16:32.000000000 +0200
 @@ -13,7 +13,6 @@
   * warranty of any kind, whether express or implied.
   */
@@ -9,10 +13,9 @@ diff -Naur linux-2.6.19-rc2.orig/arch/arm/mach-ixp4xx/common.c linux-2.6.19-rc2/
  #include <linux/kernel.h>
  #include <linux/mm.h>
  #include <linux/init.h>
-diff -Naur linux-2.6.19-rc2.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c linux-2.6.19-rc2/drivers/net/ixp4xx/ixp4xx_qmgr.c
---- linux-2.6.19-rc2.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-13 15:37:19.000000000 -0700
-+++ linux-2.6.19-rc2/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-13 15:39:54.000000000 -0700
-@@ -187,7 +186,7 @@
+--- linux-ixp4xx.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-16 16:14:43.000000000 +0200
++++ linux-ixp4xx/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-16 16:16:32.000000000 +0200
+@@ -165,7 +165,7 @@ int queue_set_irq_src(struct qm_queue *q
  	return 0;
  }
  
