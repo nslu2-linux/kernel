@@ -1,10 +1,10 @@
 ---
- drivers/net/ixp4xx/mac_driver.c        |    6 ++++--
+ drivers/net/ixp4xx/mac_driver.c        |   11 ++++++++---
  include/asm-arm/arch-ixp4xx/platform.h |    1 +
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ 2 files changed, 9 insertions(+), 3 deletions(-)
 
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/platform.h	2006-10-15 20:39:30.000000000 +0200
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/platform.h	2006-10-16 10:09:46.000000000 +0200
+--- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/platform.h	2006-10-16 16:23:48.000000000 +0200
++++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/platform.h	2006-10-16 16:24:34.000000000 +0200
 @@ -100,6 +100,7 @@ struct mac_plat_info {
  	int phy_id;	/* ID of the connected PHY (PCB/platform dependent) */
  	int rxq_id;	/* Queue ID of the RX-free q*/
@@ -13,18 +13,23 @@
  };
  
  
---- linux-ixp4xx.orig/drivers/net/ixp4xx/mac_driver.c	2006-10-16 08:37:40.000000000 +0200
-+++ linux-ixp4xx/drivers/net/ixp4xx/mac_driver.c	2006-10-16 10:11:18.000000000 +0200
-@@ -364,8 +364,10 @@ static int mac_probe(struct platform_dev
- 
- 	INIT_WORK(&mac->mdio_thread, mac_mdio_thread, dev);
- 
--	memcpy(dev->dev_addr, maddr, dev->addr_len);
+--- linux-ixp4xx.orig/drivers/net/ixp4xx/mac_driver.c	2006-10-16 16:23:48.000000000 +0200
++++ linux-ixp4xx/drivers/net/ixp4xx/mac_driver.c	2006-10-16 16:24:34.000000000 +0200
+@@ -434,9 +434,14 @@ static int mac_probe(struct platform_dev
+ 	 * following commands:
+ 	 * "ip link set address 02:03:04:04:04:01 dev eth0"
+ 	 * "ifconfig eth0 hw ether 02:03:04:04:04:07"
+-	 */
+-	random_ether_addr(dev->dev_addr);
 -	dev->dev_addr[5] = plat->phy_id;
-+	if (is_zero_ether_addr(plat->hwaddr))
-+                random_ether_addr(dev->dev_addr);
++	*/
++
++	if (!is_zero_ether_addr(plat->hwaddr)) {
++		random_ether_addr(dev->dev_addr);
++		dev->dev_addr[5] = plat->phy_id;
++	}
 +	else
 +		memcpy(dev->dev_addr, plat->hwaddr, 6);
  
- 	printk(KERN_INFO IXMAC_VERSION ": %s on %s with PHY[%d] initialized\n",
- 			dev->name, npe->plat->name, plat->phy_id);
+ 	printk(KERN_INFO IXMAC_NAME " driver " IXMAC_VERSION
+ 			": %s on %s with PHY[%d] initialized\n",
