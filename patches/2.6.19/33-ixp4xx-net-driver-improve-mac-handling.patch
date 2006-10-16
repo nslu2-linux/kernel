@@ -14,7 +14,7 @@
  
  
 --- linux-ixp4xx.orig/drivers/net/ixp4xx/mac_driver.c	2006-10-16 16:23:48.000000000 +0200
-+++ linux-ixp4xx/drivers/net/ixp4xx/mac_driver.c	2006-10-16 16:24:34.000000000 +0200
++++ linux-ixp4xx/drivers/net/ixp4xx/mac_driver.c	2006-10-16 16:57:28.000000000 +0200
 @@ -434,9 +434,14 @@ static int mac_probe(struct platform_dev
  	 * following commands:
  	 * "ip link set address 02:03:04:04:04:01 dev eth0"
@@ -24,7 +24,7 @@
 -	dev->dev_addr[5] = plat->phy_id;
 +	*/
 +
-+	if (!is_zero_ether_addr(plat->hwaddr)) {
++	if (is_zero_ether_addr(plat->hwaddr)) {
 +		random_ether_addr(dev->dev_addr);
 +		dev->dev_addr[5] = plat->phy_id;
 +	}
