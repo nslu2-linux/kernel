@@ -11,12 +11,10 @@ Signed-off-by: Kevin Hilman <khilman@mvista.com>
 Acked-by: John Stultz <johnstul@us.ibm.com>
 Signed-off-by: Deepak Saxena <dsaxena@plexity.net>
 Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
----
-
 Index: linux-2.6.18/arch/arm/Kconfig
 ===================================================================
---- linux-2.6.18.orig/arch/arm/Kconfig	2006-09-20 05:42:06.000000000 +0200
-+++ linux-2.6.18/arch/arm/Kconfig	2006-10-01 23:25:44.000000000 +0200
+--- linux-2.6.18.orig/arch/arm/Kconfig	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/arch/arm/Kconfig	2006-10-17 05:26:00.000000000 -0700
 @@ -208,6 +208,7 @@
  config ARCH_IXP4XX
  	bool "IXP4xx-based"
@@ -27,9 +25,9 @@ Index: linux-2.6.18/arch/arm/Kconfig
  
 Index: linux-2.6.18/arch/arm/mach-ixp4xx/common.c
 ===================================================================
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/common.c	2006-10-01 23:25:43.000000000 +0200
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/common.c	2006-10-01 23:25:44.000000000 +0200
-@@ -27,6 +27,7 @@
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/common.c	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/arch/arm/mach-ixp4xx/common.c	2006-10-17 05:40:23.000000000 -0700
+@@ -26,6 +26,7 @@
  #include <linux/bitops.h>
  #include <linux/time.h>
  #include <linux/timex.h>
@@ -37,7 +35,7 @@ Index: linux-2.6.18/arch/arm/mach-ixp4xx/common.c
  
  #include <asm/hardware.h>
  #include <asm/uaccess.h>
-@@ -256,16 +257,6 @@
+@@ -255,16 +256,6 @@
  
  #define CLOCK_TICKS_PER_USEC	((CLOCK_TICK_RATE + USEC_PER_SEC/2) / USEC_PER_SEC)
  
@@ -54,7 +52,7 @@ Index: linux-2.6.18/arch/arm/mach-ixp4xx/common.c
  static irqreturn_t ixp4xx_timer_interrupt(int irq, void *dev_id, struct pt_regs *regs)
  {
  	write_seqlock(&xtime_lock);
-@@ -310,7 +301,6 @@
+@@ -309,7 +300,6 @@
  
  struct sys_timer ixp4xx_timer = {
  	.init		= ixp4xx_timer_init,
@@ -62,7 +60,7 @@ Index: linux-2.6.18/arch/arm/mach-ixp4xx/common.c
  };
  
  static struct resource ixp46x_i2c_resources[] = {
-@@ -460,3 +450,29 @@
+@@ -365,3 +355,29 @@
  			ixp4xx_exp_bus_size >> 20);
  }
  
@@ -94,9 +92,9 @@ Index: linux-2.6.18/arch/arm/mach-ixp4xx/common.c
 +device_initcall(ixp4xx_clocksource_init);
 Index: linux-2.6.18/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-10-01 23:25:41.000000000 +0200
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-10-01 23:25:44.000000000 +0200
-@@ -184,6 +184,8 @@
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-10-17 05:40:39.000000000 -0700
+@@ -159,6 +159,8 @@
  
  static void __init nslu2_init(void)
  {
@@ -107,9 +105,9 @@ Index: linux-2.6.18/arch/arm/mach-ixp4xx/nslu2-setup.c
  	nslu2_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
 Index: linux-2.6.18/include/asm-arm/arch-ixp4xx/platform.h
 ===================================================================
---- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/platform.h	2006-10-01 23:25:43.000000000 +0200
-+++ linux-2.6.18/include/asm-arm/arch-ixp4xx/platform.h	2006-10-01 23:25:44.000000000 +0200
-@@ -106,6 +106,11 @@
+--- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/platform.h	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/include/asm-arm/arch-ixp4xx/platform.h	2006-10-17 05:40:23.000000000 -0700
+@@ -90,6 +90,11 @@
  struct sys_timer;
  
  /*
