@@ -5,7 +5,10 @@
 
 00-linux-2.6.18.1.patch
 00-squashfs3.1.patch
+10-br.patch
 11-ixp4xx-clocksource.patch
+#11-mtdpart-redboot-config-byteswap.patch
+#12-redboot-partition.patch
 13-zd1211rw-arm-fix.patch
 14-zd1211rw-various-fixes.patch
 15-jffs2-endian-config.patch
@@ -21,6 +24,8 @@
 34-increase-entropy-pools.patch
 40-scsi-idle.patch
 50-leds-arm-cpu-activity.patch
+#65-loft-config.patch
 79-rtl8110sb-fix.patch
+#96-loft-ide-le.patch
 96-fsg3-support.patch
 ##99-sata_via-add-pata.patch
