@@ -1,0 +1,224 @@
+Index: linux-2.6.18/drivers/ide/arm/avila-ide.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18/drivers/ide/arm/avila-ide.c	2006-10-19 00:12:50.000000000 -0700
+@@ -0,0 +1,170 @@
++/* drivers/ide/arm/avila-ide.c
++ *
++ * IDE/CF driver for the Gateworks Avila platform
++ *
++ * Copyright (c) 2005 Gateworks Corporation
++ * Dave G <daveg@unixstudios.net>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++*/
++
++
++#include <linux/module.h>
++#include <linux/config.h>
++#include <linux/slab.h>
++#include <linux/blkdev.h>
++#include <linux/errno.h>
++#include <linux/ide.h>
++#include <linux/init.h>
++#include <linux/interrupt.h>
++#include <asm/delay.h>
++
++
++#define AVILA_IDE_BASE IXP4XX_EXP_BUS_BASE(1)
++#define AVILA_IDE_IRQ IRQ_IXP4XX_GPIO12
++#define AVILA_IDE_CONTROL 0x1e
++#define AVILA_IDE_INT 12
++#define AVILA_IDE_CS1_BITS 0xbfff0003;
++
++static unsigned char _mode;
++
++static void avila_ide_enable_16(void)
++{
++	if ( _mode == 0 ) {
++		*IXP4XX_EXP_CS1 &= ~(0x00000001);
++		udelay(100);
++		_mode = 1;
++	}
++
++}
++
++static void avila_ide_disable_16(void)
++{
++	if ( _mode == 1 ) {
++		udelay(100);
++		*IXP4XX_EXP_CS1 |= (0x00000001);
++		_mode = 0;
++	}
++
++}
++
++static u8 avila_ide_inb(unsigned long addr)
++{
++	u8 val;
++
++	val = readb(addr ^ 0x03);
++
++//	val = readb(addr);
++	//printk("%s: %x = %02x\n", __FUNCTION__, addr ^ 0x03, val);
++	return val;
++}
++
++static u16 avila_ide_inw(unsigned long addr)
++{
++	u16 val;
++
++	avila_ide_enable_16();
++	val = readw(addr ^ 0x02);
++	avila_ide_disable_16();
++
++	//printk("%s: %08x = %04x\n", __FUNCTION__, addr, val);
++
++	return val;
++}
++
++static void avila_ide_insw(unsigned long addr, void *buf, u32 len)
++{
++	u16 *buf16p;
++
++	//printk("%s: %02x, %x\n", __FUNCTION__, len, addr);
++
++	avila_ide_enable_16();
++	for (buf16p = (u16 *) buf; (len > 0); len--)
++		*buf16p++ = readw(addr ^ 0x02);
++	avila_ide_disable_16();
++
++}
++
++static void avila_ide_outb(u8 val, unsigned long addr)
++{
++	//printk("%s: %02x, %x\n", __FUNCTION__, val, addr ^ 0x03);
++	writeb(val, addr ^ 0x03);
++}
++
++static void avila_ide_outbsync(ide_drive_t *drive, u8 val, unsigned long addr)
++{
++	writeb(val, addr ^ 0x03);
++}
++
++static void avila_ide_outw(u16 val, unsigned long addr)
++{
++	//printk("%s: %04x, %x\n", __FUNCTION__, val, addr);
++
++	avila_ide_enable_16();
++	writew(val, addr ^ 0x02);
++	avila_ide_disable_16();
++}
++
++
++static void avila_ide_outsw(unsigned long addr, void *buf, u32 len)
++{
++	u16 *buf16p;
++	//printk("%s: len=%d, addr=%x\n", __FUNCTION__, len, addr);
++	avila_ide_enable_16();
++	for (buf16p = (u16 *) buf; (len > 0); len--)
++		writew(*buf16p++, addr ^ 0x02);
++	avila_ide_disable_16();
++
++}
++
++static int avila_ide_iack(ide_hwif_t *hwif)
++{
++  //gpio_line_isr_clear(AVILA_IDE_INT);
++  	return 1;
++}
++
++void __init avila_ide_init(void)
++{
++	hw_regs_t hw;
++	ide_hwif_t *hwif;
++	unsigned char *avila_ide_iobase;
++	int i;
++
++	gpio_line_config(AVILA_IDE_INT, IXP4XX_GPIO_IN | IXP4XX_GPIO_STYLE_ACTIVE_HIGH);
++	// gpio_line_isr_clear(AVILA_IDE_INT);
++
++	*IXP4XX_EXP_CS1 |= AVILA_IDE_CS1_BITS;
++	
++	avila_ide_iobase = ioremap(AVILA_IDE_BASE, 0x1000);
++
++	memset(&hw, 0, sizeof(hw));
++
++	hw.irq = AVILA_IDE_IRQ;
++	hw.dma = NO_DMA;
++	hw.ack_intr = avila_ide_iack;
++
++	for (i = 0; (i <= IDE_STATUS_OFFSET); i++)
++		hw.io_ports[i] = (unsigned long)(avila_ide_iobase + i);
++	
++	hw.io_ports[IDE_CONTROL_OFFSET] = (unsigned long)(avila_ide_iobase + AVILA_IDE_CONTROL);
++
++	printk("ide: Gateworks Avila IDE/CF driver v1.3\n");
++
++	ide_register_hw(&hw, &hwif);
++
++	hwif->mmio = 2;
++	hwif->OUTB = avila_ide_outb;
++	hwif->OUTBSYNC = avila_ide_outbsync;
++	hwif->OUTW = avila_ide_outw;
++	hwif->OUTSW = avila_ide_outsw;
++	hwif->INB = avila_ide_inb;
++	hwif->INW = avila_ide_inw;
++	hwif->INSW = avila_ide_insw;
++}
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Dave G <daveg@unixstudios.net>");
++MODULE_DESCRIPTION("Gateworks Avila CF/IDE Driver");
+Index: linux-2.6.18/drivers/ide/arm/Makefile
+===================================================================
+--- linux-2.6.18.orig/drivers/ide/arm/Makefile	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/drivers/ide/arm/Makefile	2006-10-19 00:12:50.000000000 -0700
+@@ -1,5 +1,6 @@
+ 
+ obj-$(CONFIG_BLK_DEV_IDE_ICSIDE)	+= icside.o
++obj-$(CONFIG_BLK_DEV_IDE_AVILA)	+= avila-ide.o
+ obj-$(CONFIG_BLK_DEV_IDE_RAPIDE)	+= rapide.o
+ obj-$(CONFIG_BLK_DEV_IDE_BAST)		+= bast-ide.o
+ 
+Index: linux-2.6.18/drivers/ide/ide.c
+===================================================================
+--- linux-2.6.18.orig/drivers/ide/ide.c	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/drivers/ide/ide.c	2006-10-19 00:12:50.000000000 -0700
+@@ -1818,6 +1818,12 @@
+ 		macide_init();
+ 	}
+ #endif /* CONFIG_BLK_DEV_MAC_IDE */
++#ifdef CONFIG_BLK_DEV_IDE_AVILA
++  {
++    extern void avila_ide_init(void);
++    avila_ide_init();
++  }
++#endif /* CONFIG_BLK_DEV_IDE_AVILA */
+ #ifdef CONFIG_BLK_DEV_Q40IDE
+ 	{
+ 		extern void q40ide_init(void);
+Index: linux-2.6.18/drivers/ide/Kconfig
+===================================================================
+--- linux-2.6.18.orig/drivers/ide/Kconfig	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/drivers/ide/Kconfig	2006-10-19 00:12:50.000000000 -0700
+@@ -844,6 +844,16 @@
+ 	  Say Y here if you want to support the onboard IDE channels on the
+ 	  Simtec BAST or the Thorcom VR1000
+ 
++config BLK_DEV_IDE_AVILA
++	bool "Gateworks Avila IDE/CF Interface"
++	depends on (ARCH_IXDP425 || ARCH_AVILA  || MACH_LOFT) && BLK_DEV_IDEDISK && IDE_GENERIC
++	help
++		Say Y here if you want to build support for the Gateworks Avila
++		IDE/CF interface attached to the IXP4XX Expansion Bus. The IDE/CF
++		interface will allow Linux to see an inserted Compact Flash Card
++		as an ATA device which can be mounted and used as a normal hard
++		drive.
++
+ config BLK_DEV_GAYLE
+ 	bool "Amiga Gayle IDE interface support"
+ 	depends on AMIGA

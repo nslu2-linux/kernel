@@ -1,0 +1,14 @@
+Index: linux-2.6.18/net/bridge/br_input.c
+===================================================================
+--- linux-2.6.18.orig/net/bridge/br_input.c	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/net/bridge/br_input.c	2006-10-19 00:01:52.000000000 -0700
+@@ -32,6 +32,9 @@
+ 	indev = skb->dev;
+ 	skb->dev = br->dev;
+ 
++	skb_push(skb, ETH_HLEN);
++	skb->protocol = eth_type_trans(skb, skb->dev);
++
+ 	NF_HOOK(PF_BRIDGE, NF_BR_LOCAL_IN, skb, indev, NULL,
+ 		netif_receive_skb);
+ }

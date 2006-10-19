@@ -1,8 +1,9 @@
-diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/Kconfig linux-2.6.18/arch/arm/mach-ixp4xx/Kconfig
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/Kconfig	2006-10-07 07:16:35.000000000 -0700
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/Kconfig	2006-10-07 07:17:38.000000000 -0700
-@@ -89,6 +89,14 @@
- 	depends on ARCH_IXDP425 || ARCH_AVILA || MACH_IXDP465
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/Kconfig
+===================================================================
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/Kconfig	2006-10-19 00:12:49.000000000 -0700
++++ linux-2.6.18/arch/arm/mach-ixp4xx/Kconfig	2006-10-19 00:12:49.000000000 -0700
+@@ -95,6 +95,14 @@
+ 	depends on ARCH_IXDP425 || ARCH_AVILA || MACH_IXDP465 || MACH_LOFT
  	default y
  
 +config MACH_FSG
@@ -16,9 +17,10 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/Kconfig linux-2.6.18/arch/arm/
  #
  # Certain registers and IRQs are only enabled if supporting IXP465 CPUs
  #
-diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/Makefile linux-2.6.18/arch/arm/mach-ixp4xx/Makefile
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/Makefile	2006-10-07 07:16:35.000000000 -0700
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/Makefile	2006-10-07 07:19:15.000000000 -0700
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/Makefile
+===================================================================
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/Makefile	2006-10-18 23:59:08.000000000 -0700
++++ linux-2.6.18/arch/arm/mach-ixp4xx/Makefile	2006-10-19 00:12:49.000000000 -0700
 @@ -11,6 +11,7 @@
  obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx5715-pci.o
  obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
@@ -34,9 +36,10 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/Makefile linux-2.6.18/arch/arm
 +obj-$(CONFIG_MACH_FSG)          += fsg-setup.o
  
  obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
-diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-pci.c linux-2.6.18/arch/arm/mach-ixp4xx/fsg-pci.c
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-pci.c	1969-12-31 16:00:00.000000000 -0800
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/fsg-pci.c	2006-10-07 07:17:54.000000000 -0700
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/fsg-pci.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18/arch/arm/mach-ixp4xx/fsg-pci.c	2006-10-19 00:12:49.000000000 -0700
 @@ -0,0 +1,66 @@
 +/*
 + * arch/arch/mach-ixp4xx/fsg-pci.c
@@ -104,9 +107,10 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-pci.c linux-2.6.18/arch/ar
 +}
 +
 +subsys_initcall(fsg_pci_init);
-diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.18/arch/arm/mach-ixp4xx/fsg-setup.c
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c	1969-12-31 16:00:00.000000000 -0800
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-07 07:18:00.000000000 -0700
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/fsg-setup.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-19 00:12:49.000000000 -0700
 @@ -0,0 +1,207 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
@@ -315,17 +319,19 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.18/arch/
 +	.init_machine	= fsg_init,
 +MACHINE_END
 +
-diff -Naur linux-2.6.18.orig/arch/arm/tools/mach-types linux-2.6.18/arch/arm/tools/mach-types
---- linux-2.6.18.orig/arch/arm/tools/mach-types	2006-10-07 07:16:34.000000000 -0700
-+++ linux-2.6.18/arch/arm/tools/mach-types	2006-10-07 07:17:38.000000000 -0700
+Index: linux-2.6.18/arch/arm/tools/mach-types
+===================================================================
+--- linux-2.6.18.orig/arch/arm/tools/mach-types	2006-10-18 23:59:08.000000000 -0700
++++ linux-2.6.18/arch/arm/tools/mach-types	2006-10-19 00:12:49.000000000 -0700
 @@ -1093,3 +1093,4 @@
  eti_b1			MACH_ETI_B1		ETI_B1			1080
  za9l_series		MACH_ZILOG_ZA9L		ZILOG_ZA9L		1081
  bit2440			MACH_BIT2440		BIT2440			1082
 +fsg			MACH_FSG		FSG			1091
-diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/fsg.h linux-2.6.18/include/asm-arm/arch-ixp4xx/fsg.h
---- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/fsg.h	1969-12-31 16:00:00.000000000 -0800
-+++ linux-2.6.18/include/asm-arm/arch-ixp4xx/fsg.h	2006-10-07 07:17:38.000000000 -0700
+Index: linux-2.6.18/include/asm-arm/arch-ixp4xx/fsg.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18/include/asm-arm/arch-ixp4xx/fsg.h	2006-10-19 00:12:49.000000000 -0700
 @@ -0,0 +1,32 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/fsg.h
@@ -359,9 +365,10 @@ diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/fsg.h linux-2.6.18/incl
 +#define	FSG_IDE_DATA_PORT	0xFFFE10E0
 +#define	FSG_IDE_CTRL_PORT	0xFFFE10FC
 +#define	FSG_IDE_ERROR_PORT	0xFFFE10E2
-diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/hardware.h linux-2.6.18/include/asm-arm/arch-ixp4xx/hardware.h
---- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-07 07:16:25.000000000 -0700
-+++ linux-2.6.18/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-07 07:21:15.000000000 -0700
+Index: linux-2.6.18/include/asm-arm/arch-ixp4xx/hardware.h
+===================================================================
+--- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-18 23:59:08.000000000 -0700
++++ linux-2.6.18/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-19 00:12:49.000000000 -0700
 @@ -46,5 +46,6 @@
  #include "prpmc1100.h"
  #include "nslu2.h"
@@ -369,9 +376,10 @@ diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/hardware.h linux-2.6.18
 +#include "fsg.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
-diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/irqs.h linux-2.6.18/include/asm-arm/arch-ixp4xx/irqs.h
---- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-07 07:16:25.000000000 -0700
-+++ linux-2.6.18/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-07 07:17:38.000000000 -0700
+Index: linux-2.6.18/include/asm-arm/arch-ixp4xx/irqs.h
+===================================================================
+--- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-18 23:59:08.000000000 -0700
++++ linux-2.6.18/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-19 00:12:49.000000000 -0700
 @@ -109,4 +109,12 @@
  #define        IRQ_NAS100D_PCI_INTD    IRQ_IXP4XX_GPIO8
  #define        IRQ_NAS100D_PCI_INTE    IRQ_IXP4XX_GPIO7
