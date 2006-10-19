@@ -7,10 +7,10 @@ variation on a standard Avila board
  include/asm-arm/arch-ixp4xx/ixdp425.h |    1 +
  4 files changed, 31 insertions(+), 3 deletions(-)
 
-Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/Kconfig
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/Kconfig	2006-06-08 00:13:55.689531584 +0930
-+++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/Kconfig	2006-06-08 00:18:57.337674096 +0930
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/Kconfig	2006-10-18 23:59:08.000000000 -0700
++++ linux-2.6.18/arch/arm/mach-ixp4xx/Kconfig	2006-10-19 00:13:44.000000000 -0700
 @@ -25,6 +25,12 @@
  	  Avila Network Platform. For more information on this platform,
  	  see <file:Documentation/arm/IXP4xx>.
@@ -24,7 +24,7 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/Kconfig
  config ARCH_ADI_COYOTE
  	bool "Coyote"
  	select PCI
-@@ -89,7 +95,7 @@
+@@ -86,7 +92,7 @@
  #
  config	ARCH_IXDP4XX
  	bool
@@ -33,10 +33,10 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/Kconfig
  	default y
  
  #
-Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/ixdp425-pci.c
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/ixdp425-pci.c
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-03-20 16:23:29.000000000 +1030
-+++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-06-08 00:14:17.149269208 +0930
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-10-19 00:12:49.000000000 -0700
 @@ -46,7 +46,8 @@
  
  	int irq = -1;
@@ -57,11 +57,11 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/ixdp425-pci.c
  		pci_common_init(&ixdp425_pci);
  	return 0;
  }
-Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/ixdp425-setup.c
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/ixdp425-setup.c
 ===================================================================
---- linux-2.6.17-rc6.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-03-20 16:23:29.000000000 +1030
-+++ linux-2.6.17-rc6/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-06-08 00:19:13.194263528 +0930
-@@ -176,3 +176,21 @@
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-10-19 00:12:49.000000000 -0700
++++ linux-2.6.18/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-10-19 00:12:49.000000000 -0700
+@@ -223,3 +223,21 @@
  MACHINE_END
  #endif
  
@@ -83,10 +83,10 @@ Index: linux-2.6.17-rc6/arch/arm/mach-ixp4xx/ixdp425-setup.c
 +MACHINE_END
 +#endif
 +
-Index: linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/ixdp425.h
+Index: linux-2.6.18/include/asm-arm/arch-ixp4xx/ixdp425.h
 ===================================================================
---- linux-2.6.17-rc6.orig/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-03-20 16:23:29.000000000 +1030
-+++ linux-2.6.17-rc6/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-06-08 00:14:17.339240328 +0930
+--- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-10-19 00:12:49.000000000 -0700
 @@ -23,6 +23,7 @@
   * IXDP425 PCI IRQs
   */
