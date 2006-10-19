@@ -1,5 +1,7 @@
---- linux-2.6.18/drivers/mtd/redboot.c	2006-10-18 08:08:36.000000000 -0400
-+++ kernel-2.6.16-squashfs/linux-2.6.16/drivers/mtd/redboot.c	2006-09-16 23:21:13.000000000 -0400
+Index: linux-2.6.18/drivers/mtd/redboot.c
+===================================================================
+--- linux-2.6.18.orig/drivers/mtd/redboot.c	2006-10-18 23:59:36.000000000 -0700
++++ linux-2.6.18/drivers/mtd/redboot.c	2006-10-19 00:00:05.000000000 -0700
 @@ -85,6 +85,10 @@
  
  	numslots = (master->erasesize / sizeof(struct fis_image_desc));

@@ -1,5 +1,7 @@
---- linux-2.6.18-old/drivers/mtd/redboot.c	2006-09-19 23:42:06.000000000 -0400
-+++ linux-2.6.18/drivers/mtd/redboot.c	2006-10-18 18:35:26.000000000 -0400
+Index: linux-2.6.18/drivers/mtd/redboot.c
+===================================================================
+--- linux-2.6.18.orig/drivers/mtd/redboot.c	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.18/drivers/mtd/redboot.c	2006-10-18 23:59:36.000000000 -0700
 @@ -87,14 +87,41 @@
  	for (i = 0; i < numslots; i++) {
  		if (!memcmp(buf[i].name, "FIS directory", 14)) {

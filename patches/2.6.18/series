@@ -5,10 +5,10 @@
 
 00-linux-2.6.18.1.patch
 00-squashfs3.1.patch
+01-mtdpart-redboot-config-byteswap.patch
+02-redboot-partition.patch
 10-br.patch
 11-ixp4xx-clocksource.patch
-11-mtdpart-redboot-config-byteswap.patch
-12-redboot-partition.patch
 13-zd1211rw-arm-fix.patch
 14-zd1211rw-various-fixes.patch
 15-jffs2-endian-config.patch
