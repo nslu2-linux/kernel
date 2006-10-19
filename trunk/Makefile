@@ -19,7 +19,7 @@ ENDIAN = l
 MAJORVER = 2.6
 BASEVER  = 2.6.18
 MINORVER = 2.6.18
-PATCHVER = 2.6.19
+PATCHVER = 2.6.18
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
@@ -38,8 +38,7 @@ KERNEL_SNAPSHOT = http://kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots/patc
 MADWIFI_SOURCE   = http://snapshots.madwifi.org/madwifi-ng/madwifi-ng-${MADWIFIVER}.tar.gz
 
 #CROSS_COMPILE = ${DEBIAN_ARCH}-linux-gnu-
-#CROSS_COMPILE ?= ${DEBIAN_ARCH}-linux-
-CROSS_COMPILE ?= /home/blaster8/HEAD/openslug/tmp/cross/bin/armeb-linux-
+CROSS_COMPILE ?= ${DEBIAN_ARCH}-linux-
 
 ifdef CROSS_COMPILE
 CROSS_COMPILE_FLAGS = CROSS_COMPILE=${CROSS_COMPILE}
