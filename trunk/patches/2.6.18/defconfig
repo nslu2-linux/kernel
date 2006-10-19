@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18
-# Thu Oct 19 03:24:06 2006
+# Thu Oct 19 09:10:50 2006
 #
 CONFIG_ARM=y
 CONFIG_MMU=y
@@ -1108,7 +1108,7 @@ CONFIG_SENSORS_W83781D=m
 # CONFIG_SENSORS_W83L785TS is not set
 # CONFIG_SENSORS_W83627HF is not set
 # CONFIG_SENSORS_W83627EHF is not set
-CONFIG_SENSORS_AD741X=m
+CONFIG_SENSORS_AD7418=m
 # CONFIG_HWMON_DEBUG_CHIP is not set
 
 #

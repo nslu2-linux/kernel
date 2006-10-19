@@ -19,6 +19,7 @@
 45-eeprom-new-notifier.patch
 50-leds-arm-cpu-activity.patch
 60-nas100d-artop-temp-fix.patch
+66-hwmon-ad7418.patch
 74-add-arm-ata-support.patch
 75-dsmg600-support.patch
 76-dsmg600-pwrbtn.patch

@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.19-rc2
-# Fri Oct 13 12:31:40 2006
+# Thu Oct 19 09:19:31 2006
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -1177,6 +1177,7 @@ CONFIG_SENSORS_W83781D=m
 # CONFIG_SENSORS_W83L785TS is not set
 # CONFIG_SENSORS_W83627HF is not set
 # CONFIG_SENSORS_W83627EHF is not set
+CONFIG_SENSORS_AD7418=m
 # CONFIG_HWMON_DEBUG_CHIP is not set
 
 #

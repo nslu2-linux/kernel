@@ -25,7 +25,7 @@
 40-scsi-idle.patch
 50-leds-arm-cpu-activity.patch
 65-loft-config.patch
-66-hwmon-ad741x.patch
+66-hwmon-ad7418.patch
 79-rtl8110sb-fix.patch
 96-fsg3-support.patch
 98-loft-ide-le.patch
