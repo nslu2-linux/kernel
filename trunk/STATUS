@@ -7,6 +7,14 @@
 [linux-mtd] - patch submitted to the linux-mtd mailing list (because
 	it is not ARM specific.)
 
+01-mtdpart-redboot-config-byteswap.patch
+	More robust test for byteswapped Redboot partition table
+	Should be submitted together with patch to support data in payload
+	
+02-redboot-partition.patch
+	Fix deleted partition skipping behaviour for Redboot 2.x
+	Should be submitted together with patch to support data in payload
+
 15-jffs2-endian-config.patch [linux-mtd]
 	Has been submitted to linux-mtd
 	http://lists.infradead.org/pipermail/linux-mtd/2006-January/014740.html
