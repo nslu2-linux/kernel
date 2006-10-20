@@ -6,7 +6,6 @@
 00-linux-2.6.18.1.patch
 00-squashfs3.1.patch
 01-mtdpart-redboot-config-byteswap.patch
-02-redboot-partition.patch
 10-bridging-fix.patch
 11-ixp4xx-clocksource.patch
 13-zd1211rw-arm-fix.patch
