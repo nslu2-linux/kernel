@@ -1,0 +1,51 @@
+--- linux-2.6.18-orig/drivers/mtd/redboot.c	2006-09-19 23:42:06.000000000 -0400
++++ linux-2.6.18/drivers/mtd/redboot.c	2006-10-20 19:05:43.000000000 -0400
+@@ -94,8 +94,38 @@
+ 			 * (NOTE: this is 'size' not 'data_length'; size is
+ 			 * the full size of the entry.)
+ 			 */
+-			if (swab32(buf[i].size) == master->erasesize) {
++			/* The assumption that FIS directory is always one
++			 * erase block is a bad assumption. The redboot config
++			 * data is sometimes combine in the same erase block
++			 * with the FIS directory.  This will cause the swab
++			 * check to always fail.
++			 *
++			 * IMHO the best solution would be to compute the
++			 * flash address of the RedBoot FIS directory and
++			 * compare that with the entry in the FIS directory
++			 * entry swabbed.  However, I haven't yet figured out
++			 * how to compute that.
++			 *
++			 * In the meantime, adjusting the size to the nearest
++			 * erase block boundary fixes the combine situation
++			 * and it functionaly identical to the original case
++			 * where the FIS directory takes the whole block.
++			 *
++			 * One additional change is added below for the
++			 * combined FIS directory and RedBoot config area.
++			 * This adjusts the numslots to be the size of the 
++			 * FIS directory entires based on the entry in the
++			 * partition table.  This stops using any datum
++			 * outside of the actual FIS directory
++			 */
++
++			unsigned long erasesize_mask = master->erasesize -1;
++			unsigned long eraseaddr_mask = 0xFFFFFFFF ^ erasesize_mask;
++			
++			if (((swab32(buf[i].size)+erasesize_mask) 
++				& eraseaddr_mask) == master->erasesize) {
+ 				int j;
++
+ 				for (j = 0; j < numslots && buf[j].name[0] != 0xff; ++j) {
+ 					/* The unsigned long fields were written with the
+ 					 * wrong byte sex, name and pad have no byte sex.
+@@ -109,6 +139,8 @@
+ 					swab32s(&buf[j].file_cksum);
+ 				}
+ 			}
++			/* Update numslots based on actual FIS directory size */
++			numslots = buf[i].size / sizeof (struct fis_image_desc);
+ 			break;
+ 		}
+ 	}
