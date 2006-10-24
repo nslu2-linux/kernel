@@ -1,7 +1,7 @@
-Index: linux-2.6.19-rc2/drivers/mtd/redboot.c
+Index: linux-2.6.19-rc3/drivers/mtd/redboot.c
 ===================================================================
---- linux-2.6.19-rc2.orig/drivers/mtd/redboot.c	2006-09-19 20:42:06.000000000 -0700
-+++ linux-2.6.19-rc2/drivers/mtd/redboot.c	2006-10-21 05:05:50.000000000 -0700
+--- linux-2.6.19-rc3.orig/drivers/mtd/redboot.c	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.19-rc3/drivers/mtd/redboot.c	2006-10-24 00:27:41.000000000 -0700
 @@ -94,8 +94,38 @@
  			 * (NOTE: this is 'size' not 'data_length'; size is
  			 * the full size of the entry.)

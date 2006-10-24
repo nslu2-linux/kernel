@@ -18,9 +18,11 @@ Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
  fs/jffs2/nodelist.h |    8 +++-----
  2 files changed, 28 insertions(+), 5 deletions(-)
 
---- linux-ixp4xx.orig/fs/Kconfig	2006-10-15 18:52:22.000000000 +0200
-+++ linux-ixp4xx/fs/Kconfig	2006-10-15 18:52:23.000000000 +0200
-@@ -1383,6 +1383,31 @@ config JFFS2_CMODE_SIZE
+Index: linux-2.6.19-rc3/fs/Kconfig
+===================================================================
+--- linux-2.6.19-rc3.orig/fs/Kconfig	2006-10-24 00:27:37.000000000 -0700
++++ linux-2.6.19-rc3/fs/Kconfig	2006-10-24 00:27:41.000000000 -0700
+@@ -1387,6 +1387,31 @@
  
  endchoice
  
@@ -52,8 +54,10 @@ Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
  config CRAMFS
  	tristate "Compressed ROM file system support (cramfs)"
  	depends on BLOCK
---- linux-ixp4xx.orig/fs/jffs2/nodelist.h	2006-10-15 18:52:22.000000000 +0200
-+++ linux-ixp4xx/fs/jffs2/nodelist.h	2006-10-15 18:52:23.000000000 +0200
+Index: linux-2.6.19-rc3/fs/jffs2/nodelist.h
+===================================================================
+--- linux-2.6.19-rc3.orig/fs/jffs2/nodelist.h	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.19-rc3/fs/jffs2/nodelist.h	2006-10-24 00:27:41.000000000 -0700
 @@ -30,12 +30,10 @@
  #include "os-linux.h"
  #endif
