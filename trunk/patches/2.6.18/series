@@ -22,6 +22,7 @@
 33-ixp4xx-net-driver-improve-mac-handling.patch
 34-increase-entropy-pools.patch
 40-scsi-idle.patch
+45-eeprom-new-notifier.patch
 50-leds-arm-cpu-activity.patch
 65-loft-config.patch
 66-hwmon-ad7418.patch
