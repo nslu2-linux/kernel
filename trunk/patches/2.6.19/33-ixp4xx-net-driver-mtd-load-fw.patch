@@ -1,0 +1,245 @@
+---
+ drivers/net/ixp4xx/Kconfig    |   17 ++++-
+ drivers/net/ixp4xx/ucode_dl.c |  135 +++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 143 insertions(+), 9 deletions(-)
+
+--- linux-ixp4xx.orig/drivers/net/ixp4xx/Kconfig	2006-10-24 18:04:16.000000000 +0200
++++ linux-ixp4xx/drivers/net/ixp4xx/Kconfig	2006-10-25 12:04:44.000000000 +0200
+@@ -18,7 +18,7 @@ config IXP4XX_NPE
+ 	  More about this at: Documentation/networking/ixp4xx/README.
+ 	  You can either use this OR the Intel Access Library (IAL)
+ 
+-config IXP4XX_FW_LOAD
++config IXP4XX_NPE_FW_LOAD
+ 	bool "Use Firmware hotplug for Microcode download"
+ 	depends on IXP4XX_NPE
+ 	select HOTPLUG
+@@ -28,6 +28,21 @@ config IXP4XX_FW_LOAD
+ 	  /usr/lib/hotplug/firmware/NPE-[ABC]
+ 	  see Documentation/firmware_class/hotplug-script
+ 
++config IXP4XX_NPE_FW_MTD
++	bool "Load firmware from an mtd partition"
++	depends on IXP4XX_NPE && MTD_IXP4XX
++	help
++	  With this option, the driver will search for
++	  the firmware into an MTD partition.
++
++config IXP4XX_NPE_FW_MTD_PARTITION
++	string "The partition to read the firmware from"
++	depends on IXP4XX_NPE_FW_MTD = y
++	default "RedBoot"
++	help
++	  The MTD partition name that will be searched for
++	  the firmware, usually RedBoot.
++
+ config IXP4XX_MAC
+ 	tristate "IXP4xx MAC support"
+ 	depends on IXP4XX_NPE
+--- linux-ixp4xx.orig/drivers/net/ixp4xx/ucode_dl.c	2006-10-24 18:04:16.000000000 +0200
++++ linux-ixp4xx/drivers/net/ixp4xx/ucode_dl.c	2006-10-25 16:22:33.000000000 +0200
+@@ -16,6 +16,7 @@
+ #include <linux/firmware.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/byteorder/swab.h>
++#include <linux/mtd/mtd.h>
+ #include <asm/uaccess.h>
+ #include <asm/io.h>
+ 
+@@ -30,6 +31,12 @@
+ #define IMG_SIZE(image) (((image)->size * sizeof(u32)) + \
+ 		sizeof(struct dl_image))
+ 
++#define IMG_REV_MAJOR(id) (((id) >> 8) & 0x0f)
++#define IMG_REV_MINOR(id) ((id) & 0x0f)
++#define IMG_FUNC(id) (((id) >> 16) & 0xff)
++#define IMG_NPE(id) (((id) >> 24) & 0x0f)
++#define IMG_IXP(id) (((id) >> 28) & 0x0f)
++
+ #define BT_INSTR 0
+ #define BT_DATA 1
+ 
+@@ -139,18 +146,33 @@ static int store_npe_image(struct dl_ima
+ 	struct dl_block *blk;
+ 	struct dl_codeblock *cb;
+ 	struct npe_info *npe;
+-	int ret=0;
++	int ret = 0;
+ 
+ 	if (!dev) {
+-		dev = get_npe_by_id( (image->id >> 24) & 0xf);
+-		put_device(dev);
++		dev = get_npe_by_id(IMG_NPE(image->id));
++		if (dev)
++			put_device(dev);
++			// XXX shouldn't this put_device be outside if(!dev) ?
++		else
++			printk(KERN_ERR "npe: cannot find npe for image %x\n", IMG_NPE(image->id));
+ 	}
++
+ 	if (!dev)
+ 		return -ENODEV;
+ 
++	if (image->size > 24000) { // XXX fix max size
++		printk(KERN_ERR "npe: firmware too large\n");
++		return -EFBIG;
++	}
++
++	if (IMG_REV_MAJOR(image->id) != 2) {
++		printk(KERN_ERR "npe: only revision 2 is supported at this time\n");
++		return -EINVAL;
++	}
++
+ 	npe = dev_get_drvdata(dev);
+ 
+-	if ( npe_status(npe) & IX_NPEDL_EXCTL_STATUS_RUN) {
++	if (npe_status(npe) & IX_NPEDL_EXCTL_STATUS_RUN) {
+ 		printk(KERN_INFO "Cowardly refusing to reload an Image "
+ 				"into the running %s\n", npe->plat->name);
+ 		return 0; /* indicate success anyway... */
+@@ -173,7 +195,7 @@ static int store_npe_image(struct dl_ima
+ 	*(u32*)npe->img_info = cpu_to_be32(image->id);
+ 	npe_start(npe);
+ 
+-	printk(KERN_INFO "Image loaded to %s Func:%x, Rel: %x:%x, Status: %x\n",
++	printk(KERN_INFO "npe: firmware loaded to %s, func: %02x, rev: %x.%x, status: %x\n",
+ 			npe->plat->name, npe->img_info[1], npe->img_info[2],
+ 			npe->img_info[3], npe_status(npe));
+ 	return 0;
+@@ -265,8 +287,7 @@ static ssize_t ucode_write(struct file *
+ 
+ static void npe_firmware_probe(struct device *dev)
+ {
+-#if (defined(CONFIG_FW_LOADER) || defined(CONFIG_FW_LOADER_MODULE)) \
+-	&& defined(MODULE)
++#ifdef CONFIG_IXP4XX_NPE_FW_LOADER
+ 	const struct firmware *fw_entry;
+ 	struct npe_info *npe = dev_get_drvdata(dev);
+ 	struct dl_image *image;
+@@ -388,7 +409,7 @@ static int npe_probe(struct platform_dev
+ 
+ 	npe->plat = plat;
+ 	disable_npe_irq(npe);
+-	if (! (npe_status(npe) & IX_NPEDL_EXCTL_STATUS_RUN))
++	if (!(npe_status(npe) & IX_NPEDL_EXCTL_STATUS_RUN))
+ 		npe_firmware_probe(&pdev->dev);
+ 
+ 	return 0;
+@@ -400,6 +421,102 @@ out_free:
+ 	return ret;
+ }
+ 
++static void print_image_info(u32 id, u32 offset, u32 size)
++{
++	unsigned char idx;
++	const char *names[] = { "IXP425", "IXP465", "unknown" };
++
++	idx = IMG_IXP(id) < 2 ? IMG_IXP(id) : 2;
++
++	printk(KERN_INFO "npe: found at 0x%x, %s/NPE-%c func: %02x, rev: %x.%x, "
++		"size: %5d, id: %08x\n", offset, names[idx], IMG_NPE(id) + 'A',
++		IMG_FUNC(id), IMG_REV_MAJOR(id), IMG_REV_MINOR(id), size, id);
++}
++
++static void npe_swap_image(struct dl_image *image)
++{
++	unsigned int i;
++
++	image->magic = swab32(image->magic);
++	image->id = swab32(image->id);
++	image->size = swab32(image->size);
++
++	for (i = 0; i < image->size; i++)
++		image->u.data[i] = swab32(image->u.data[i]);
++}
++
++static void npe_flash_add(struct mtd_info *mtd)
++{
++	if (strcmp(mtd->name, CONFIG_IXP4XX_NPE_FW_MTD_PARTITION) == 0) {
++		u32 buf;
++		u32 magic = htonl(0xfeedf00d);
++		u32 id, size;
++		size_t retlen;
++		int err;
++		unsigned int offset = 0;
++
++		printk("npe: searching for firmware...\n");
++
++		while (offset < mtd->size) {
++
++			err = mtd->read(mtd, offset, 4, &retlen, (u_char *) &buf);
++			offset += retlen;
++
++			if (buf != magic)
++				continue;
++
++			err = mtd->read(mtd, offset, 4, &retlen, (u_char *) &id);
++			offset += retlen;
++
++			if (id == magic)
++				break;
++
++			id = ntohl(id);
++
++			err = mtd->read(mtd, offset, 4, &retlen, (u_char *) &size);
++			offset += retlen;
++
++			size = (ntohl(size) * 4) + 12;
++
++			print_image_info(id, offset - 12, size);
++
++			if (size < 24000 && IMG_FUNC(id) == 0x01) { // XXX fix size/detection
++
++				struct dl_image *image = kmalloc(size, GFP_KERNEL);
++
++				/* we are going to load it, rewind offset */
++				offset -= 12;
++
++				if (image) {
++					err = mtd->read(mtd, offset, size, &retlen, (u_char *) image);
++
++					if (err == 0 && retlen == size) {
++						if (image->magic == DL_MAGIC_SWAP)
++							npe_swap_image(image);
++
++						store_npe_image(image, NULL);
++					} else {
++						printk(KERN_ERR "unable to read firmware\n");
++					}
++
++					kfree(image);
++				}
++
++				offset += size;
++			}
++		}
++	}
++}
++
++static void npe_flash_remove(struct mtd_info *mtd) {
++}
++
++static struct mtd_notifier npe_flash_notifier = {
++	.add = npe_flash_add,
++	.remove = npe_flash_remove,
++};
++
++
+ static struct file_operations ucode_dl_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.write		= ucode_write,
+@@ -447,12 +564,14 @@ static int __init init_npedriver(void)
+ 	else
+ 		printk(KERN_INFO IXNPE_VERSION " initialized\n");
+ 
++	register_mtd_user(&npe_flash_notifier);
+ 	return ret;
+ 
+ }
+ 
+ static void __exit finish_npedriver(void)
+ {
++	unregister_mtd_user(&npe_flash_notifier);
+ 	misc_deregister(&ucode_dl_dev);
+ 	platform_driver_unregister(&ixp4xx_npe_driver);
+ }
