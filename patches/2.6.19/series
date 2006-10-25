@@ -13,6 +13,7 @@
 31-ixp4xx-2.6.19-cleanup.patch
 32-ixp4xx-net-driver-fix-qmgr.patch
 33-ixp4xx-net-driver-improve-mac-handling.patch
+33-ixp4xx-net-driver-mtd-load-fw.patch
 34-increase-entropy-pools.patch
 40-scsi-idle.patch
 45-eeprom-new-notifier.patch
