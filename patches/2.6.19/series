@@ -4,6 +4,8 @@
 # Patches marked with ## need reworking and are currently disabled
 
 02-mtdpart-redboot-byteswap-partition-truncate.patch
+#07-remove-avila-ixdp425-setup.patch
+#08-avila-loft-setup.patch
 15-jffs2-endian-config.patch
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
