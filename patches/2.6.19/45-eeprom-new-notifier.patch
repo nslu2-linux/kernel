@@ -9,14 +9,10 @@ the 'maclist' code and read out by the ethernet config.
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
----
- drivers/i2c/chips/eeprom.c |   43 +++++++++++++++++++++++++++++++++++++
- include/linux/eeprom.h     |   51 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/notifier.h   |    3 ++
- 3 files changed, 97 insertions(+)
-
---- linux-ixp4xx.orig/drivers/i2c/chips/eeprom.c	2006-10-15 18:51:01.000000000 +0200
-+++ linux-ixp4xx/drivers/i2c/chips/eeprom.c	2006-10-15 20:30:09.000000000 +0200
+Index: linux-2.6.19-rc3/drivers/i2c/chips/eeprom.c
+===================================================================
+--- linux-2.6.19-rc3.orig/drivers/i2c/chips/eeprom.c	2006-10-25 04:58:17.000000000 -0700
++++ linux-2.6.19-rc3/drivers/i2c/chips/eeprom.c	2006-10-25 04:59:49.000000000 -0700
 @@ -34,6 +34,8 @@
  #include <linux/jiffies.h>
  #include <linux/i2c.h>
@@ -26,18 +22,35 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  
  /* Addresses to scan */
  static unsigned short normal_i2c[] = { 0x50, 0x51, 0x52, 0x53, 0x54,
-@@ -60,8 +62,10 @@ struct eeprom_data {
- 	unsigned long last_updated[8];	/* In jiffies, 8 slices */
- 	u8 data[EEPROM_SIZE];		/* Register values */
- 	enum eeprom_nature nature;
-+	struct bin_attribute *attr;
- };
+@@ -42,26 +44,7 @@
+ /* Insmod parameters */
+ I2C_CLIENT_INSMOD_1(eeprom);
  
+-
+-/* Size of EEPROM in bytes */
+-#define EEPROM_SIZE		256
+-
+-/* possible types of eeprom devices */
+-enum eeprom_nature {
+-	UNKNOWN,
+-	VAIO,
+-};
+-
+-/* Each client has this additional data */
+-struct eeprom_data {
+-	struct i2c_client client;
+-	struct mutex update_lock;
+-	u8 valid;			/* bitfield, bit!=0 if slice is valid */
+-	unsigned long last_updated[8];	/* In jiffies, 8 slices */
+-	u8 data[EEPROM_SIZE];		/* Register values */
+-	enum eeprom_nature nature;
+-};
+-
 +ATOMIC_NOTIFIER_HEAD(eeprom_chain);
  
  static int eeprom_attach_adapter(struct i2c_adapter *adapter);
  static int eeprom_detect(struct i2c_adapter *adapter, int address, int kind);
-@@ -190,6 +194,7 @@ static int eeprom_detect(struct i2c_adap
+@@ -190,6 +173,7 @@
  	data->valid = 0;
  	mutex_init(&data->update_lock);
  	data->nature = UNKNOWN;
@@ -45,7 +58,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  
  	/* Tell the I2C layer a new client has arrived */
  	if ((err = i2c_attach_client(new_client)))
-@@ -213,6 +218,9 @@ static int eeprom_detect(struct i2c_adap
+@@ -213,6 +197,9 @@
  	if (err)
  		goto exit_detach;
  
@@ -55,7 +68,7 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  	return 0;
  
  exit_detach:
-@@ -238,6 +246,41 @@ static int eeprom_detach_client(struct i
+@@ -238,6 +225,41 @@
  	return 0;
  }
  
@@ -97,9 +110,11 @@ Signed-off-by: John Bowler <jbowler@acm.org>
  static int __init eeprom_init(void)
  {
  	return i2c_add_driver(&eeprom_driver);
+Index: linux-2.6.19-rc3/include/linux/eeprom.h
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/include/linux/eeprom.h	2006-10-15 20:21:40.000000000 +0200
-@@ -0,0 +1,51 @@
++++ linux-2.6.19-rc3/include/linux/eeprom.h	2006-10-25 04:59:49.000000000 -0700
+@@ -0,0 +1,71 @@
 +#ifndef _LINUX_EEPROM_H
 +#define _LINUX_EEPROM_H
 +/*
@@ -132,11 +147,31 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 +#include <linux/kobject.h>
 +#include <linux/sysfs.h>
 +
++/* Size of EEPROM in bytes */
++#define EEPROM_SIZE             256
++
++/* possible types of eeprom devices */
++enum eeprom_nature {
++	UNKNOWN,
++	VAIO,
++};
++
++/* Each client has this additional data */
++struct eeprom_data {
++	struct i2c_client client;
++	struct mutex update_lock;
++	u8 valid;			/* bitfield, bit!=0 if slice is valid */
++	unsigned long last_updated[8];	/* In jiffies, 8 slices */
++	u8 data[EEPROM_SIZE];		/* Register values */
++	enum eeprom_nature nature;
++	struct bin_attribute *attr;
++};
++
 +/*
 + * This is very basic.
 + *
 + * If an EEPROM is detected on the I2C bus (this only works for
-+ * I2C EEPROMs) the eeprom_notifier::add method is called with
++ * I2C EEPROMs) the notifier chain  is called with
 + * both the I2C information and the kobject for the sysfs
 + * device which has been registers.  It is then possible to
 + * read from the device via the bin_attribute::read method
@@ -151,9 +186,11 @@ Signed-off-by: John Bowler <jbowler@acm.org>
 +extern int unregister_eeprom_notifier(struct notifier_block *nb);
 +
 +#endif /* _LINUX_EEPROM_H */
---- linux-ixp4xx.orig/include/linux/notifier.h	2006-10-15 18:51:19.000000000 +0200
-+++ linux-ixp4xx/include/linux/notifier.h	2006-10-15 20:18:35.000000000 +0200
-@@ -187,5 +187,8 @@ extern int srcu_notifier_call_chain(stru
+Index: linux-2.6.19-rc3/include/linux/notifier.h
+===================================================================
+--- linux-2.6.19-rc3.orig/include/linux/notifier.h	2006-10-25 04:58:17.000000000 -0700
++++ linux-2.6.19-rc3/include/linux/notifier.h	2006-10-25 04:59:49.000000000 -0700
+@@ -187,5 +187,8 @@
  #define CPU_DOWN_FAILED		0x0006 /* CPU (unsigned)v NOT going down */
  #define CPU_DEAD		0x0007 /* CPU (unsigned)v dead */
  
