@@ -80,10 +80,10 @@ diff -Naur linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/avila-pci.c linux-2.6.19-r
 +
 +void __init avila_pci_preinit(void)
 +{
-+	set_irq_type(IRQ_AVILA_PCI_INTA, IRQT_LOW);
-+	set_irq_type(IRQ_AVILA_PCI_INTB, IRQT_LOW);
-+	set_irq_type(IRQ_AVILA_PCI_INTC, IRQT_LOW);
-+	set_irq_type(IRQ_AVILA_PCI_INTD, IRQT_LOW);
++	set_irq_type(IRQ_IXDP425_PCI_INTA, IRQT_LOW);
++	set_irq_type(IRQ_IXDP425_PCI_INTB, IRQT_LOW);
++	set_irq_type(IRQ_IXDP425_PCI_INTC, IRQT_LOW);
++	set_irq_type(IRQ_IXDP425_PCI_INTD, IRQT_LOW);
 +
 +	ixp4xx_pci_preinit();
 +}
@@ -91,10 +91,10 @@ diff -Naur linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/avila-pci.c linux-2.6.19-r
 +static int __init avila_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
 +{
 +	static int pci_irq_table[AVILA_PCI_IRQ_LINES] = {
-+		IRQ_AVILA_PCI_INTA,
-+		IRQ_AVILA_PCI_INTB,
-+		IRQ_AVILA_PCI_INTC,
-+		IRQ_AVILA_PCI_INTD
++		IRQ_IXDP425_PCI_INTA,
++		IRQ_IXDP425_PCI_INTB,
++		IRQ_IXDP425_PCI_INTC,
++		IRQ_IXDP425_PCI_INTD
 +	};
 +
 +	int irq = -1;
