@@ -28,3 +28,4 @@
 
 # Waiting for status from jgarzik
 ##99-sata_via-add-pata.patch
+96-pata-ixp4xx.patch
