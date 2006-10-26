@@ -8,8 +8,8 @@ Signed-off-by: Michael-Luke Jones <mlj28 <at> cam.ac.uk>
 
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/Kconfig	2006-10-25 17:29:24.000000000 -0700
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig	2006-10-25 17:29:41.000000000 -0700
+--- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/Kconfig	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig	2006-10-26 08:41:20.000000000 -0700
 @@ -25,6 +25,14 @@
  	  Avila Network Platform. For more information on this platform,
  	  see <file:Documentation/arm/IXP4xx>.
@@ -36,8 +36,8 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig
  #
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/Makefile	2006-10-25 17:29:24.000000000 -0700
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile	2006-10-25 17:29:41.000000000 -0700
+--- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/Makefile	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile	2006-10-26 08:41:20.000000000 -0700
 @@ -6,6 +6,7 @@
  obj-pci-n	:=
  
@@ -57,7 +57,7 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-pci.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-pci.c	2006-10-25 17:29:41.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-pci.c	2006-10-26 08:36:56.000000000 -0700
 @@ -0,0 +1,78 @@
 +/*
 + * arch/arm/mach-ixp4xx/avila-pci.c 
@@ -140,8 +140,8 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-pci.c
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-25 17:29:41.000000000 -0700
-@@ -0,0 +1,154 @@
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-26 08:36:56.000000000 -0700
+@@ -0,0 +1,152 @@
 +/*
 + * arch/arm/mach-ixp4xx/avila-setup.c
 + *
@@ -265,7 +265,6 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
 +	platform_add_devices(avila_devices, ARRAY_SIZE(avila_devices));
 +}
 +
-+#ifdef CONFIG_ARCH_AVILA
 +MACHINE_START(AVILA, "Gateworks Avila Network Platform")
 +	/* Maintainer: Deepak Saxena <dsaxena@plexity.net> */
 +	.phys_io	= IXP4XX_PERIPHERAL_BASE_PHYS,
@@ -276,7 +275,6 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
 +	.boot_params	= 0x0100,
 +	.init_machine	= avila_init,
 +MACHINE_END
-+#endif
 +
 + /*
 +  * Loft is functionally equivalent to Avila except that it has a
@@ -288,7 +286,7 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
 +	/* Maintainer: Tom Billman <kernel@giantshoulderinc.com> */
 +	.phys_io	= IXP4XX_PERIPHERAL_BASE_PHYS,
 +	.io_pg_offst	= ((IXP4XX_PERIPHERAL_BASE_VIRT) >> 18) & 0xfffc,
-+    .map_io		= ixp4xx_map_io,
++	.map_io		= ixp4xx_map_io,
 +	.init_irq	= ixp4xx_init_irq,
 +	.timer		= &ixp4xx_timer,
 +	.boot_params	= 0x0100,
@@ -299,7 +297,7 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
 Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/avila.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/avila.h	2006-10-25 17:29:41.000000000 -0700
++++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/avila.h	2006-10-26 08:36:56.000000000 -0700
 @@ -0,0 +1,39 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/avila.h
@@ -342,8 +340,8 @@ Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/avila.h
 +
 Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.19-rc3.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-25 17:29:24.000000000 -0700
-+++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-25 17:29:41.000000000 -0700
+--- linux-2.6.19-rc3.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-26 08:41:20.000000000 -0700
 @@ -42,6 +42,7 @@
  
  /* Platform specific details */
@@ -354,8 +352,8 @@ Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/hardware.h
  #include "nslu2.h"
 Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.19-rc3.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-25 17:29:24.000000000 -0700
-+++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-25 17:29:41.000000000 -0700
+--- linux-2.6.19-rc3.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-26 08:41:20.000000000 -0700
 @@ -79,6 +79,15 @@
  #define	IRQ_IXDP425_PCI_INTD	IRQ_IXP4XX_GPIO8
  
