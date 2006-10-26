@@ -1,6 +1,13 @@
-diff -Naur linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c linux-2.6.19-rc3/arch/arm/mach-ixp4xx/ixdp425-pci.c
---- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-10-25 15:08:03.000000000 -0700
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-10-25 15:10:22.000000000 -0700
+This patch removes references to the Gateworks Avila Network
+Platform in the ixdp425 setup code. Avila setup should occur
+separately now that a CF ATA device driver is available.
+
+Signed-off-by: Michael-Luke Jones <mlj28 <at> cam.ac.uk>
+
+Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/ixdp425-pci.c
+===================================================================
+--- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-10-25 17:28:19.000000000 -0700
 @@ -66,7 +66,7 @@
  int __init ixdp425_pci_init(void)
  {
@@ -10,9 +17,10 @@ diff -Naur linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c linux-2.6.19
  		pci_common_init(&ixdp425_pci);
  	return 0;
  }
-diff -Naur linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c linux-2.6.19-rc3/arch/arm/mach-ixp4xx/ixdp425-setup.c
---- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-10-25 15:08:03.000000000 -0700
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-10-25 15:09:38.000000000 -0700
+Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/ixdp425-setup.c
+===================================================================
+--- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-09-19 20:42:06.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-10-25 17:29:24.000000000 -0700
 @@ -156,23 +156,3 @@
  	.init_machine	= ixdp425_init,
  MACHINE_END

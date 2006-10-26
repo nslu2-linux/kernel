@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.19-rc3
-# Tue Oct 24 00:52:06 2006
+# Wed Oct 25 17:44:30 2006
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -134,6 +134,7 @@ CONFIG_ARCH_SUPPORTS_BIG_ENDIAN=y
 #
 CONFIG_MACH_NSLU2=y
 CONFIG_ARCH_AVILA=y
+CONFIG_MACH_LOFT=y
 # CONFIG_ARCH_ADI_COYOTE is not set
 CONFIG_ARCH_IXDP425=y
 # CONFIG_MACH_IXDPG425 is not set
@@ -754,6 +755,7 @@ CONFIG_PATA_ARTOP=m
 # CONFIG_PATA_SIS is not set
 # CONFIG_PATA_VIA is not set
 # CONFIG_PATA_WINBOND is not set
+CONFIG_PATA_IXP4XX_CF=m
 
 #
 # Multi-device support (RAID and LVM)

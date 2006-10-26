@@ -1,0 +1,63 @@
+diff -Naur linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/avila-setup.c linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
+--- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-25 17:32:46.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-25 17:34:59.000000000 -0700
+@@ -104,10 +104,58 @@
+ 	.resource		= avila_uart_resources
+ };
+ 
++/* MACs */
++static struct resource res_mac0 = {
++	.start		= IXP4XX_EthB_BASE_PHYS,
++	.end		= IXP4XX_EthB_BASE_PHYS + 0x1ff,
++	.flags          = IORESOURCE_MEM,
++};
++
++static struct resource res_mac1 = {
++	.start		= IXP4XX_EthC_BASE_PHYS,
++	.end		= IXP4XX_EthC_BASE_PHYS + 0x1ff,
++	.flags          = IORESOURCE_MEM,
++};
++
++static struct mac_plat_info plat_mac0 = {
++	.npe_id		= 1,
++	.phy_id		= 0,
++	.eth_id		= 0,
++	.rxq_id		= 27,
++	.txq_id		= 24,
++};
++
++static struct mac_plat_info plat_mac1 = {
++	.npe_id		= 2,
++	.phy_id		= 1,
++	.eth_id		= 1,
++	.rxq_id		= 28,
++	.txq_id		= 25,
++};
++
++static struct platform_device mac0 = {
++	.name           = "ixp4xx_mac",
++	.id             = 0,
++	.dev.platform_data = &plat_mac0,
++	.num_resources  = 1,
++	.resource       = &res_mac0,
++};
++
++static struct platform_device mac1 = {
++	.name           = "ixp4xx_mac",
++	.id             = 1,
++	.dev.platform_data = &plat_mac1,
++	.num_resources  = 1,
++	.resource       = &res_mac1,
++};
++
+ static struct platform_device *avila_devices[] __initdata = {
+ 	&avila_i2c_controller,
+ 	&avila_flash,
+-	&avila_uart
++	&avila_uart,
++	&mac0,
++	&mac1,
++
+ };
+ 
+ static void __init avila_init(void)
