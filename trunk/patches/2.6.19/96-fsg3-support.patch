@@ -1,7 +1,7 @@
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/Kconfig	2006-10-25 17:31:45.000000000 -0700
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig	2006-10-25 17:32:05.000000000 -0700
+--- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/Kconfig	2006-10-28 10:08:55.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig	2006-10-28 10:08:55.000000000 -0700
 @@ -106,6 +106,14 @@
  	depends on ARCH_IXDP425 || MACH_IXDP465
  	default y
@@ -19,8 +19,8 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig
  #
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/Makefile	2006-10-25 17:31:45.000000000 -0700
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile	2006-10-25 17:32:05.000000000 -0700
+--- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/Makefile	2006-10-28 10:08:55.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile	2006-10-28 10:08:55.000000000 -0700
 @@ -13,6 +13,7 @@
  obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
  obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
@@ -39,7 +39,7 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/fsg-pci.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/fsg-pci.c	2006-10-25 17:32:05.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/fsg-pci.c	2006-10-28 10:08:55.000000000 -0700
 @@ -0,0 +1,66 @@
 +/*
 + * arch/arch/mach-ixp4xx/fsg-pci.c
@@ -110,7 +110,7 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/fsg-pci.c
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/fsg-setup.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-25 17:32:05.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/fsg-setup.c	2006-10-28 10:08:55.000000000 -0700
 @@ -0,0 +1,207 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
@@ -322,7 +322,7 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/fsg-setup.c
 Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/fsg.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/fsg.h	2006-10-25 17:32:05.000000000 -0700
++++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/fsg.h	2006-10-28 10:08:55.000000000 -0700
 @@ -0,0 +1,32 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/fsg.h
@@ -358,8 +358,8 @@ Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/fsg.h
 +#define	FSG_IDE_ERROR_PORT	0xFFFE10E2
 Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.19-rc3.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-25 17:31:45.000000000 -0700
-+++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-25 17:32:05.000000000 -0700
+--- linux-2.6.19-rc3.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-28 10:08:55.000000000 -0700
++++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-28 10:08:55.000000000 -0700
 @@ -48,5 +48,6 @@
  #include "nslu2.h"
  #include "nas100d.h"
@@ -369,8 +369,8 @@ Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/hardware.h
  #endif  /* _ASM_ARCH_HARDWARE_H */
 Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.19-rc3.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-25 17:31:45.000000000 -0700
-+++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-25 17:32:05.000000000 -0700
+--- linux-2.6.19-rc3.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-28 10:08:55.000000000 -0700
++++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-28 10:08:55.000000000 -0700
 @@ -128,4 +128,12 @@
  #define        IRQ_DSMG600_PCI_INTE    IRQ_IXP4XX_GPIO7
  #define        IRQ_DSMG600_PCI_INTF    IRQ_IXP4XX_GPIO6
