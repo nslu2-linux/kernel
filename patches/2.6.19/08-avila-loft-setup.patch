@@ -9,7 +9,16 @@ Signed-off-by: Michael-Luke Jones <mlj28 <at> cam.ac.uk>
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
 --- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/Kconfig	2006-09-19 20:42:06.000000000 -0700
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig	2006-10-26 08:41:20.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig	2006-10-28 10:00:05.000000000 -0700
+@@ -17,7 +17,7 @@
+ 	  NSLU2 NAS device. For more information on this platform,
+ 	  see http://www.nslu2-linux.org
+ 
+-config ARCH_AVILA
++config MACH_AVILA
+ 	bool "Avila"
+ 	select PCI
+ 	help
 @@ -25,6 +25,14 @@
  	  Avila Network Platform. For more information on this platform,
  	  see <file:Documentation/arm/IXP4xx>.
@@ -37,12 +46,12 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Kconfig
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
 --- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/Makefile	2006-09-19 20:42:06.000000000 -0700
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile	2006-10-26 08:41:20.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile	2006-10-28 10:00:05.000000000 -0700
 @@ -6,6 +6,7 @@
  obj-pci-n	:=
  
  obj-pci-$(CONFIG_ARCH_IXDP4XX)		+= ixdp425-pci.o
-+obj-pci-$(CONFIG_ARCH_AVILA)        += avila-pci.o
++obj-pci-$(CONFIG_MACH_AVILA)		+= avila-pci.o
  obj-pci-$(CONFIG_MACH_IXDPG425)		+= ixdpg425-pci.o
  obj-pci-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-pci.o
  obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx5715-pci.o
@@ -50,14 +59,14 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/Makefile
  obj-y	+= common.o
  
  obj-$(CONFIG_ARCH_IXDP4XX)	+= ixdp425-setup.o
-+obj-$(CONFIG_ARCH_AVILA)    += avila-setup.o
++obj-$(CONFIG_MACH_AVILA)	+= avila-setup.o
  obj-$(CONFIG_MACH_IXDPG425)	+= coyote-setup.o
  obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-setup.o
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-pci.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-pci.c	2006-10-26 08:36:56.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-pci.c	2006-10-28 09:59:21.000000000 -0700
 @@ -0,0 +1,78 @@
 +/*
 + * arch/arm/mach-ixp4xx/avila-pci.c 
@@ -140,7 +149,7 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-pci.c
 Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-26 08:36:56.000000000 -0700
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-28 09:59:21.000000000 -0700
 @@ -0,0 +1,152 @@
 +/*
 + * arch/arm/mach-ixp4xx/avila-setup.c
@@ -294,79 +303,3 @@ Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
 +MACHINE_END
 +#endif
 +
-Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/avila.h
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/avila.h	2006-10-26 08:36:56.000000000 -0700
-@@ -0,0 +1,39 @@
-+/*
-+ * include/asm-arm/arch-ixp4xx/avila.h
-+ *
-+ * Gateworks Avila platform specific definitions
-+ *
-+ * Author: Michael-Luke Jones <mlj28@cam.ac.uk>
-+ *
-+ * Based on ixdp425.h
-+ * Author: Deepak Saxena <dsaxena@plexity.net>
-+ *
-+ * Copyright 2004 (c) MontaVista, Software, Inc. 
-+ * 
-+ * This file is licensed under  the terms of the GNU General Public 
-+ * License version 2. This program is licensed "as is" without any 
-+ * warranty of any kind, whether express or implied.
-+ */
-+
-+#ifndef __ASM_ARCH_HARDWARE_H__
-+#error "Do not include this directly, instead #include <asm/hardware.h>"
-+#endif
-+
-+#define	AVILA_SDA_PIN		7
-+#define	AVILA_SCL_PIN		6
-+
-+/*
-+ * AVILA PCI IRQs
-+ */
-+#define AVILA_PCI_MAX_DEV	4
-+#define LOFT_PCI_MAX_DEV    6
-+#define AVILA_PCI_IRQ_LINES	4
-+
-+
-+/* PCI controller GPIO to IRQ pin mappings */
-+#define AVILA_PCI_INTA_PIN	11
-+#define AVILA_PCI_INTB_PIN	10
-+#define AVILA_PCI_INTC_PIN	9
-+#define AVILA_PCI_INTD_PIN	8
-+
-+
-Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/hardware.h
-===================================================================
---- linux-2.6.19-rc3.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-09-19 20:42:06.000000000 -0700
-+++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/hardware.h	2006-10-26 08:41:20.000000000 -0700
-@@ -42,6 +42,7 @@
- 
- /* Platform specific details */
- #include "ixdp425.h"
-+#include "avila.h"
- #include "coyote.h"
- #include "prpmc1100.h"
- #include "nslu2.h"
-Index: linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/irqs.h
-===================================================================
---- linux-2.6.19-rc3.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-09-19 20:42:06.000000000 -0700
-+++ linux-2.6.19-rc3/include/asm-arm/arch-ixp4xx/irqs.h	2006-10-26 08:41:20.000000000 -0700
-@@ -79,6 +79,15 @@
- #define	IRQ_IXDP425_PCI_INTD	IRQ_IXP4XX_GPIO8
- 
- /*
-+ * Gateworks Avila board IRQs
-+ */
-+#define	IRQ_AVILA_PCI_INTA	IRQ_IXP4XX_GPIO11
-+#define	IRQ_AVILA_PCI_INTB	IRQ_IXP4XX_GPIO10
-+#define	IRQ_AVILA_PCI_INTC	IRQ_IXP4XX_GPIO9
-+#define	IRQ_AVILA_PCI_INTD	IRQ_IXP4XX_GPIO8
-+
-+
-+/*
-  * PrPMC1100 Board IRQs
-  */
- #define	IRQ_PRPMC1100_PCI_INTA	IRQ_IXP4XX_GPIO11
