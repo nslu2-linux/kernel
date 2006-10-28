@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.19-rc3
-# Wed Oct 25 17:44:30 2006
+# Sat Oct 28 10:09:03 2006
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -133,7 +133,7 @@ CONFIG_ARCH_SUPPORTS_BIG_ENDIAN=y
 # IXP4xx Platforms
 #
 CONFIG_MACH_NSLU2=y
-CONFIG_ARCH_AVILA=y
+CONFIG_MACH_AVILA=y
 CONFIG_MACH_LOFT=y
 # CONFIG_ARCH_ADI_COYOTE is not set
 CONFIG_ARCH_IXDP425=y
