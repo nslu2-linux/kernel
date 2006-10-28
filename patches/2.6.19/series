@@ -9,6 +9,7 @@
 15-jffs2-endian-config.patch
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
+26-avila-setup-pata.patch
 27-avila-setup-mac.patch
 28-nslu2-setup-mac.patch
 29-nas100d-setup-mac.patch
@@ -16,6 +17,8 @@
 31-ixp4xx-2.6.19-cleanup.patch
 32-ixp4xx-net-driver-fix-qmgr.patch
 33-ixp4xx-net-driver-improve-mac-handling.patch
+# Unknown upstream acceptance
+#33-ixp4xx-net-driver-mtd-load-fw.patch
 34-increase-entropy-pools.patch
 40-scsi-idle.patch
 45-eeprom-new-notifier.patch
