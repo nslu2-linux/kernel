@@ -1,9 +1,10 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18
-# Thu Oct 19 09:10:50 2006
+# Sun Oct 29 01:02:27 2006
 #
 CONFIG_ARM=y
+CONFIG_GENERIC_TIME=y
 CONFIG_MMU=y
 CONFIG_GENERIC_HARDIRQS=y
 CONFIG_HARDIRQS_SW_RESEND=y
