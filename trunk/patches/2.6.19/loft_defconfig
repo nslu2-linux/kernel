@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.19-rc3
-# Sun Oct 29 01:27:19 2006
+# Sun Oct 29 07:44:52 2006
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -208,7 +208,7 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE=" noirqdebug console=ttyS0,115200n8 root=/dev/hda1 rtc-ds1672.probe=0,0x68 mem=128M@0x0"
+CONFIG_CMDLINE=" noirqdebug console=ttyS0,115200n8 root=/dev/sda1 rootdelay=12 rtc-ds1672.probe=0,0x68 mem=128M@0x0"
 # CONFIG_XIP_KERNEL is not set
 
 #
@@ -245,7 +245,7 @@ CONFIG_NET=y
 # Networking options
 #
 # CONFIG_NETDEBUG is not set
-CONFIG_PACKET=m
+CONFIG_PACKET=y
 CONFIG_PACKET_MMAP=y
 CONFIG_UNIX=y
 CONFIG_XFRM=y
@@ -748,7 +748,9 @@ CONFIG_NET_ETHERNET=y
 CONFIG_MII=y
 CONFIG_IXP4XX_QMGR=y
 CONFIG_IXP4XX_NPE=y
-CONFIG_IXP4XX_FW_LOAD=y
+# CONFIG_IXP4XX_NPE_FW_LOAD is not set
+CONFIG_IXP4XX_NPE_FW_MTD=y
+CONFIG_IXP4XX_NPE_FW_MTD_PARTITION="RedBoot"
 CONFIG_IXP4XX_MAC=y
 # CONFIG_HAPPYMEAL is not set
 # CONFIG_SUNGEM is not set
