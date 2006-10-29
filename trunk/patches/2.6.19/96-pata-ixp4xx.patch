@@ -1,13 +1,13 @@
 ---
  drivers/ata/Kconfig                    |   10 +
  drivers/ata/Makefile                   |    1 
- drivers/ata/pata_ixp4xx_cf.c           |  269 +++++++++++++++++++++++++++++++++
+ drivers/ata/pata_ixp4xx_cf.c           |  270 +++++++++++++++++++++++++++++++++
  include/asm-arm/arch-ixp4xx/platform.h |   13 +
- 4 files changed, 293 insertions(+)
+ 4 files changed, 294 insertions(+)
 
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/ata/pata_ixp4xx_cf.c	2006-10-26 00:49:21.000000000 +0200
-@@ -0,0 +1,269 @@
++++ linux-ixp4xx/drivers/ata/pata_ixp4xx_cf.c	2006-10-29 22:12:26.000000000 +0100
+@@ -0,0 +1,270 @@
 +/*
 + * ixp4xx PATA/Compact Flash driver
 + * Copyright (c) 2006 Tower Technologies
@@ -71,6 +71,7 @@
 +	 * 8 bit mode after the transaction.
 +	 */
 +	*data->cs0_cfg &= ~(0x01);
++	udelay(100);
 +
 +	/* Transfer multiple of 2 bytes */
 +	if (write_data) {
@@ -277,8 +278,8 @@
 +
 +module_init(ixp4xx_pata_init);
 +module_exit(ixp4xx_pata_exit);
---- linux-ixp4xx.orig/drivers/ata/Kconfig	2006-10-25 23:48:40.000000000 +0200
-+++ linux-ixp4xx/drivers/ata/Kconfig	2006-10-25 23:49:32.000000000 +0200
+--- linux-ixp4xx.orig/drivers/ata/Kconfig	2006-10-29 21:43:04.000000000 +0100
++++ linux-ixp4xx/drivers/ata/Kconfig	2006-10-29 21:50:52.000000000 +0100
 @@ -483,6 +483,16 @@ config PATA_WINBOND
  
  	  If unsure, say N.
@@ -296,8 +297,8 @@
  endif
  endmenu
  
---- linux-ixp4xx.orig/drivers/ata/Makefile	2006-10-25 23:48:40.000000000 +0200
-+++ linux-ixp4xx/drivers/ata/Makefile	2006-10-25 23:49:32.000000000 +0200
+--- linux-ixp4xx.orig/drivers/ata/Makefile	2006-10-29 21:43:04.000000000 +0100
++++ linux-ixp4xx/drivers/ata/Makefile	2006-10-29 21:50:52.000000000 +0100
 @@ -53,6 +53,7 @@ obj-$(CONFIG_PATA_VIA)		+= pata_via.o
  obj-$(CONFIG_PATA_WINBOND)	+= pata_sl82c105.o
  obj-$(CONFIG_PATA_SIS)		+= pata_sis.o
@@ -306,8 +307,8 @@
  # Should be last but one libata driver
  obj-$(CONFIG_ATA_GENERIC)	+= ata_generic.o
  # Should be last libata driver
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/platform.h	2006-10-25 23:48:40.000000000 +0200
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/platform.h	2006-10-25 23:49:32.000000000 +0200
+--- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/platform.h	2006-10-29 21:43:04.000000000 +0100
++++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/platform.h	2006-10-29 21:50:52.000000000 +0100
 @@ -103,6 +103,19 @@ struct mac_plat_info {
  	unsigned char hwaddr[6]; /* Desired hardware address */
  };
