@@ -17,12 +17,11 @@
 31-ixp4xx-2.6.19-cleanup.patch
 32-ixp4xx-net-driver-fix-qmgr.patch
 33-ixp4xx-net-driver-improve-mac-handling.patch
-# Unknown upstream acceptance
-#33-ixp4xx-net-driver-mtd-load-fw.patch
-34-increase-entropy-pools.patch
+#39-ixp4xx-net-driver-mtd-load-fw.patch #Unknown upstream acceptance
 40-scsi-idle.patch
 45-eeprom-new-notifier.patch
 50-leds-arm-cpu-activity.patch
+55-increase-entropy-pools.patch
 60-nas100d-artop-temp-fix.patch
 66-hwmon-ad7418.patch
 74-add-arm-ata-support.patch
@@ -30,8 +29,8 @@
 76-dsmg600-pwrbtn.patch
 77-velocity-module.patch
 ##78-velocity-BE.patch
+95-pata-ixp4xx.patch
 96-fsg3-support.patch
 
 # Waiting for status from jgarzik
 ##99-sata_via-add-pata.patch
-96-pata-ixp4xx.patch

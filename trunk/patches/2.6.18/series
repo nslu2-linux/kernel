@@ -21,10 +21,10 @@
 30-ixp4xx-0.2.1-driver.patch
 32-ixp4xx-net-driver-fix-qmgr.patch
 33-ixp4xx-net-driver-improve-mac-handling.patch
-34-increase-entropy-pools.patch
 40-scsi-idle.patch
 45-eeprom-new-notifier.patch
 50-leds-arm-cpu-activity.patch
+55-increase-entropy-pools.patch
 65-loft-config.patch
 66-hwmon-ad7418.patch
 79-rtl8110sb-fix.patch

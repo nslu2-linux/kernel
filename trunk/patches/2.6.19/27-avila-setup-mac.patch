@@ -1,8 +1,9 @@
-diff -Naur linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/avila-setup.c linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
---- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-25 17:32:46.000000000 -0700
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-25 17:34:59.000000000 -0700
-@@ -104,10 +104,58 @@
- 	.resource		= avila_uart_resources
+Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
+===================================================================
+--- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-29 14:32:55.000000000 -0800
++++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-29 14:32:55.000000000 -0800
+@@ -132,10 +132,58 @@
+ 	.resource		= avila_pata_resources,
  };
  
 +/* MACs */
