@@ -1,13 +1,13 @@
 ---
  drivers/ata/Kconfig                    |   10 +
  drivers/ata/Makefile                   |    1 
- drivers/ata/pata_ixp4xx_cf.c           |  270 +++++++++++++++++++++++++++++++++
+ drivers/ata/pata_ixp4xx_cf.c           |  271 +++++++++++++++++++++++++++++++++
  include/asm-arm/arch-ixp4xx/platform.h |   13 +
- 4 files changed, 294 insertions(+)
+ 4 files changed, 295 insertions(+)
 
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/ata/pata_ixp4xx_cf.c	2006-10-29 22:12:26.000000000 +0100
-@@ -0,0 +1,270 @@
++++ linux-ixp4xx/drivers/ata/pata_ixp4xx_cf.c	2006-10-29 22:31:17.000000000 +0100
+@@ -0,0 +1,271 @@
 +/*
 + * ixp4xx PATA/Compact Flash driver
 + * Copyright (c) 2006 Tower Technologies
@@ -96,6 +96,7 @@
 +		}
 +	}
 +
++	udelay(100);
 +	*data->cs0_cfg |= 0x01;
 +}
 +
