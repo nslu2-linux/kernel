@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.18
-# Sun Oct 29 01:02:27 2006
+# Tue Oct 31 07:57:52 2006
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -1554,7 +1554,7 @@ CONFIG_RTC_INTF_DEV=y
 CONFIG_RTC_DRV_X1205=y
 CONFIG_RTC_DRV_DS1307=y
 # CONFIG_RTC_DRV_DS1553 is not set
-# CONFIG_RTC_DRV_ISL1208 is not set
+CONFIG_RTC_DRV_ISL1208=y
 CONFIG_RTC_DRV_DS1672=y
 # CONFIG_RTC_DRV_DS1742 is not set
 CONFIG_RTC_DRV_PCF8563=y
