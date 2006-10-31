@@ -37,10 +37,6 @@
 	local cleanups to remove config.h includes and make ixp_qmgr
 	compatible with new IRQ system.
 
-34-increase-entropy-pools.patch
-	No reason to push upstream. Only for use on ixp4xx hardware in
-	combination with rng daemon.
-
 40-scsi-idle.patch
 	Not ours. Dunno why it's not in mainstream. It's in debian's
 	patch system, but not applied.
