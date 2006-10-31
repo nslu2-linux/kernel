@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.19-rc3
-# Sat Oct 28 10:09:03 2006
+# Linux kernel version: 2.6.19-rc4
+# Tue Oct 31 07:50:15 2006
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -1651,7 +1651,7 @@ CONFIG_RTC_INTF_DEV=y
 CONFIG_RTC_DRV_X1205=y
 CONFIG_RTC_DRV_DS1307=y
 # CONFIG_RTC_DRV_DS1553 is not set
-# CONFIG_RTC_DRV_ISL1208 is not set
+CONFIG_RTC_DRV_ISL1208=y
 CONFIG_RTC_DRV_DS1672=y
 # CONFIG_RTC_DRV_DS1742 is not set
 CONFIG_RTC_DRV_PCF8563=y
@@ -1879,7 +1879,6 @@ CONFIG_LOG_BUF_SHIFT=14
 # CONFIG_DEBUG_BUGVERBOSE is not set
 # CONFIG_DEBUG_FS is not set
 CONFIG_FRAME_POINTER=y
-# CONFIG_UNWIND_INFO is not set
 # CONFIG_HEADERS_CHECK is not set
 # CONFIG_DEBUG_USER is not set
 
