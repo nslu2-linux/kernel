@@ -18,7 +18,6 @@
 32-ixp4xx-net-driver-fix-qmgr.patch
 33-ixp4xx-net-driver-improve-mac-handling.patch
 #39-ixp4xx-net-driver-mtd-load-fw.patch #Unknown upstream acceptance
-40-scsi-idle.patch
 45-eeprom-new-notifier.patch
 50-leds-arm-cpu-activity.patch
 55-increase-entropy-pools.patch
