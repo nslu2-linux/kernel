@@ -95,7 +95,9 @@ downloads/madwifi-ng-${MADWIFIVER}.tar.gz :
 
 vmlinuz-loft-${REVISION}: vmlinuz-${REVISION}
 ifeq (${ENDIAN},b)
-	cp $< $@
+	devio '<<'$< >$@ \
+		'wb 0xe3a01c03,4' 'wb 0xe3811051,4' \
+		'cp$$'
 else
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c03,4' 'wb 0xe3811051,4' \
