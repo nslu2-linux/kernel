@@ -1,11 +1,19 @@
 ---
- drivers/net/ixp4xx/Kconfig    |   17 ++++-
- drivers/net/ixp4xx/ucode_dl.c |  135 +++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 143 insertions(+), 9 deletions(-)
+ drivers/net/ixp4xx/Kconfig    |   18 +++++
+ drivers/net/ixp4xx/ucode_dl.c |  141 +++++++++++++++++++++++++++++++++++++++---
+ 2 files changed, 149 insertions(+), 10 deletions(-)
 
---- linux-ixp4xx.orig/drivers/net/ixp4xx/Kconfig	2006-10-24 18:04:16.000000000 +0200
-+++ linux-ixp4xx/drivers/net/ixp4xx/Kconfig	2006-10-25 12:04:44.000000000 +0200
-@@ -18,7 +18,7 @@ config IXP4XX_NPE
+--- linux-ixp4xx.orig/drivers/net/ixp4xx/Kconfig	2006-11-01 17:51:26.000000000 +0100
++++ linux-ixp4xx/drivers/net/ixp4xx/Kconfig	2006-11-01 17:51:26.000000000 +0100
+@@ -11,6 +11,7 @@ config IXP4XX_NPE
+ 	tristate "IXP4xx NPE support"
+ 	depends on ARCH_IXP4XX
+ 	depends on NET_ETHERNET
++	select CRC16
+ 	help
+ 	  The IXP4XX NPE driver supports the 3 CPU co-processors called
+ 	  "Network Processing Engines" (NPE). It adds support fo downloading
+@@ -18,7 +19,7 @@ config IXP4XX_NPE
  	  More about this at: Documentation/networking/ixp4xx/README.
  	  You can either use this OR the Intel Access Library (IAL)
  
@@ -14,7 +22,7 @@
  	bool "Use Firmware hotplug for Microcode download"
  	depends on IXP4XX_NPE
  	select HOTPLUG
-@@ -28,6 +28,21 @@ config IXP4XX_FW_LOAD
+@@ -28,6 +29,21 @@ config IXP4XX_FW_LOAD
  	  /usr/lib/hotplug/firmware/NPE-[ABC]
  	  see Documentation/firmware_class/hotplug-script
  
@@ -36,17 +44,18 @@
  config IXP4XX_MAC
  	tristate "IXP4xx MAC support"
  	depends on IXP4XX_NPE
---- linux-ixp4xx.orig/drivers/net/ixp4xx/ucode_dl.c	2006-10-24 18:04:16.000000000 +0200
-+++ linux-ixp4xx/drivers/net/ixp4xx/ucode_dl.c	2006-10-25 16:22:33.000000000 +0200
-@@ -16,6 +16,7 @@
+--- linux-ixp4xx.orig/drivers/net/ixp4xx/ucode_dl.c	2006-11-01 17:51:26.000000000 +0100
++++ linux-ixp4xx/drivers/net/ixp4xx/ucode_dl.c	2006-11-01 22:11:04.000000000 +0100
+@@ -16,6 +16,8 @@
  #include <linux/firmware.h>
  #include <linux/dma-mapping.h>
  #include <linux/byteorder/swab.h>
 +#include <linux/mtd/mtd.h>
++#include <linux/crc16.h>
  #include <asm/uaccess.h>
  #include <asm/io.h>
  
-@@ -30,6 +31,12 @@
+@@ -30,6 +32,12 @@
  #define IMG_SIZE(image) (((image)->size * sizeof(u32)) + \
  		sizeof(struct dl_image))
  
@@ -59,12 +68,13 @@
  #define BT_INSTR 0
  #define BT_DATA 1
  
-@@ -139,18 +146,33 @@ static int store_npe_image(struct dl_ima
+@@ -139,18 +147,36 @@ static int store_npe_image(struct dl_ima
  	struct dl_block *blk;
  	struct dl_codeblock *cb;
  	struct npe_info *npe;
 -	int ret=0;
 +	int ret = 0;
++	u16 crc;
  
  	if (!dev) {
 -		dev = get_npe_by_id( (image->id >> 24) & 0xf);
@@ -90,6 +100,8 @@
 +		return -EINVAL;
 +	}
 +
++	crc = crc16(0, image, IMG_SIZE(image));
++
  	npe = dev_get_drvdata(dev);
  
 -	if ( npe_status(npe) & IX_NPEDL_EXCTL_STATUS_RUN) {
@@ -97,16 +109,19 @@
  		printk(KERN_INFO "Cowardly refusing to reload an Image "
  				"into the running %s\n", npe->plat->name);
  		return 0; /* indicate success anyway... */
-@@ -173,7 +195,7 @@ static int store_npe_image(struct dl_ima
+@@ -173,9 +199,9 @@ static int store_npe_image(struct dl_ima
  	*(u32*)npe->img_info = cpu_to_be32(image->id);
  	npe_start(npe);
  
 -	printk(KERN_INFO "Image loaded to %s Func:%x, Rel: %x:%x, Status: %x\n",
-+	printk(KERN_INFO "npe: firmware loaded to %s, func: %02x, rev: %x.%x, status: %x\n",
++	printk(KERN_INFO "npe: firmware loaded to %s, func: %02x, rev: %x.%x, status: %x, crc: %x\n",
  			npe->plat->name, npe->img_info[1], npe->img_info[2],
- 			npe->img_info[3], npe_status(npe));
+-			npe->img_info[3], npe_status(npe));
++			npe->img_info[3], npe_status(npe), crc);
  	return 0;
-@@ -265,8 +287,7 @@ static ssize_t ucode_write(struct file *
+ }
+ 
+@@ -265,8 +291,7 @@ static ssize_t ucode_write(struct file *
  
  static void npe_firmware_probe(struct device *dev)
  {
@@ -116,7 +131,7 @@
  	const struct firmware *fw_entry;
  	struct npe_info *npe = dev_get_drvdata(dev);
  	struct dl_image *image;
-@@ -388,7 +409,7 @@ static int npe_probe(struct platform_dev
+@@ -388,7 +413,7 @@ static int npe_probe(struct platform_dev
  
  	npe->plat = plat;
  	disable_npe_irq(npe);
@@ -125,7 +140,7 @@
  		npe_firmware_probe(&pdev->dev);
  
  	return 0;
-@@ -400,6 +421,102 @@ out_free:
+@@ -400,6 +425,102 @@ out_free:
  	return ret;
  }
  
@@ -188,7 +203,7 @@
 +
 +			print_image_info(id, offset - 12, size);
 +
-+			if (size < 24000 && IMG_FUNC(id) == 0x01) { // XXX fix size/detection
++			if (size < 24000 && ( IMG_FUNC(id) == 0x01 || IMG_FUNC(id) == 0x00) ) { // XXX fix size/detection
 +
 +				struct dl_image *image = kmalloc(size, GFP_KERNEL);
 +
@@ -228,7 +243,7 @@
  static struct file_operations ucode_dl_fops = {
  	.owner		= THIS_MODULE,
  	.write		= ucode_write,
-@@ -447,12 +564,14 @@ static int __init init_npedriver(void)
+@@ -447,12 +568,14 @@ static int __init init_npedriver(void)
  	else
  		printk(KERN_INFO IXNPE_VERSION " initialized\n");
  
