@@ -25,6 +25,8 @@ SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
 MADWIFIVER = r1503-20060415
 
+DEFCONFIG=defconfig
+
 ifeq (${ENDIAN},b)
 DEBIAN_ARCH = armeb
 else
@@ -190,7 +192,7 @@ menuconfig: linux-${REVISION}/.config
 ifeq (${REVISION},${BASEVER})
 linux-${REVISION}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/defconfig
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
 	  cd linux-${REVISION} ; \
@@ -200,7 +202,7 @@ else
 ifeq (${REVISION},${MINORVER})
 linux-${REVISION}/.config: \
 		downloads/linux-${MINORVER}.tar.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/defconfig
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${MINORVER}.tar.bz2 ; \
 	  cd linux-${REVISION} ; \
@@ -211,7 +213,7 @@ ifeq (${REVISION},${SNAPSHOT})
 linux-${REVISION}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/defconfig
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
 	  mv linux-${BASEVER} linux-${REVISION} ; \
@@ -225,7 +227,7 @@ linux-${REVISION}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
 		downloads/patch-${SNAPSHOT}.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/defconfig
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
 	  mv linux-${BASEVER} linux-${REVISION} ; \
@@ -242,7 +244,7 @@ ifeq (${ENDIAN},b)
 		-e '/CONFIG_JFFS2_NATIVE_ENDIAN/d' \
 		-e '/CONFIG_JFFS2_BIG_ENDIAN/d' \
 		-e '/CONFIG_JFFS2_LITTLE_ENDIAN/d' \
-		< patches/${PATCHVER}/defconfig > linux-${REVISION}/.config
+		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${REVISION}/.config
 	echo '# CONFIG_JFFS2_NATIVE_ENDIAN is not set' >> linux-${REVISION}/.config
 	echo 'CONFIG_JFFS2_BIG_ENDIAN=y' >> linux-${REVISION}/.config
 	echo '# CONFIG_JFFS2_LITTLE_ENDIAN is not set' >> linux-${REVISION}/.config
@@ -251,7 +253,7 @@ else
 		-e '/CONFIG_JFFS2_NATIVE_ENDIAN/d' \
 		-e '/CONFIG_JFFS2_BIG_ENDIAN/d' \
 		-e '/CONFIG_JFFS2_LITTLE_ENDIAN/d' \
-		< patches/${PATCHVER}/defconfig > linux-${REVISION}/.config
+		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${REVISION}/.config
 	echo '# CONFIG_JFFS2_NATIVE_ENDIAN is not set' >> linux-${REVISION}/.config
 	echo '# CONFIG_JFFS2_BIG_ENDIAN is not set' >> linux-${REVISION}/.config
 	echo 'CONFIG_JFFS2_LITTLE_ENDIAN=y' >> linux-${REVISION}/.config
