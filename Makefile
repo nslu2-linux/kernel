@@ -72,18 +72,26 @@ else
 		< patches/apex/defconfig > apex-${APEX_REVISION}/.config
 endif
 ifeq (${APEX_TARGET},nslu2)
-	echo 'CONFIG_ARCH_NUMBER=597' >> apex-${APEX_REVISION}/.config
+	sed -i -e '/CONFIG_MACH_NSLU2/d' apex-${APEX_REVISION}/.config
+	echo 'CONFIG_MACH_NSLU2=y' >> apex-${APEX_REVISION}/.config
 endif
 ifeq (${APEX_TARGET},loft)
+	sed -i -e '/CONFIG_MACH_AVILA2347/d' apex-${APEX_REVISION}/.config
+	echo 'CONFIG_MACH_AVILA2347=y' >> apex-${APEX_REVISION}/.config
 	echo 'CONFIG_ARCH_NUMBER=849' >> apex-${APEX_REVISION}/.config
 endif
 ifeq (${APEX_TARGET},nas100d)
-	echo 'CONFIG_ARCH_NUMBER=865' >> apex-${APEX_REVISION}/.config
+	sed -i -e '/CONFIG_MACH_NAS100D/d' apex-${APEX_REVISION}/.config
+	echo 'CONFIG_MACH_NAS100D=y' >> apex-${APEX_REVISION}/.config
 endif
 ifeq (${APEX_TARGET},dsmg600)
+	sed -i -e '/CONFIG_MACH_DSMG600/d' apex-${APEX_REVISION}/.config
+	echo 'CONFIG_MACH_DSMG600=y' >> apex-${APEX_REVISION}/.config
 	echo 'CONFIG_ARCH_NUMBER=964' >> apex-${APEX_REVISION}/.config
 endif
 ifeq (${APEX_TARGET},fsg3)
+	sed -i -e '/CONFIG_MACH_FSG/d' apex-${APEX_REVISION}/.config
+	echo 'CONFIG_MACH_FSG=y' >> apex-${APEX_REVISION}/.config
 	echo 'CONFIG_ARCH_NUMBER=1091' >> apex-${APEX_REVISION}/.config
 endif
 	( cd apex-${APEX_REVISION} ; \
