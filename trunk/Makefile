@@ -50,7 +50,7 @@ endif
 
 all: kernel modules
 
-kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REVISION} vmlinuz-ds101-${REVISION} vmlinuz-dsmg600-${REVISION} vmlinuz-fsg3-${REVISION}
+kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REVISION} vmlinuz-dsmg600-${REVISION} vmlinuz-fsg3-${REVISION}
 madwifi: lib/modules/${REVISION}/net/ath_hal.ko
 modules: modules-${REVISION}.tar.gz
 patched: linux-${REVISION}/.config 
@@ -128,20 +128,6 @@ ifeq (${ENDIAN},b)
 else
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c02,4' 'wb 0xe3811055,4' \
-		'wb 0xee110f10,4' \
-		'wb 0xe3c00080,4' \
-		'wb 0xee010f10,4' \
-		'xp $$,4'
-endif
-
-vmlinuz-ds101-${REVISION}: vmlinuz-${REVISION}
-ifeq (${ENDIAN},b)
-	devio '<<'$< >$@ \
-		'wb 0xe3a01c03,4' 'wb 0xe3811041,4' \
-		'cp$$'
-else
-		devio '<<'$< >$@ \
-		'wb 0xe3a01c03,4' 'wb 0xe3811041,4' \
 		'wb 0xee110f10,4' \
 		'wb 0xe3c00080,4' \
 		'wb 0xee010f10,4' \
