@@ -1,9 +1,11 @@
-Index: linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c
-===================================================================
---- linux-2.6.19-rc3.orig/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-29 14:32:55.000000000 -0800
-+++ linux-2.6.19-rc3/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-29 14:32:55.000000000 -0800
-@@ -132,10 +132,58 @@
- 	.resource		= avila_pata_resources,
+---
+ arch/arm/mach-ixp4xx/avila-setup.c |   50 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 49 insertions(+), 1 deletion(-)
+
+--- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/avila-setup.c	2006-11-05 14:27:32.000000000 +0100
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/avila-setup.c	2006-11-05 14:53:55.000000000 +0100
+@@ -104,10 +104,58 @@ static struct platform_device avila_uart
+ 	.resource		= avila_uart_resources
  };
  
 +/* MACs */
