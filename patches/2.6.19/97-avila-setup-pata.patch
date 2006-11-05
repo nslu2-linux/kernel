@@ -2,10 +2,10 @@
  arch/arm/mach-ixp4xx/avila-setup.c |   40 +++++++++++++++++++++++++++++++++++++
  1 file changed, 40 insertions(+)
 
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-28 18:56:07.000000000 +0200
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/avila-setup.c	2006-10-28 18:59:54.000000000 +0200
-@@ -104,6 +104,34 @@ static struct platform_device avila_uart
- 	.resource		= avila_uart_resources
+--- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/avila-setup.c	2006-11-05 14:53:55.000000000 +0100
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/avila-setup.c	2006-11-05 14:54:13.000000000 +0100
+@@ -149,6 +149,34 @@ static struct platform_device mac1 = {
+ 	.resource       = &res_mac1,
  };
  
 +static struct resource avila_pata_resources[] = {
@@ -39,7 +39,7 @@
  static struct platform_device *avila_devices[] __initdata = {
  	&avila_i2c_controller,
  	&avila_flash,
-@@ -119,6 +147,18 @@ static void __init avila_init(void)
+@@ -167,6 +195,18 @@ static void __init avila_init(void)
  		IXP4XX_EXP_BUS_BASE(0) + ixp4xx_exp_bus_size - 1;
  
  	platform_add_devices(avila_devices, ARRAY_SIZE(avila_devices));
