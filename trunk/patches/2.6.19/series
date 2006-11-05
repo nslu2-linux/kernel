@@ -18,6 +18,7 @@
 41-nslu2-setup-mac.patch
 42-nas100d-setup-mac.patch
 43-nslu2-mtd-microcode.patch
+43-nas100d-mtd-microcode.patch
 45-eeprom-new-notifier.patch
 50-leds-arm-cpu-activity.patch
 53-nslu2-mtd-load-mac.patch
