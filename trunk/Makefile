@@ -23,6 +23,9 @@ PATCHVER = 2.6.19
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
+APEX_REVISION = 1.4.7
+APEX_TARGET = nslu2
+
 MADWIFIVER = r1503-20060415
 
 DEFCONFIG=defconfig
@@ -37,6 +40,8 @@ KERNEL_SOURCE   = http://kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${BASEVE
 KERNEL_PATCH    = http://kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.bz2
 KERNEL_SNAPSHOT = http://kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots/patch-${SNAPSHOT}.bz2
 
+APEX_SOURCE	= ftp://ftp.buici.com/pub/apex/apex-${APEX_REVISION}.tar.gz
+
 MADWIFI_SOURCE   = http://snapshots.madwifi.org/madwifi-ng/madwifi-ng-${MADWIFIVER}.tar.gz
 
 #CROSS_COMPILE = ${DEBIAN_ARCH}-linux-gnu-
@@ -48,12 +53,56 @@ else
 CROSS_COMPILE_FLAGS = 
 endif
 
-all: kernel modules
+all: kernel modules apex
 
 kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REVISION} vmlinuz-dsmg600-${REVISION} vmlinuz-fsg3-${REVISION}
 madwifi: lib/modules/${REVISION}/net/ath_hal.ko
 modules: modules-${REVISION}.tar.gz
 patched: linux-${REVISION}/.config 
+apex: apex-${APEX_TARGET}-${APEX_REVISION}.bin
+
+apex-${APEX_TARGET}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/Makefile patches/apex/defconfig
+ifeq (${ENDIAN},b)
+	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/CONFIG_CPU_BIG_ENDIAN=y/' \
+		-e '/CONFIG_ARCH_NUMBER/d' \
+		< patches/apex/defconfig > apex-${APEX_REVISION}/.config
+else
+	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/\# CONFIG_CPU_BIG_ENDIAN is not set/' \
+		-e '/CONFIG_ARCH_NUMBER/d' \
+		< patches/apex/defconfig > apex-${APEX_REVISION}/.config
+endif
+ifeq (${APEX_TARGET},nslu2)
+	echo 'CONFIG_ARCH_NUMBER=597' >> apex-${APEX_REVISION}/.config
+endif
+ifeq (${APEX_TARGET},loft)
+	echo 'CONFIG_ARCH_NUMBER=849' >> apex-${APEX_REVISION}/.config
+endif
+ifeq (${APEX_TARGET},nas100d)
+	echo 'CONFIG_ARCH_NUMBER=865' >> apex-${APEX_REVISION}/.config
+endif
+ifeq (${APEX_TARGET},dsmg600)
+	echo 'CONFIG_ARCH_NUMBER=964' >> apex-${APEX_REVISION}/.config
+endif
+ifeq (${APEX_TARGET},fsg3)
+	echo 'CONFIG_ARCH_NUMBER=1091' >> apex-${APEX_REVISION}/.config
+endif
+	( cd apex-${APEX_REVISION} ; \
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm clean all )
+	cp apex-${APEX_REVISION}/apex apex-${APEX_TARGET}-${APEX_REVISION}.bin
+
+apex-${APEX_REVISION}/Makefile: \
+		downloads/apex-${APEX_REVISION}.tar.gz
+	[ -e apex-${APEX_REVISION} ] || \
+	( tar zxf downloads/apex-${APEX_REVISION}.tar.gz ; \
+	  cd apex-${APEX_REVISION} ; \
+	  ln -s ../patches/apex patches ; \
+	  quilt push -a )
+	touch apex-${APEX_REVISION}/Makefile
+
+downloads/apex-${APEX_REVISION}.tar.gz :
+	[ -e downloads/apex-${APEX_REVISION}.tar.gz ] || \
+	( mkdir -p downloads ; cd downloads ; \
+	  wget ${APEX_SOURCE} )
 
 usr: usr-${REVISION}.tar.gz
 
@@ -269,8 +318,9 @@ clobber:
 	rm -rf vmlinuz-* modules-*.tar.gz usr-*.tar.gz
 	rm -rf linux-*
 	rm -rf madwifi-ng
+	rm -rf apex-*
 	rm -rf lib usr
 
-.PHONY: all kernel menuconfig modules clobber
+.PHONY: all kernel menuconfig modules clobber apex
 
 # End of Makefile
