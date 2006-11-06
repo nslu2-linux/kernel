@@ -284,22 +284,10 @@ endif
 endif
 ifeq (${ENDIAN},b)
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/CONFIG_CPU_BIG_ENDIAN=y/' \
-		-e '/CONFIG_JFFS2_NATIVE_ENDIAN/d' \
-		-e '/CONFIG_JFFS2_BIG_ENDIAN/d' \
-		-e '/CONFIG_JFFS2_LITTLE_ENDIAN/d' \
 		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${REVISION}/.config
-	echo '# CONFIG_JFFS2_NATIVE_ENDIAN is not set' >> linux-${REVISION}/.config
-	echo 'CONFIG_JFFS2_BIG_ENDIAN=y' >> linux-${REVISION}/.config
-	echo '# CONFIG_JFFS2_LITTLE_ENDIAN is not set' >> linux-${REVISION}/.config
 else
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/\# CONFIG_CPU_BIG_ENDIAN is not set/' \
-		-e '/CONFIG_JFFS2_NATIVE_ENDIAN/d' \
-		-e '/CONFIG_JFFS2_BIG_ENDIAN/d' \
-		-e '/CONFIG_JFFS2_LITTLE_ENDIAN/d' \
 		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${REVISION}/.config
-	echo '# CONFIG_JFFS2_NATIVE_ENDIAN is not set' >> linux-${REVISION}/.config
-	echo '# CONFIG_JFFS2_BIG_ENDIAN is not set' >> linux-${REVISION}/.config
-	echo 'CONFIG_JFFS2_LITTLE_ENDIAN=y' >> linux-${REVISION}/.config
 endif
 
 downloads/linux-${BASEVER}.tar.bz2 :
