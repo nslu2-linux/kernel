@@ -2,10 +2,10 @@
  arch/arm/mach-ixp4xx/nas100d-setup.c |   27 +++++++++++++++++++++++++++
  1 file changed, 27 insertions(+)
 
-Index: linux-2.6.19-rc4/arch/arm/mach-ixp4xx/nas100d-setup.c
+Index: linux-2.6.18/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.19-rc4.orig/arch/arm/mach-ixp4xx/nas100d-setup.c
-+++ linux-2.6.19-rc4/arch/arm/mach-ixp4xx/nas100d-setup.c
+--- linux-2.6.18.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-11-07 17:52:17.000000000 +0100
++++ linux-2.6.18/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-11-07 17:52:19.000000000 +0100
 @@ -16,6 +16,7 @@
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
@@ -14,8 +14,8 @@ Index: linux-2.6.19-rc4/arch/arm/mach-ixp4xx/nas100d-setup.c
  
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
-@@ -155,6 +156,30 @@
- 	&mac0
+@@ -166,6 +167,30 @@
+ 	&nas100d_npe_ucode,
  };
  
 +static void nas100d_flash_add(struct mtd_info *mtd)
@@ -45,7 +45,7 @@ Index: linux-2.6.19-rc4/arch/arm/mach-ixp4xx/nas100d-setup.c
  static void nas100d_power_off(void)
  {
  	/* This causes the box to drop the power and go dead. */
-@@ -186,6 +211,8 @@
+@@ -197,6 +222,8 @@
  	(void)platform_device_register(&nas100d_uart);
  
  	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
