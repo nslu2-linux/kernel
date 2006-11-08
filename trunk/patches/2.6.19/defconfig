@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.19-rc4
-# Tue Nov  7 18:30:41 2006
+# Linux kernel version: 2.6.19-rc5
+# Wed Nov  8 03:14:15 2006
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -178,7 +178,6 @@ CONFIG_KEXEC=y
 # Bus support
 #
 CONFIG_PCI=y
-# CONFIG_PCI_MULTITHREAD_PROBE is not set
 
 #
 # PCCARD (PCMCIA/CardBus) support
@@ -1536,6 +1535,7 @@ CONFIG_USB_CATC=m
 CONFIG_USB_KAWETH=m
 CONFIG_USB_PEGASUS=m
 CONFIG_USB_RTL8150=m
+CONFIG_USB_USBNET_MII=m
 CONFIG_USB_USBNET=m
 CONFIG_USB_NET_AX8817X=m
 CONFIG_USB_NET_CDCETHER=m
