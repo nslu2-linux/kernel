@@ -208,7 +208,7 @@ CONFIG_ALIGNMENT_TRAP=y
 #
 CONFIG_ZBOOT_ROM_TEXT=0x0
 CONFIG_ZBOOT_ROM_BSS=0x0
-CONFIG_CMDLINE=" noirqdebug console=ttyS0,115200n8 root=/dev/sda1 rootdelay=12 rtc-ds1672.probe=0,0x68 mem=128M@0x0"
+CONFIG_CMDLINE=" noirqdebug console=ttyS0,115200n8 root=/dev/sda1 rtc-ds1672.probe=0,0x68 mem=128M@0x0"
 # CONFIG_XIP_KERNEL is not set
 
 #

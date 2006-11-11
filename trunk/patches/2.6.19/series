@@ -16,6 +16,7 @@
 40-avila-setup-mac.patch
 41-nslu2-setup-mac.patch
 42-nas100d-setup-mac.patch
+43-avila-mtd-microcode.patch
 43-nslu2-mtd-microcode.patch
 43-nas100d-mtd-microcode.patch
 45-eeprom-new-notifier.patch
