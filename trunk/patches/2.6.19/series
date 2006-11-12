@@ -35,3 +35,4 @@
 97-avila-setup-pata.patch
 ##99-sata_via-add-pata.patch
 99-avila-mtd-microcode.patch
+99-avila-loft-mac-platform.patch
