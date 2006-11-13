@@ -2,14 +2,16 @@
  arch/arm/mach-ixp4xx/nslu2-setup.c |   13 ++++++++++++-
  1 file changed, 12 insertions(+), 1 deletion(-)
 
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-11-05 15:02:52.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-11-05 15:28:26.000000000 +0100
+Index: linux-2.6.19-rc5/arch/arm/mach-ixp4xx/nslu2-setup.c
+===================================================================
+--- linux-2.6.19-rc5.orig/arch/arm/mach-ixp4xx/nslu2-setup.c
++++ linux-2.6.19-rc5/arch/arm/mach-ixp4xx/nslu2-setup.c
 @@ -161,6 +161,16 @@ static struct platform_device mac0 = {
  	.resource       = &res_mac0,
  };
  
 +struct npe_ucode_platform_data nslu2_npe_ucode_data = {
-+	.mtd_partition	= "Ramdisk",
++	.mtd_partition	= "FIS directory",
 +};
 +
 +static struct platform_device nslu2_npe_ucode = {
