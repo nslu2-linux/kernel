@@ -1,8 +1,8 @@
-Index: linux-2.6.19-rc3/drivers/mtd/redboot.c
+Index: linux-2.6.19-rc5/drivers/mtd/redboot.c
 ===================================================================
---- linux-2.6.19-rc3.orig/drivers/mtd/redboot.c	2006-09-19 20:42:06.000000000 -0700
-+++ linux-2.6.19-rc3/drivers/mtd/redboot.c	2006-10-24 00:55:03.000000000 -0700
-@@ -92,22 +92,47 @@
+--- linux-2.6.19-rc5.orig/drivers/mtd/redboot.c
++++ linux-2.6.19-rc5/drivers/mtd/redboot.c
+@@ -92,22 +92,47 @@ static int parse_redboot_partitions(stru
  			 * swab32(erasesize) then we know we are looking at
  			 * a byte swapped FIS directory - swap all the entries!
  			 * (NOTE: this is 'size' not 'data_length'; size is
@@ -60,3 +60,12 @@ Index: linux-2.6.19-rc3/drivers/mtd/redboot.c
  			}
  			break;
  		}
+@@ -125,6 +150,8 @@ static int parse_redboot_partitions(stru
+ 
+ 		if (buf[i].name[0] == 0xff)
+ 			continue;
++		if (buf[i].name[1] == 0xff)
++			break;
+ 		if (!redboot_checksum(&buf[i]))
+ 			break;
+ 
