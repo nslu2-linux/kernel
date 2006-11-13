@@ -14,8 +14,8 @@
 #
 
 
-ENDIAN = l
-#ENDIAN = b
+#ENDIAN = l
+ENDIAN = b
 MAJORVER = 2.6
 BASEVER  = 2.6.18
 MINORVER = 2.6.19
@@ -63,11 +63,13 @@ apex: apex-${APEX_TARGET}-${APEX_REVISION}.bin
 
 apex-${APEX_TARGET}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/Makefile patches/apex/defconfig
 ifeq (${ENDIAN},b)
-	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/CONFIG_CPU_BIG_ENDIAN=y/' \
+	sed -e 's/.*CONFIG_USER_BIGENDIAN.*/CONFIG_USER_BIGENDIAN=y/' \
+	    -e 's/.*CONFIG_BIGENDIAN.*/CONFIG_BIGENDIAN=y/' \
 		-e '/CONFIG_ARCH_NUMBER/d' \
 		< patches/apex/defconfig > apex-${APEX_REVISION}/.config
 else
-	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/\# CONFIG_CPU_BIG_ENDIAN is not set/' \
+	sed -e 's/.*CONFIG_USER_LITTTLEENDIAN.*/CONFIG_USER_LITTLEENDIAN=y/' \
+	    -e 's/.*CONFIG_LITTTLEENDIAN.*/CONFIG_LITTLEENDIAN=y/' \
 		-e '/CONFIG_ARCH_NUMBER/d' \
 		< patches/apex/defconfig > apex-${APEX_REVISION}/.config
 endif
@@ -96,7 +98,7 @@ ifeq (${APEX_TARGET},fsg3)
 endif
 	( cd apex-${APEX_REVISION} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm clean all )
-	cp apex-${APEX_REVISION}/apex apex-${APEX_TARGET}-${APEX_REVISION}.bin
+	cp apex-${APEX_REVISION}/apex.bin apex-${APEX_TARGET}-${APEX_REVISION}.bin
 
 apex-${APEX_REVISION}/Makefile: \
 		downloads/apex-${APEX_REVISION}.tar.gz
