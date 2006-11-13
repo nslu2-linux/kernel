@@ -60,12 +60,19 @@ Index: linux-2.6.19-rc5/drivers/mtd/redboot.c
  			}
  			break;
  		}
-@@ -125,6 +150,8 @@ static int parse_redboot_partitions(stru
+@@ -123,8 +148,13 @@ static int parse_redboot_partitions(stru
+ 	for (i = 0; i < numslots; i++) {
+ 		struct fis_list *new_fl, **prev;
  
- 		if (buf[i].name[0] == 0xff)
- 			continue;
-+		if (buf[i].name[1] == 0xff)
-+			break;
+-		if (buf[i].name[0] == 0xff)
+-			continue;
++		if (buf[i].name[0] == 0xff) {
++			if (buf[i].name[1] == 0xff) {
++				break;
++			} else {
++				continue;
++			}
++		}
  		if (!redboot_checksum(&buf[i]))
  			break;
  
