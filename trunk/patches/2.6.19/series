@@ -6,6 +6,7 @@
 05-mtdpart-redboot-partition-truncate.patch
 07-remove-avila-ixdp425-setup.patch
 08-avila-loft-setup.patch
+10-bridging-fix.patch
 11-mtdpart-redboot-config-byteswap.patch
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
