@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.19-rc5
-# Wed Nov  8 03:14:15 2006
+# Linux kernel version: 2.6.19-rc6
+# Thu Nov 16 01:21:22 2006
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
