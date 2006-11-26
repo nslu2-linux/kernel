@@ -30,6 +30,7 @@
 74-add-arm-ata-support.patch
 75-dsmg600-support.patch
 76-dsmg600-pwrbtn.patch
+77-dsmg600-cmdline.patch
 ##78-velocity-BE.patch
 80-kexec-arm-r3.patch
 95-pata-ixp4xx.patch
