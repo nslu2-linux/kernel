@@ -61,43 +61,20 @@ modules: modules-${REVISION}.tar.gz
 patched: linux-${REVISION}/.config 
 apex: apex-${APEX_TARGET}-${APEX_REVISION}.bin
 
-apex-${APEX_TARGET}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/Makefile patches/apex/defconfig
-ifeq (${ENDIAN},b)
-	sed -e 's/.*CONFIG_USER_BIGENDIAN.*/CONFIG_USER_BIGENDIAN=y/' \
-	    -e 's/.*CONFIG_BIGENDIAN.*/CONFIG_BIGENDIAN=y/' \
-		-e '/CONFIG_ARCH_NUMBER/d' \
-		< patches/apex/defconfig > apex-${APEX_REVISION}/.config
-else
-	sed -e 's/.*CONFIG_USER_LITTLEENDIAN.*/CONFIG_USER_LITTLEENDIAN=y/' \
-	    -e 's/.*CONFIG_LITTLEENDIAN.*/CONFIG_LITTLEENDIAN=y/' \
-		-e '/CONFIG_ARCH_NUMBER/d' \
-		< patches/apex/defconfig > apex-${APEX_REVISION}/.config
-endif
-ifeq (${APEX_TARGET},nslu2)
-	sed -i -e '/CONFIG_MACH_NSLU2/d' apex-${APEX_REVISION}/.config
-	echo 'CONFIG_MACH_NSLU2=y' >> apex-${APEX_REVISION}/.config
-endif
-ifeq (${APEX_TARGET},loft)
-	sed -i -e '/CONFIG_MACH_AVILA2347/d' apex-${APEX_REVISION}/.config
-	echo 'CONFIG_MACH_AVILA2347=y' >> apex-${APEX_REVISION}/.config
-	echo 'CONFIG_ARCH_NUMBER=849' >> apex-${APEX_REVISION}/.config
-endif
-ifeq (${APEX_TARGET},nas100d)
-	sed -i -e '/CONFIG_MACH_NAS100D/d' apex-${APEX_REVISION}/.config
-	echo 'CONFIG_MACH_NAS100D=y' >> apex-${APEX_REVISION}/.config
-endif
-ifeq (${APEX_TARGET},dsmg600)
-	sed -i -e '/CONFIG_MACH_DSMG600/d' apex-${APEX_REVISION}/.config
-	echo 'CONFIG_MACH_DSMG600=y' >> apex-${APEX_REVISION}/.config
-	echo 'CONFIG_ARCH_NUMBER=964' >> apex-${APEX_REVISION}/.config
-endif
-ifeq (${APEX_TARGET},fsg3)
-	sed -i -e '/CONFIG_MACH_FSG/d' apex-${APEX_REVISION}/.config
-	echo 'CONFIG_MACH_FSG=y' >> apex-${APEX_REVISION}/.config
-	echo 'CONFIG_ARCH_NUMBER=1091' >> apex-${APEX_REVISION}/.config
-endif
+# ifeq (${APEX_TARGET},dsmg600)
+# 	sed -i -e '/CONFIG_MACH_DSMG600/d' apex-${APEX_REVISION}/.config
+# 	echo 'CONFIG_MACH_DSMG600=y' >> apex-${APEX_REVISION}/.config
+# 	echo 'CONFIG_ARCH_NUMBER=964' >> apex-${APEX_REVISION}/.config
+# endif
+# ifeq (${APEX_TARGET},fsg3)
+# 	sed -i -e '/CONFIG_MACH_FSG/d' apex-${APEX_REVISION}/.config
+# 	echo 'CONFIG_MACH_FSG=y' >> apex-${APEX_REVISION}/.config
+# 	echo 'CONFIG_ARCH_NUMBER=1091' >> apex-${APEX_REVISION}/.config
+# endif
+
+apex-${APEX_TARGET}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/.config
 	( cd apex-${APEX_REVISION} ; \
-	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm clean all )
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm all )
 ifeq (${ENDIAN},b)
 	devio '<<'apex-${APEX_REVISION}/apex.bin >apex-${APEX_TARGET}-${APEX_REVISION}.bin \
 		'cp$$'
@@ -106,7 +83,12 @@ else
 		'xp $$,4'
 endif
 
-apex-${APEX_REVISION}/Makefile: \
+apex-${APEX_REVISION}/.config: apex-${APEX_REVISION}/src/mach-ixp42x/slugos-${APEX_TARGET}-${DEBIAN_ARCH}_config
+	( cd apex-${APEX_REVISION} ; \
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm clean ; \
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm slugos-${APEX_TARGET}-${DEBIAN_ARCH}_config )
+
+apex-${APEX_REVISION}/src/mach-ixp42x/slugos-${APEX_TARGET}-${DEBIAN_ARCH}_config: \
 		downloads/apex-${APEX_REVISION}.tar.gz
 	[ -e apex-${APEX_REVISION} ] || \
 	( tar zxf downloads/apex-${APEX_REVISION}.tar.gz ; \
@@ -318,13 +300,15 @@ endif
 downloads:
 	mkdir -p downloads
 
-clobber:
+clobber: clobber-apex
 	rm -rf vmlinuz-* modules-*.tar.gz usr-*.tar.gz
 	rm -rf linux-*
 	rm -rf madwifi-ng
-	rm -rf apex-*
 	rm -rf lib usr
 
-.PHONY: all kernel menuconfig modules clobber apex
+clobber-apex:
+	rm -rf apex-*
+
+.PHONY: all kernel menuconfig modules clobber apex clobber-apex
 
 # End of Makefile
