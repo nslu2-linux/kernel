@@ -11,7 +11,7 @@ Index: linux-2.6.19-rc6/arch/arm/mach-ixp4xx/nas100d-setup.c
  };
  
 +struct npe_ucode_platform_data nas100d_npe_ucode_data = {
-+	.mtd_partition	= "kernel",
++	.mtd_partition	= "sysconfig",
 +};
 +
 +static struct platform_device nas100d_npe_ucode = {
