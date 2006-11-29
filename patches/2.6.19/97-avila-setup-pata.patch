@@ -2,8 +2,10 @@
  arch/arm/mach-ixp4xx/avila-setup.c |   40 +++++++++++++++++++++++++++++++++++++
  1 file changed, 40 insertions(+)
 
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/avila-setup.c	2006-11-05 14:53:55.000000000 +0100
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/avila-setup.c	2006-11-05 14:54:13.000000000 +0100
+Index: linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
+===================================================================
+--- linux-2.6.19.orig/arch/arm/mach-ixp4xx/avila-setup.c
++++ linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
 @@ -149,6 +149,34 @@ static struct platform_device mac1 = {
  	.resource       = &res_mac1,
  };

@@ -1,7 +1,7 @@
-Index: linux-2.6.19-rc5/drivers/mtd/redboot.c
+Index: linux-2.6.19/drivers/mtd/redboot.c
 ===================================================================
---- linux-2.6.19-rc5.orig/drivers/mtd/redboot.c
-+++ linux-2.6.19-rc5/drivers/mtd/redboot.c
+--- linux-2.6.19.orig/drivers/mtd/redboot.c
++++ linux-2.6.19/drivers/mtd/redboot.c
 @@ -96,7 +96,19 @@ static int parse_redboot_partitions(stru
  			 */
  			if (swab32(buf[i].size) == master->erasesize) {

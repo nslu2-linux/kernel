@@ -8,10 +8,10 @@ the original test made slightly more robust.
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
-Index: linux-2.6.19-rc5/drivers/mtd/redboot.c
+Index: linux-2.6.19/drivers/mtd/redboot.c
 ===================================================================
---- linux-2.6.19-rc5.orig/drivers/mtd/redboot.c
-+++ linux-2.6.19-rc5/drivers/mtd/redboot.c
+--- linux-2.6.19.orig/drivers/mtd/redboot.c
++++ linux-2.6.19/drivers/mtd/redboot.c
 @@ -87,14 +87,41 @@ static int parse_redboot_partitions(stru
  	for (i = 0; i < numslots; i++) {
  		if (!memcmp(buf[i].name, "FIS directory", 14)) {

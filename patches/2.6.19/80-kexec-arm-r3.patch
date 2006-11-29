@@ -1,8 +1,8 @@
-Index: linux-2.6.18/arch/arm/Kconfig
+Index: linux-2.6.19/arch/arm/Kconfig
 ===================================================================
---- linux-2.6.18.orig/arch/arm/Kconfig	2006-11-07 17:53:28.000000000 +0100
-+++ linux-2.6.18/arch/arm/Kconfig	2006-11-07 17:53:33.000000000 +0100
-@@ -384,6 +384,23 @@
+--- linux-2.6.19.orig/arch/arm/Kconfig
++++ linux-2.6.19/arch/arm/Kconfig
+@@ -384,6 +384,23 @@ if !MMU
  source "arch/arm/Kconfig-nommu"
  endif
  
@@ -26,10 +26,10 @@ Index: linux-2.6.18/arch/arm/Kconfig
  endmenu
  
  source "arch/arm/common/Kconfig"
-Index: linux-2.6.18/arch/arm/kernel/calls.S
+Index: linux-2.6.19/arch/arm/kernel/calls.S
 ===================================================================
---- linux-2.6.18.orig/arch/arm/kernel/calls.S	2006-09-20 05:42:06.000000000 +0200
-+++ linux-2.6.18/arch/arm/kernel/calls.S	2006-11-07 17:53:33.000000000 +0100
+--- linux-2.6.19.orig/arch/arm/kernel/calls.S
++++ linux-2.6.19/arch/arm/kernel/calls.S
 @@ -198,7 +198,7 @@
  		CALL(sys_sigaltstack_wrapper)
  		CALL(sys_sendfile)
@@ -39,10 +39,10 @@ Index: linux-2.6.18/arch/arm/kernel/calls.S
  /* 190 */	CALL(sys_vfork_wrapper)
  		CALL(sys_getrlimit)
  		CALL(sys_mmap2)
-Index: linux-2.6.18/arch/arm/kernel/machine_kexec.c
+Index: linux-2.6.19/arch/arm/kernel/machine_kexec.c
 ===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.18/arch/arm/kernel/machine_kexec.c	2006-11-07 17:53:33.000000000 +0100
+--- /dev/null
++++ linux-2.6.19/arch/arm/kernel/machine_kexec.c
 @@ -0,0 +1,78 @@
 +/*
 + * machine_kexec.c - handle transition of Linux booting another kernel
@@ -122,11 +122,11 @@ Index: linux-2.6.18/arch/arm/kernel/machine_kexec.c
 +	setup_mm_for_reboot(0); /* mode is not used, so just pass 0*/
 +	cpu_reset(reboot_code_buffer_phys);
 +}
-Index: linux-2.6.18/arch/arm/kernel/Makefile
+Index: linux-2.6.19/arch/arm/kernel/Makefile
 ===================================================================
---- linux-2.6.18.orig/arch/arm/kernel/Makefile	2006-09-20 05:42:06.000000000 +0200
-+++ linux-2.6.18/arch/arm/kernel/Makefile	2006-11-07 17:53:33.000000000 +0100
-@@ -19,6 +19,7 @@
+--- linux-2.6.19.orig/arch/arm/kernel/Makefile
++++ linux-2.6.19/arch/arm/kernel/Makefile
+@@ -19,6 +19,7 @@ obj-$(CONFIG_ARTHUR)		+= arthur.o
  obj-$(CONFIG_ISA_DMA)		+= dma-isa.o
  obj-$(CONFIG_PCI)		+= bios32.o isa.o
  obj-$(CONFIG_SMP)		+= smp.o
@@ -134,10 +134,10 @@ Index: linux-2.6.18/arch/arm/kernel/Makefile
  obj-$(CONFIG_OABI_COMPAT)	+= sys_oabi-compat.o
  
  obj-$(CONFIG_CRUNCH)		+= crunch.o crunch-bits.o
-Index: linux-2.6.18/arch/arm/kernel/relocate_kernel.S
+Index: linux-2.6.19/arch/arm/kernel/relocate_kernel.S
 ===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.18/arch/arm/kernel/relocate_kernel.S	2006-11-07 17:53:33.000000000 +0100
+--- /dev/null
++++ linux-2.6.19/arch/arm/kernel/relocate_kernel.S
 @@ -0,0 +1,74 @@
 +/*
 + * relocate_kernel.S - put the kernel image in place to boot
@@ -213,10 +213,10 @@ Index: linux-2.6.18/arch/arm/kernel/relocate_kernel.S
 +	.long relocate_new_kernel_end - relocate_new_kernel
 +
 +
-Index: linux-2.6.18/include/asm-arm/kexec.h
+Index: linux-2.6.19/include/asm-arm/kexec.h
 ===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.18/include/asm-arm/kexec.h	2006-11-07 17:53:33.000000000 +0100
+--- /dev/null
++++ linux-2.6.19/include/asm-arm/kexec.h
 @@ -0,0 +1,30 @@
 +#ifndef _ARM_KEXEC_H
 +#define _ARM_KEXEC_H
@@ -248,10 +248,10 @@ Index: linux-2.6.18/include/asm-arm/kexec.h
 +#endif /* CONFIG_KEXEC */
 +
 +#endif /* _ARM_KEXEC_H */
-Index: linux-2.6.18/include/asm-arm/unistd.h
+Index: linux-2.6.19/include/asm-arm/unistd.h
 ===================================================================
---- linux-2.6.18.orig/include/asm-arm/unistd.h	2006-11-07 17:50:48.000000000 +0100
-+++ linux-2.6.18/include/asm-arm/unistd.h	2006-11-07 17:53:33.000000000 +0100
+--- linux-2.6.19.orig/include/asm-arm/unistd.h
++++ linux-2.6.19/include/asm-arm/unistd.h
 @@ -214,7 +214,7 @@
  #define __NR_sigaltstack		(__NR_SYSCALL_BASE+186)
  #define __NR_sendfile			(__NR_SYSCALL_BASE+187)
@@ -261,11 +261,11 @@ Index: linux-2.6.18/include/asm-arm/unistd.h
  #define __NR_vfork			(__NR_SYSCALL_BASE+190)
  #define __NR_ugetrlimit			(__NR_SYSCALL_BASE+191)	/* SuS compliant getrlimit */
  #define __NR_mmap2			(__NR_SYSCALL_BASE+192)
-Index: linux-2.6.18/include/linux/kexec.h
+Index: linux-2.6.19/include/linux/kexec.h
 ===================================================================
---- linux-2.6.18.orig/include/linux/kexec.h	2006-09-20 05:42:06.000000000 +0200
-+++ linux-2.6.18/include/linux/kexec.h	2006-11-07 17:53:33.000000000 +0100
-@@ -120,6 +120,7 @@
+--- linux-2.6.19.orig/include/linux/kexec.h
++++ linux-2.6.19/include/linux/kexec.h
+@@ -120,6 +120,7 @@ extern struct kimage *kexec_crash_image;
  #define KEXEC_ARCH_PPC     (20 << 16)
  #define KEXEC_ARCH_PPC64   (21 << 16)
  #define KEXEC_ARCH_IA_64   (50 << 16)
