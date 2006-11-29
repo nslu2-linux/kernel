@@ -1,0 +1,43 @@
+Index: apex-1.4.7/src/drivers/drv-fis.c
+===================================================================
+--- apex-1.4.7.orig/src/drivers/drv-fis.c
++++ apex-1.4.7/src/drivers/drv-fis.c
+@@ -189,6 +189,11 @@ static int end_of_table (struct fis_desc
+   return descriptor->start == 0xffffffff;
+ }
+ 
++static int deleted_entry (struct fis_descriptor* descriptor)
++{
++  return descriptor->name[0] == 0xff;
++}
++
+ static int compare_skips (const void* _a, const void* _b)
+ {
+   struct fis_skip_descriptor* a = (struct fis_skip_descriptor*) _a;
+@@ -219,6 +224,8 @@ static void prescan_directory (struct de
+     if (d->driver->read (d, &descriptor, sizeof (descriptor))
+ 	!= sizeof (descriptor))
+       break;
++    if (deleted_entry (&descriptor))
++      continue;
+     if (end_of_table (&descriptor))
+       break;
+ 
+@@ -274,6 +281,8 @@ static int fis_open (struct descriptor_d
+       close_descriptor (&fis_d);
+       ERROR_RETURN (ERROR_IOFAILURE, "premature end of fis-drv");
+     }
++    if (deleted_entry (&partition))
++      continue;
+     if (end_of_table (&partition))
+       break;
+     if (strnicmp (d->pb[0], partition.name, sizeof (partition.name)))
+@@ -457,6 +466,8 @@ static void fis_report (void)
+     if (d.driver->read (&d, &partition, sizeof (partition))
+ 	!= sizeof (partition))
+       break;
++    if (deleted_entry (&partition))
++      continue;
+     if (end_of_table (&partition))
+       break;
+ 
