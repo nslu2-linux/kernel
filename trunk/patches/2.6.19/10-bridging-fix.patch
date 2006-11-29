@@ -1,8 +1,8 @@
-Index: linux-2.6.18/net/bridge/br_input.c
+Index: linux-2.6.19/net/bridge/br_input.c
 ===================================================================
---- linux-2.6.18.orig/net/bridge/br_input.c	2006-09-19 20:42:06.000000000 -0700
-+++ linux-2.6.18/net/bridge/br_input.c	2006-10-19 00:01:52.000000000 -0700
-@@ -32,6 +32,9 @@
+--- linux-2.6.19.orig/net/bridge/br_input.c
++++ linux-2.6.19/net/bridge/br_input.c
+@@ -32,6 +32,9 @@ static void br_pass_frame_up(struct net_
  	indev = skb->dev;
  	skb->dev = br->dev;
  

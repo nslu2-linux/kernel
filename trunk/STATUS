@@ -18,10 +18,7 @@
 
 20-nas100d-cmdline-fixup.patch
 20-nslu2-cmdline-fixup.patch
-	Don't expect these to be accepted upstream (based on advice from 
-	Richard Purdie).
-	For upstream, just submit nslu2 and nas100d defconfig files.
-	Should be removed for SlugOS 4.x, as APEX should handle cmdline.
+	Obsolete, not includeded in kernel.
 
 28-nslu2-setup-mac.patch
 	Setup required for ixp4xx mac driver on nslu2.
@@ -48,6 +45,9 @@
 55-increase-entropy-pools.patch
         No reason to push upstream. Only for use on ixp4xx hardware in
         combination with rng daemon.
+
+60-nas100d-artop-temp-fix.patch
+	Check whether the problem has been fixed.
 
 75-dsmg600.patch
 	Refreshed for 2.6.19 but untested.

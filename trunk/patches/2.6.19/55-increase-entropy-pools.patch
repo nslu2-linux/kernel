@@ -1,5 +1,7 @@
---- linux-2.6.18/drivers/char/random.c.orig	2006-10-01 23:48:04.000000000 +0200
-+++ linux-2.6.18/drivers/char/random.c	2006-10-02 00:10:06.000000000 +0200
+Index: linux-2.6.19/drivers/char/random.c
+===================================================================
+--- linux-2.6.19.orig/drivers/char/random.c
++++ linux-2.6.19/drivers/char/random.c
 @@ -248,9 +248,9 @@
  /*
   * Configuration information

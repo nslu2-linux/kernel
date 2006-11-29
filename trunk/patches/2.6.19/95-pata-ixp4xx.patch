@@ -5,8 +5,10 @@
  include/asm-arm/arch-ixp4xx/platform.h |   14 +
  4 files changed, 296 insertions(+)
 
---- linux-ixp4xx.orig/drivers/ata/Kconfig	2006-11-05 14:59:23.000000000 +0100
-+++ linux-ixp4xx/drivers/ata/Kconfig	2006-11-05 15:03:15.000000000 +0100
+Index: linux-2.6.19/drivers/ata/Kconfig
+===================================================================
+--- linux-2.6.19.orig/drivers/ata/Kconfig
++++ linux-2.6.19/drivers/ata/Kconfig
 @@ -483,6 +483,16 @@ config PATA_WINBOND
  
  	  If unsure, say N.
@@ -24,8 +26,10 @@
  endif
  endmenu
  
---- linux-ixp4xx.orig/drivers/ata/Makefile	2006-11-05 14:59:23.000000000 +0100
-+++ linux-ixp4xx/drivers/ata/Makefile	2006-11-05 15:03:15.000000000 +0100
+Index: linux-2.6.19/drivers/ata/Makefile
+===================================================================
+--- linux-2.6.19.orig/drivers/ata/Makefile
++++ linux-2.6.19/drivers/ata/Makefile
 @@ -53,6 +53,7 @@ obj-$(CONFIG_PATA_VIA)		+= pata_via.o
  obj-$(CONFIG_PATA_WINBOND)	+= pata_sl82c105.o
  obj-$(CONFIG_PATA_SIS)		+= pata_sis.o
@@ -34,8 +38,10 @@
  # Should be last but one libata driver
  obj-$(CONFIG_ATA_GENERIC)	+= ata_generic.o
  # Should be last libata driver
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/ata/pata_ixp4xx_cf.c	2006-11-05 15:03:15.000000000 +0100
+Index: linux-2.6.19/drivers/ata/pata_ixp4xx_cf.c
+===================================================================
+--- /dev/null
++++ linux-2.6.19/drivers/ata/pata_ixp4xx_cf.c
 @@ -0,0 +1,271 @@
 +/*
 + * ixp4xx PATA/Compact Flash driver
@@ -308,8 +314,10 @@
 +
 +module_init(ixp4xx_pata_init);
 +module_exit(ixp4xx_pata_exit);
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/platform.h	2006-11-05 15:02:51.000000000 +0100
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/platform.h	2006-11-05 15:11:47.000000000 +0100
+Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/platform.h
+===================================================================
+--- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/platform.h
++++ linux-2.6.19/include/asm-arm/arch-ixp4xx/platform.h
 @@ -76,6 +76,20 @@ extern unsigned long ixp4xx_exp_bus_size
  #define IXP4XX_UART_XTAL        	14745600
  

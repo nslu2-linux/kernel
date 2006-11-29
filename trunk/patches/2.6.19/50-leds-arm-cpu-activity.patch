@@ -1,6 +1,7 @@
-diff -Naur linux-2.6.19-rc2.orig/arch/arm/kernel/process.c linux-2.6.19-rc2/arch/arm/kernel/process.c
---- linux-2.6.19-rc2.orig/arch/arm/kernel/process.c	2006-10-13 12:27:28.000000000 -0700
-+++ linux-2.6.19-rc2/arch/arm/kernel/process.c	2006-10-13 10:24:35.000000000 -0700
+Index: linux-2.6.19/arch/arm/kernel/process.c
+===================================================================
+--- linux-2.6.19.orig/arch/arm/kernel/process.c
++++ linux-2.6.19/arch/arm/kernel/process.c
 @@ -26,6 +26,7 @@
  #include <linux/kallsyms.h>
  #include <linux/init.h>
@@ -9,7 +10,7 @@ diff -Naur linux-2.6.19-rc2.orig/arch/arm/kernel/process.c linux-2.6.19-rc2/arch
  #include <linux/elfcore.h>
  #include <linux/pm.h>
  
-@@ -114,6 +115,12 @@
+@@ -114,6 +115,12 @@ EXPORT_SYMBOL_GPL(arm_pm_restart);
  
  
  /*
@@ -22,7 +23,7 @@ diff -Naur linux-2.6.19-rc2.orig/arch/arm/kernel/process.c linux-2.6.19-rc2/arch
   * This is our default idle handler.  We need to disable
   * interrupts here to ensure we don't miss a wakeup call.
   */
-@@ -154,8 +161,12 @@
+@@ -154,8 +161,12 @@ void cpu_idle(void)
  		if (!idle)
  			idle = default_idle;
  		leds_event(led_idle_start);
@@ -35,10 +36,11 @@ diff -Naur linux-2.6.19-rc2.orig/arch/arm/kernel/process.c linux-2.6.19-rc2/arch
  		leds_event(led_idle_end);
  		preempt_enable_no_resched();
  		schedule();
-diff -Naur linux-2.6.19-rc2.orig/drivers/leds/Kconfig linux-2.6.19-rc2/drivers/leds/Kconfig
---- linux-2.6.19-rc2.orig/drivers/leds/Kconfig	2006-10-13 12:27:28.000000000 -0700
-+++ linux-2.6.19-rc2/drivers/leds/Kconfig	2006-10-13 10:24:35.000000000 -0700
-@@ -109,5 +109,14 @@
+Index: linux-2.6.19/drivers/leds/Kconfig
+===================================================================
+--- linux-2.6.19.orig/drivers/leds/Kconfig
++++ linux-2.6.19/drivers/leds/Kconfig
+@@ -109,5 +109,14 @@ config LEDS_TRIGGER_HEARTBEAT
  	  load average.
  	  If unsure, say Y.
  
@@ -53,17 +55,19 @@ diff -Naur linux-2.6.19-rc2.orig/drivers/leds/Kconfig linux-2.6.19-rc2/drivers/l
 +
  endmenu
  
-diff -Naur linux-2.6.19-rc2.orig/drivers/leds/Makefile linux-2.6.19-rc2/drivers/leds/Makefile
---- linux-2.6.19-rc2.orig/drivers/leds/Makefile	2006-10-13 12:27:28.000000000 -0700
-+++ linux-2.6.19-rc2/drivers/leds/Makefile	2006-10-13 10:24:35.000000000 -0700
-@@ -18,3 +18,4 @@
+Index: linux-2.6.19/drivers/leds/Makefile
+===================================================================
+--- linux-2.6.19.orig/drivers/leds/Makefile
++++ linux-2.6.19/drivers/leds/Makefile
+@@ -18,3 +18,4 @@ obj-$(CONFIG_LEDS_NET48XX)		+= leds-net4
  obj-$(CONFIG_LEDS_TRIGGER_TIMER)	+= ledtrig-timer.o
  obj-$(CONFIG_LEDS_TRIGGER_IDE_DISK)	+= ledtrig-ide-disk.o
  obj-$(CONFIG_LEDS_TRIGGER_HEARTBEAT)	+= ledtrig-heartbeat.o
 +obj-$(CONFIG_LEDS_TRIGGER_CPU_ACTIVITY)	+= ledtrig-cpu.o
-diff -Naur linux-2.6.19-rc2.orig/drivers/leds/ledtrig-cpu.c linux-2.6.19-rc2/drivers/leds/ledtrig-cpu.c
---- linux-2.6.19-rc2.orig/drivers/leds/ledtrig-cpu.c	1969-12-31 16:00:00.000000000 -0800
-+++ linux-2.6.19-rc2/drivers/leds/ledtrig-cpu.c	2006-10-13 12:27:51.000000000 -0700
+Index: linux-2.6.19/drivers/leds/ledtrig-cpu.c
+===================================================================
+--- /dev/null
++++ linux-2.6.19/drivers/leds/ledtrig-cpu.c
 @@ -0,0 +1,487 @@
 +/*
 + * LEDs CPU activity trigger
@@ -552,10 +556,11 @@ diff -Naur linux-2.6.19-rc2.orig/drivers/leds/ledtrig-cpu.c linux-2.6.19-rc2/dri
 +MODULE_AUTHOR("John Bowler <jbowler@acm.org>");
 +MODULE_DESCRIPTION("CPU activity LED trigger");
 +MODULE_LICENSE("MIT");
-diff -Naur linux-2.6.19-rc2.orig/include/linux/leds.h linux-2.6.19-rc2/include/linux/leds.h
---- linux-2.6.19-rc2.orig/include/linux/leds.h	2006-10-13 12:27:28.000000000 -0700
-+++ linux-2.6.19-rc2/include/linux/leds.h	2006-10-13 10:24:35.000000000 -0700
-@@ -110,4 +110,13 @@
+Index: linux-2.6.19/include/linux/leds.h
+===================================================================
+--- linux-2.6.19.orig/include/linux/leds.h
++++ linux-2.6.19/include/linux/leds.h
+@@ -110,4 +110,13 @@ extern void ledtrig_ide_activity(void);
  #define ledtrig_ide_activity() do {} while(0)
  #endif
  

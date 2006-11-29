@@ -3,13 +3,17 @@
 # must be all able to be applied independently in any order.
 # Patches marked with ## need reworking and are currently disabled
 
+squashfs/squashfs.patch
+squashfs/squashfs-ramdisk.patch
+squashfs/squashfs-force-O2.patch
+squashfs/squashfs-lzma.patch
+squashfs/squashfs-Kconfig.patch
+squashfs/squashfs-Makefile.patch
 05-mtdpart-redboot-partition-truncate.patch
 07-remove-avila-ixdp425-setup.patch
 08-avila-loft-setup.patch
 10-bridging-fix.patch
 11-mtdpart-redboot-config-byteswap.patch
-#20-nas100d-cmdline-fixup.patch
-#20-nslu2-cmdline-fixup.patch
 30-ixp4xx-0.2.1-driver.patch
 31-ixp4xx-2.6.19-cleanup.patch
 32-ixp4xx-net-driver-fix-qmgr.patch
@@ -27,10 +31,8 @@
 55-increase-entropy-pools.patch
 60-nas100d-artop-temp-fix.patch
 66-hwmon-ad7418.patch
-74-add-arm-ata-support.patch
 75-dsmg600-support.patch
 76-dsmg600-pwrbtn.patch
-#77-dsmg600-cmdline.patch
 ##78-velocity-BE.patch
 80-kexec-arm-r3.patch
 95-pata-ixp4xx.patch

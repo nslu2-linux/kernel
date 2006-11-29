@@ -1,8 +1,8 @@
-Index: linux-2.6.19-rc3/drivers/hwmon/Makefile
+Index: linux-2.6.19/drivers/hwmon/Makefile
 ===================================================================
---- linux-2.6.19-rc3.orig/drivers/hwmon/Makefile	2006-10-24 00:44:51.000000000 -0700
-+++ linux-2.6.19-rc3/drivers/hwmon/Makefile	2006-10-24 00:45:18.000000000 -0700
-@@ -50,6 +50,7 @@
+--- linux-2.6.19.orig/drivers/hwmon/Makefile
++++ linux-2.6.19/drivers/hwmon/Makefile
+@@ -50,6 +50,7 @@ obj-$(CONFIG_SENSORS_VT1211)	+= vt1211.o
  obj-$(CONFIG_SENSORS_VT8231)	+= vt8231.o
  obj-$(CONFIG_SENSORS_W83627EHF)	+= w83627ehf.o
  obj-$(CONFIG_SENSORS_W83L785TS)	+= w83l785ts.o
@@ -10,10 +10,10 @@ Index: linux-2.6.19-rc3/drivers/hwmon/Makefile
  
  ifeq ($(CONFIG_HWMON_DEBUG_CHIP),y)
  EXTRA_CFLAGS += -DDEBUG
-Index: linux-2.6.19-rc3/drivers/hwmon/ad7418.c
+Index: linux-2.6.19/drivers/hwmon/ad7418.c
 ===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19-rc3/drivers/hwmon/ad7418.c	2006-10-24 00:45:18.000000000 -0700
+--- /dev/null
++++ linux-2.6.19/drivers/hwmon/ad7418.c
 @@ -0,0 +1,353 @@
 +/*
 + * An hwmon driver for the Analog Devices AD7417/18
@@ -368,11 +368,11 @@ Index: linux-2.6.19-rc3/drivers/hwmon/ad7418.c
 +
 +module_init(ad7418_init);
 +module_exit(ad7418_exit);
-Index: linux-2.6.19-rc3/drivers/hwmon/Kconfig
+Index: linux-2.6.19/drivers/hwmon/Kconfig
 ===================================================================
---- linux-2.6.19-rc3.orig/drivers/hwmon/Kconfig	2006-10-24 00:44:51.000000000 -0700
-+++ linux-2.6.19-rc3/drivers/hwmon/Kconfig	2006-10-24 00:45:18.000000000 -0700
-@@ -514,6 +514,16 @@
+--- linux-2.6.19.orig/drivers/hwmon/Kconfig
++++ linux-2.6.19/drivers/hwmon/Kconfig
+@@ -514,6 +514,16 @@ config SENSORS_W83627EHF
  	  This driver can also be built as a module.  If so, the module
  	  will be called w83627ehf.
  

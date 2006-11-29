@@ -3,8 +3,10 @@
  drivers/net/ixp4xx/ixp4xx_qmgr.c |    8 ++++----
  1 file changed, 4 insertions(+), 4 deletions(-)
 
---- linux-ixp4xx.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-15 18:52:35.000000000 +0200
-+++ linux-ixp4xx/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-10-15 18:54:32.000000000 +0200
+Index: linux-2.6.19/drivers/net/ixp4xx/ixp4xx_qmgr.c
+===================================================================
+--- linux-2.6.19.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c
++++ linux-2.6.19/drivers/net/ixp4xx/ixp4xx_qmgr.c
 @@ -107,7 +107,7 @@ static int get_free_qspace(struct qm_qmg
  	return -1;
  }
