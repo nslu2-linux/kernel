@@ -8,8 +8,8 @@
 08-avila-loft-setup.patch
 10-bridging-fix.patch
 11-mtdpart-redboot-config-byteswap.patch
-20-nas100d-cmdline-fixup.patch
-20-nslu2-cmdline-fixup.patch
+#20-nas100d-cmdline-fixup.patch
+#20-nslu2-cmdline-fixup.patch
 30-ixp4xx-0.2.1-driver.patch
 31-ixp4xx-2.6.19-cleanup.patch
 32-ixp4xx-net-driver-fix-qmgr.patch
@@ -30,7 +30,7 @@
 74-add-arm-ata-support.patch
 75-dsmg600-support.patch
 76-dsmg600-pwrbtn.patch
-77-dsmg600-cmdline.patch
+#77-dsmg600-cmdline.patch
 ##78-velocity-BE.patch
 80-kexec-arm-r3.patch
 95-pata-ixp4xx.patch
