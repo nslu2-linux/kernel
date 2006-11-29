@@ -4,3 +4,4 @@ slugos-nslu2-armeb_config.patch
 openslug_config.patch
 slugos-nas100d-arm_config.patch
 slugos-nas100d-armeb_config.patch
+fis-deleted-entries.patch
