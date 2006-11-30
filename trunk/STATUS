@@ -7,6 +7,9 @@
 [linux-mtd] - patch submitted to the linux-mtd mailing list (because
 	it is not ARM specific.)
 
+01-nslu2-led-swap.patch [l-a-k]
+	Ready for upstream.
+
 01-mtdpart-redboot-config-byteswap.patch
 	More robust test for byteswapped Redboot partition table
 	This is a "nice to have" - the case it prevents will never happen.
