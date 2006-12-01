@@ -8,42 +8,58 @@
 	it is not ARM specific.)
 
 01-nslu2-led-swap.patch [l-a-k]
-	Ready for upstream.
+	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3944/1
 
-01-mtdpart-redboot-config-byteswap.patch
-	More robust test for byteswapped Redboot partition table
-	This is a "nice to have" - the case it prevents will never happen.
-	
-15-jffs2-endian-config.patch [linux-mtd]
-	Has been submitted to linux-mtd
-	http://lists.infradead.org/pipermail/linux-mtd/2006-January/014740.html
-	No response in 6 months - resubmit?
+05-mtdpart-redboot-partition-truncate.patch
+	We need to send this upstream, but where?
 
-20-nas100d-cmdline-fixup.patch
-20-nslu2-cmdline-fixup.patch
-	Obsolete, not includeded in kernel.
+07-remove-avila-ixdp425-setup.patch [l-a-k]
+	[g2] needs to send this upstream
 
-28-nslu2-setup-mac.patch
-	Setup required for ixp4xx mac driver on nslu2.
+08-avila-loft-setup.patch [l-a-k]
+	[g2] needs to send this upstream
 
-29-nas100d-setup-mac.patch
-	Setup required for ixp4xx mac driver on NAS-100D.
+10-bridging-fix.patch
+	Who added this, and why are we carrying it?
 
-30-ixp4xx-driver-0.2.0-driver.patch
+11-mtdpart-redboot-config-byteswap.patch
+	Is this really required in our target devices?
+
+30-ixp4xx-0.2.1-driver.patch
 	driver being actively developed. Developer will probably push
 	upstream when properly tested.
 
 31-ixp4xx-2.6.19-cleanup.patch
-	local cleanups to remove config.h includes and make ixp_qmgr
-	compatible with new IRQ system.
+32-ixp4xx-net-driver-fix-qmgr.patch
+33-ixp4xx-net-driver-improve-mac-handling.patch
+39-ixp4xx-net-driver-mtd-load-fw.patch
+	Should all be submitted to Christian.
 
-40-scsi-idle.patch
-	Not ours. Dunno why it's not in mainstream. It's in debian's
-	patch system, but not applied.
-	http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=352642
+40-avila-setup-mac.patch
+	Setup required for ixp4xx mac driver on avila.
+	Submit upstream after open source ixp driver.
+
+41-nslu2-setup-mac.patch [l-a-k]
+	Setup required for ixp4xx mac driver on nslu2.
+	Submit upstream after open source ixp driver.
+
+42-nas100d-setup-mac.patch [l-a-k]
+	Setup required for ixp4xx mac driver on nas100d.
+	Submit upstream after open source ixp driver.
+
+43-nslu2-mtd-microcode.patch
+44-nas100d-mtd-microcode.patch
+	??
+
+45-eeprom-new-notifier.patch
+	??
 
 50-leds-arm-cpu-activity.patch
 	Discussed with Richard Purdie.  Not yet ready for upstream.
+
+52-nas100d-mtd-load-mac.patch
+53-nslu2-mtd-load-mac.patch
+	??
 
 55-increase-entropy-pools.patch
         No reason to push upstream. Only for use on ixp4xx hardware in
@@ -52,20 +68,35 @@
 60-nas100d-artop-temp-fix.patch
 	Check whether the problem has been fixed.
 
-75-dsmg600.patch
-	Refreshed for 2.6.19 but untested.
+66-hwmon-ad7418.patch
+	??
 
+75-dsmg600-support.patch
 76-dsmg600-pwrbtn.patch
-	Refreshed for 2.6.19 but untested.
+	Someone with a DSMG600 to push upstream this cycle.
 
-77-velocity-module.patch
-	Exports an extra symbol required for the velocity driver.
+##78-velocity-BE.patch
+	??
 
-78-velocity-BE.patch
-	Does not apply cleanly.
+80-kexec-arm-r3.patch
+	??
+
+85-nslu2-rtc-fixup.patch
+86-nas100d-rtc-fixup.patch
+87-dsmg600-rtc-fixup.patch
+	Dunno whether upstream will accept this.
+	We may need to carry them ourselves.
+
+95-pata-ixp4xx.patch
+	??
 
 96-fsg3-support.patch
 	Untested, should allow all functionality except PATA & wireless.
+
+97-avila-setup-pata.patch
+99-avila-mtd-microcode.patch
+99-avila-loft-mac-platform.patch
+	??
 
 99-sata_via-add-pata.patch
 	Waiting for feedback from Jeff Garzik.
