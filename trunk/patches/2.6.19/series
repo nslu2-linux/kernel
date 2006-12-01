@@ -38,6 +38,7 @@ squashfs/squashfs-Makefile.patch
 80-kexec-arm-r3.patch
 85-nslu2-rtc-fixup.patch
 86-nas100d-rtc-fixup.patch
+87-dsmg600-rtc-fixup.patch
 95-pata-ixp4xx.patch
 96-fsg3-support.patch
 97-avila-setup-pata.patch
