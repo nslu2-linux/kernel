@@ -1,0 +1,23 @@
+diff -Naur linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-setup.c~ linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-setup.c
+--- linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-setup.c~	2006-12-01 09:44:18.000000000 -0600
++++ linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-setup.c	2006-12-02 12:24:59.000000000 -0600
+@@ -159,11 +159,19 @@
+ }
+ 
+ static char dsmg600_rtc_probe[] __initdata = "rtc-pcf8563.probe=0,0x51 ";
++static char dsmg600_default_cmdline[] __initdata = 
++	"init=/linuxrc root=/dev/mtdblock2 rootfstype=jffs2 "
++	CONFIG_CMDLINE;
+ 
+ static void __init dsmg600_fixup(struct machine_desc *desc,
+ 		struct tag *tags, char **cmdline, struct meminfo *mi)
+ {
+ 	struct tag *t = tags;
++
++	/* A command line in the ATAG list will override this one,
++	 * as is intended.
++	 */
++	strlcpy(*cmdline, dsmg600_default_cmdline, COMMAND_LINE_SIZE);
+ 	char *p = *cmdline;
+ 
+ 	/* Find the end of the tags table, taking note of any cmdline tag. */
