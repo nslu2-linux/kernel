@@ -61,11 +61,6 @@ modules: modules-${REVISION}.tar.gz
 patched: linux-${REVISION}/.config 
 apex: apex-${APEX_TARGET}-${APEX_REVISION}.bin
 
-# ifeq (${APEX_TARGET},dsmg600)
-# 	sed -i -e '/CONFIG_MACH_DSMG600/d' apex-${APEX_REVISION}/.config
-# 	echo 'CONFIG_MACH_DSMG600=y' >> apex-${APEX_REVISION}/.config
-# 	echo 'CONFIG_ARCH_NUMBER=964' >> apex-${APEX_REVISION}/.config
-# endif
 # ifeq (${APEX_TARGET},fsg3)
 # 	sed -i -e '/CONFIG_MACH_FSG/d' apex-${APEX_REVISION}/.config
 # 	echo 'CONFIG_MACH_FSG=y' >> apex-${APEX_REVISION}/.config

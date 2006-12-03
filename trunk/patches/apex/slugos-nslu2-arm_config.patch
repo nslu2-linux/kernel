@@ -1,8 +1,12 @@
+---
+ src/mach-ixp42x/slugos-nslu2-arm_config |  126 ++++++++++++++++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+
 Index: apex-1.4.7/src/mach-ixp42x/slugos-nslu2-arm_config
 ===================================================================
 --- /dev/null
 +++ apex-1.4.7/src/mach-ixp42x/slugos-nslu2-arm_config
-@@ -0,0 +1,125 @@
+@@ -0,0 +1,126 @@
 +#
 +# Automatically generated make config: don't edit
 +# Linux kernel version: 
@@ -51,6 +55,7 @@ Index: apex-1.4.7/src/mach-ixp42x/slugos-nslu2-arm_config
 +CONFIG_MACH="ixp42x"
 +CONFIG_MACH_NSLU2=y
 +# CONFIG_MACH_NAS100D is not set
++# CONFIG_MACH_DSMG600 is not set
 +# CONFIG_MACH_AVILA2347 is not set
 +# CONFIG_USER_DEFAULTENDIAN is not set
 +# CONFIG_USER_BIGENDIAN is not set
