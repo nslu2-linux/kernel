@@ -59,7 +59,7 @@ kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REV
 madwifi: lib/modules/${REVISION}/net/ath_hal.ko
 modules: modules-${REVISION}.tar.gz
 patched: linux-${REVISION}/.config 
-apex: apex-${APEX_TARGET}-${APEX_REVISION}.bin
+apex: apex-${APEX_TARGET}-${DEBIAN_ARCH}-${APEX_REVISION}.bin
 
 # ifeq (${APEX_TARGET},fsg3)
 # 	sed -i -e '/CONFIG_MACH_FSG/d' apex-${APEX_REVISION}/.config
@@ -67,15 +67,13 @@ apex: apex-${APEX_TARGET}-${APEX_REVISION}.bin
 # 	echo 'CONFIG_ARCH_NUMBER=1091' >> apex-${APEX_REVISION}/.config
 # endif
 
-apex-${APEX_TARGET}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/.config
+apex-${APEX_TARGET}-${DEBIAN_ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/.config
 	( cd apex-${APEX_REVISION} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm all )
 ifeq (${ENDIAN},b)
-	devio '<<'apex-${APEX_REVISION}/apex.bin >apex-${APEX_TARGET}-${APEX_REVISION}.bin \
-		'cp$$'
+	devio '<<'apex-${APEX_REVISION}/apex.bin >$@ 'cp$$'
 else
-	devio '<<'apex-${APEX_REVISION}/apex.bin >apex-${APEX_TARGET}-${APEX_REVISION}.bin \
-		'xp $$,4'
+	devio '<<'apex-${APEX_REVISION}/apex.bin >$@ 'xp $$,4'
 endif
 
 apex-${APEX_REVISION}/.config: apex-${APEX_REVISION}/src/mach-ixp42x/slugos-${APEX_TARGET}-${DEBIAN_ARCH}_config
