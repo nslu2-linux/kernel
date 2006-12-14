@@ -9,6 +9,7 @@ squashfs/squashfs-force-O2.patch
 squashfs/squashfs-lzma.patch
 squashfs/squashfs-Kconfig.patch
 squashfs/squashfs-Makefile.patch
+00-linux-2.6.19.1.patch
 01-nslu2-led-swap.patch
 05-mtdpart-redboot-partition-truncate.patch
 07-remove-avila-ixdp425-setup.patch
