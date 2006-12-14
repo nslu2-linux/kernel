@@ -76,7 +76,7 @@ index 7cee902..20d0d79 100644
  
  This enables or disables panic on out-of-memory feature.  If this is set to 1,
 diff --git a/Makefile b/Makefile
-index edfc2fd..9eda185 100644
+index edfc2fd..85d8009 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -894,6 +894,9 @@ export INSTALL_HDR_PATH
@@ -109,6 +109,19 @@ index edfc2fd..9eda185 100644
  	@echo  ''
  	@echo  'Kernel packaging:'
  	@$(MAKE) $(build)=$(package-dir) help
+diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+index 213c785..2b36afd 100644
+--- a/arch/alpha/Kconfig
++++ b/arch/alpha/Kconfig
+@@ -381,7 +381,7 @@ config ALPHA_EV56
+ 
+ config ALPHA_EV56
+ 	prompt "EV56 CPU (speed >= 333MHz)?"
+-	depends on ALPHA_NORITAKE && ALPHA_PRIMO
++	depends on ALPHA_NORITAKE || ALPHA_PRIMO
+ 
+ config ALPHA_EV56
+ 	prompt "EV56 CPU (speed >= 400MHz)?"
 diff --git a/arch/i386/Kconfig.cpu b/arch/i386/Kconfig.cpu
 index 21c9a4e..fc4f2ab 100644
 --- a/arch/i386/Kconfig.cpu
@@ -178,6 +191,39 @@ index e6ea00e..ec0c5c2 100644
  }
  
  
+diff --git a/arch/i386/kernel/microcode.c b/arch/i386/kernel/microcode.c
+index 40b44cc..e5520eb 100644
+--- a/arch/i386/kernel/microcode.c
++++ b/arch/i386/kernel/microcode.c
+@@ -250,14 +250,14 @@ static int find_matching_ucodes (void) 
+ 		}
+ 
+ 		total_size = get_totalsize(&mc_header);
+-		if ((cursor + total_size > user_buffer_size) || (total_size < DEFAULT_UCODE_TOTALSIZE)) {
++		if (cursor + total_size > user_buffer_size) {
+ 			printk(KERN_ERR "microcode: error! Bad data in microcode data file\n");
+ 			error = -EINVAL;
+ 			goto out;
+ 		}
+ 
+ 		data_size = get_datasize(&mc_header);
+-		if ((data_size + MC_HEADER_SIZE > total_size) || (data_size < DEFAULT_UCODE_DATASIZE)) {
++		if (data_size + MC_HEADER_SIZE > total_size) {
+ 			printk(KERN_ERR "microcode: error! Bad data in microcode data file\n");
+ 			error = -EINVAL;
+ 			goto out;
+@@ -460,11 +460,6 @@ static ssize_t microcode_write (struct f
+ {
+ 	ssize_t ret;
+ 
+-	if (len < DEFAULT_UCODE_TOTALSIZE) {
+-		printk(KERN_ERR "microcode: not enough data\n"); 
+-		return -EINVAL;
+-	}
+-
+ 	if ((len >> PAGE_SHIFT) > num_physpages) {
+ 		printk(KERN_ERR "microcode: too much data (max %ld pages)\n", num_physpages);
+ 		return -EINVAL;
 diff --git a/arch/i386/kernel/smpboot.c b/arch/i386/kernel/smpboot.c
 index f948419..efe0799 100644
 --- a/arch/i386/kernel/smpboot.c
@@ -337,6 +383,29 @@ index f648c61..5629b45 100644
  }
  EXPORT_SYMBOL(arch_register_cpu);
  EXPORT_SYMBOL(arch_unregister_cpu);
+diff --git a/arch/ia64/sn/kernel/bte.c b/arch/ia64/sn/kernel/bte.c
+index 27dee45..c55f487 100644
+--- a/arch/ia64/sn/kernel/bte.c
++++ b/arch/ia64/sn/kernel/bte.c
+@@ -382,14 +382,13 @@ bte_result_t bte_unaligned_copy(u64 src,
+ 		 * bcopy to the destination.
+ 		 */
+ 
+-		/* Add the leader from source */
+-		headBteLen = len + (src & L1_CACHE_MASK);
+-		/* Add the trailing bytes from footer. */
+-		headBteLen += L1_CACHE_BYTES - (headBteLen & L1_CACHE_MASK);
+-		headBteSource = src & ~L1_CACHE_MASK;
+ 		headBcopySrcOffset = src & L1_CACHE_MASK;
+ 		headBcopyDest = dest;
+ 		headBcopyLen = len;
++
++		headBteSource = src - headBcopySrcOffset;
++		/* Add the leading and trailing bytes from source */
++		headBteLen = L1_CACHE_ALIGN(len + headBcopySrcOffset);
+ 	}
+ 
+ 	if (headBcopyLen > 0) {
 diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
 index 694b0c6..f35bb14 100644
 --- a/arch/powerpc/Kconfig
@@ -1340,7 +1409,7 @@ index ddd9253..3ecdb34 100644
  	} while (ret);
  }
 diff --git a/block/scsi_ioctl.c b/block/scsi_ioctl.c
-index b33eda2..ed3d3ae 100644
+index b33eda2..848ac42 100644
 --- a/block/scsi_ioctl.c
 +++ b/block/scsi_ioctl.c
 @@ -246,10 +246,10 @@ static int sg_io(struct file *file, requ
@@ -1355,6 +1424,17 @@ index b33eda2..ed3d3ae 100644
  		case SG_DXFER_FROM_DEV:
  			break;
  		}
+@@ -286,9 +286,8 @@ static int sg_io(struct file *file, requ
+ 	 * fill in request structure
+ 	 */
+ 	rq->cmd_len = hdr->cmd_len;
++	memset(rq->cmd, 0, BLK_MAX_CDB); /* ATAPI hates garbage after CDB */
+ 	memcpy(rq->cmd, cmd, hdr->cmd_len);
+-	if (sizeof(rq->cmd) != hdr->cmd_len)
+-		memset(rq->cmd + hdr->cmd_len, 0, sizeof(rq->cmd) - hdr->cmd_len);
+ 
+ 	memset(sense, 0, sizeof(sense));
+ 	rq->sense = sense;
 diff --git a/drivers/block/DAC960.c b/drivers/block/DAC960.c
 index 4cd23c3..a360215 100644
 --- a/drivers/block/DAC960.c
@@ -1420,6 +1500,32 @@ index 78082ed..5ee5f93 100644
  }
  
  /*
+diff --git a/drivers/char/agp/generic.c b/drivers/char/agp/generic.c
+index cc5ea34..d218575 100644
+--- a/drivers/char/agp/generic.c
++++ b/drivers/char/agp/generic.c
+@@ -1042,7 +1042,7 @@ void *agp_generic_alloc_page(struct agp_
+ {
+ 	struct page * page;
+ 
+-	page = alloc_page(GFP_KERNEL);
++	page = alloc_page(GFP_KERNEL | GFP_DMA32);
+ 	if (page == NULL)
+ 		return NULL;
+ 
+diff --git a/drivers/char/agp/intel-agp.c b/drivers/char/agp/intel-agp.c
+index 61ac380..64bb579 100644
+--- a/drivers/char/agp/intel-agp.c
++++ b/drivers/char/agp/intel-agp.c
+@@ -160,7 +160,7 @@ static void *i8xx_alloc_pages(void)
+ {
+ 	struct page * page;
+ 
+-	page = alloc_pages(GFP_KERNEL, 2);
++	page = alloc_pages(GFP_KERNEL | GFP_DMA32, 2);
+ 	if (page == NULL)
+ 		return NULL;
+ 
 diff --git a/drivers/char/hw_random/intel-rng.c b/drivers/char/hw_random/intel-rng.c
 index ccd7e71..8efbc9c 100644
 --- a/drivers/char/hw_random/intel-rng.c
@@ -2152,6 +2258,18 @@ index 016ddb8..115a6f8 100644
  			disk->head_position = 0;
  			mddev->degraded++;
  		}
+diff --git a/drivers/media/Kconfig b/drivers/media/Kconfig
+index ed4aa4e..9f7e1fe 100644
+--- a/drivers/media/Kconfig
++++ b/drivers/media/Kconfig
+@@ -54,6 +54,7 @@ config VIDEO_V4L1_COMPAT
+ 
+ config VIDEO_V4L2
+ 	bool
++	depends on VIDEO_DEV
+ 	default y
+ 
+ source "drivers/media/video/Kconfig"
 diff --git a/drivers/media/dvb/b2c2/flexcop-fe-tuner.c b/drivers/media/dvb/b2c2/flexcop-fe-tuner.c
 index 3be87c7..68bb56e 100644
 --- a/drivers/media/dvb/b2c2/flexcop-fe-tuner.c
@@ -2955,6 +3073,22 @@ index 2db8d19..7af5499 100644
  			  GMR_FS_UN_SIZE | GMR_FS_JABBER,
  };
  
+diff --git a/drivers/net/tg3.c b/drivers/net/tg3.c
+index eafabb2..fa620ae 100644
+--- a/drivers/net/tg3.c
++++ b/drivers/net/tg3.c
+@@ -6889,8 +6889,10 @@ static int tg3_open(struct net_device *d
+ 	tg3_full_lock(tp, 0);
+ 
+ 	err = tg3_set_power_state(tp, PCI_D0);
+-	if (err)
++	if (err) {
++		tg3_full_unlock(tp);
+ 		return err;
++	}
+ 
+ 	tg3_disable_ints(tp);
+ 	tp->tg3_flags &= ~TG3_FLAG_INIT_COMPLETE;
 diff --git a/drivers/net/wireless/bcm43xx/bcm43xx.h b/drivers/net/wireless/bcm43xx/bcm43xx.h
 index 17a5682..6d4ea36 100644
 --- a/drivers/net/wireless/bcm43xx/bcm43xx.h
@@ -4866,7 +5000,7 @@ index ec80692..c3f90c8 100644
 +	spin_unlock_irqrestore(&bcm->leds_lock, flags);
  }
 diff --git a/drivers/net/wireless/bcm43xx/bcm43xx_main.c b/drivers/net/wireless/bcm43xx/bcm43xx_main.c
-index df317c1..f24ba4d 100644
+index df317c1..42eecf2 100644
 --- a/drivers/net/wireless/bcm43xx/bcm43xx_main.c
 +++ b/drivers/net/wireless/bcm43xx/bcm43xx_main.c
 @@ -509,23 +509,20 @@ static void bcm43xx_synchronize_irq(stru
@@ -5005,7 +5139,31 @@ index df317c1..f24ba4d 100644
  }
  
  static void handle_irq_transmit_status(struct bcm43xx_private *bcm)
-@@ -1581,17 +1546,7 @@ static void handle_irq_noise(struct bcm4
+@@ -1498,6 +1463,23 @@ static void handle_irq_transmit_status(s
+ 	}
+ }
+ 
++static void drain_txstatus_queue(struct bcm43xx_private *bcm)
++{
++	u32 dummy;
++
++	if (bcm->current_core->rev < 5)
++		return;
++	/* Read all entries from the microcode TXstatus FIFO
++	 * and throw them away.
++	 */
++	while (1) {
++		dummy = bcm43xx_read32(bcm, BCM43xx_MMIO_XMITSTAT_0);
++		if (!dummy)
++			break;
++		dummy = bcm43xx_read32(bcm, BCM43xx_MMIO_XMITSTAT_1);
++	}
++}
++
+ static void bcm43xx_generate_noise_sample(struct bcm43xx_private *bcm)
+ {
+ 	bcm43xx_shm_write16(bcm, BCM43xx_SHM_SHARED, 0x408, 0x7F7F);
+@@ -1581,17 +1563,7 @@ static void handle_irq_noise(struct bcm4
  		else
  			average -= 48;
  
@@ -5024,7 +5182,7 @@ index df317c1..f24ba4d 100644
  drop_calculation:
  		bcm->noisecalc.calculation_running = 0;
  		return;
-@@ -1709,8 +1664,9 @@ static void handle_irq_beacon(struct bcm
+@@ -1709,8 +1681,9 @@ static void handle_irq_beacon(struct bcm
  static void bcm43xx_interrupt_tasklet(struct bcm43xx_private *bcm)
  {
  	u32 reason;
@@ -5036,7 +5194,7 @@ index df317c1..f24ba4d 100644
  	unsigned long flags;
  
  #ifdef CONFIG_BCM43XX_DEBUG
-@@ -1720,12 +1676,12 @@ #else
+@@ -1720,12 +1693,12 @@ #else
  # define bcmirq_handled(irq)	do { /* nothing */ } while (0)
  #endif /* CONFIG_BCM43XX_DEBUG*/
  
@@ -5054,7 +5212,7 @@ index df317c1..f24ba4d 100644
  
  	if (unlikely(reason & BCM43xx_IRQ_XMIT_ERROR)) {
  		/* TX error. We get this when Template Ram is written in wrong endianess
-@@ -1736,27 +1692,25 @@ #endif /* CONFIG_BCM43XX_DEBUG*/
+@@ -1736,27 +1709,25 @@ #endif /* CONFIG_BCM43XX_DEBUG*/
  		printkl(KERN_ERR PFX "FATAL ERROR: BCM43xx_IRQ_XMIT_ERROR\n");
  		bcmirq_handled(BCM43xx_IRQ_XMIT_ERROR);
  	}
@@ -5093,7 +5251,7 @@ index df317c1..f24ba4d 100644
  	}
  
  	if (reason & BCM43xx_IRQ_PS) {
-@@ -1791,8 +1745,6 @@ #endif /* CONFIG_BCM43XX_DEBUG*/
+@@ -1791,8 +1762,6 @@ #endif /* CONFIG_BCM43XX_DEBUG*/
  	}
  
  	/* Check the DMA reason registers for received data. */
@@ -5102,7 +5260,7 @@ index df317c1..f24ba4d 100644
  	if (dma_reason[0] & BCM43xx_DMAIRQ_RX_DONE) {
  		if (bcm43xx_using_pio(bcm))
  			bcm43xx_pio_rx(bcm43xx_current_pio(bcm)->queue0);
-@@ -1800,13 +1752,17 @@ #endif /* CONFIG_BCM43XX_DEBUG*/
+@@ -1800,13 +1769,17 @@ #endif /* CONFIG_BCM43XX_DEBUG*/
  			bcm43xx_dma_rx(bcm43xx_current_dma(bcm)->rx_ring0);
  		/* We intentionally don't set "activity" to 1, here. */
  	}
@@ -5121,7 +5279,7 @@ index df317c1..f24ba4d 100644
  	bcmirq_handled(BCM43xx_IRQ_RX);
  
  	if (reason & BCM43xx_IRQ_XMIT_STATUS) {
-@@ -1834,7 +1790,7 @@ #undef bcmirq_handled
+@@ -1834,7 +1807,7 @@ #undef bcmirq_handled
  		bcm43xx_leds_update(bcm, activity);
  	bcm43xx_interrupt_enable(bcm, bcm->irq_savedstate);
  	mmiowb();
@@ -5130,7 +5288,7 @@ index df317c1..f24ba4d 100644
  }
  
  static void pio_irq_workaround(struct bcm43xx_private *bcm,
-@@ -1863,14 +1819,18 @@ static void bcm43xx_interrupt_ack(struct
+@@ -1863,14 +1836,18 @@ static void bcm43xx_interrupt_ack(struct
  
  	bcm43xx_write32(bcm, BCM43xx_MMIO_GEN_IRQ_REASON, reason);
  
@@ -5153,7 +5311,7 @@ index df317c1..f24ba4d 100644
  }
  
  /* Interrupt handler top-half */
-@@ -1885,14 +1845,8 @@ static irqreturn_t bcm43xx_interrupt_han
+@@ -1885,14 +1862,8 @@ static irqreturn_t bcm43xx_interrupt_han
  
  	spin_lock(&bcm->irq_lock);
  
@@ -5170,7 +5328,7 @@ index df317c1..f24ba4d 100644
  
  	reason = bcm43xx_read32(bcm, BCM43xx_MMIO_GEN_IRQ_REASON);
  	if (reason == 0xffffffff) {
-@@ -1904,14 +1858,18 @@ static irqreturn_t bcm43xx_interrupt_han
+@@ -1904,14 +1875,18 @@ static irqreturn_t bcm43xx_interrupt_han
  	if (!reason)
  		goto out;
  
@@ -5197,7 +5355,7 @@ index df317c1..f24ba4d 100644
  
  	bcm43xx_interrupt_ack(bcm, reason);
  
-@@ -1930,16 +1888,18 @@ out:
+@@ -1930,16 +1905,18 @@ out:
  
  static void bcm43xx_release_firmware(struct bcm43xx_private *bcm, int force)
  {
@@ -5224,7 +5382,7 @@ index df317c1..f24ba4d 100644
  }
  
  static int bcm43xx_request_firmware(struct bcm43xx_private *bcm)
-@@ -1950,11 +1910,11 @@ static int bcm43xx_request_firmware(stru
+@@ -1950,11 +1927,11 @@ static int bcm43xx_request_firmware(stru
  	int nr;
  	char buf[22 + sizeof(modparam_fwpostfix) - 1] = { 0 };
  
@@ -5238,7 +5396,7 @@ index df317c1..f24ba4d 100644
  		if (err) {
  			printk(KERN_ERR PFX 
  			       "Error: Microcode \"%s\" not available or load failed.\n",
-@@ -1963,12 +1923,12 @@ static int bcm43xx_request_firmware(stru
+@@ -1963,12 +1940,12 @@ static int bcm43xx_request_firmware(stru
  		}
  	}
  
@@ -5253,7 +5411,7 @@ index df317c1..f24ba4d 100644
  		if (err) {
  			printk(KERN_ERR PFX
  			       "Error: PCM \"%s\" not available or load failed.\n",
-@@ -1977,7 +1937,7 @@ static int bcm43xx_request_firmware(stru
+@@ -1977,7 +1954,7 @@ static int bcm43xx_request_firmware(stru
  		}
  	}
  
@@ -5262,7 +5420,7 @@ index df317c1..f24ba4d 100644
  		if (rev == 2 || rev == 4) {
  			switch (phy->type) {
  			case BCM43xx_PHYTYPE_A:
-@@ -2008,20 +1968,20 @@ static int bcm43xx_request_firmware(stru
+@@ -2008,20 +1985,20 @@ static int bcm43xx_request_firmware(stru
  		snprintf(buf, ARRAY_SIZE(buf), "bcm43xx_initval%02d%s.fw",
  			 nr, modparam_fwpostfix);
  
@@ -5286,7 +5444,7 @@ index df317c1..f24ba4d 100644
  		if (rev >= 5) {
  			u32 sbtmstatehigh;
  
-@@ -2043,14 +2003,14 @@ static int bcm43xx_request_firmware(stru
+@@ -2043,14 +2020,14 @@ static int bcm43xx_request_firmware(stru
  			snprintf(buf, ARRAY_SIZE(buf), "bcm43xx_initval%02d%s.fw",
  				 nr, modparam_fwpostfix);
  
@@ -5303,7 +5461,7 @@ index df317c1..f24ba4d 100644
  				printk(KERN_ERR PFX "InitVals fileformat error.\n");
  				goto error;
  			}
-@@ -2070,12 +2030,13 @@ err_noinitval:
+@@ -2070,12 +2047,13 @@ err_noinitval:
  
  static void bcm43xx_upload_microcode(struct bcm43xx_private *bcm)
  {
@@ -5319,7 +5477,7 @@ index df317c1..f24ba4d 100644
  	bcm43xx_shm_control_word(bcm, BCM43xx_SHM_UCODE, 0x0000);
  	for (i = 0; i < len; i++) {
  		bcm43xx_write32(bcm, BCM43xx_MMIO_SHM_DATA,
-@@ -2084,8 +2045,8 @@ static void bcm43xx_upload_microcode(str
+@@ -2084,8 +2062,8 @@ static void bcm43xx_upload_microcode(str
  	}
  
  	/* Upload PCM data. */
@@ -5330,7 +5488,7 @@ index df317c1..f24ba4d 100644
  	bcm43xx_shm_control_word(bcm, BCM43xx_SHM_PCM, 0x01ea);
  	bcm43xx_write32(bcm, BCM43xx_MMIO_SHM_DATA, 0x00004000);
  	bcm43xx_shm_control_word(bcm, BCM43xx_SHM_PCM, 0x01eb);
-@@ -2131,15 +2092,16 @@ err_format:
+@@ -2131,15 +2109,16 @@ err_format:
  
  static int bcm43xx_upload_initvals(struct bcm43xx_private *bcm)
  {
@@ -5352,7 +5510,7 @@ index df317c1..f24ba4d 100644
  		if (err)
  			goto out;
  	}
-@@ -2156,9 +2118,7 @@ #endif
+@@ -2156,9 +2135,7 @@ #endif
  
  static int bcm43xx_initialize_irq(struct bcm43xx_private *bcm)
  {
@@ -5363,7 +5521,7 @@ index df317c1..f24ba4d 100644
  
  	bcm->irq = bcm->pci_dev->irq;
  #ifdef CONFIG_BCM947XX
-@@ -2175,32 +2135,12 @@ #ifdef CONFIG_BCM947XX
+@@ -2175,32 +2152,12 @@ #ifdef CONFIG_BCM947XX
  		}
  	}
  #endif
@@ -5399,7 +5557,7 @@ index df317c1..f24ba4d 100644
  }
  
  /* Switch to the core used to write the GPIO register.
-@@ -2298,13 +2238,17 @@ static int bcm43xx_gpio_cleanup(struct b
+@@ -2298,13 +2255,17 @@ static int bcm43xx_gpio_cleanup(struct b
  /* http://bcm-specs.sipsolutions.net/EnableMac */
  void bcm43xx_mac_enable(struct bcm43xx_private *bcm)
  {
@@ -5424,7 +5582,7 @@ index df317c1..f24ba4d 100644
  }
  
  /* http://bcm-specs.sipsolutions.net/SuspendMAC */
-@@ -2313,18 +2257,23 @@ void bcm43xx_mac_suspend(struct bcm43xx_
+@@ -2313,18 +2274,23 @@ void bcm43xx_mac_suspend(struct bcm43xx_
  	int i;
  	u32 tmp;
  
@@ -5459,7 +5617,7 @@ index df317c1..f24ba4d 100644
  }
  
  void bcm43xx_set_iwmode(struct bcm43xx_private *bcm,
-@@ -2394,7 +2343,6 @@ static void bcm43xx_chip_cleanup(struct 
+@@ -2394,7 +2360,6 @@ static void bcm43xx_chip_cleanup(struct 
  	if (!modparam_noleds)
  		bcm43xx_leds_exit(bcm);
  	bcm43xx_gpio_cleanup(bcm);
@@ -5467,7 +5625,7 @@ index df317c1..f24ba4d 100644
  	bcm43xx_release_firmware(bcm, 0);
  }
  
-@@ -2406,7 +2354,7 @@ static int bcm43xx_chip_init(struct bcm4
+@@ -2406,7 +2371,7 @@ static int bcm43xx_chip_init(struct bcm4
  	struct bcm43xx_radioinfo *radio = bcm43xx_current_radio(bcm);
  	struct bcm43xx_phyinfo *phy = bcm43xx_current_phy(bcm);
  	int err;
@@ -5476,7 +5634,7 @@ index df317c1..f24ba4d 100644
  	u32 value32;
  	u16 value16;
  
-@@ -2419,13 +2367,53 @@ static int bcm43xx_chip_init(struct bcm4
+@@ -2419,13 +2384,53 @@ static int bcm43xx_chip_init(struct bcm4
  		goto out;
  	bcm43xx_upload_microcode(bcm);
  
@@ -5533,7 +5691,7 @@ index df317c1..f24ba4d 100644
  
  	err = bcm43xx_upload_initvals(bcm);
  	if (err)
-@@ -2489,10 +2477,12 @@ static int bcm43xx_chip_init(struct bcm4
+@@ -2489,10 +2494,12 @@ static int bcm43xx_chip_init(struct bcm4
  		bcm43xx_write32(bcm, 0x018C, 0x02000000);
  	}
  	bcm43xx_write32(bcm, BCM43xx_MMIO_GEN_IRQ_REASON, 0x00004000);
@@ -5549,7 +5707,7 @@ index df317c1..f24ba4d 100644
  
  	value32 = bcm43xx_read32(bcm, BCM43xx_CIR_SBTMSTATELOW);
  	value32 |= 0x00100000;
-@@ -2509,8 +2499,6 @@ err_radio_off:
+@@ -2509,8 +2516,6 @@ err_radio_off:
  	bcm43xx_radio_turn_off(bcm);
  err_gpio_cleanup:
  	bcm43xx_gpio_cleanup(bcm);
@@ -5558,7 +5716,7 @@ index df317c1..f24ba4d 100644
  err_release_fw:
  	bcm43xx_release_firmware(bcm, 1);
  	goto out;
-@@ -2550,11 +2538,9 @@ static void bcm43xx_init_struct_phyinfo(
+@@ -2550,11 +2555,9 @@ static void bcm43xx_init_struct_phyinfo(
  {
  	/* Initialize a "phyinfo" structure. The structure is already
  	 * zeroed out.
@@ -5571,7 +5729,7 @@ index df317c1..f24ba4d 100644
  	spin_lock_init(&phy->lock);
  }
  
-@@ -2562,14 +2548,11 @@ static void bcm43xx_init_struct_radioinf
+@@ -2562,14 +2565,11 @@ static void bcm43xx_init_struct_radioinf
  {
  	/* Initialize a "radioinfo" structure. The structure is already
  	 * zeroed out.
@@ -5587,7 +5745,7 @@ index df317c1..f24ba4d 100644
  }
  
  static int bcm43xx_probe_cores(struct bcm43xx_private *bcm)
-@@ -2587,7 +2570,6 @@ static int bcm43xx_probe_cores(struct bc
+@@ -2587,7 +2587,6 @@ static int bcm43xx_probe_cores(struct bc
  				    * BCM43xx_MAX_80211_CORES);
  	memset(&bcm->core_80211_ext, 0, sizeof(struct bcm43xx_coreinfo_80211)
  					* BCM43xx_MAX_80211_CORES);
@@ -5595,7 +5753,7 @@ index df317c1..f24ba4d 100644
  	bcm->nr_80211_available = 0;
  	bcm->current_core = NULL;
  	bcm->active_80211_core = NULL;
-@@ -2757,6 +2739,7 @@ #endif
+@@ -2757,6 +2756,7 @@ #endif
  				goto out;
  			}
  			bcm->nr_80211_available++;
@@ -5603,7 +5761,7 @@ index df317c1..f24ba4d 100644
  			bcm43xx_init_struct_phyinfo(&ext_80211->phy);
  			bcm43xx_init_struct_radioinfo(&ext_80211->radio);
  			break;
-@@ -2857,7 +2840,8 @@ static void bcm43xx_wireless_core_cleanu
+@@ -2857,7 +2857,8 @@ static void bcm43xx_wireless_core_cleanu
  }
  
  /* http://bcm-specs.sipsolutions.net/80211Init */
@@ -5613,7 +5771,7 @@ index df317c1..f24ba4d 100644
  {
  	struct bcm43xx_phyinfo *phy = bcm43xx_current_phy(bcm);
  	struct bcm43xx_radioinfo *radio = bcm43xx_current_radio(bcm);
-@@ -2939,19 +2923,26 @@ static int bcm43xx_wireless_core_init(st
+@@ -2939,19 +2940,26 @@ static int bcm43xx_wireless_core_init(st
  	if (bcm->current_core->rev >= 5)
  		bcm43xx_write16(bcm, 0x043C, 0x000C);
  
@@ -5648,7 +5806,7 @@ index df317c1..f24ba4d 100644
  	bcm->current_core->initialized = 1;
  out:
  	return err;
-@@ -3066,11 +3057,6 @@ out:
+@@ -3066,11 +3074,6 @@ out:
  	return err;
  }
  
@@ -5660,7 +5818,7 @@ index df317c1..f24ba4d 100644
  static void bcm43xx_periodic_every120sec(struct bcm43xx_private *bcm)
  {
  	struct bcm43xx_phyinfo *phy = bcm43xx_current_phy(bcm);
-@@ -3178,51 +3164,51 @@ static void bcm43xx_periodic_work_handle
+@@ -3178,51 +3181,51 @@ static void bcm43xx_periodic_work_handle
  	int badness;
  
  	badness = estimate_periodic_work_badness(bcm->periodic_state);
@@ -5737,7 +5895,7 @@ index df317c1..f24ba4d 100644
  {
  	struct work_struct *work = &(bcm->periodic_work);
  
-@@ -3243,9 +3229,9 @@ static int bcm43xx_rng_read(struct hwrng
+@@ -3243,9 +3246,9 @@ static int bcm43xx_rng_read(struct hwrng
  	struct bcm43xx_private *bcm = (struct bcm43xx_private *)rng->priv;
  	unsigned long flags;
  
@@ -5749,7 +5907,7 @@ index df317c1..f24ba4d 100644
  
  	return (sizeof(u16));
  }
-@@ -3271,139 +3257,329 @@ static int bcm43xx_rng_init(struct bcm43
+@@ -3271,139 +3274,330 @@ static int bcm43xx_rng_init(struct bcm43
  	return err;
  }
  
@@ -5760,8 +5918,7 @@ index df317c1..f24ba4d 100644
 +	int ret = 0;
  	int i, err;
 +	struct bcm43xx_coreinfo *core;
- 
--	bcm43xx_lock_noirq(bcm);
++
 +	bcm43xx_set_status(bcm, BCM43xx_STAT_SHUTTINGDOWN);
 +	for (i = 0; i < bcm->nr_80211_available; i++) {
 +		core = &(bcm->core_80211[i]);
@@ -5783,7 +5940,8 @@ index df317c1..f24ba4d 100644
 +	}
 +	free_irq(bcm->irq, bcm);
 +	bcm43xx_set_status(bcm, BCM43xx_STAT_UNINIT);
-+
+ 
+-	bcm43xx_lock_noirq(bcm);
 +	return ret;
 +}
 +
@@ -6075,6 +6233,7 @@ index df317c1..f24ba4d 100644
 -	dprintk(KERN_INFO PFX "80211 cores initialized\n");
  	bcm43xx_security_init(bcm);
 -	bcm43xx_softmac_init(bcm);
++	drain_txstatus_queue(bcm);
 +	ieee80211softmac_start(bcm->net_dev);
  
 -	bcm43xx_pctl_set_clock(bcm, BCM43xx_PCTL_CLK_DYNAMIC);
@@ -6162,7 +6321,7 @@ index df317c1..f24ba4d 100644
  	goto out;
  }
  
-@@ -3647,7 +3823,8 @@ static void bcm43xx_ieee80211_set_chan(s
+@@ -3647,7 +3841,8 @@ static void bcm43xx_ieee80211_set_chan(s
  	struct bcm43xx_radioinfo *radio;
  	unsigned long flags;
  
@@ -6172,7 +6331,7 @@ index df317c1..f24ba4d 100644
  	if (bcm43xx_status(bcm) == BCM43xx_STAT_INITIALIZED) {
  		bcm43xx_mac_suspend(bcm);
  		bcm43xx_radio_selectchannel(bcm, channel, 0);
-@@ -3656,7 +3833,8 @@ static void bcm43xx_ieee80211_set_chan(s
+@@ -3656,7 +3851,8 @@ static void bcm43xx_ieee80211_set_chan(s
  		radio = bcm43xx_current_radio(bcm);
  		radio->initial_channel = channel;
  	}
@@ -6182,7 +6341,7 @@ index df317c1..f24ba4d 100644
  }
  
  /* set_security() callback in struct ieee80211_device */
-@@ -3670,7 +3848,8 @@ static void bcm43xx_ieee80211_set_securi
+@@ -3670,7 +3866,8 @@ static void bcm43xx_ieee80211_set_securi
  	
  	dprintk(KERN_INFO PFX "set security called");
  
@@ -6192,7 +6351,7 @@ index df317c1..f24ba4d 100644
  
  	for (keyidx = 0; keyidx<WEP_KEYS; keyidx++)
  		if (sec->flags & (1<<keyidx)) {
-@@ -3739,7 +3918,8 @@ static void bcm43xx_ieee80211_set_securi
+@@ -3739,7 +3936,8 @@ static void bcm43xx_ieee80211_set_securi
  		} else
  				bcm43xx_clear_keys(bcm);
  	}
@@ -6202,7 +6361,7 @@ index df317c1..f24ba4d 100644
  }
  
  /* hard_start_xmit() callback in struct ieee80211_device */
-@@ -3751,12 +3931,14 @@ static int bcm43xx_ieee80211_hard_start_
+@@ -3751,12 +3949,14 @@ static int bcm43xx_ieee80211_hard_start_
  	int err = -ENODEV;
  	unsigned long flags;
  
@@ -6220,7 +6379,7 @@ index df317c1..f24ba4d 100644
  }
  
  static struct net_device_stats * bcm43xx_net_get_stats(struct net_device *net_dev)
-@@ -3769,9 +3951,9 @@ static void bcm43xx_net_tx_timeout(struc
+@@ -3769,9 +3969,9 @@ static void bcm43xx_net_tx_timeout(struc
  	struct bcm43xx_private *bcm = bcm43xx_priv(net_dev);
  	unsigned long flags;
  
@@ -6232,7 +6391,7 @@ index df317c1..f24ba4d 100644
  }
  
  #ifdef CONFIG_NET_POLL_CONTROLLER
-@@ -3781,7 +3963,8 @@ static void bcm43xx_net_poll_controller(
+@@ -3781,7 +3981,8 @@ static void bcm43xx_net_poll_controller(
  	unsigned long flags;
  
  	local_irq_save(flags);
@@ -6242,7 +6401,7 @@ index df317c1..f24ba4d 100644
  	local_irq_restore(flags);
  }
  #endif /* CONFIG_NET_POLL_CONTROLLER */
-@@ -3799,9 +3982,10 @@ static int bcm43xx_net_stop(struct net_d
+@@ -3799,9 +4000,10 @@ static int bcm43xx_net_stop(struct net_d
  	int err;
  
  	ieee80211softmac_stop(net_dev);
@@ -6254,7 +6413,7 @@ index df317c1..f24ba4d 100644
  
  	return 0;
  }
-@@ -3818,10 +4002,12 @@ static int bcm43xx_init_private(struct b
+@@ -3818,10 +4020,12 @@ static int bcm43xx_init_private(struct b
  	bcm->softmac->set_channel = bcm43xx_ieee80211_set_chan;
  
  	bcm->irq_savedstate = BCM43xx_IRQ_INITIAL;
@@ -6267,7 +6426,7 @@ index df317c1..f24ba4d 100644
  	mutex_init(&bcm->mutex);
  	tasklet_init(&bcm->isr_tasklet,
  		     (void (*)(unsigned long))bcm43xx_interrupt_tasklet,
-@@ -3940,7 +4126,6 @@ static void __devexit bcm43xx_remove_one
+@@ -3940,7 +4144,6 @@ static void __devexit bcm43xx_remove_one
  	bcm43xx_debugfs_remove_device(bcm);
  	unregister_netdev(net_dev);
  	bcm43xx_detach_board(bcm);
@@ -6275,7 +6434,7 @@ index df317c1..f24ba4d 100644
  	free_ieee80211softmac(net_dev);
  }
  
-@@ -3950,47 +4135,31 @@ static void __devexit bcm43xx_remove_one
+@@ -3950,47 +4153,31 @@ static void __devexit bcm43xx_remove_one
  static void bcm43xx_chip_reset(void *_bcm)
  {
  	struct bcm43xx_private *bcm = _bcm;
@@ -6339,7 +6498,7 @@ index df317c1..f24ba4d 100644
  	printk(KERN_ERR PFX "Controller RESET (%s) ...\n", reason);
  	INIT_WORK(&bcm->restart_work, bcm43xx_chip_reset, bcm);
  	schedule_work(&bcm->restart_work);
-@@ -4002,21 +4171,16 @@ static int bcm43xx_suspend(struct pci_de
+@@ -4002,21 +4189,16 @@ static int bcm43xx_suspend(struct pci_de
  {
  	struct net_device *net_dev = pci_get_drvdata(pdev);
  	struct bcm43xx_private *bcm = bcm43xx_priv(net_dev);
@@ -6366,7 +6525,7 @@ index df317c1..f24ba4d 100644
  		if (unlikely(err)) {
  			dprintk(KERN_ERR PFX "Suspend failed.\n");
  			return -EAGAIN;
-@@ -4049,17 +4213,14 @@ static int bcm43xx_resume(struct pci_dev
+@@ -4049,17 +4231,14 @@ static int bcm43xx_resume(struct pci_dev
  	pci_restore_state(pdev);
  
  	bcm43xx_chipset_attach(bcm);
@@ -7207,6 +7366,22 @@ index 17e709e..60b31ac 100644
  /*
   * CardBus controllers have a legacy base address that enables them
   * to respond as i82365 pcmcia controllers.  We don't want them to
+diff --git a/drivers/pcmcia/ds.c b/drivers/pcmcia/ds.c
+index 74b3124..95d5e88 100644
+--- a/drivers/pcmcia/ds.c
++++ b/drivers/pcmcia/ds.c
+@@ -1264,6 +1264,11 @@ static void pcmcia_bus_remove_socket(str
+ 	socket->pcmcia_state.dead = 1;
+ 	pccard_register_pcmcia(socket, NULL);
+ 
++	/* unregister any unbound devices */
++	mutex_lock(&socket->skt_mutex);
++	pcmcia_card_remove(socket, NULL);
++	mutex_unlock(&socket->skt_mutex);
++
+ 	pcmcia_put_socket(socket);
+ 
+ 	return;
 diff --git a/drivers/rtc/rtc-max6902.c b/drivers/rtc/rtc-max6902.c
 index 2c97395..b38208b 100644
 --- a/drivers/rtc/rtc-max6902.c
@@ -7291,6 +7466,18 @@ index fa38a41..39ace4c 100644
  
  	.eng_timeout		= mv_eng_timeout,
  
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index 077c1c6..3031078 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -408,6 +408,7 @@ int scsi_execute_async(struct scsi_devic
+ 		goto free_req;
+ 
+ 	req->cmd_len = cmd_len;
++	memset(req->cmd, 0, BLK_MAX_CDB); /* ATAPI hates garbage after CDB */
+ 	memcpy(req->cmd, cmd, req->cmd_len);
+ 	req->sense = sioc->sense;
+ 	req->sense_len = 0;
 diff --git a/drivers/serial/serial_core.c b/drivers/serial/serial_core.c
 index 372e47f..c59dcb7 100644
 --- a/drivers/serial/serial_core.c
@@ -7827,10 +8014,147 @@ index b88147c..c76ac38 100644
  					      cifs_sb_source->mnt_cifs_flags &
  						CIFS_MOUNT_MAP_SPECIAL_CHR);
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 409ce6a..5d7c726 100644
+index 409ce6a..f75deeb 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -935,14 +935,30 @@ static void iattr_to_fattr(struct iattr 
+@@ -138,6 +138,7 @@ static int fuse_dentry_revalidate(struct
+ 		struct fuse_entry_out outarg;
+ 		struct fuse_conn *fc;
+ 		struct fuse_req *req;
++		struct fuse_req *forget_req;
+ 
+ 		/* Doesn't hurt to "reset" the validity timeout */
+ 		fuse_invalidate_entry_cache(entry);
+@@ -151,21 +152,29 @@ static int fuse_dentry_revalidate(struct
+ 		if (IS_ERR(req))
+ 			return 0;
+ 
++		forget_req = fuse_get_req(fc);
++		if (IS_ERR(forget_req)) {
++			fuse_put_request(fc, req);
++			return 0;
++		}
++
+ 		fuse_lookup_init(req, entry->d_parent->d_inode, entry, &outarg);
+ 		request_send(fc, req);
+ 		err = req->out.h.error;
++		fuse_put_request(fc, req);
+ 		/* Zero nodeid is same as -ENOENT */
+ 		if (!err && !outarg.nodeid)
+ 			err = -ENOENT;
+ 		if (!err) {
+ 			struct fuse_inode *fi = get_fuse_inode(inode);
+ 			if (outarg.nodeid != get_node_id(inode)) {
+-				fuse_send_forget(fc, req, outarg.nodeid, 1);
++				fuse_send_forget(fc, forget_req,
++						 outarg.nodeid, 1);
+ 				return 0;
+ 			}
+ 			fi->nlookup ++;
+ 		}
+-		fuse_put_request(fc, req);
++		fuse_put_request(fc, forget_req);
+ 		if (err || (outarg.attr.mode ^ inode->i_mode) & S_IFMT)
+ 			return 0;
+ 
+@@ -214,6 +223,7 @@ static struct dentry *fuse_lookup(struct
+ 	struct inode *inode = NULL;
+ 	struct fuse_conn *fc = get_fuse_conn(dir);
+ 	struct fuse_req *req;
++	struct fuse_req *forget_req;
+ 
+ 	if (entry->d_name.len > FUSE_NAME_MAX)
+ 		return ERR_PTR(-ENAMETOOLONG);
+@@ -222,9 +232,16 @@ static struct dentry *fuse_lookup(struct
+ 	if (IS_ERR(req))
+ 		return ERR_PTR(PTR_ERR(req));
+ 
++	forget_req = fuse_get_req(fc);
++	if (IS_ERR(forget_req)) {
++		fuse_put_request(fc, req);
++		return ERR_PTR(PTR_ERR(forget_req));
++	}
++
+ 	fuse_lookup_init(req, dir, entry, &outarg);
+ 	request_send(fc, req);
+ 	err = req->out.h.error;
++	fuse_put_request(fc, req);
+ 	/* Zero nodeid is same as -ENOENT, but with valid timeout */
+ 	if (!err && outarg.nodeid &&
+ 	    (invalid_nodeid(outarg.nodeid) || !valid_mode(outarg.attr.mode)))
+@@ -233,11 +250,11 @@ static struct dentry *fuse_lookup(struct
+ 		inode = fuse_iget(dir->i_sb, outarg.nodeid, outarg.generation,
+ 				  &outarg.attr);
+ 		if (!inode) {
+-			fuse_send_forget(fc, req, outarg.nodeid, 1);
++			fuse_send_forget(fc, forget_req, outarg.nodeid, 1);
+ 			return ERR_PTR(-ENOMEM);
+ 		}
+ 	}
+-	fuse_put_request(fc, req);
++	fuse_put_request(fc, forget_req);
+ 	if (err && err != -ENOENT)
+ 		return ERR_PTR(err);
+ 
+@@ -375,6 +392,13 @@ static int create_new_entry(struct fuse_
+ 	struct fuse_entry_out outarg;
+ 	struct inode *inode;
+ 	int err;
++	struct fuse_req *forget_req;
++
++	forget_req = fuse_get_req(fc);
++	if (IS_ERR(forget_req)) {
++		fuse_put_request(fc, req);
++		return PTR_ERR(forget_req);
++	}
+ 
+ 	req->in.h.nodeid = get_node_id(dir);
+ 	req->out.numargs = 1;
+@@ -382,24 +406,24 @@ static int create_new_entry(struct fuse_
+ 	req->out.args[0].value = &outarg;
+ 	request_send(fc, req);
+ 	err = req->out.h.error;
+-	if (err) {
+-		fuse_put_request(fc, req);
+-		return err;
+-	}
++	fuse_put_request(fc, req);
++	if (err)
++		goto out_put_forget_req;
++
+ 	err = -EIO;
+ 	if (invalid_nodeid(outarg.nodeid))
+-		goto out_put_request;
++		goto out_put_forget_req;
+ 
+ 	if ((outarg.attr.mode ^ mode) & S_IFMT)
+-		goto out_put_request;
++		goto out_put_forget_req;
+ 
+ 	inode = fuse_iget(dir->i_sb, outarg.nodeid, outarg.generation,
+ 			  &outarg.attr);
+ 	if (!inode) {
+-		fuse_send_forget(fc, req, outarg.nodeid, 1);
++		fuse_send_forget(fc, forget_req, outarg.nodeid, 1);
+ 		return -ENOMEM;
+ 	}
+-	fuse_put_request(fc, req);
++	fuse_put_request(fc, forget_req);
+ 
+ 	if (dir_alias(inode)) {
+ 		iput(inode);
+@@ -411,8 +435,8 @@ static int create_new_entry(struct fuse_
+ 	fuse_invalidate_attr(dir);
+ 	return 0;
+ 
+- out_put_request:
+-	fuse_put_request(fc, req);
++ out_put_forget_req:
++	fuse_put_request(fc, forget_req);
+ 	return err;
+ }
+ 
+@@ -935,14 +959,30 @@ static void iattr_to_fattr(struct iattr 
  	}
  }
  
@@ -7864,7 +8188,7 @@ index 409ce6a..5d7c726 100644
   */
  static int fuse_setattr(struct dentry *entry, struct iattr *attr)
  {
-@@ -993,12 +1009,8 @@ static int fuse_setattr(struct dentry *e
+@@ -993,12 +1033,8 @@ static int fuse_setattr(struct dentry *e
  			make_bad_inode(inode);
  			err = -EIO;
  		} else {
@@ -9979,6 +10303,19 @@ index 5b1aba6..76ff4c4 100644
 +
 +unifdef-y += ebtables.h
 +unifdef-y += ebt_802_3.h
+diff --git a/include/linux/netfilter_ipv4.h b/include/linux/netfilter_ipv4.h
+index ce02c98..5b63a23 100644
+--- a/include/linux/netfilter_ipv4.h
++++ b/include/linux/netfilter_ipv4.h
+@@ -77,7 +77,7 @@ enum nf_ip_hook_priorities {
+ #define SO_ORIGINAL_DST 80
+ 
+ #ifdef __KERNEL__
+-extern int ip_route_me_harder(struct sk_buff **pskb);
++extern int ip_route_me_harder(struct sk_buff **pskb, unsigned addr_type);
+ extern int ip_xfrm_me_harder(struct sk_buff **pskb);
+ extern unsigned int nf_ip_checksum(struct sk_buff *skb, unsigned int hook,
+ 				   unsigned int dataoff, u_int8_t protocol);
 diff --git a/include/linux/netfilter_ipv4/Kbuild b/include/linux/netfilter_ipv4/Kbuild
 index 04e4d27..591c1a8 100644
 --- a/include/linux/netfilter_ipv4/Kbuild
@@ -11051,6 +11388,28 @@ index c1b5f41..0e3f7e2 100644
  			   zone->zone_start_pfn);
  		spin_unlock_irqrestore(&zone->lock, flags);
  		seq_putc(m, '\n');
+diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
+index 1a35d34..316fa7a 100644
+--- a/net/bluetooth/hci_sock.c
++++ b/net/bluetooth/hci_sock.c
+@@ -120,10 +120,13 @@ void hci_send_to_sock(struct hci_dev *hd
+ 			if (!hci_test_bit(evt, &flt->event_mask))
+ 				continue;
+ 
+-			if (flt->opcode && ((evt == HCI_EV_CMD_COMPLETE && 
+-					flt->opcode != *(__u16 *)(skb->data + 3)) ||
+-					(evt == HCI_EV_CMD_STATUS && 
+-					flt->opcode != *(__u16 *)(skb->data + 4))))
++			if (flt->opcode &&
++			    ((evt == HCI_EV_CMD_COMPLETE &&
++			      flt->opcode !=
++			      get_unaligned((__u16 *)(skb->data + 3))) ||
++			     (evt == HCI_EV_CMD_STATUS &&
++			      flt->opcode !=
++			      get_unaligned((__u16 *)(skb->data + 4)))))
+ 				continue;
+ 		}
+ 
 diff --git a/net/bluetooth/rfcomm/tty.c b/net/bluetooth/rfcomm/tty.c
 index bd8d671..5d65ceb 100644
 --- a/net/bluetooth/rfcomm/tty.c
@@ -11065,6 +11424,28 @@ index bd8d671..5d65ceb 100644
  	/* Handle turning off CRTSCTS */
  	if ((old->c_cflag & CRTSCTS) && !(new->c_cflag & CRTSCTS)) 
  		BT_DBG("Turning off CRTSCTS unsupported");
+diff --git a/net/bridge/br_ioctl.c b/net/bridge/br_ioctl.c
+index 4e4119a..4c61a7e 100644
+--- a/net/bridge/br_ioctl.c
++++ b/net/bridge/br_ioctl.c
+@@ -58,12 +58,13 @@ static int get_fdb_entries(struct net_br
+ {
+ 	int num;
+ 	void *buf;
+-	size_t size = maxnum * sizeof(struct __fdb_entry);
++	size_t size;
+ 
+-	if (size > PAGE_SIZE) {
+-		size = PAGE_SIZE;
++	/* Clamp size to PAGE_SIZE, test maxnum to avoid overflow */
++	if (maxnum > PAGE_SIZE/sizeof(struct __fdb_entry))
+ 		maxnum = PAGE_SIZE/sizeof(struct __fdb_entry);
+-	}
++
++	size = maxnum * sizeof(struct __fdb_entry);
+ 
+ 	buf = kmalloc(size, GFP_USER);
+ 	if (!buf)
 diff --git a/net/core/dev.c b/net/core/dev.c
 index d4a1ec3..a34f7c6 100644
 --- a/net/core/dev.c
@@ -11141,6 +11522,19 @@ index 51fcfbc..e7ecdf2 100644
  			if (skb) {
  				int npages;
  				int i;
+diff --git a/net/dccp/ipv6.c b/net/dccp/ipv6.c
+index 610c722..3744c24 100644
+--- a/net/dccp/ipv6.c
++++ b/net/dccp/ipv6.c
+@@ -276,7 +276,7 @@ static void dccp_v6_err(struct sk_buff *
+ 	__u64 seq;
+ 
+ 	sk = inet6_lookup(&dccp_hashinfo, &hdr->daddr, dh->dccph_dport,
+-			  &hdr->saddr, dh->dccph_sport, skb->dev->ifindex);
++			  &hdr->saddr, dh->dccph_sport, inet6_iif(skb));
+ 
+ 	if (sk == NULL) {
+ 		ICMP6_INC_STATS_BH(__in6_dev_get(skb->dev), ICMP6_MIB_INERRORS);
 diff --git a/net/decnet/af_decnet.c b/net/decnet/af_decnet.c
 index 5486247..07d9869 100644
 --- a/net/decnet/af_decnet.c
@@ -11157,8 +11551,194 @@ index 5486247..07d9869 100644
  
  		memcpy(sa, &scp->peer, sizeof(struct sockaddr_dn));
  	} else {
+diff --git a/net/ieee80211/softmac/ieee80211softmac_io.c b/net/ieee80211/softmac/ieee80211softmac_io.c
+index 6ae5a1d..3b67d19 100644
+--- a/net/ieee80211/softmac/ieee80211softmac_io.c
++++ b/net/ieee80211/softmac/ieee80211softmac_io.c
+@@ -304,7 +304,7 @@ ieee80211softmac_auth(struct ieee80211_a
+ 		2 +		/* Auth Transaction Seq */
+ 		2 +		/* Status Code */
+ 		 /* Challenge Text IE */
+-		is_shared_response ? 0 : 1 + 1 + net->challenge_len
++		(is_shared_response ? 1 + 1 + net->challenge_len : 0)
+ 	);
+ 	if (unlikely((*pkt) == NULL))
+ 		return 0;
+diff --git a/net/ipv4/ipvs/ip_vs_core.c b/net/ipv4/ipvs/ip_vs_core.c
+index 3f47ad8..f594635 100644
+--- a/net/ipv4/ipvs/ip_vs_core.c
++++ b/net/ipv4/ipvs/ip_vs_core.c
+@@ -813,6 +813,16 @@ ip_vs_out(unsigned int hooknum, struct s
+ 	skb->nh.iph->saddr = cp->vaddr;
+ 	ip_send_check(skb->nh.iph);
+ 
++ 	/* For policy routing, packets originating from this
++ 	 * machine itself may be routed differently to packets
++ 	 * passing through.  We want this packet to be routed as
++ 	 * if it came from this machine itself.  So re-compute
++ 	 * the routing information.
++ 	 */
++ 	if (ip_route_me_harder(pskb, RTN_LOCAL) != 0)
++ 		goto drop;
++	skb = *pskb;
++
+ 	IP_VS_DBG_PKT(10, pp, skb, 0, "After SNAT");
+ 
+ 	ip_vs_out_stats(cp, skb);
+diff --git a/net/ipv4/netfilter.c b/net/ipv4/netfilter.c
+index 6a9e34b..327ba37 100644
+--- a/net/ipv4/netfilter.c
++++ b/net/ipv4/netfilter.c
+@@ -8,7 +8,7 @@ #include <net/xfrm.h>
+ #include <net/ip.h>
+ 
+ /* route_me_harder function, used by iptable_nat, iptable_mangle + ip_queue */
+-int ip_route_me_harder(struct sk_buff **pskb)
++int ip_route_me_harder(struct sk_buff **pskb, unsigned addr_type)
+ {
+ 	struct iphdr *iph = (*pskb)->nh.iph;
+ 	struct rtable *rt;
+@@ -16,10 +16,13 @@ int ip_route_me_harder(struct sk_buff **
+ 	struct dst_entry *odst;
+ 	unsigned int hh_len;
+ 
++	if (addr_type == RTN_UNSPEC)
++		addr_type = inet_addr_type(iph->saddr);
++
+ 	/* some non-standard hacks like ipt_REJECT.c:send_reset() can cause
+ 	 * packets with foreign saddr to appear on the NF_IP_LOCAL_OUT hook.
+ 	 */
+-	if (inet_addr_type(iph->saddr) == RTN_LOCAL) {
++	if (addr_type == RTN_LOCAL) {
+ 		fl.nl_u.ip4_u.daddr = iph->daddr;
+ 		fl.nl_u.ip4_u.saddr = iph->saddr;
+ 		fl.nl_u.ip4_u.tos = RT_TOS(iph->tos);
+@@ -156,7 +159,7 @@ static int nf_ip_reroute(struct sk_buff 
+ 		if (!(iph->tos == rt_info->tos
+ 		      && iph->daddr == rt_info->daddr
+ 		      && iph->saddr == rt_info->saddr))
+-			return ip_route_me_harder(pskb);
++			return ip_route_me_harder(pskb, RTN_UNSPEC);
+ 	}
+ 	return 0;
+ }
+diff --git a/net/ipv4/netfilter/arp_tables.c b/net/ipv4/netfilter/arp_tables.c
+index 8d1d7a6..8ba83e8 100644
+--- a/net/ipv4/netfilter/arp_tables.c
++++ b/net/ipv4/netfilter/arp_tables.c
+@@ -380,6 +380,13 @@ static int mark_source_chains(struct xt_
+ 			    && unconditional(&e->arp)) {
+ 				unsigned int oldpos, size;
+ 
++				if (t->verdict < -NF_MAX_VERDICT - 1) {
++					duprintf("mark_source_chains: bad "
++						"negative verdict (%i)\n",
++								t->verdict);
++					return 0;
++				}
++
+ 				/* Return: backtrack through the last
+ 				 * big jump.
+ 				 */
+@@ -409,6 +416,14 @@ static int mark_source_chains(struct xt_
+ 				if (strcmp(t->target.u.user.name,
+ 					   ARPT_STANDARD_TARGET) == 0
+ 				    && newpos >= 0) {
++					if (newpos > newinfo->size -
++						sizeof(struct arpt_entry)) {
++						duprintf("mark_source_chains: "
++							"bad verdict (%i)\n",
++								newpos);
++						return 0;
++					}
++
+ 					/* This a jump; chase it. */
+ 					duprintf("Jump rule %u -> %u\n",
+ 						 pos, newpos);
+@@ -431,8 +446,6 @@ static int mark_source_chains(struct xt_
+ static inline int standard_check(const struct arpt_entry_target *t,
+ 				 unsigned int max_offset)
+ {
+-	struct arpt_standard_target *targ = (void *)t;
+-
+ 	/* Check standard info. */
+ 	if (t->u.target_size
+ 	    != ARPT_ALIGN(sizeof(struct arpt_standard_target))) {
+@@ -442,18 +455,6 @@ static inline int standard_check(const s
+ 		return 0;
+ 	}
+ 
+-	if (targ->verdict >= 0
+-	    && targ->verdict > max_offset - sizeof(struct arpt_entry)) {
+-		duprintf("arpt_standard_check: bad verdict (%i)\n",
+-			 targ->verdict);
+-		return 0;
+-	}
+-
+-	if (targ->verdict < -NF_MAX_VERDICT - 1) {
+-		duprintf("arpt_standard_check: bad negative verdict (%i)\n",
+-			 targ->verdict);
+-		return 0;
+-	}
+ 	return 1;
+ }
+ 
+@@ -471,7 +472,13 @@ static inline int check_entry(struct arp
+ 		return -EINVAL;
+ 	}
+ 
++	if (e->target_offset + sizeof(struct arpt_entry_target) > e->next_offset)
++		return -EINVAL;
++
+ 	t = arpt_get_target(e);
++	if (e->target_offset + t->u.target_size > e->next_offset)
++		return -EINVAL;
++
+ 	target = try_then_request_module(xt_find_target(NF_ARP, t->u.user.name,
+ 							t->u.user.revision),
+ 					 "arpt_%s", t->u.user.name);
+@@ -641,7 +648,7 @@ static int translate_table(const char *n
+ 
+ 	if (ret != 0) {
+ 		ARPT_ENTRY_ITERATE(entry0, newinfo->size,
+-				   cleanup_entry, &i);
++				cleanup_entry, &i);
+ 		return ret;
+ 	}
+ 
+@@ -1204,6 +1211,8 @@ err1:
+ static void __exit arp_tables_fini(void)
+ {
+ 	nf_unregister_sockopt(&arpt_sockopts);
++	xt_unregister_target(&arpt_error_target);
++	xt_unregister_target(&arpt_standard_target);
+ 	xt_proto_fini(NF_ARP);
+ }
+ 
+diff --git a/net/ipv4/netfilter/ip_conntrack_helper_h323.c b/net/ipv4/netfilter/ip_conntrack_helper_h323.c
+index 9a39e29..afe7039 100644
+--- a/net/ipv4/netfilter/ip_conntrack_helper_h323.c
++++ b/net/ipv4/netfilter/ip_conntrack_helper_h323.c
+@@ -1417,7 +1417,7 @@ static int process_rcf(struct sk_buff **
+ 		DEBUGP
+ 		    ("ip_ct_ras: set RAS connection timeout to %u seconds\n",
+ 		     info->timeout);
+-		ip_ct_refresh_acct(ct, ctinfo, NULL, info->timeout * HZ);
++		ip_ct_refresh(ct, *pskb, info->timeout * HZ);
+ 
+ 		/* Set expect timeout */
+ 		read_lock_bh(&ip_conntrack_lock);
+@@ -1465,7 +1465,7 @@ static int process_urq(struct sk_buff **
+ 	info->sig_port[!dir] = 0;
+ 
+ 	/* Give it 30 seconds for UCF or URJ */
+-	ip_ct_refresh_acct(ct, ctinfo, NULL, 30 * HZ);
++	ip_ct_refresh(ct, *pskb, 30 * HZ);
+ 
+ 	return 0;
+ }
 diff --git a/net/ipv4/netfilter/ip_nat_standalone.c b/net/ipv4/netfilter/ip_nat_standalone.c
-index 17de077..6db485f 100644
+index 17de077..c508544 100644
 --- a/net/ipv4/netfilter/ip_nat_standalone.c
 +++ b/net/ipv4/netfilter/ip_nat_standalone.c
 @@ -110,12 +110,17 @@ ip_nat_fn(unsigned int hooknum,
@@ -11191,6 +11771,291 @@ index 17de077..6db485f 100644
  	switch (ctinfo) {
  	case IP_CT_RELATED:
  	case IP_CT_RELATED+IP_CT_IS_REPLY:
+@@ -274,7 +275,8 @@ #ifdef CONFIG_XFRM
+ 		       ct->tuplehash[!dir].tuple.src.u.all
+ #endif
+ 		    )
+-			return ip_route_me_harder(pskb) == 0 ? ret : NF_DROP;
++			if (ip_route_me_harder(pskb, RTN_UNSPEC))
++				ret = NF_DROP;
+ 	}
+ 	return ret;
+ }
+diff --git a/net/ipv4/netfilter/ip_tables.c b/net/ipv4/netfilter/ip_tables.c
+index 048514f..e964436 100644
+--- a/net/ipv4/netfilter/ip_tables.c
++++ b/net/ipv4/netfilter/ip_tables.c
+@@ -404,6 +404,13 @@ mark_source_chains(struct xt_table_info 
+ 			    && unconditional(&e->ip)) {
+ 				unsigned int oldpos, size;
+ 
++				if (t->verdict < -NF_MAX_VERDICT - 1) {
++					duprintf("mark_source_chains: bad "
++						"negative verdict (%i)\n",
++								t->verdict);
++					return 0;
++				}
++
+ 				/* Return: backtrack through the last
+ 				   big jump. */
+ 				do {
+@@ -441,6 +448,13 @@ #endif
+ 				if (strcmp(t->target.u.user.name,
+ 					   IPT_STANDARD_TARGET) == 0
+ 				    && newpos >= 0) {
++					if (newpos > newinfo->size -
++						sizeof(struct ipt_entry)) {
++						duprintf("mark_source_chains: "
++							"bad verdict (%i)\n",
++								newpos);
++						return 0;
++					}
+ 					/* This a jump; chase it. */
+ 					duprintf("Jump rule %u -> %u\n",
+ 						 pos, newpos);
+@@ -474,27 +488,6 @@ cleanup_match(struct ipt_entry_match *m,
+ }
+ 
+ static inline int
+-standard_check(const struct ipt_entry_target *t,
+-	       unsigned int max_offset)
+-{
+-	struct ipt_standard_target *targ = (void *)t;
+-
+-	/* Check standard info. */
+-	if (targ->verdict >= 0
+-	    && targ->verdict > max_offset - sizeof(struct ipt_entry)) {
+-		duprintf("ipt_standard_check: bad verdict (%i)\n",
+-			 targ->verdict);
+-		return 0;
+-	}
+-	if (targ->verdict < -NF_MAX_VERDICT - 1) {
+-		duprintf("ipt_standard_check: bad negative verdict (%i)\n",
+-			 targ->verdict);
+-		return 0;
+-	}
+-	return 1;
+-}
+-
+-static inline int
+ check_match(struct ipt_entry_match *m,
+ 	    const char *name,
+ 	    const struct ipt_ip *ip,
+@@ -552,12 +545,18 @@ check_entry(struct ipt_entry *e, const c
+ 		return -EINVAL;
+ 	}
+ 
++	if (e->target_offset + sizeof(struct ipt_entry_target) > e->next_offset)
++		return -EINVAL;
++
+ 	j = 0;
+ 	ret = IPT_MATCH_ITERATE(e, check_match, name, &e->ip, e->comefrom, &j);
+ 	if (ret != 0)
+ 		goto cleanup_matches;
+ 
+ 	t = ipt_get_target(e);
++	ret = -EINVAL;
++	if (e->target_offset + t->u.target_size > e->next_offset)
++			goto cleanup_matches;
+ 	target = try_then_request_module(xt_find_target(AF_INET,
+ 						     t->u.user.name,
+ 						     t->u.user.revision),
+@@ -575,12 +574,7 @@ check_entry(struct ipt_entry *e, const c
+ 	if (ret)
+ 		goto err;
+ 
+-	if (t->u.kernel.target == &ipt_standard_target) {
+-		if (!standard_check(t, size)) {
+-			ret = -EINVAL;
+-			goto cleanup_matches;
+-		}
+-	} else if (t->u.kernel.target->checkentry
++	if (t->u.kernel.target->checkentry
+ 		   && !t->u.kernel.target->checkentry(name, e, target, t->data,
+ 						      t->u.target_size
+ 						      - sizeof(*t),
+@@ -730,7 +724,7 @@ translate_table(const char *name,
+ 
+ 	if (ret != 0) {
+ 		IPT_ENTRY_ITERATE(entry0, newinfo->size,
+-				  cleanup_entry, &i);
++				cleanup_entry, &i);
+ 		return ret;
+ 	}
+ 
+@@ -1531,15 +1525,22 @@ check_compat_entry_size_and_hooks(struct
+ 		return -EINVAL;
+ 	}
+ 
++	if (e->target_offset + sizeof(struct compat_xt_entry_target) >
++								e->next_offset)
++		return -EINVAL;
++
+ 	off = 0;
+ 	entry_offset = (void *)e - (void *)base;
+ 	j = 0;
+ 	ret = IPT_MATCH_ITERATE(e, compat_check_calc_match, name, &e->ip,
+ 			e->comefrom, &off, &j);
+ 	if (ret != 0)
+-		goto out;
++		goto cleanup_matches;
+ 
+ 	t = ipt_get_target(e);
++	ret = -EINVAL;
++	if (e->target_offset + t->u.target_size > e->next_offset)
++			goto cleanup_matches;
+ 	target = try_then_request_module(xt_find_target(AF_INET,
+ 						     t->u.user.name,
+ 						     t->u.user.revision),
+@@ -1547,7 +1548,7 @@ check_compat_entry_size_and_hooks(struct
+ 	if (IS_ERR(target) || !target) {
+ 		duprintf("check_entry: `%s' not found\n", t->u.user.name);
+ 		ret = target ? PTR_ERR(target) : -ENOENT;
+-		goto out;
++		goto cleanup_matches;
+ 	}
+ 	t->u.kernel.target = target;
+ 
+@@ -1574,7 +1575,10 @@ check_compat_entry_size_and_hooks(struct
+ 
+ 	(*i)++;
+ 	return 0;
++
+ out:
++	module_put(t->u.kernel.target->me);
++cleanup_matches:
+ 	IPT_MATCH_ITERATE(e, cleanup_match, &j);
+ 	return ret;
+ }
+@@ -1597,18 +1601,16 @@ static inline int compat_copy_match_from
+ 	ret = xt_check_match(match, AF_INET, dm->u.match_size - sizeof(*dm),
+ 			     name, hookmask, ip->proto,
+ 			     ip->invflags & IPT_INV_PROTO);
+-	if (ret)
+-		return ret;
+ 
+-	if (m->u.kernel.match->checkentry
++	if (!ret && m->u.kernel.match->checkentry
+ 	    && !m->u.kernel.match->checkentry(name, ip, match, dm->data,
+ 					      dm->u.match_size - sizeof(*dm),
+ 					      hookmask)) {
+ 		duprintf("ip_tables: check failed for `%s'.\n",
+ 			 m->u.kernel.match->name);
+-		return -EINVAL;
++		ret = -EINVAL;
+ 	}
+-	return 0;
++	return ret;
+ }
+ 
+ static int compat_copy_entry_from_user(struct ipt_entry *e, void **dstptr,
+@@ -1630,7 +1632,7 @@ static int compat_copy_entry_from_user(s
+ 	ret = IPT_MATCH_ITERATE(e, compat_copy_match_from_user, dstptr, size,
+ 			name, &de->ip, de->comefrom);
+ 	if (ret)
+-		goto out;
++		goto err;
+ 	de->target_offset = e->target_offset - (origsize - *size);
+ 	t = ipt_get_target(e);
+ 	target = t->u.kernel.target;
+@@ -1653,22 +1655,18 @@ static int compat_copy_entry_from_user(s
+ 			      name, e->comefrom, e->ip.proto,
+ 			      e->ip.invflags & IPT_INV_PROTO);
+ 	if (ret)
+-		goto out;
++		goto err;
+ 
+-	ret = -EINVAL;
+-	if (t->u.kernel.target == &ipt_standard_target) {
+-		if (!standard_check(t, *size))
+-			goto out;
+-	} else if (t->u.kernel.target->checkentry
++	if (t->u.kernel.target->checkentry
+ 		   && !t->u.kernel.target->checkentry(name, de, target,
+ 				t->data, t->u.target_size - sizeof(*t),
+ 				de->comefrom)) {
+ 		duprintf("ip_tables: compat: check failed for `%s'.\n",
+ 			 t->u.kernel.target->name);
+-		goto out;
++		ret = -EINVAL;
++		goto err;
+ 	}
+-	ret = 0;
+-out:
++ err:
+ 	return ret;
+ }
+ 
+@@ -1682,7 +1680,7 @@ translate_compat_table(const char *name,
+ 		unsigned int *hook_entries,
+ 		unsigned int *underflows)
+ {
+-	unsigned int i;
++	unsigned int i, j;
+ 	struct xt_table_info *newinfo, *info;
+ 	void *pos, *entry0, *entry1;
+ 	unsigned int size;
+@@ -1700,21 +1698,21 @@ translate_compat_table(const char *name,
+ 	}
+ 
+ 	duprintf("translate_compat_table: size %u\n", info->size);
+-	i = 0;
++	j = 0;
+ 	xt_compat_lock(AF_INET);
+ 	/* Walk through entries, checking offsets. */
+ 	ret = IPT_ENTRY_ITERATE(entry0, total_size,
+ 				check_compat_entry_size_and_hooks,
+ 				info, &size, entry0,
+ 				entry0 + total_size,
+-				hook_entries, underflows, &i, name);
++				hook_entries, underflows, &j, name);
+ 	if (ret != 0)
+ 		goto out_unlock;
+ 
+ 	ret = -EINVAL;
+-	if (i != number) {
++	if (j != number) {
+ 		duprintf("translate_compat_table: %u not %u entries\n",
+-			 i, number);
++			 j, number);
+ 		goto out_unlock;
+ 	}
+ 
+@@ -1773,8 +1771,10 @@ translate_compat_table(const char *name,
+ free_newinfo:
+ 	xt_free_table_info(newinfo);
+ out:
++	IPT_ENTRY_ITERATE(entry0, total_size, cleanup_entry, &j);
+ 	return ret;
+ out_unlock:
++	compat_flush_offsets();
+ 	xt_compat_unlock(AF_INET);
+ 	goto out;
+ }
+@@ -1994,6 +1994,9 @@ compat_do_ipt_get_ctl(struct sock *sk, i
+ {
+ 	int ret;
+ 
++	if (!capable(CAP_NET_ADMIN))
++		return -EPERM;
++
+ 	switch (cmd) {
+ 	case IPT_SO_GET_INFO:
+ 		ret = get_info(user, len, 1);
+diff --git a/net/ipv4/netfilter/iptable_mangle.c b/net/ipv4/netfilter/iptable_mangle.c
+index 4e7998b..f7b8906 100644
+--- a/net/ipv4/netfilter/iptable_mangle.c
++++ b/net/ipv4/netfilter/iptable_mangle.c
+@@ -157,7 +157,8 @@ #ifdef CONFIG_IP_ROUTE_FWMARK
+ 		|| (*pskb)->nfmark != nfmark
+ #endif
+ 		|| (*pskb)->nh.iph->tos != tos))
+-		return ip_route_me_harder(pskb) == 0 ? ret : NF_DROP;
++		if (ip_route_me_harder(pskb, RTN_UNSPEC))
++			ret = NF_DROP;
+ 
+ 	return ret;
+ }
 diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
 index 934396b..0a4ed27 100644
 --- a/net/ipv4/tcp.c
@@ -11302,6 +12167,48 @@ index 159fa3f..020f3e1 100644
  
  		if (icsk->icsk_ca_ops->pkts_acked)
  			icsk->icsk_ca_ops->pkts_acked(sk, pkts_acked);
+diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
+index f136cec..87b7fe5 100644
+--- a/net/ipv4/udp.c
++++ b/net/ipv4/udp.c
+@@ -892,23 +892,32 @@ #ifndef CONFIG_XFRM
+ 	return 1; 
+ #else
+ 	struct udp_sock *up = udp_sk(sk);
+-  	struct udphdr *uh = skb->h.uh;
++  	struct udphdr *uh;
+ 	struct iphdr *iph;
+ 	int iphlen, len;
+   
+-	__u8 *udpdata = (__u8 *)uh + sizeof(struct udphdr);
+-	__u32 *udpdata32 = (__u32 *)udpdata;
++	__u8 *udpdata;
++	__u32 *udpdata32;
+ 	__u16 encap_type = up->encap_type;
+ 
+ 	/* if we're overly short, let UDP handle it */
+-	if (udpdata > skb->tail)
++	len = skb->len - sizeof(struct udphdr);
++	if (len <= 0)
+ 		return 1;
+ 
+ 	/* if this is not encapsulated socket, then just return now */
+ 	if (!encap_type)
+ 		return 1;
+ 
+-	len = skb->tail - udpdata;
++	/* If this is a paged skb, make sure we pull up
++	 * whatever data we need to look at. */
++	if (!pskb_may_pull(skb, sizeof(struct udphdr) + min(len, 8)))
++		return 1;
++
++	/* Now we can get the pointers */
++	uh = skb->h.uh;
++	udpdata = (__u8 *)uh + sizeof(struct udphdr);
++	udpdata32 = (__u32 *)udpdata;
+ 
+ 	switch (encap_type) {
+ 	default:
 diff --git a/net/ipv6/ip6_flowlabel.c b/net/ipv6/ip6_flowlabel.c
 index 1d672b0..062e526 100644
 --- a/net/ipv6/ip6_flowlabel.c
@@ -11329,6 +12236,118 @@ index a5eaaf6..1c50e6a 100644
  	if (unlikely(skb_shinfo(skb)->gso_type &
  		     ~(SKB_GSO_UDP |
  		       SKB_GSO_DODGY |
+diff --git a/net/ipv6/netfilter/ip6_tables.c b/net/ipv6/netfilter/ip6_tables.c
+index c9d6b23..751548a 100644
+--- a/net/ipv6/netfilter/ip6_tables.c
++++ b/net/ipv6/netfilter/ip6_tables.c
+@@ -444,6 +444,13 @@ mark_source_chains(struct xt_table_info 
+ 			    && unconditional(&e->ipv6)) {
+ 				unsigned int oldpos, size;
+ 
++				if (t->verdict < -NF_MAX_VERDICT - 1) {
++					duprintf("mark_source_chains: bad "
++						"negative verdict (%i)\n",
++								t->verdict);
++					return 0;
++				}
++
+ 				/* Return: backtrack through the last
+ 				   big jump. */
+ 				do {
+@@ -481,6 +488,13 @@ #endif
+ 				if (strcmp(t->target.u.user.name,
+ 					   IP6T_STANDARD_TARGET) == 0
+ 				    && newpos >= 0) {
++					if (newpos > newinfo->size -
++						sizeof(struct ip6t_entry)) {
++						duprintf("mark_source_chains: "
++							"bad verdict (%i)\n",
++								newpos);
++						return 0;
++					}
+ 					/* This a jump; chase it. */
+ 					duprintf("Jump rule %u -> %u\n",
+ 						 pos, newpos);
+@@ -514,27 +528,6 @@ cleanup_match(struct ip6t_entry_match *m
+ }
+ 
+ static inline int
+-standard_check(const struct ip6t_entry_target *t,
+-	       unsigned int max_offset)
+-{
+-	struct ip6t_standard_target *targ = (void *)t;
+-
+-	/* Check standard info. */
+-	if (targ->verdict >= 0
+-	    && targ->verdict > max_offset - sizeof(struct ip6t_entry)) {
+-		duprintf("ip6t_standard_check: bad verdict (%i)\n",
+-			 targ->verdict);
+-		return 0;
+-	}
+-	if (targ->verdict < -NF_MAX_VERDICT - 1) {
+-		duprintf("ip6t_standard_check: bad negative verdict (%i)\n",
+-			 targ->verdict);
+-		return 0;
+-	}
+-	return 1;
+-}
+-
+-static inline int
+ check_match(struct ip6t_entry_match *m,
+ 	    const char *name,
+ 	    const struct ip6t_ip6 *ipv6,
+@@ -592,12 +585,19 @@ check_entry(struct ip6t_entry *e, const 
+ 		return -EINVAL;
+ 	}
+ 
++	if (e->target_offset + sizeof(struct ip6t_entry_target) >
++								e->next_offset)
++		return -EINVAL;
++
+ 	j = 0;
+ 	ret = IP6T_MATCH_ITERATE(e, check_match, name, &e->ipv6, e->comefrom, &j);
+ 	if (ret != 0)
+ 		goto cleanup_matches;
+ 
+ 	t = ip6t_get_target(e);
++	ret = -EINVAL;
++	if (e->target_offset + t->u.target_size > e->next_offset)
++			goto cleanup_matches;
+ 	target = try_then_request_module(xt_find_target(AF_INET6,
+ 							t->u.user.name,
+ 							t->u.user.revision),
+@@ -615,12 +615,7 @@ check_entry(struct ip6t_entry *e, const 
+ 	if (ret)
+ 		goto err;
+ 
+-	if (t->u.kernel.target == &ip6t_standard_target) {
+-		if (!standard_check(t, size)) {
+-			ret = -EINVAL;
+-			goto cleanup_matches;
+-		}
+-	} else if (t->u.kernel.target->checkentry
++	if (t->u.kernel.target->checkentry
+ 		   && !t->u.kernel.target->checkentry(name, e, target, t->data,
+ 						      t->u.target_size
+ 						      - sizeof(*t),
+@@ -770,7 +765,7 @@ translate_table(const char *name,
+ 
+ 	if (ret != 0) {
+ 		IP6T_ENTRY_ITERATE(entry0, newinfo->size,
+-				  cleanup_entry, &i);
++				   cleanup_entry, &i);
+ 		return ret;
+ 	}
+ 
+@@ -780,7 +775,7 @@ translate_table(const char *name,
+ 			memcpy(newinfo->entries[i], entry0, newinfo->size);
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ /* Gets counters. */
 diff --git a/net/ipv6/tcp_ipv6.c b/net/ipv6/tcp_ipv6.c
 index 802a1a6..72c074c 100644
 --- a/net/ipv6/tcp_ipv6.c
@@ -11342,6 +12361,68 @@ index 802a1a6..72c074c 100644
  	ret = 0;
  	if (!sock_owned_by_user(sk)) {
  #ifdef CONFIG_NET_DMA
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index 3d54f24..7ecfe82 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -314,14 +314,13 @@ static void udpv6_err(struct sk_buff *sk
+ {
+ 	struct ipv6_pinfo *np;
+ 	struct ipv6hdr *hdr = (struct ipv6hdr*)skb->data;
+-	struct net_device *dev = skb->dev;
+ 	struct in6_addr *saddr = &hdr->saddr;
+ 	struct in6_addr *daddr = &hdr->daddr;
+ 	struct udphdr *uh = (struct udphdr*)(skb->data+offset);
+ 	struct sock *sk;
+ 	int err;
+ 
+-	sk = udp_v6_lookup(daddr, uh->dest, saddr, uh->source, dev->ifindex);
++	sk = udp_v6_lookup(daddr, uh->dest, saddr, uh->source, inet6_iif(skb));
+    
+ 	if (sk == NULL)
+ 		return;
+@@ -415,7 +414,7 @@ static void udpv6_mcast_deliver(struct u
+ 
+ 	read_lock(&udp_hash_lock);
+ 	sk = sk_head(&udp_hash[ntohs(uh->dest) & (UDP_HTABLE_SIZE - 1)]);
+-	dif = skb->dev->ifindex;
++	dif = inet6_iif(skb);
+ 	sk = udp_v6_mcast_next(sk, uh->dest, daddr, uh->source, saddr, dif);
+ 	if (!sk) {
+ 		kfree_skb(skb);
+@@ -496,7 +495,7 @@ static int udpv6_rcv(struct sk_buff **ps
+ 	 * check socket cache ... must talk to Alan about his plans
+ 	 * for sock caches... i'll skip this for now.
+ 	 */
+-	sk = udp_v6_lookup(saddr, uh->source, daddr, uh->dest, dev->ifindex);
++	sk = udp_v6_lookup(saddr, uh->source, daddr, uh->dest, inet6_iif(skb));
+ 
+ 	if (sk == NULL) {
+ 		if (!xfrm6_policy_check(NULL, XFRM_POLICY_IN, skb))
+diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
+index a9894dd..e1c27b7 100644
+--- a/net/netfilter/Kconfig
++++ b/net/netfilter/Kconfig
+@@ -197,7 +197,9 @@ config NETFILTER_XT_TARGET_SECMARK
+ 
+ config NETFILTER_XT_TARGET_CONNSECMARK
+ 	tristate '"CONNSECMARK" target support'
+-	depends on NETFILTER_XTABLES && (NF_CONNTRACK_SECMARK || IP_NF_CONNTRACK_SECMARK)
++	depends on NETFILTER_XTABLES && \
++		   ((NF_CONNTRACK && NF_CONNTRACK_SECMARK) || \
++		    (IP_NF_CONNTRACK && IP_NF_CONNTRACK_SECMARK))
+ 	help
+ 	  The CONNSECMARK target copies security markings from packets
+ 	  to connections, and restores security markings from connections
+@@ -342,7 +344,7 @@ config NETFILTER_XT_MATCH_MULTIPORT
+ 
+ config NETFILTER_XT_MATCH_PHYSDEV
+ 	tristate '"physdev" match support'
+-	depends on NETFILTER_XTABLES && BRIDGE_NETFILTER
++	depends on NETFILTER_XTABLES && BRIDGE && BRIDGE_NETFILTER
+ 	help
+ 	  Physdev packet matching matches against the physical bridge ports
+ 	  the IP packet arrived on or will leave by.
 diff --git a/net/sched/cls_api.c b/net/sched/cls_api.c
 index 7e14f14..37a1840 100644
 --- a/net/sched/cls_api.c
