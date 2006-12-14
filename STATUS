@@ -11,7 +11,7 @@
 	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3944/1
 
 05-mtdpart-redboot-partition-truncate.patch
-	We need to send this upstream, but where?
+	We need to send this upstream, but where? -- linux-mtd mailing list
 
 07-remove-avila-ixdp425-setup.patch [l-a-k]
 	[g2] needs to send this upstream
@@ -20,7 +20,7 @@
 	[g2] needs to send this upstream
 
 10-bridging-fix.patch
-	Who added this, and why are we carrying it?
+	Who added this, and why are we carrying it? -- [g2] & don't know
 
 11-mtdpart-redboot-config-byteswap.patch
 	Is this really required in our target devices?
@@ -85,7 +85,7 @@
 86-nas100d-rtc-fixup.patch
 87-dsmg600-rtc-fixup.patch
 	Dunno whether upstream will accept this.
-	We may need to carry them ourselves.
+	We may need to carry them ourselves until i2c update 2.6.21/22
 
 95-pata-ixp4xx.patch
 	??
