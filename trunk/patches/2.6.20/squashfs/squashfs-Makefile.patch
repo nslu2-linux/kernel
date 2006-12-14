@@ -1,0 +1,14 @@
+Signed-off-by: Leon Woestenberg <leonw@mailcan.com>
+
+Index: linux-2.6.20-rc1/fs/Makefile
+===================================================================
+--- linux-2.6.20-rc1.orig/fs/Makefile	2006-12-14 15:03:39.190017750 +0000
++++ linux-2.6.20-rc1/fs/Makefile	2006-12-14 15:04:06.753513500 +0000
+@@ -68,6 +68,7 @@
+ obj-$(CONFIG_JBD2)		+= jbd2/
+ obj-$(CONFIG_EXT2_FS)		+= ext2/
+ obj-$(CONFIG_CRAMFS)		+= cramfs/
++obj-$(CONFIG_SQUASHFS)		+= squashfs/
+ obj-$(CONFIG_RAMFS)		+= ramfs/
+ obj-$(CONFIG_HUGETLBFS)		+= hugetlbfs/
+ obj-$(CONFIG_CODA_FS)		+= coda/

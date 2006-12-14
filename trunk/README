@@ -1,14 +1,8 @@
-This branch is here to allow initial testing of the IXP_NPE driver.
+2.6.18.3 + IXP_NPE 0.2.1 builds
+Should fully support NSLU2, NAS-100D, FSG-3
 
-STATUS
-2.6.18.1 + IXP_NPE 0.2.1 builds
-IXP_NPE driver functions in SlugOS 4.0 HEAD BE & LE on NSLU2.
-SquashFS LZMA support compiled as module (PoC) but untested
-Should fully support NSLU2, NAS-100D
+2.6.19.1 + IXP_NPE 0.2.1 builds
+Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
 
-2.6.19-rc2 + IXP_NPE 0.2.1 builds (some cleanups required)
-Currently untested
-Should fully support NSLU2, NAS-100D, DSM-G600
-
-ISSUES
-DSM-G600 & Loft patches need some refreshing on 2.6.19
+2.6.20-rc1 + IXP_NPE 0.2.1 broken
+IXP_NPE driver needs patching due to workstruct api changes
