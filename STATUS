@@ -97,6 +97,3 @@
 99-avila-mtd-microcode.patch
 99-avila-loft-mac-platform.patch
 	??
-
-99-sata_via-add-pata.patch
-	Waiting for feedback from Jeff Garzik.

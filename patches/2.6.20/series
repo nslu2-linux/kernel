@@ -14,11 +14,11 @@ squashfs/squashfs-Makefile.patch
 08-avila-loft-setup.patch
 10-bridging-fix.patch
 11-mtdpart-redboot-config-byteswap.patch
-#30-ixp4xx-0.2.1-driver.patch
-#31-ixp4xx-2.6.19-cleanup.patch
-#32-ixp4xx-net-driver-fix-qmgr.patch
-#33-ixp4xx-net-driver-improve-mac-handling.patch
-#39-ixp4xx-net-driver-mtd-load-fw.patch
+##30-ixp4xx-0.2.1-driver.patch
+##31-ixp4xx-2.6.19-cleanup.patch
+##32-ixp4xx-net-driver-fix-qmgr.patch
+##33-ixp4xx-net-driver-improve-mac-handling.patch
+##39-ixp4xx-net-driver-mtd-load-fw.patch
 40-avila-setup-mac.patch
 41-nslu2-setup-mac.patch
 42-nas100d-setup-mac.patch
@@ -41,7 +41,6 @@ squashfs/squashfs-Makefile.patch
 88-dsmg600-dflt-cmdline.patch
 96-fsg3-support.patch
 97-avila-setup-pata.patch
-98-fsg3-sata-support.patch
-##99-sata_via-add-pata.patch
+98-sata_via-add-pata-cleanly.patch
 99-avila-mtd-microcode.patch
 99-avila-loft-mac-platform.patch
