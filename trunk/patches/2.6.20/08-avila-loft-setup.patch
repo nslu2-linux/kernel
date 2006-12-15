@@ -4,7 +4,7 @@ that a driver for the Avila CF card slot is available. It also adds
 support for a minor variant on the Avila board known as the Loft,
 which has a different number of maximum PCI devices.
 
-Signed-off-by: Michael-Luke Jones <mlj28 <at> cam.ac.uk>
+Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
 
 Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================

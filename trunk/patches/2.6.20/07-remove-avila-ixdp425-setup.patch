@@ -2,7 +2,7 @@ This patch removes references to the Gateworks Avila Network
 Platform in the ixdp425 setup code. Avila setup should occur
 separately now that a CF ATA device driver is available.
 
-Signed-off-by: Michael-Luke Jones <mlj28 <at> cam.ac.uk>
+Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
 
 Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/ixdp425-pci.c
 ===================================================================
