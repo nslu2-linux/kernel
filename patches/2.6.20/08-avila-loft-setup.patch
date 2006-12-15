@@ -6,11 +6,11 @@ which has a different number of maximum PCI devices.
 
 Signed-off-by: Michael-Luke Jones <mlj28 <at> cam.ac.uk>
 
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
+Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/Kconfig
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
-@@ -17,7 +17,7 @@ config MACH_NSLU2
+--- linux-2.6.20-rc1.orig/arch/arm/mach-ixp4xx/Kconfig	2006-12-15 10:10:12.939923462 +0000
++++ linux-2.6.20-rc1/arch/arm/mach-ixp4xx/Kconfig	2006-12-15 10:10:32.793164215 +0000
+@@ -17,7 +17,7 @@
  	  NSLU2 NAS device. For more information on this platform,
  	  see http://www.nslu2-linux.org
  
@@ -19,7 +19,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
  	bool "Avila"
  	select PCI
  	help
-@@ -25,6 +25,14 @@ config ARCH_AVILA
+@@ -25,6 +25,14 @@
  	  Avila Network Platform. For more information on this platform,
  	  see <file:Documentation/arm/IXP4xx>.
  
@@ -29,12 +29,12 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
 +    help
 +	  Say 'Y' here if you want your kernel to support the Giant
 +	  Shoulder Inc Loft board (a minor variation on the standard
-+	  Gateworks Avila Network Platform).  
++	  Gateworks Avila Network Platform).
 +
  config ARCH_ADI_COYOTE
  	bool "Coyote"
  	select PCI
-@@ -86,7 +94,7 @@ config MACH_NAS100D
+@@ -86,7 +94,7 @@
  #
  config	ARCH_IXDP4XX
  	bool
@@ -43,11 +43,11 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
  	default y
  
  #
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/Makefile
+Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/Makefile
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/Makefile
-@@ -6,6 +6,7 @@ obj-pci-y	:=
+--- linux-2.6.20-rc1.orig/arch/arm/mach-ixp4xx/Makefile	2006-12-15 10:10:12.951924213 +0000
++++ linux-2.6.20-rc1/arch/arm/mach-ixp4xx/Makefile	2006-12-15 10:10:32.793164215 +0000
+@@ -6,6 +6,7 @@
  obj-pci-n	:=
  
  obj-pci-$(CONFIG_ARCH_IXDP4XX)		+= ixdp425-pci.o
@@ -55,7 +55,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/Makefile
  obj-pci-$(CONFIG_MACH_IXDPG425)		+= ixdpg425-pci.o
  obj-pci-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-pci.o
  obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx5715-pci.o
-@@ -15,6 +16,7 @@ obj-pci-$(CONFIG_MACH_NAS100D)		+= nas10
+@@ -15,6 +16,7 @@
  obj-y	+= common.o
  
  obj-$(CONFIG_ARCH_IXDP4XX)	+= ixdp425-setup.o
@@ -63,13 +63,13 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/Makefile
  obj-$(CONFIG_MACH_IXDPG425)	+= coyote-setup.o
  obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-setup.o
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/avila-pci.c
+Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/avila-pci.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/avila-pci.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/arch/arm/mach-ixp4xx/avila-pci.c	2006-12-15 10:10:32.793164215 +0000
 @@ -0,0 +1,78 @@
 +/*
-+ * arch/arm/mach-ixp4xx/avila-pci.c 
++ * arch/arm/mach-ixp4xx/avila-pci.c
 + *
 + * Gateworks Avila board-level PCI initialization
 + *
@@ -146,15 +146,15 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/avila-pci.c
 +
 +subsys_initcall(avila_pci_init);
 +
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
+Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/avila-setup.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/arch/arm/mach-ixp4xx/avila-setup.c	2006-12-15 10:10:32.793164215 +0000
 @@ -0,0 +1,152 @@
 +/*
 + * arch/arm/mach-ixp4xx/avila-setup.c
 + *
-+ * Gateworks Avila board-setup 
++ * Gateworks Avila board-setup
 + *
 + * Author: Michael-Luke Jones <mlj28@cam.ac.uk>
 + *
@@ -303,10 +303,10 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
 +MACHINE_END
 +#endif
 +
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/avila.h
+Index: linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/avila.h
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/avila.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/avila.h	2006-12-15 10:10:32.793164215 +0000
 @@ -0,0 +1,39 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/avila.h
@@ -318,10 +318,10 @@ Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/avila.h
 + * Based on ixdp425.h
 + * Author: Deepak Saxena <dsaxena@plexity.net>
 + *
-+ * Copyright 2004 (c) MontaVista, Software, Inc. 
-+ * 
-+ * This file is licensed under  the terms of the GNU General Public 
-+ * License version 2. This program is licensed "as is" without any 
++ * Copyright 2004 (c) MontaVista, Software, Inc.
++ *
++ * This file is licensed under  the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
 + * warranty of any kind, whether express or implied.
 + */
 +
@@ -347,11 +347,11 @@ Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/avila.h
 +#define AVILA_PCI_INTD_PIN	8
 +
 +
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/hardware.h
+Index: linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/hardware.h
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/hardware.h
-@@ -42,6 +42,7 @@ extern unsigned int processor_id;
+--- linux-2.6.20-rc1.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-12-15 10:10:13.007927713 +0000
++++ linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/hardware.h	2006-12-15 10:10:32.801164712 +0000
+@@ -42,6 +42,7 @@
  
  /* Platform specific details */
  #include "ixdp425.h"
@@ -359,10 +359,10 @@ Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/hardware.h
  #include "coyote.h"
  #include "prpmc1100.h"
  #include "nslu2.h"
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/irqs.h
+Index: linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/irqs.h
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/irqs.h
+--- linux-2.6.20-rc1.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-12-15 10:10:13.027928962 +0000
++++ linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/irqs.h	2006-12-15 10:10:32.801164712 +0000
 @@ -79,6 +79,15 @@
  #define	IRQ_IXDP425_PCI_INTD	IRQ_IXP4XX_GPIO8
  

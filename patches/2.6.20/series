@@ -12,6 +12,7 @@ squashfs/squashfs-Makefile.patch
 05-mtdpart-redboot-partition-truncate.patch
 07-remove-avila-ixdp425-setup.patch
 08-avila-loft-setup.patch
+09-avila-setup-pata.patch
 10-bridging-fix.patch
 11-mtdpart-redboot-config-byteswap.patch
 ##30-ixp4xx-0.2.1-driver.patch
@@ -40,7 +41,6 @@ squashfs/squashfs-Makefile.patch
 87-dsmg600-rtc-fixup.patch
 88-dsmg600-dflt-cmdline.patch
 96-fsg3-support.patch
-97-avila-setup-pata.patch
 98-sata_via-add-pata-cleanly.patch
 ##99-avila-mtd-microcode.patch
 ##99-avila-loft-mac-platform.patch
