@@ -2,7 +2,7 @@ This patch add the necessary structures to avila-setup.c to enable the
 onboard ATA CF slot. Support was added for this device in 2.6.20-rc1.
 
 Signed-off-by: 
-Signed-off-by: Michael-Luke Jones <mlj28 <at> cam.ac.uk>
+Acked-by: Michael-Luke Jones <mlj28 <at> cam.ac.uk>
 
 Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/avila-setup.c
 ===================================================================
