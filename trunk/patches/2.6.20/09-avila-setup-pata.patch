@@ -1,13 +1,12 @@
-This patch add the necessary structures to avila-setup.c to enable the
-onboard ATA CF slot. Support was added for this device in 2.6.20-rc1.
+This patch adds the platform resources required to support the
+ixp4xx-pata-cf libata driver on Avila Gateworks boards.
 
-Signed-off-by: 
-Acked-by: Michael-Luke Jones <mlj28 <at> cam.ac.uk>
+Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
 
 Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/avila-setup.c
 ===================================================================
---- linux-2.6.20-rc1.orig/arch/arm/mach-ixp4xx/avila-setup.c	2006-12-15 10:10:32.793164215 +0000
-+++ linux-2.6.20-rc1/arch/arm/mach-ixp4xx/avila-setup.c	2006-12-15 10:15:01.749972967 +0000
+--- linux-2.6.20-rc1.orig/arch/arm/mach-ixp4xx/avila-setup.c	2006-12-15 16:49:46.657326213 +0000
++++ linux-2.6.20-rc1/arch/arm/mach-ixp4xx/avila-setup.c	2006-12-15 16:49:46.685327962 +0000
 @@ -104,6 +104,34 @@
  	.resource		= avila_uart_resources
  };

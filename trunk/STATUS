@@ -20,7 +20,7 @@
 	[g2] needs to send this upstream
 
 09-avila-setup-pata.patch [l-a-k]
-	dwery needs to sign this, then [g2] needs to send it upstream
+	[g2] needs to send this upstream
 
 10-bridging-fix.patch
 	Who added this, and why are we carrying it? -- [g2] & don't know
