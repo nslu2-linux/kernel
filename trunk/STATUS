@@ -19,6 +19,9 @@
 08-avila-loft-setup.patch [l-a-k]
 	[g2] needs to send this upstream
 
+09-avila-setup-pata.patch [l-a-k]
+	dwery needs to sign this, then [g2] needs to send it upstream
+
 10-bridging-fix.patch
 	Who added this, and why are we carrying it? -- [g2] & don't know
 
@@ -93,7 +96,6 @@
 96-fsg3-support.patch
 	Untested, should allow all functionality except PATA & wireless.
 
-97-avila-setup-pata.patch
 99-avila-mtd-microcode.patch
 99-avila-loft-mac-platform.patch
 	??
