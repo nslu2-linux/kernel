@@ -15,6 +15,7 @@ squashfs/squashfs-Makefile.patch
 09-avila-setup-pata.patch
 10-bridging-fix.patch
 11-mtdpart-redboot-config-byteswap.patch
+15-fix-compile-warnings.patch
 ##30-ixp4xx-0.2.1-driver.patch
 ##31-ixp4xx-2.6.19-cleanup.patch
 ##32-ixp4xx-net-driver-fix-qmgr.patch

@@ -28,6 +28,10 @@
 11-mtdpart-redboot-config-byteswap.patch
 	Is this really required in our target devices?
 
+15-fix-compile-warnings.patch
+	Fixes the compile warnings on EVERY file in 2.6.20-rc1 kernel
+	Should be removed for 2.6.20-rc2 and beyond
+
 30-ixp4xx-0.2.1-driver.patch
 	driver being actively developed. Developer will probably push
 	upstream when properly tested.
