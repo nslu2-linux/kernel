@@ -1,17 +1,17 @@
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/nslu2-setup.c
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/nslu2-setup.c
-@@ -20,6 +20,7 @@
+--- linux-2.6.20-rc1.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-11-29 21:57:37.000000000 +0000
++++ linux-2.6.20-rc1/arch/arm/mach-ixp4xx/nslu2-setup.c	2006-12-16 12:12:31.737658964 +0000
+@@ -19,6 +19,7 @@
+ #include <linux/serial_8250.h>
  #include <linux/leds.h>
- #include <linux/mtd/mtd.h>
  
 +#include <asm/setup.h>
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
-@@ -239,11 +240,41 @@ static void __init nslu2_init(void)
- 	register_mtd_user(&nslu2_flash_notifier);
+@@ -178,11 +179,41 @@
+ 	platform_add_devices(nslu2_devices, ARRAY_SIZE(nslu2_devices));
  }
  
 +static char nslu2_rtc_probe[] __initdata = "rtc-x1205.probe=0,0x6f ";

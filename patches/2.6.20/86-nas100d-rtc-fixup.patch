@@ -1,17 +1,17 @@
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/nas100d-setup.c
+Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/nas100d-setup.c
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/nas100d-setup.c
-@@ -18,6 +18,7 @@
+--- linux-2.6.20-rc1.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-11-29 21:57:37.000000000 +0000
++++ linux-2.6.20-rc1/arch/arm/mach-ixp4xx/nas100d-setup.c	2006-12-16 12:12:31.769676963 +0000
+@@ -17,6 +17,7 @@
+ #include <linux/serial_8250.h>
  #include <linux/leds.h>
- #include <linux/mtd/mtd.h>
  
 +#include <asm/setup.h>
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
-@@ -225,11 +226,42 @@ static void __init nas100d_init(void)
- 	register_mtd_user(&nas100d_flash_notifier);
+@@ -164,11 +165,42 @@
+ 	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
  }
  
 +static char nas100d_rtc_probe[] __initdata = "rtc-pcf8563.probe=0,0x51 ";
