@@ -15,16 +15,17 @@
 	Upstream in the linux-mtd tree :)
 
 07-remove-avila-ixdp425-setup.patch [l-a-k]
-	[g2] needs to send this upstream
+	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4031/1
 
 08-avila-loft-setup.patch [l-a-k]
-	[g2] needs to send this upstream
+	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4033/1
 
 09-avila-setup-pata.patch [l-a-k]
-	[g2] needs to send this upstream
+	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4032/1
 
 10-bridging-fix.patch
 	Who added this, and why are we carrying it? -- [g2] & don't know
+	Temporarily disabled in 2.6.20-rc1
 
 11-mtdpart-redboot-config-byteswap.patch
 	Is this really required in our target devices?
@@ -86,7 +87,7 @@
 	Someone with a DSMG600 to push upstream this cycle.
 	If so, needs mac setup to be separated out into another patch
 
-##78-velocity-BE.patch
+78-velocity-BE.patch
 	??
 
 80-kexec-arm-r3.patch
