@@ -25,6 +25,7 @@ SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
 APEX_REVISION = 1.4.7
 APEX_TARGET = nslu2
+APEX_CONFIG = slugos
 
 MADWIFIVER = r1503-20060415
 
@@ -59,7 +60,7 @@ kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REV
 madwifi: lib/modules/${REVISION}/net/ath_hal.ko
 modules: modules-${REVISION}.tar.gz
 patched: linux-${REVISION}/.config 
-apex: apex-${APEX_TARGET}-${DEBIAN_ARCH}-${APEX_REVISION}.bin
+apex: apex-${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}-${APEX_REVISION}.bin
 
 # ifeq (${APEX_TARGET},fsg3)
 # 	sed -i -e '/CONFIG_MACH_FSG/d' apex-${APEX_REVISION}/.config
@@ -67,7 +68,7 @@ apex: apex-${APEX_TARGET}-${DEBIAN_ARCH}-${APEX_REVISION}.bin
 # 	echo 'CONFIG_ARCH_NUMBER=1091' >> apex-${APEX_REVISION}/.config
 # endif
 
-apex-${APEX_TARGET}-${DEBIAN_ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/.config
+apex-${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/.config
 	( cd apex-${APEX_REVISION} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm all )
 ifeq (${ENDIAN},b)
@@ -76,12 +77,12 @@ else
 	devio '<<'apex-${APEX_REVISION}/apex.bin >$@ 'xp $$,4'
 endif
 
-apex-${APEX_REVISION}/.config: apex-${APEX_REVISION}/src/mach-ixp42x/slugos-${APEX_TARGET}-${DEBIAN_ARCH}_config
+apex-${APEX_REVISION}/.config: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}_config
 	( cd apex-${APEX_REVISION} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm clean ; \
-	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm slugos-${APEX_TARGET}-${DEBIAN_ARCH}_config )
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm ${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}_config )
 
-apex-${APEX_REVISION}/src/mach-ixp42x/slugos-${APEX_TARGET}-${DEBIAN_ARCH}_config: \
+apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}_config: \
 		downloads/apex-${APEX_REVISION}.tar.gz
 	[ -e apex-${APEX_REVISION} ] || \
 	( tar zxf downloads/apex-${APEX_REVISION}.tar.gz ; \
