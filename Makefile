@@ -18,8 +18,7 @@ ENDIAN = l
 #ENDIAN = b
 MAJORVER = 2.6
 BASEVER  = 2.6.19
-MINORVER = 2.6.19
-PATCHVER = 2.6.19
+PATCHVER = 2.6.20
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
@@ -56,10 +55,10 @@ endif
 
 all: kernel modules apex
 
-kernel: vmlinuz-nslu2-${REVISION} vmlinuz-nas100d-${REVISION} vmlinuz-loft-${REVISION} vmlinuz-dsmg600-${REVISION} vmlinuz-fsg3-${REVISION}
-madwifi: lib/modules/${REVISION}/net/ath_hal.ko
-modules: modules-${REVISION}.tar.gz
-patched: linux-${REVISION}/.config 
+kernel: vmlinuz-nslu2-${SNAPSHOT} vmlinuz-nas100d-${SNAPSHOT} vmlinuz-loft-${SNAPSHOT} vmlinuz-dsmg600-${SNAPSHOT} vmlinuz-fsg3-${SNAPSHOT}
+madwifi: lib/modules/${SNAPSHOT}/net/ath_hal.ko
+modules: modules-${SNAPSHOT}.tar.gz
+patched: linux-${SNAPSHOT}/.config 
 apex: apex-${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}-${APEX_REVISION}.bin
 
 # ifeq (${APEX_TARGET},fsg3)
@@ -96,26 +95,26 @@ downloads/apex-${APEX_REVISION}.tar.gz :
 	( mkdir -p downloads ; cd downloads ; \
 	  wget ${APEX_SOURCE} )
 
-usr: usr-${REVISION}.tar.gz
+usr: usr-${SNAPSHOT}.tar.gz
 
-usr-${REVISION}.tar.gz: vmlinuz-${REVISION} \
+usr-${SNAPSHOT}.tar.gz: vmlinuz-${SNAPSHOT} \
 	 usr/local/bin/wlanconfig
-	tar zcf usr-${REVISION}.tar.gz usr/local
+	tar zcf usr-${SNAPSHOT}.tar.gz usr/local
 
 # Add the following depedency if you want madwifi built.
-#	 lib/modules/${REVISION}/net/ath_hal.ko
+#	 lib/modules/${SNAPSHOT}/net/ath_hal.ko
 
-modules-${REVISION}.tar.gz: vmlinuz-${REVISION}
-	tar zcf modules-${REVISION}.tar.gz lib/modules/${REVISION}
+modules-${SNAPSHOT}.tar.gz: vmlinuz-${SNAPSHOT}
+	tar zcf modules-${SNAPSHOT}.tar.gz lib/modules/${SNAPSHOT}
 
-lib/modules/${REVISION}/net/ath_hal.ko usr/local/bin/wlanconfig: \
+lib/modules/${SNAPSHOT}/net/ath_hal.ko usr/local/bin/wlanconfig: \
 		madwifi-ng/Makefile \
-		vmlinuz-${REVISION}
-	rm -rf lib/modules/${REVISION}/net
+		vmlinuz-${SNAPSHOT}
+	rm -rf lib/modules/${SNAPSHOT}/net
 	( cd madwifi-ng ; \
 	  ${MAKE} CROSS_COMPILE=${CROSS_COMPILE} TOOLPATH=${CROSS_COMPILE} \
 		TARGET=xscale-${ENDIAN}e-elf \
-		KERNELPATH=`cd .. ; pwd`/linux-${REVISION} \
+		KERNELPATH=`cd .. ; pwd`/linux-${SNAPSHOT} \
 		DESTDIR=`cd .. ; pwd` \
 		all install )
 
@@ -136,7 +135,7 @@ downloads/madwifi-ng-${MADWIFIVER}.tar.gz :
 	( mkdir -p downloads ; cd downloads ; \
 	  wget ${MADWIFI_SOURCE} )
 
-vmlinuz-loft-${REVISION}: vmlinuz-${REVISION}
+vmlinuz-loft-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c03,4' 'wb 0xe3811051,4' \
@@ -150,7 +149,7 @@ else
 		'xp $$,4'
 endif
 
-vmlinuz-nas100d-${REVISION}: vmlinuz-${REVISION}
+vmlinuz-nas100d-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
 ifeq (${ENDIAN},b)
 	cp $< $@
 else
@@ -161,7 +160,7 @@ else
 		'xp $$,4'
 endif
 
-vmlinuz-nslu2-${REVISION}: vmlinuz-${REVISION}
+vmlinuz-nslu2-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c02,4' 'wb 0xe3811055,4' \
@@ -175,7 +174,7 @@ else
 		'xp $$,4'
 endif
 
-vmlinuz-dsmg600-${REVISION}: vmlinuz-${REVISION}
+vmlinuz-dsmg600-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c03,4' 'wb 0xe38110c4,4' \
@@ -190,7 +189,7 @@ else
 endif
 
 
-vmlinuz-fsg3-${REVISION}: vmlinuz-${REVISION}
+vmlinuz-fsg3-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c04,4' 'wb 0xe3811043,4' \
@@ -205,73 +204,62 @@ else
 endif
 
 
-vmlinuz-${REVISION}: linux-${REVISION}/.config
-	( cd linux-${REVISION} ; \
+vmlinuz-${SNAPSHOT}: linux-${SNAPSHOT}/.config
+	( cd linux-${SNAPSHOT} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm bzImage modules )
-	( cd linux-${REVISION} ; \
+	( cd linux-${SNAPSHOT} ; \
 	  INSTALL_MOD_PATH=".." ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm modules_install )
-	rm -f lib/modules/${REVISION}/build lib/modules/${REVISION}/source
-	cp linux-${REVISION}/arch/arm/boot/zImage vmlinuz-${REVISION}
+	rm -f lib/modules/${SNAPSHOT}/build lib/modules/${SNAPSHOT}/source
+	cp linux-${SNAPSHOT}/arch/arm/boot/zImage vmlinuz-${SNAPSHOT}
 
-menuconfig: linux-${REVISION}/.config
-	${MAKE} -C linux-${REVISION} ARCH=arm CROSS_COMPILE=${CROSS_COMPILE} menuconfig
+menuconfig: linux-${SNAPSHOT}/.config
+	${MAKE} -C linux-${SNAPSHOT} ARCH=arm CROSS_COMPILE=${CROSS_COMPILE} menuconfig
 
-ifeq (${REVISION},${BASEVER})
-linux-${REVISION}/.config: \
+ifeq (${SNAPSHOT},${BASEVER})
+linux-${SNAPSHOT}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
-	  cd linux-${REVISION} ; \
-	  ln -s ../patches/${PATCHVER} patches ; \
-	  quilt push -a )
-else
-ifeq (${REVISION},${MINORVER})
-linux-${REVISION}/.config: \
-		downloads/linux-${MINORVER}.tar.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
-	[ -e linux-${REVISION} ] || \
-	( tar xjf downloads/linux-${MINORVER}.tar.bz2 ; \
-	  cd linux-${REVISION} ; \
+	  cd linux-${SNAPSHOT} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
 	  quilt push -a )
 else
 ifeq (${REVISION},${SNAPSHOT})
-linux-${REVISION}/.config: \
+linux-${SNAPSHOT}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
 		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
-	  mv linux-${BASEVER} linux-${REVISION} ; \
+	  mv linux-${BASEVER} linux-${SNAPSHOT} ; \
 	  bzcat downloads/patch-${REVISION}.bz2 | \
-	  patch -d linux-${REVISION} -p1 ; \
-	  cd linux-${REVISION} ; \
+	  patch -d linux-${SNAPSHOT} -p1 ; \
+	  cd linux-${SNAPSHOT} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
 	  quilt push -a )
 else
-linux-${REVISION}/.config: \
+linux-${SNAPSHOT}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
 		downloads/patch-${SNAPSHOT}.bz2 \
 		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${REVISION} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
-	  mv linux-${BASEVER} linux-${REVISION} ; \
+	  mv linux-${BASEVER} linux-${SNAPSHOT} ; \
 	  bzcat downloads/patch-${REVISION}.bz2 downloads/patch-${SNAPSHOT}.bz2 | \
-	  patch -d linux-${REVISION} -p1 ; \
-	  cd linux-${REVISION} ; \
+	  patch -d linux-${SNAPSHOT} -p1 ; \
+	  cd linux-${SNAPSHOT} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
 	  quilt push -a )
 endif
 endif
-endif
 ifeq (${ENDIAN},b)
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/CONFIG_CPU_BIG_ENDIAN=y/' \
-		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${REVISION}/.config
+		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${SNAPSHOT}/.config
 else
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/\# CONFIG_CPU_BIG_ENDIAN is not set/' \
-		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${REVISION}/.config
+		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${SNAPSHOT}/.config
 endif
 
 downloads/linux-${BASEVER}.tar.bz2 :
