@@ -1,3 +1,23 @@
+Redboot supports storing the FIS directory and the RedBoot
+configuration information in the same block of flash memory.  This is
+not the most common RedBoot configuration, but it is used on
+commercially available boards supported by the kernel.
+
+A recent patch to mtd/redboot.c (http://lkml.org/lkml/2006/3/20/410)
+which corrected the skipping of deleted table entries has exposed the
+latent problem of the kernel redboot parser running off the end of the
+FIS directory and interpreting the RedBoot configuration information
+as table entries.
+
+This patch terminates the table parsing when the first truly empty
+entry is found (table entry deletion only clears the first byte of the
+name, so two cleared bytes in a row indicates the end of the table),
+thereby supporting the combined redboot FIS directory and RedBoot
+configuration information flash layout scenario.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
 Index: linux-2.6.19/drivers/mtd/redboot.c
 ===================================================================
 --- linux-2.6.19.orig/drivers/mtd/redboot.c
