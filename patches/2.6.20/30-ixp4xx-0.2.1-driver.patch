@@ -1,7 +1,7 @@
-Index: linux-2.6.19/Documentation/networking/ixp4xx/IxNpeMicrocode.h
+Index: linux-2.6.20-rc1/Documentation/networking/ixp4xx/IxNpeMicrocode.h
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/Documentation/networking/ixp4xx/IxNpeMicrocode.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/Documentation/networking/ixp4xx/IxNpeMicrocode.h	2006-12-17 16:33:45.098160962 +0000
 @@ -0,0 +1,149 @@
 +/*
 + * IxNpeMicrocode.h - Headerfile for compiling the Intel microcode C file
@@ -152,10 +152,10 @@ Index: linux-2.6.19/Documentation/networking/ixp4xx/IxNpeMicrocode.h
 +	close(fd);
 +	return 0;
 +}
-Index: linux-2.6.19/Documentation/networking/ixp4xx/README
+Index: linux-2.6.20-rc1/Documentation/networking/ixp4xx/README
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/Documentation/networking/ixp4xx/README
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/Documentation/networking/ixp4xx/README	2006-12-17 16:33:45.098160962 +0000
 @@ -0,0 +1,72 @@
 +Informations about the Networking Driver using the IXP4XX CPU internal NPEs
 +and Queue manager.
@@ -229,10 +229,10 @@ Index: linux-2.6.19/Documentation/networking/ixp4xx/README
 +   to grab the microcode from a binary image like the RedBoot bootloader.
 +   (big-endian images only)
 +
-Index: linux-2.6.19/Documentation/networking/ixp4xx/mc_grab.c
+Index: linux-2.6.20-rc1/Documentation/networking/ixp4xx/mc_grab.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/Documentation/networking/ixp4xx/mc_grab.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/Documentation/networking/ixp4xx/mc_grab.c	2006-12-17 16:33:45.106161462 +0000
 @@ -0,0 +1,97 @@
 +/*
 + * mc_grab.c  - grabs IXP4XX microcode from a binary datastream
@@ -331,10 +331,10 @@ Index: linux-2.6.19/Documentation/networking/ixp4xx/mc_grab.c
 +		fprintf(stderr, "Error reading  Microcode\n");
 +	return ret;
 +}
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/common.c
+Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/common.c
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/common.c
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/common.c
+--- linux-2.6.20-rc1.orig/arch/arm/mach-ixp4xx/common.c	2006-12-17 16:25:20.956083214 +0000
++++ linux-2.6.20-rc1/arch/arm/mach-ixp4xx/common.c	2006-12-17 16:33:45.106161462 +0000
 @@ -13,6 +13,7 @@
   * warranty of any kind, whether express or implied.
   */
@@ -343,7 +343,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/common.c
  #include <linux/kernel.h>
  #include <linux/mm.h>
  #include <linux/init.h>
-@@ -262,7 +263,7 @@ static irqreturn_t ixp4xx_timer_interrup
+@@ -265,7 +266,7 @@
  
  static struct irqaction ixp4xx_timer_irq = {
  	.name		= "IXP4xx Timer Tick",
@@ -352,7 +352,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/common.c
  	.handler	= ixp4xx_timer_interrupt,
  };
  
-@@ -314,6 +315,97 @@ static struct platform_device *ixp46x_de
+@@ -357,6 +358,97 @@
  	&ixp46x_i2c_controller
  };
  
@@ -450,7 +450,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/common.c
  unsigned long ixp4xx_exp_bus_size;
  EXPORT_SYMBOL(ixp4xx_exp_bus_size);
  
-@@ -333,7 +425,10 @@ void __init ixp4xx_sys_init(void)
+@@ -378,7 +470,10 @@
  				break;
  			}
  		}
@@ -461,11 +461,11 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/common.c
  
  	printk("IXP4xx: Using %luMiB expansion bus window size\n",
  			ixp4xx_exp_bus_size >> 20);
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/ixdp425-setup.c
+Index: linux-2.6.20-rc1/arch/arm/mach-ixp4xx/ixdp425-setup.c
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/ixdp425-setup.c
-@@ -101,10 +101,57 @@ static struct platform_device ixdp425_ua
+--- linux-2.6.20-rc1.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-12-17 16:25:20.976094463 +0000
++++ linux-2.6.20-rc1/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-12-17 16:33:45.106161462 +0000
+@@ -101,10 +101,57 @@
  	.resource		= ixdp425_uart_resources
  };
  
@@ -524,11 +524,11 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/ixdp425-setup.c
  };
  
  static void __init ixdp425_init(void)
-Index: linux-2.6.19/drivers/net/Kconfig
+Index: linux-2.6.20-rc1/drivers/net/Kconfig
 ===================================================================
---- linux-2.6.19.orig/drivers/net/Kconfig
-+++ linux-2.6.19/drivers/net/Kconfig
-@@ -190,6 +190,8 @@ config MII
+--- linux-2.6.20-rc1.orig/drivers/net/Kconfig	2006-12-17 16:25:20.992103463 +0000
++++ linux-2.6.20-rc1/drivers/net/Kconfig	2006-12-17 16:33:45.106161462 +0000
+@@ -201,6 +201,8 @@
  
  source "drivers/net/arm/Kconfig"
  
@@ -537,11 +537,11 @@ Index: linux-2.6.19/drivers/net/Kconfig
  config MACE
  	tristate "MACE (Power Mac ethernet) support"
  	depends on NET_ETHERNET && PPC_PMAC && PPC32
-Index: linux-2.6.19/drivers/net/Makefile
+Index: linux-2.6.20-rc1/drivers/net/Makefile
 ===================================================================
---- linux-2.6.19.orig/drivers/net/Makefile
-+++ linux-2.6.19/drivers/net/Makefile
-@@ -209,6 +209,7 @@ obj-$(CONFIG_HAMRADIO) += hamradio/
+--- linux-2.6.20-rc1.orig/drivers/net/Makefile	2006-12-17 16:25:21.008112463 +0000
++++ linux-2.6.20-rc1/drivers/net/Makefile	2006-12-17 16:33:45.110161713 +0000
+@@ -211,6 +211,7 @@
  obj-$(CONFIG_IRDA) += irda/
  obj-$(CONFIG_ETRAX_ETHERNET) += cris/
  obj-$(CONFIG_ENP2611_MSF_NET) += ixp2000/
@@ -549,10 +549,10 @@ Index: linux-2.6.19/drivers/net/Makefile
  
  obj-$(CONFIG_NETCONSOLE) += netconsole.o
  
-Index: linux-2.6.19/drivers/net/ixp4xx/Kconfig
+Index: linux-2.6.20-rc1/drivers/net/ixp4xx/Kconfig
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/drivers/net/ixp4xx/Kconfig
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/drivers/net/ixp4xx/Kconfig	2006-12-17 16:33:45.110161713 +0000
 @@ -0,0 +1,40 @@
 +config IXP4XX_QMGR
 +	tristate "IXP4xx Queue Manager support"
@@ -594,10 +594,10 @@ Index: linux-2.6.19/drivers/net/ixp4xx/Kconfig
 +	  The IXP4XX MAC driver supports the MACs on the IXP4XX CPUs.
 +	  There are 2 on ixp425 and up to 5 on ixdp465.
 +	  You can either use this OR the Intel Access Library (IAL)
-Index: linux-2.6.19/drivers/net/ixp4xx/Makefile
+Index: linux-2.6.20-rc1/drivers/net/ixp4xx/Makefile
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/drivers/net/ixp4xx/Makefile
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/drivers/net/ixp4xx/Makefile	2006-12-17 16:33:45.110161713 +0000
 @@ -0,0 +1,6 @@
 +obj-$(CONFIG_IXP4XX_QMGR) += ixp4xx_qmgr.o
 +obj-$(CONFIG_IXP4XX_NPE) += ixp4xx_npe.o
@@ -605,10 +605,10 @@ Index: linux-2.6.19/drivers/net/ixp4xx/Makefile
 +
 +ixp4xx_npe-objs := ucode_dl.o npe_mh.o
 +ixp4xx_mac-objs := mac_driver.o qmgr_eth.o phy.o
-Index: linux-2.6.19/drivers/net/ixp4xx/ixp4xx_qmgr.c
+Index: linux-2.6.20-rc1/drivers/net/ixp4xx/ixp4xx_qmgr.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/drivers/net/ixp4xx/ixp4xx_qmgr.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/drivers/net/ixp4xx/ixp4xx_qmgr.c	2006-12-17 16:33:45.110161713 +0000
 @@ -0,0 +1,390 @@
 +/*
 + * qmgr.c - reimplementation of the queue configuration interface.
@@ -1000,10 +1000,10 @@ Index: linux-2.6.19/drivers/net/ixp4xx/ixp4xx_qmgr.c
 +EXPORT_SYMBOL(queue_set_irq_src);
 +EXPORT_SYMBOL(queue_set_watermarks);
 +EXPORT_SYMBOL(queue_len);
-Index: linux-2.6.19/drivers/net/ixp4xx/mac.h
+Index: linux-2.6.20-rc1/drivers/net/ixp4xx/mac.h
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/drivers/net/ixp4xx/mac.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/drivers/net/ixp4xx/mac.h	2006-12-17 16:33:45.110161713 +0000
 @@ -0,0 +1,221 @@
 +/*
 + * Copyright (C) 2002-2006 Christian Hohnstaedt <chohnstaedt@innominate.com>
@@ -1226,10 +1226,10 @@ Index: linux-2.6.19/drivers/net/ixp4xx/mac.h
 +	MAC_UNI_ADDR +3, MAC_UNI_ADDR +4, MAC_UNI_ADDR +5, \
 +	MAC_CORE_CNTRL \
 +}
-Index: linux-2.6.19/drivers/net/ixp4xx/mac_driver.c
+Index: linux-2.6.20-rc1/drivers/net/ixp4xx/mac_driver.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/drivers/net/ixp4xx/mac_driver.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/drivers/net/ixp4xx/mac_driver.c	2006-12-17 16:33:45.114161963 +0000
 @@ -0,0 +1,578 @@
 +/*
 + * mac_driver.c - provide a network interface for each MAC
@@ -1809,10 +1809,10 @@ Index: linux-2.6.19/drivers/net/ixp4xx/mac_driver.c
 +MODULE_LICENSE("GPL");
 +MODULE_AUTHOR("Christian Hohnstaedt <chohnstaedt@innominate.com>");
 +
-Index: linux-2.6.19/drivers/net/ixp4xx/npe_mh.c
+Index: linux-2.6.20-rc1/drivers/net/ixp4xx/npe_mh.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/drivers/net/ixp4xx/npe_mh.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/drivers/net/ixp4xx/npe_mh.c	2006-12-17 16:33:45.114161963 +0000
 @@ -0,0 +1,137 @@
 +/*
 + * npe_mh.c - NPE message handler.
@@ -1951,10 +1951,10 @@ Index: linux-2.6.19/drivers/net/ixp4xx/npe_mh.c
 +EXPORT_SYMBOL(npe_mh_disable_firewall);
 +EXPORT_SYMBOL(npe_mh_set_rxqid);
 +EXPORT_SYMBOL(npe_mh_npe_loopback_mode);
-Index: linux-2.6.19/drivers/net/ixp4xx/phy.c
+Index: linux-2.6.20-rc1/drivers/net/ixp4xx/phy.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/drivers/net/ixp4xx/phy.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/drivers/net/ixp4xx/phy.c	2006-12-17 16:33:45.114161963 +0000
 @@ -0,0 +1,113 @@
 +/*
 + * phy.c - MDIO functions and mii initialisation
@@ -2069,10 +2069,10 @@ Index: linux-2.6.19/drivers/net/ixp4xx/phy.c
 +	mac->mii.mdio_write = mdio_write_register;
 +}
 +
-Index: linux-2.6.19/drivers/net/ixp4xx/qmgr_eth.c
+Index: linux-2.6.20-rc1/drivers/net/ixp4xx/qmgr_eth.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/drivers/net/ixp4xx/qmgr_eth.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/drivers/net/ixp4xx/qmgr_eth.c	2006-12-17 16:33:45.114161963 +0000
 @@ -0,0 +1,127 @@
 +/*
 + * qmgr_eth.c - Glue between qmgr and MAC. Linked to mac to keep qmgr.ko
@@ -2201,10 +2201,10 @@ Index: linux-2.6.19/drivers/net/ixp4xx/qmgr_eth.c
 +	return skb;
 +}
 +
-Index: linux-2.6.19/drivers/net/ixp4xx/ucode_dl.c
+Index: linux-2.6.20-rc1/drivers/net/ixp4xx/ucode_dl.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/drivers/net/ixp4xx/ucode_dl.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/drivers/net/ixp4xx/ucode_dl.c	2006-12-17 16:33:45.114161963 +0000
 @@ -0,0 +1,466 @@
 +/*
 + * ucode_dl.c - provide an NPE device and a char-dev for microcode download
@@ -2672,10 +2672,10 @@ Index: linux-2.6.19/drivers/net/ixp4xx/ucode_dl.c
 +MODULE_AUTHOR("Christian Hohnstaedt <chohnstaedt@innominate.com>");
 +
 +EXPORT_SYMBOL(get_npe_by_id);
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
+Index: linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
 ===================================================================
---- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
+--- linux-2.6.20-rc1.orig/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h	2006-12-17 16:25:21.128179964 +0000
++++ linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h	2006-12-17 16:33:45.118162213 +0000
 @@ -22,6 +22,8 @@
  #ifndef _ASM_ARM_IXP4XX_H_
  #define _ASM_ARM_IXP4XX_H_
@@ -2685,10 +2685,10 @@ Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
  /*
   * IXP4xx Linux Memory Map:
   *
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/npe_regs.h
+Index: linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/npe_regs.h
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/npe_regs.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/npe_regs.h	2006-12-17 16:33:45.118162213 +0000
 @@ -0,0 +1,82 @@
 +#ifndef NPE_REGS_H
 +#define NPE_REGS_H
@@ -2772,37 +2772,10 @@ Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/npe_regs.h
 +
 +#endif
 +
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/platform.h
+Index: linux-2.6.20-rc1/include/linux/ixp_npe.h
 ===================================================================
---- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/platform.h
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/platform.h
-@@ -86,6 +86,22 @@ struct ixp4xx_i2c_pins {
- 	unsigned long scl_pin;
- };
- 
-+struct npe_plat_data {
-+	const char *name;
-+	int data_size;
-+	int inst_size;
-+	int id;		/* Node ID */
-+};
-+
-+struct mac_plat_info {
-+	int npe_id;	/* Node ID of the NPE for this port */
-+	int port_id;	/* Port ID for NPE-B @ ixp465 */
-+	int eth_id;	/* Physical ID */
-+	int phy_id;	/* ID of the connected PHY (PCB/platform dependent) */
-+	int rxq_id;	/* Queue ID of the RX-free q*/
-+	int txq_id;	/* Where to push the outgoing packets */
-+};
-+
- 
- struct sys_timer;
- 
-Index: linux-2.6.19/include/linux/ixp_npe.h
-===================================================================
---- /dev/null
-+++ linux-2.6.19/include/linux/ixp_npe.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/include/linux/ixp_npe.h	2006-12-17 16:33:45.118162213 +0000
 @@ -0,0 +1,85 @@
 +/*
 + * Copyright (C) 2006 Christian Hohnstaedt <chohnstaedt@innominate.com>
@@ -2889,10 +2862,10 @@ Index: linux-2.6.19/include/linux/ixp_npe.h
 +npe_mh_npe_loopback_mode(struct npe_info *npe, struct mac_plat_info *mp, int enable);
 +
 +#endif
-Index: linux-2.6.19/include/linux/ixp_qmgr.h
+Index: linux-2.6.20-rc1/include/linux/ixp_qmgr.h
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/include/linux/ixp_qmgr.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1/include/linux/ixp_qmgr.h	2006-12-17 16:33:45.118162213 +0000
 @@ -0,0 +1,188 @@
 +/*
 + * Copyright (C) 2006 Christian Hohnstaedt <chohnstaedt@innominate.com>
@@ -3082,3 +3055,30 @@ Index: linux-2.6.19/include/linux/ixp_qmgr.h
 +}
 +
 +#endif
+Index: linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/platform.h
+===================================================================
+--- linux-2.6.20-rc1.orig/include/asm-arm/arch-ixp4xx/platform.h	2006-12-17 16:30:27.317800464 +0000
++++ linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/platform.h	2006-12-17 16:33:45.118162213 +0000
+@@ -86,6 +86,22 @@
+ 	unsigned long scl_pin;
+ };
+ 
++struct npe_plat_data {
++       const char *name;
++       int data_size;
++       int inst_size;
++       int id;         /* Node ID */
++};
++
++struct mac_plat_info {
++       int npe_id;     /* Node ID of the NPE for this port */
++       int port_id;    /* Port ID for NPE-B @ ixp465 */
++       int eth_id;     /* Physical ID */
++       int phy_id;     /* ID of the connected PHY (PCB/platform dependent) */
++       int rxq_id;     /* Queue ID of the RX-free q*/
++       int txq_id;     /* Where to push the outgoing packets */
++};
++
+ /*
+  * This structure provide a means for the board setup code
+  * to give information to th pata_ixp4xx driver. It is
