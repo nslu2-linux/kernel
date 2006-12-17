@@ -1,8 +1,8 @@
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
+Index: linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/Kconfig
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
-@@ -89,6 +89,15 @@ config MACH_NAS100D
+--- linux-2.6.20-rc1-git5.orig/arch/arm/mach-ixp4xx/Kconfig	2006-12-17 23:28:55.335206713 +0000
++++ linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/Kconfig	2006-12-17 23:28:55.523218464 +0000
+@@ -89,6 +89,15 @@
  	  NAS 100d device. For more information on this platform,
  	  see http://www.nslu2-linux.org/wiki/NAS100d/HomePage
  
@@ -18,29 +18,29 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
  #
  # Avila and IXDP share the same source for now. Will change in future
  #
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/Makefile
+Index: linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/Makefile
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/Makefile
-@@ -12,6 +12,7 @@ obj-pci-$(CONFIG_ARCH_ADI_COYOTE)	+= coy
+--- linux-2.6.20-rc1-git5.orig/arch/arm/mach-ixp4xx/Makefile	2006-12-17 23:28:55.335206713 +0000
++++ linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/Makefile	2006-12-17 23:28:55.527218712 +0000
+@@ -12,6 +12,7 @@
  obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx5715-pci.o
  obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
  obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
-+obj-pci-$(CONFIG_MACH_DSMG600)		+= dsmg600-pci.o 
++obj-pci-$(CONFIG_MACH_DSMG600)		+= dsmg600-pci.o
  
  obj-y	+= common.o
  
-@@ -22,5 +23,6 @@ obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-
+@@ -22,5 +23,6 @@
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
  obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
  obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
 +obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
  
  obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-pci.c
+Index: linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/dsmg600-pci.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-pci.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/dsmg600-pci.c	2006-12-17 23:28:55.527218712 +0000
 @@ -0,0 +1,74 @@
 +/*
 + * DSM-G600 board-level PCI initialization
@@ -116,10 +116,10 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-pci.c
 +}
 +
 +subsys_initcall(dsmg600_pci_init);
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-power.c
+Index: linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/dsmg600-power.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-power.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/dsmg600-power.c	2006-12-17 23:32:25.268326713 +0000
 @@ -0,0 +1,70 @@
 +/*
 + * arch/arm/mach-ixp4xx/dsmg600-power.c
@@ -191,10 +191,10 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-power.c
 +MODULE_AUTHOR("Michael Westerhof <mwester@dls.net>");
 +MODULE_DESCRIPTION("DSM-G600 Power/Reset driver");
 +MODULE_LICENSE("GPL");
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-setup.c
+Index: linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/dsmg600-setup.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-setup.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/dsmg600-setup.c	2006-12-17 23:28:55.527218712 +0000
 @@ -0,0 +1,169 @@
 +/*
 + * DSM-G600 board-setup
@@ -365,10 +365,10 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +	.timer          = &ixp4xx_timer,
 +	.init_machine	= dsmg600_init,
 +MACHINE_END
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/dsmg600.h
+Index: linux-2.6.20-rc1-git5/include/asm-arm/arch-ixp4xx/dsmg600.h
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/dsmg600.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1-git5/include/asm-arm/arch-ixp4xx/dsmg600.h	2006-12-17 23:28:55.527218712 +0000
 @@ -0,0 +1,76 @@
 +/*
 + * DSM-G600 platform specific definitions
@@ -446,21 +446,21 @@ Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/dsmg600.h
 +
 +#define DSMG600_LED_WLAN	DSMG600_GPIO14
 +#define DSMG600_LED_WLAN_BM	(1L << DSMG600_LED_WLAN)
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/hardware.h
+Index: linux-2.6.20-rc1-git5/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/hardware.h
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/hardware.h
-@@ -47,5 +47,6 @@ extern unsigned int processor_id;
+--- linux-2.6.20-rc1-git5.orig/include/asm-arm/arch-ixp4xx/hardware.h	2006-12-17 23:28:55.335206713 +0000
++++ linux-2.6.20-rc1-git5/include/asm-arm/arch-ixp4xx/hardware.h	2006-12-17 23:28:55.527218712 +0000
+@@ -47,5 +47,6 @@
  #include "prpmc1100.h"
  #include "nslu2.h"
  #include "nas100d.h"
 +#include "dsmg600.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/irqs.h
+Index: linux-2.6.20-rc1-git5/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/irqs.h
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/irqs.h
+--- linux-2.6.20-rc1-git5.orig/include/asm-arm/arch-ixp4xx/irqs.h	2006-12-17 23:28:55.339206963 +0000
++++ linux-2.6.20-rc1-git5/include/asm-arm/arch-ixp4xx/irqs.h	2006-12-17 23:28:55.531218962 +0000
 @@ -118,4 +118,14 @@
  #define        IRQ_NAS100D_PCI_INTD    IRQ_IXP4XX_GPIO8
  #define        IRQ_NAS100D_PCI_INTE    IRQ_IXP4XX_GPIO7
