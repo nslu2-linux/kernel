@@ -1,7 +1,7 @@
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-power.c
+Index: linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/dsmg600-power.c
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/dsmg600-power.c
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-power.c
+--- linux-2.6.20-rc1-git5.orig/arch/arm/mach-ixp4xx/dsmg600-power.c	2006-12-17 23:28:55.527218712 +0000
++++ linux-2.6.20-rc1-git5/arch/arm/mach-ixp4xx/dsmg600-power.c	2006-12-17 23:28:55.563220964 +0000
 @@ -26,6 +26,55 @@
  
  #include <asm/mach-types.h>
@@ -58,7 +58,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-power.c
  static irqreturn_t dsmg600_reset_handler(int irq, void *dev_id)
  {
  	/* This is the paper-clip reset, it shuts the machine down directly. */
-@@ -37,6 +86,8 @@ static irqreturn_t dsmg600_reset_handler
+@@ -37,6 +86,8 @@
  
  static int __init dsmg600_power_init(void)
  {
@@ -67,7 +67,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-power.c
  	if (!(machine_is_dsmg600()))
  		return 0;
  
-@@ -51,6 +102,30 @@ static int __init dsmg600_power_init(voi
+@@ -51,6 +102,30 @@
  		return -EIO;
  	}
  
