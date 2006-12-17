@@ -1,8 +1,8 @@
-Index: apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-arm_config
+Index: apex-1.4.7/src/mach-ixp42x/debian-nas100d-arm_config
 ===================================================================
 --- /dev/null
-+++ apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-arm_config
-@@ -0,0 +1,125 @@
++++ apex-1.4.7/src/mach-ixp42x/debian-nas100d-arm_config
+@@ -0,0 +1,130 @@
 +#
 +# Automatically generated make config: don't edit
 +# Linux kernel version: 
@@ -39,7 +39,8 @@ Index: apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-arm_config
 +CONFIG_ATAG_PHYS=0x00000100
 +CONFIG_APEX_VMA=0x00200000
 +CONFIG_KERNEL_LMA=0x00400000
-+# CONFIG_USE_RAMDISK is not set
++CONFIG_USE_RAMDISK=y
++CONFIG_RAMDISK_LMA=0x00B00000
 +CONFIG_SDRAM_BANK0=y
 +# CONFIG_SDRAM_BANK1 is not set
 +CONFIG_NOR_BUSWIDTH=16
@@ -48,9 +49,10 @@ Index: apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-arm_config
 +CONFIG_NOR_BANK0_LENGTH=0x01000000
 +CONFIG_ENV_STARTUP=""
 +CONFIG_MACH="ixp42x"
++CONFIG_RAMDISK_SIZE=0x00400000
 +# CONFIG_MACH_NSLU2 is not set
-+# CONFIG_MACH_NAS100D is not set
-+CONFIG_MACH_DSMG600=y
++CONFIG_MACH_NAS100D=y
++# CONFIG_MACH_DSMG600 is not set
 +# CONFIG_MACH_AVILA2347 is not set
 +# CONFIG_USER_DEFAULTENDIAN is not set
 +# CONFIG_USER_BIGENDIAN is not set
@@ -120,9 +122,12 @@ Index: apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-arm_config
 +CONFIG_ENV_CHECK_LEN=1024
 +CONFIG_ENV_STARTUP_KERNEL_COPY=y
 +CONFIG_ENV_REGION_KERNEL="fis://kernel"
-+CONFIG_ENV_REGION_KERNEL_SWAP=y
++# CONFIG_ENV_REGION_KERNEL_SWAP is not set
++CONFIG_ENV_STARTUP_RAMDISK_COPY=y
++CONFIG_ENV_REGION_RAMDISK="fis://filesystem"
++# CONFIG_ENV_REGION_RAMDISK_SWAP is not set
 +CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
-+CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="console=ttyS0,115200 rtc-pcf8563.probe=0,0x51 noirqdebug"
 +# CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
 +CONFIG_USES_NOR_BOOTFLASH=y
 +CONFIG_LITTLEENDIAN=y
