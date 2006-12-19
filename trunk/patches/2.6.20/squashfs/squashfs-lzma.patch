@@ -3,10 +3,10 @@ rather then zlib. You need patched mksquashfs tools that also support LZMA.
 
 Signed-off-by: Leon Woestenberg <leonw@mailcan.com>
 
-Index: linux-2.6.19/fs/squashfs/Makefile
+Index: linux-2.6.20-rc1-git5/fs/squashfs/Makefile
 ===================================================================
---- linux-2.6.19.orig/fs/squashfs/Makefile
-+++ linux-2.6.19/fs/squashfs/Makefile
+--- linux-2.6.20-rc1-git5.orig/fs/squashfs/Makefile	2006-12-19 22:38:01.921012712 +0000
++++ linux-2.6.20-rc1-git5/fs/squashfs/Makefile	2006-12-19 22:38:04.553177213 +0000
 @@ -5,6 +5,7 @@
  obj-$(CONFIG_SQUASHFS) += squashfs.o
  squashfs-y += inode.o
@@ -15,10 +15,10 @@ Index: linux-2.6.19/fs/squashfs/Makefile
  
  CFLAGS_squashfs2_0.o = "-O2"
  CFLAGS_inode.o = "-O2"
-Index: linux-2.6.19/fs/squashfs/inode.c
+Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 ===================================================================
---- linux-2.6.19.orig/fs/squashfs/inode.c
-+++ linux-2.6.19/fs/squashfs/inode.c
+--- linux-2.6.20-rc1-git5.orig/fs/squashfs/inode.c	2006-12-19 22:37:48.160152713 +0000
++++ linux-2.6.20-rc1-git5/fs/squashfs/inode.c	2006-12-19 22:38:04.557177463 +0000
 @@ -4,6 +4,9 @@
   * Copyright (c) 2002, 2003, 2004, 2005, 2006
   * Phillip Lougher <phillip@lougher.org.uk>
@@ -57,7 +57,7 @@ Index: linux-2.6.19/fs/squashfs/inode.c
  static void squashfs_put_super(struct super_block *);
  static int squashfs_statfs(struct dentry *, struct kstatfs *);
  static int squashfs_symlink_readpage(struct file *file, struct page *page);
-@@ -65,6 +82,10 @@ static int squashfs_get_sb(struct file_s
+@@ -65,6 +82,10 @@
  static void vfs_read_inode(struct inode *i);
  static struct dentry *squashfs_get_parent(struct dentry *child);
  
@@ -68,7 +68,7 @@ Index: linux-2.6.19/fs/squashfs/inode.c
  static struct file_system_type squashfs_fs_type = {
  	.owner = THIS_MODULE,
  	.name = "squashfs",
-@@ -270,6 +291,15 @@ SQSH_EXTERN unsigned int squashfs_read_d
+@@ -270,6 +291,15 @@
  	if (compressed) {
  		int zlib_err;
  
@@ -84,7 +84,7 @@ Index: linux-2.6.19/fs/squashfs/inode.c
  		msblk->stream.next_in = c_buffer;
  		msblk->stream.avail_in = c_byte;
  		msblk->stream.next_out = buffer;
-@@ -287,7 +317,7 @@ SQSH_EXTERN unsigned int squashfs_read_d
+@@ -287,7 +317,7 @@
  			bytes = 0;
  		} else
  			bytes = msblk->stream.total_out;
@@ -93,7 +93,7 @@ Index: linux-2.6.19/fs/squashfs/inode.c
  		up(&msblk->read_data_mutex);
  	}
  
-@@ -1084,10 +1114,12 @@ static int squashfs_fill_super(struct su
+@@ -1084,10 +1114,12 @@
  	}
  	memset(s->s_fs_info, 0, sizeof(struct squashfs_sb_info));
  	msblk = s->s_fs_info;
@@ -106,7 +106,7 @@ Index: linux-2.6.19/fs/squashfs/inode.c
  	sblk = &msblk->sblk;
  	
  	msblk->devblksize = sb_min_blocksize(s, BLOCK_SIZE);
-@@ -1283,7 +1315,9 @@ failed_mount:
+@@ -1283,7 +1315,9 @@
  	kfree(msblk->read_data);
  	kfree(msblk->block_cache);
  	kfree(msblk->fragment_index_2);
@@ -116,7 +116,7 @@ Index: linux-2.6.19/fs/squashfs/inode.c
  	kfree(s->s_fs_info);
  	s->s_fs_info = NULL;
  	return -EINVAL;
-@@ -2199,7 +2233,9 @@ static void squashfs_put_super(struct su
+@@ -2199,7 +2233,9 @@
  		kfree(sbi->fragment_index);
  		kfree(sbi->fragment_index_2);
  		kfree(sbi->meta_index);
@@ -126,10 +126,10 @@ Index: linux-2.6.19/fs/squashfs/inode.c
  		kfree(s->s_fs_info);
  		s->s_fs_info = NULL;
  	}
-Index: linux-2.6.19/fs/squashfs/LzmaDecode.c
+Index: linux-2.6.20-rc1-git5/fs/squashfs/LzmaDecode.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/fs/squashfs/LzmaDecode.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1-git5/fs/squashfs/LzmaDecode.c	2006-12-19 22:38:04.557177463 +0000
 @@ -0,0 +1,663 @@
 +/*
 +  LzmaDecode.c
@@ -794,10 +794,10 @@ Index: linux-2.6.19/fs/squashfs/LzmaDecode.c
 +  *outSizeProcessed = nowPos;
 +  return LZMA_RESULT_OK;
 +}
-Index: linux-2.6.19/fs/squashfs/LzmaDecode.h
+Index: linux-2.6.20-rc1-git5/fs/squashfs/LzmaDecode.h
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/fs/squashfs/LzmaDecode.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc1-git5/fs/squashfs/LzmaDecode.h	2006-12-19 22:38:04.557177463 +0000
 @@ -0,0 +1,100 @@
 +/* 
 +  LzmaDecode.h
