@@ -1,9 +1,9 @@
 Signed-off-by: Leon Woestenberg <leonw@mailcan.com>
 
-Index: linux-2.6.19/init/do_mounts_rd.c
+Index: linux-2.6.20-rc1-git5/init/do_mounts_rd.c
 ===================================================================
---- linux-2.6.19.orig/init/do_mounts_rd.c
-+++ linux-2.6.19/init/do_mounts_rd.c
+--- linux-2.6.20-rc1-git5.orig/init/do_mounts_rd.c	2006-12-19 22:37:44.523925462 +0000
++++ linux-2.6.20-rc1-git5/init/do_mounts_rd.c	2006-12-19 22:37:59.016831214 +0000
 @@ -5,6 +5,7 @@
  #include <linux/ext2_fs.h>
  #include <linux/romfs_fs.h>
@@ -12,7 +12,7 @@ Index: linux-2.6.19/init/do_mounts_rd.c
  #include <linux/initrd.h>
  #include <linux/string.h>
  
-@@ -39,6 +40,7 @@ static int __init crd_load(int in_fd, in
+@@ -39,6 +40,7 @@
   * numbers could not be found.
   *
   * We currently check for the following magic numbers:
@@ -20,7 +20,7 @@ Index: linux-2.6.19/init/do_mounts_rd.c
   * 	minix
   * 	ext2
   *	romfs
-@@ -53,6 +55,7 @@ identify_ramdisk_image(int fd, int start
+@@ -53,6 +55,7 @@
  	struct ext2_super_block *ext2sb;
  	struct romfs_super_block *romfsb;
  	struct cramfs_super *cramfsb;
@@ -28,7 +28,7 @@ Index: linux-2.6.19/init/do_mounts_rd.c
  	int nblocks = -1;
  	unsigned char *buf;
  
-@@ -64,6 +67,7 @@ identify_ramdisk_image(int fd, int start
+@@ -64,6 +67,7 @@
  	ext2sb = (struct ext2_super_block *) buf;
  	romfsb = (struct romfs_super_block *) buf;
  	cramfsb = (struct cramfs_super *) buf;
@@ -36,7 +36,7 @@ Index: linux-2.6.19/init/do_mounts_rd.c
  	memset(buf, 0xe5, size);
  
  	/*
-@@ -101,6 +105,18 @@ identify_ramdisk_image(int fd, int start
+@@ -101,6 +105,18 @@
  		goto done;
  	}
  

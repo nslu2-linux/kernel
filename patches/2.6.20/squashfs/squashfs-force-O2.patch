@@ -4,10 +4,10 @@ that problem by using optimization flag -O2 instead for these two files.
 
 Signed-off-by: Leon Woestenberg <leonw@mailcan.com>
 
-Index: linux-2.6.19/fs/squashfs/Makefile
+Index: linux-2.6.20-rc1-git5/fs/squashfs/Makefile
 ===================================================================
---- linux-2.6.19.orig/fs/squashfs/Makefile
-+++ linux-2.6.19/fs/squashfs/Makefile
+--- linux-2.6.20-rc1-git5.orig/fs/squashfs/Makefile	2006-12-19 22:37:48.160152713 +0000
++++ linux-2.6.20-rc1-git5/fs/squashfs/Makefile	2006-12-19 22:38:01.921012712 +0000
 @@ -5,3 +5,6 @@
  obj-$(CONFIG_SQUASHFS) += squashfs.o
  squashfs-y += inode.o
