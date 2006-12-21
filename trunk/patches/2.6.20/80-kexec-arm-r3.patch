@@ -1,7 +1,7 @@
-Index: linux-2.6.20-rc1/arch/arm/Kconfig
+Index: linux-2.6.20-rc1-git8/arch/arm/Kconfig
 ===================================================================
---- linux-2.6.20-rc1.orig/arch/arm/Kconfig	2006-12-14 15:03:34.443349250 +0000
-+++ linux-2.6.20-rc1/arch/arm/Kconfig	2006-12-14 15:06:26.221187500 +0000
+--- linux-2.6.20-rc1-git8.orig/arch/arm/Kconfig	2006-12-21 23:34:37.763166465 +0000
++++ linux-2.6.20-rc1-git8/arch/arm/Kconfig	2006-12-21 23:35:05.684911462 +0000
 @@ -408,6 +408,23 @@
  source "arch/arm/Kconfig-nommu"
  endif
@@ -26,23 +26,10 @@ Index: linux-2.6.20-rc1/arch/arm/Kconfig
  endmenu
  
  source "arch/arm/common/Kconfig"
-Index: linux-2.6.20-rc1/arch/arm/kernel/calls.S
-===================================================================
---- linux-2.6.20-rc1.orig/arch/arm/kernel/calls.S	2006-12-14 15:03:34.471365000 +0000
-+++ linux-2.6.20-rc1/arch/arm/kernel/calls.S	2006-12-14 15:06:26.229188000 +0000
-@@ -198,7 +198,7 @@
- 		CALL(sys_sigaltstack_wrapper)
- 		CALL(sys_sendfile)
- 		CALL(sys_ni_syscall)
--		CALL(sys_ni_syscall)
-+		CALL(sys_kexec_load)
- /* 190 */	CALL(sys_vfork_wrapper)
- 		CALL(sys_getrlimit)
- 		CALL(sys_mmap2)
-Index: linux-2.6.20-rc1/arch/arm/kernel/machine_kexec.c
+Index: linux-2.6.20-rc1-git8/arch/arm/kernel/machine_kexec.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1/arch/arm/kernel/machine_kexec.c	2006-12-14 15:06:26.253189500 +0000
++++ linux-2.6.20-rc1-git8/arch/arm/kernel/machine_kexec.c	2006-12-21 23:35:05.684911462 +0000
 @@ -0,0 +1,78 @@
 +/*
 + * machine_kexec.c - handle transition of Linux booting another kernel
@@ -122,10 +109,10 @@ Index: linux-2.6.20-rc1/arch/arm/kernel/machine_kexec.c
 +	setup_mm_for_reboot(0); /* mode is not used, so just pass 0*/
 +	cpu_reset(reboot_code_buffer_phys);
 +}
-Index: linux-2.6.20-rc1/arch/arm/kernel/Makefile
+Index: linux-2.6.20-rc1-git8/arch/arm/kernel/Makefile
 ===================================================================
---- linux-2.6.20-rc1.orig/arch/arm/kernel/Makefile	2006-12-14 15:03:34.523394250 +0000
-+++ linux-2.6.20-rc1/arch/arm/kernel/Makefile	2006-12-14 15:06:26.257189750 +0000
+--- linux-2.6.20-rc1-git8.orig/arch/arm/kernel/Makefile	2006-12-21 23:34:37.803168967 +0000
++++ linux-2.6.20-rc1-git8/arch/arm/kernel/Makefile	2006-12-21 23:35:05.684911462 +0000
 @@ -19,6 +19,7 @@
  obj-$(CONFIG_ISA_DMA)		+= dma-isa.o
  obj-$(CONFIG_PCI)		+= bios32.o isa.o
@@ -134,10 +121,10 @@ Index: linux-2.6.20-rc1/arch/arm/kernel/Makefile
  obj-$(CONFIG_OABI_COMPAT)	+= sys_oabi-compat.o
  
  obj-$(CONFIG_CRUNCH)		+= crunch.o crunch-bits.o
-Index: linux-2.6.20-rc1/arch/arm/kernel/relocate_kernel.S
+Index: linux-2.6.20-rc1-git8/arch/arm/kernel/relocate_kernel.S
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1/arch/arm/kernel/relocate_kernel.S	2006-12-14 15:06:26.257189750 +0000
++++ linux-2.6.20-rc1-git8/arch/arm/kernel/relocate_kernel.S	2006-12-21 23:35:05.684911462 +0000
 @@ -0,0 +1,74 @@
 +/*
 + * relocate_kernel.S - put the kernel image in place to boot
@@ -213,10 +200,10 @@ Index: linux-2.6.20-rc1/arch/arm/kernel/relocate_kernel.S
 +	.long relocate_new_kernel_end - relocate_new_kernel
 +
 +
-Index: linux-2.6.20-rc1/include/asm-arm/kexec.h
+Index: linux-2.6.20-rc1-git8/include/asm-arm/kexec.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1/include/asm-arm/kexec.h	2006-12-14 15:06:26.257189750 +0000
++++ linux-2.6.20-rc1-git8/include/asm-arm/kexec.h	2006-12-21 23:35:05.692911962 +0000
 @@ -0,0 +1,30 @@
 +#ifndef _ARM_KEXEC_H
 +#define _ARM_KEXEC_H
@@ -248,10 +235,10 @@ Index: linux-2.6.20-rc1/include/asm-arm/kexec.h
 +#endif /* CONFIG_KEXEC */
 +
 +#endif /* _ARM_KEXEC_H */
-Index: linux-2.6.20-rc1/include/asm-arm/unistd.h
+Index: linux-2.6.20-rc1-git8/include/asm-arm/unistd.h
 ===================================================================
---- linux-2.6.20-rc1.orig/include/asm-arm/unistd.h	2006-12-14 15:03:34.631455000 +0000
-+++ linux-2.6.20-rc1/include/asm-arm/unistd.h	2006-12-14 15:06:26.257189750 +0000
+--- linux-2.6.20-rc1-git8.orig/include/asm-arm/unistd.h	2006-12-21 23:34:37.855172216 +0000
++++ linux-2.6.20-rc1-git8/include/asm-arm/unistd.h	2006-12-21 23:35:05.692911962 +0000
 @@ -214,7 +214,7 @@
  #define __NR_sigaltstack		(__NR_SYSCALL_BASE+186)
  #define __NR_sendfile			(__NR_SYSCALL_BASE+187)
@@ -261,10 +248,10 @@ Index: linux-2.6.20-rc1/include/asm-arm/unistd.h
  #define __NR_vfork			(__NR_SYSCALL_BASE+190)
  #define __NR_ugetrlimit			(__NR_SYSCALL_BASE+191)	/* SuS compliant getrlimit */
  #define __NR_mmap2			(__NR_SYSCALL_BASE+192)
-Index: linux-2.6.20-rc1/include/linux/kexec.h
+Index: linux-2.6.20-rc1-git8/include/linux/kexec.h
 ===================================================================
---- linux-2.6.20-rc1.orig/include/linux/kexec.h	2006-12-14 15:03:34.675479750 +0000
-+++ linux-2.6.20-rc1/include/linux/kexec.h	2006-12-14 15:06:26.257189750 +0000
+--- linux-2.6.20-rc1-git8.orig/include/linux/kexec.h	2006-12-21 23:34:37.879173717 +0000
++++ linux-2.6.20-rc1-git8/include/linux/kexec.h	2006-12-21 23:35:05.692911962 +0000
 @@ -125,6 +125,7 @@
  #define KEXEC_ARCH_PPC     (20 << 16)
  #define KEXEC_ARCH_PPC64   (21 << 16)
@@ -273,3 +260,16 @@ Index: linux-2.6.20-rc1/include/linux/kexec.h
  #define KEXEC_ARCH_S390    (22 << 16)
  #define KEXEC_ARCH_SH      (42 << 16)
  #define KEXEC_ARCH_MIPS_LE (10 << 16)
+Index: linux-2.6.20-rc1-git8/arch/arm/kernel/calls.S
+===================================================================
+--- linux-2.6.20-rc1-git8.orig/arch/arm/kernel/calls.S	2006-12-21 23:34:37.779167466 +0000
++++ linux-2.6.20-rc1-git8/arch/arm/kernel/calls.S	2006-12-21 23:35:41.255134463 +0000
+@@ -198,7 +198,7 @@
+ 		CALL(sys_sigaltstack_wrapper)
+ 		CALL(sys_sendfile)
+ 		CALL(sys_ni_syscall)		/* getpmsg */
+-		CALL(sys_ni_syscall)		/* putpmsg */
++               CALL(sys_kexec_load)
+ /* 190 */	CALL(sys_vfork_wrapper)
+ 		CALL(sys_getrlimit)
+ 		CALL(sys_mmap2)
