@@ -2,11 +2,11 @@ This kernel Kconfig patch is copied straight from the squashfs-3.1r2 release.
 
 Signed-off-by: Leon Woestenberg <leonw@mailcan.com>
 
-Index: linux-2.6.20-rc1-git5/fs/Kconfig
+Index: linux-2.6.20-rc1-git11/fs/Kconfig
 ===================================================================
---- linux-2.6.20-rc1-git5.orig/fs/Kconfig	2006-12-19 22:37:44.243907962 +0000
-+++ linux-2.6.20-rc1-git5/fs/Kconfig	2006-12-19 22:38:08.061396467 +0000
-@@ -1401,6 +1401,71 @@
+--- linux-2.6.20-rc1-git11.orig/fs/Kconfig	2006-12-23 16:11:06.471361713 +0000
++++ linux-2.6.20-rc1-git11/fs/Kconfig	2006-12-23 16:11:07.411420463 +0000
+@@ -1404,6 +1404,71 @@
  
  	  If unsure, say N.
  
