@@ -31,6 +31,10 @@
 	Is this really required in our target devices?
 	Temporarily disabled in 2.6.20-rc1
 
+12-fix-ext3-corruption.patch
+	Will be fixed upstream forthwith, but we should to test this
+	here as the NSLU2 was one of the devices this issue appeared with
+
 30-ixp4xx-0.2.1-driver.patch
 	driver being actively developed. Developer will probably push
 	upstream when properly tested.
