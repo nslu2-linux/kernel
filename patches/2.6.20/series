@@ -13,7 +13,6 @@ squashfs/squashfs-Makefile.patch
 07-remove-avila-ixdp425-setup.patch
 08-avila-loft-setup.patch
 09-avila-setup-pata.patch
-12-fix-ext3-corruption.patch
 ##30-ixp4xx-0.2.1-driver.patch
 #31-ixp4xx-fuses-stats.patch
 #32-ixp4xx-2.6.19-cleanup.patch
