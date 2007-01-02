@@ -1,7 +1,7 @@
 Index: linux-2.6.19/drivers/net/ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.19.orig/drivers/net/ixp4xx/Kconfig	2007-01-02 20:00:43.377955964 +0000
-+++ linux-2.6.19/drivers/net/ixp4xx/Kconfig	2007-01-02 20:00:43.497963464 +0000
+--- linux-2.6.19.orig/drivers/net/ixp4xx/Kconfig	2007-01-02 21:24:16.204535463 +0000
++++ linux-2.6.19/drivers/net/ixp4xx/Kconfig	2007-01-02 21:28:49.166227462 +0000
 @@ -11,6 +11,7 @@
  	tristate "IXP4xx NPE support"
  	depends on ARCH_IXP4XX
@@ -35,8 +35,8 @@ Index: linux-2.6.19/drivers/net/ixp4xx/Kconfig
  	depends on IXP4XX_NPE
 Index: linux-2.6.19/drivers/net/ixp4xx/Makefile
 ===================================================================
---- linux-2.6.19.orig/drivers/net/ixp4xx/Makefile	2007-01-02 20:00:43.377955964 +0000
-+++ linux-2.6.19/drivers/net/ixp4xx/Makefile	2007-01-02 20:00:43.497963464 +0000
+--- linux-2.6.19.orig/drivers/net/ixp4xx/Makefile	2007-01-02 21:24:16.204535463 +0000
++++ linux-2.6.19/drivers/net/ixp4xx/Makefile	2007-01-02 21:28:49.166227462 +0000
 @@ -1,6 +1,7 @@
  obj-$(CONFIG_IXP4XX_QMGR) += ixp4xx_qmgr.o
  obj-$(CONFIG_IXP4XX_NPE) += ixp4xx_npe.o
@@ -48,7 +48,7 @@ Index: linux-2.6.19/drivers/net/ixp4xx/Makefile
 Index: linux-2.6.19/drivers/net/ixp4xx/npe_ucode.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.19/drivers/net/ixp4xx/npe_ucode.c	2007-01-02 20:00:43.497963464 +0000
++++ linux-2.6.19/drivers/net/ixp4xx/npe_ucode.c	2007-01-02 21:28:49.166227462 +0000
 @@ -0,0 +1,185 @@
 +/*
 + * Provide an NPE platform device for microcode handling
@@ -237,8 +237,8 @@ Index: linux-2.6.19/drivers/net/ixp4xx/npe_ucode.c
 +MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
 Index: linux-2.6.19/drivers/net/ixp4xx/ucode_dl.c
 ===================================================================
---- linux-2.6.19.orig/drivers/net/ixp4xx/ucode_dl.c	2007-01-02 20:00:43.385956465 +0000
-+++ linux-2.6.19/drivers/net/ixp4xx/ucode_dl.c	2007-01-02 20:00:43.501963714 +0000
+--- linux-2.6.19.orig/drivers/net/ixp4xx/ucode_dl.c	2007-01-02 21:24:16.212535963 +0000
++++ linux-2.6.19/drivers/net/ixp4xx/ucode_dl.c	2007-01-02 21:28:49.166227462 +0000
 @@ -16,6 +16,7 @@
  #include <linux/firmware.h>
  #include <linux/dma-mapping.h>
@@ -367,8 +367,8 @@ Index: linux-2.6.19/drivers/net/ixp4xx/ucode_dl.c
 +EXPORT_SYMBOL(store_npe_image);
 Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/platform.h
 ===================================================================
---- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/platform.h	2007-01-02 20:00:43.417958464 +0000
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/platform.h	2007-01-02 20:01:10.299638459 +0000
+--- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/platform.h	2007-01-02 21:28:43.509873965 +0000
++++ linux-2.6.19/include/asm-arm/arch-ixp4xx/platform.h	2007-01-02 21:29:13.771765212 +0000
 @@ -86,6 +86,20 @@
  	unsigned long scl_pin;
  };
@@ -391,7 +391,7 @@ Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/platform.h
  	const char *name;
  	int data_size;
 @@ -103,6 +117,9 @@
-         unsigned char hwaddr[6]; /* Desired hardware address */
+ 	unsigned char hwaddr[6]; /* Desired hardware address */
  };
  
 +struct npe_ucode_platform_data {
@@ -402,8 +402,8 @@ Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/platform.h
  
 Index: linux-2.6.19/include/linux/ixp_npe.h
 ===================================================================
---- linux-2.6.19.orig/include/linux/ixp_npe.h	2007-01-02 20:00:43.389956712 +0000
-+++ linux-2.6.19/include/linux/ixp_npe.h	2007-01-02 20:00:43.505963965 +0000
+--- linux-2.6.19.orig/include/linux/ixp_npe.h	2007-01-02 21:24:16.216536213 +0000
++++ linux-2.6.19/include/linux/ixp_npe.h	2007-01-02 21:28:49.178228213 +0000
 @@ -71,6 +71,7 @@
  }
  
