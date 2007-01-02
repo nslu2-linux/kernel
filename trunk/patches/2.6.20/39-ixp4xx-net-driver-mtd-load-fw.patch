@@ -1,7 +1,7 @@
-Index: linux-2.6.20-rc1/drivers/net/ixp4xx/Kconfig
+Index: linux-2.6.20-rc3/drivers/net/ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.20-rc1.orig/drivers/net/ixp4xx/Kconfig	2006-12-17 16:33:45.110161713 +0000
-+++ linux-2.6.20-rc1/drivers/net/ixp4xx/Kconfig	2006-12-17 16:49:05.295554464 +0000
+--- linux-2.6.20-rc3.orig/drivers/net/ixp4xx/Kconfig	2007-01-02 19:52:46.620160462 +0000
++++ linux-2.6.20-rc3/drivers/net/ixp4xx/Kconfig	2007-01-02 19:53:50.956181213 +0000
 @@ -11,6 +11,7 @@
  	tristate "IXP4xx NPE support"
  	depends on ARCH_IXP4XX
@@ -33,10 +33,10 @@ Index: linux-2.6.20-rc1/drivers/net/ixp4xx/Kconfig
  config IXP4XX_MAC
  	tristate "IXP4xx MAC support"
  	depends on IXP4XX_NPE
-Index: linux-2.6.20-rc1/drivers/net/ixp4xx/Makefile
+Index: linux-2.6.20-rc3/drivers/net/ixp4xx/Makefile
 ===================================================================
---- linux-2.6.20-rc1.orig/drivers/net/ixp4xx/Makefile	2006-12-17 16:33:45.110161713 +0000
-+++ linux-2.6.20-rc1/drivers/net/ixp4xx/Makefile	2006-12-17 16:49:05.295554464 +0000
+--- linux-2.6.20-rc3.orig/drivers/net/ixp4xx/Makefile	2007-01-02 19:52:46.620160462 +0000
++++ linux-2.6.20-rc3/drivers/net/ixp4xx/Makefile	2007-01-02 19:53:50.956181213 +0000
 @@ -1,6 +1,7 @@
  obj-$(CONFIG_IXP4XX_QMGR) += ixp4xx_qmgr.o
  obj-$(CONFIG_IXP4XX_NPE) += ixp4xx_npe.o
@@ -45,10 +45,10 @@ Index: linux-2.6.20-rc1/drivers/net/ixp4xx/Makefile
  
  ixp4xx_npe-objs := ucode_dl.o npe_mh.o
  ixp4xx_mac-objs := mac_driver.o qmgr_eth.o phy.o
-Index: linux-2.6.20-rc1/drivers/net/ixp4xx/npe_ucode.c
+Index: linux-2.6.20-rc3/drivers/net/ixp4xx/npe_ucode.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1/drivers/net/ixp4xx/npe_ucode.c	2006-12-17 16:49:05.295554464 +0000
++++ linux-2.6.20-rc3/drivers/net/ixp4xx/npe_ucode.c	2007-01-02 19:53:50.956181213 +0000
 @@ -0,0 +1,185 @@
 +/*
 + * Provide an NPE platform device for microcode handling
@@ -235,10 +235,10 @@ Index: linux-2.6.20-rc1/drivers/net/ixp4xx/npe_ucode.c
 +
 +MODULE_LICENSE("GPL");
 +MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
-Index: linux-2.6.20-rc1/drivers/net/ixp4xx/ucode_dl.c
+Index: linux-2.6.20-rc3/drivers/net/ixp4xx/ucode_dl.c
 ===================================================================
---- linux-2.6.20-rc1.orig/drivers/net/ixp4xx/ucode_dl.c	2006-12-17 16:33:45.114161963 +0000
-+++ linux-2.6.20-rc1/drivers/net/ixp4xx/ucode_dl.c	2006-12-17 16:49:05.295554464 +0000
+--- linux-2.6.20-rc3.orig/drivers/net/ixp4xx/ucode_dl.c	2007-01-02 19:52:46.628160963 +0000
++++ linux-2.6.20-rc3/drivers/net/ixp4xx/ucode_dl.c	2007-01-02 19:53:50.960181463 +0000
 @@ -16,6 +16,7 @@
  #include <linux/firmware.h>
  #include <linux/dma-mapping.h>
@@ -365,10 +365,10 @@ Index: linux-2.6.20-rc1/drivers/net/ixp4xx/ucode_dl.c
  
  EXPORT_SYMBOL(get_npe_by_id);
 +EXPORT_SYMBOL(store_npe_image);
-Index: linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/platform.h
+Index: linux-2.6.20-rc3/include/asm-arm/arch-ixp4xx/platform.h
 ===================================================================
---- linux-2.6.20-rc1.orig/include/asm-arm/arch-ixp4xx/platform.h	2006-12-17 16:39:39.796328214 +0000
-+++ linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/platform.h	2006-12-17 16:52:45.647432714 +0000
+--- linux-2.6.20-rc3.orig/include/asm-arm/arch-ixp4xx/platform.h	2007-01-02 19:53:28.150755963 +0000
++++ linux-2.6.20-rc3/include/asm-arm/arch-ixp4xx/platform.h	2007-01-02 19:53:50.968181964 +0000
 @@ -86,6 +86,20 @@
  	unsigned long scl_pin;
  };
@@ -391,7 +391,7 @@ Index: linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/platform.h
         const char *name;
         int data_size;
 @@ -103,6 +117,10 @@
-        unsigned char hwaddr[6]; /* Desired hardware address */
+        unsigned char hwaddr[6]; /* Desired hardware address */	
  };
  
 +struct npe_ucode_platform_data {
@@ -401,10 +401,10 @@ Index: linux-2.6.20-rc1/include/asm-arm/arch-ixp4xx/platform.h
  /*
   * This structure provide a means for the board setup code
   * to give information to th pata_ixp4xx driver. It is
-Index: linux-2.6.20-rc1/include/linux/ixp_npe.h
+Index: linux-2.6.20-rc3/include/linux/ixp_npe.h
 ===================================================================
---- linux-2.6.20-rc1.orig/include/linux/ixp_npe.h	2006-12-17 16:39:39.800328464 +0000
-+++ linux-2.6.20-rc1/include/linux/ixp_npe.h	2006-12-17 16:49:05.307561211 +0000
+--- linux-2.6.20-rc3.orig/include/linux/ixp_npe.h	2007-01-02 19:52:46.628160963 +0000
++++ linux-2.6.20-rc3/include/linux/ixp_npe.h	2007-01-02 19:53:50.968181964 +0000
 @@ -71,6 +71,7 @@
  }
  
