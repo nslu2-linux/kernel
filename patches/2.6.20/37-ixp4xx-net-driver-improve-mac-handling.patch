@@ -2,11 +2,11 @@ This patch allows MAC address handling to be dealt with at interface up,
 but my understanding is that this behaviour is not acceptable upstream.
 Michael-Luke Jones (blaster8)
 
-Index: linux-2.6.20-rc1/drivers/net/ixp4xx/mac_driver.c
+Index: linux-2.6.20-rc3/drivers/net/ixp4xx/mac_driver.c
 ===================================================================
---- linux-2.6.20-rc1.orig/drivers/net/ixp4xx/mac_driver.c	2006-12-17 16:39:39.792327963 +0000
-+++ linux-2.6.20-rc1/drivers/net/ixp4xx/mac_driver.c	2006-12-17 16:48:05.850135215 +0000
-@@ -202,6 +202,24 @@
+--- linux-2.6.20-rc3.orig/drivers/net/ixp4xx/mac_driver.c	2007-01-02 19:52:54.732667463 +0000
++++ linux-2.6.20-rc3/drivers/net/ixp4xx/mac_driver.c	2007-01-02 19:57:52.515277714 +0000
+@@ -189,6 +189,24 @@
  	}
  	mac->rxq_pkt += RX_QUEUE_PREFILL;
  
@@ -30,18 +30,18 @@ Index: linux-2.6.20-rc1/drivers/net/ixp4xx/mac_driver.c
 +
  	mac_init(mac);
  	npe_mh_set_rxqid(npe, mac->plat, RX_DONE_QID);
- 	get_npe_stats(mac, buf, sizeof(buf), 1); /* reset stats */
-@@ -498,12 +516,14 @@
+ 	mac_set_uniaddr(dev);
+@@ -436,12 +454,14 @@
  	 * "ifconfig eth0 hw ether 02:03:04:04:04:07"
- 	*/
+         */
  
 +	/* Note: moved to ixmac_open to allow notifiers to run for compiled in modules
- 	if (is_zero_ether_addr(plat->hwaddr)) {
- 		random_ether_addr(dev->dev_addr);
- 		dev->dev_addr[5] = plat->phy_id;
- 	}
- 	else
- 		memcpy(dev->dev_addr, plat->hwaddr, 6);
+         if (is_zero_ether_addr(plat->hwaddr)) {
+                 random_ether_addr(dev->dev_addr);
+                 dev->dev_addr[5] = plat->phy_id;
+         }
+         else
+                 memcpy(dev->dev_addr, plat->hwaddr, 6);
 +	*/
  
  	printk(KERN_INFO IXMAC_NAME " driver " IXMAC_VERSION
