@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.20-rc1-git11
-# Sat Dec 23 16:12:10 2006
+# Linux kernel version: 2.6.20-rc3
+# Tue Jan  2 10:31:14 2007
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -1523,7 +1523,7 @@ CONFIG_USB_STORAGE_KARMA=y
 # USB Input Devices
 #
 CONFIG_USB_HID=m
-# CONFIG_USB_HID_POWERBOOK is not set
+# CONFIG_USB_HIDINPUT_POWERBOOK is not set
 # CONFIG_HID_FF is not set
 CONFIG_USB_HIDDEV=y
 
