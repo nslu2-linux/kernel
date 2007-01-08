@@ -1,4 +1,4 @@
-Submitted as http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3984/1
+Accepted at http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3984/1
 
 This patch fixes an error in the numbering of the disk LEDs on the
 Linksys NSLU2.  The error crept in because the physical location
