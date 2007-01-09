@@ -9,4 +9,3 @@ slugos-nas100d-armeb_config.patch
 slugos-dsmg600-arm_config.patch
 slugos-dsmg600-armeb_config.patch
 debian-nas100d-arm_config.patch
-openwrt-nas100d-armeb_config.patch
