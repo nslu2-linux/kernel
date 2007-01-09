@@ -1,11 +1,1 @@
-fis-deleted-entries.patch
-10-nas100d-support.patch
-20-dsmg600-support.patch
-openslug_config.patch
-slugos-nslu2-arm_config.patch
-slugos-nslu2-armeb_config.patch
-slugos-nas100d-arm_config.patch
-slugos-nas100d-armeb_config.patch
-slugos-dsmg600-arm_config.patch
-slugos-dsmg600-armeb_config.patch
-debian-nas100d-arm_config.patch
+debian-nas100d-armeb_config.patch
