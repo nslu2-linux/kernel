@@ -1,11 +1,9 @@
-2.6.18.6 + IXP_NPE 0.2.1 builds
+2.6.18.6 + IXP_NPE 0.3.1 builds
 Should fully support NSLU2, NAS-100D, FSG-3
 
-2.6.19.1 + IXP_NPE 0.2.1 builds
+2.6.19.2 + IXP_NPE 0.3.1 builds
 Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
 
-2.6.20-rc2 + IXP_NPE 0.2.1 broken
-IXP_NPE driver needs patching due to workstruct api changes
-Many other patches disabled due to dependency on IXP_NPE
+2.6.20-rc5 + IXP_NPE 0.3.1 builds
 Bridging and Reboot FIS Directory Byteswap patch disabled 
  (rinsed) to check if still required (otherwise drop)
