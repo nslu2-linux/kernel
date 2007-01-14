@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.19-rc6
-# Thu Nov 16 01:21:22 2006
+# Linux kernel version: 2.6.19
+# Sun Jan 14 08:22:40 2007
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -169,7 +169,7 @@ CONFIG_CPU_CP15_MMU=y
 # Processor Features
 #
 CONFIG_ARM_THUMB=y
-# CONFIG_CPU_BIG_ENDIAN is not set
+CONFIG_CPU_BIG_ENDIAN=y
 # CONFIG_CPU_DCACHE_DISABLE is not set
 CONFIG_XSCALE_PMU=y
 CONFIG_KEXEC=y
