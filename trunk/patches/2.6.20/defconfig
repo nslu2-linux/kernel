@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.20-rc3
-# Tue Jan  2 10:31:14 2007
+# Linux kernel version: 2.6.20-rc5
+# Sun Jan 14 07:57:04 2007
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -174,7 +174,7 @@ CONFIG_CPU_CP15_MMU=y
 # Processor Features
 #
 CONFIG_ARM_THUMB=y
-# CONFIG_CPU_BIG_ENDIAN is not set
+CONFIG_CPU_BIG_ENDIAN=y
 # CONFIG_CPU_DCACHE_DISABLE is not set
 # CONFIG_IWMMXT is not set
 CONFIG_XSCALE_PMU=y
@@ -184,7 +184,6 @@ CONFIG_KEXEC=y
 # Bus support
 #
 CONFIG_PCI=y
-# CONFIG_PCI_MULTITHREAD_PROBE is not set
 
 #
 # PCCARD (PCMCIA/CardBus) support
