@@ -111,7 +111,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/fsg-setup.c
 ===================================================================
 --- /dev/null
 +++ linux-2.6.19/arch/arm/mach-ixp4xx/fsg-setup.c
-@@ -0,0 +1,207 @@
+@@ -0,0 +1,209 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
 + *
@@ -227,6 +227,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/fsg-setup.c
 +        .eth_id         = 0,
 +        .rxq_id         = 27,
 +        .txq_id         = 24,
++	 .rxdoneq_id	 = 4,
 +};
 +
 +static struct mac_plat_info plat_mac1 = {
@@ -235,6 +236,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/fsg-setup.c
 +        .eth_id         = 1,
 +        .rxq_id         = 28,
 +        .txq_id         = 25,
++	 .rxdoneq_id	 = 5,
 +};
 +
 +static struct platform_device mac0 = {
