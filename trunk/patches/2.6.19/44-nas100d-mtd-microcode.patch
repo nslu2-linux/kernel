@@ -1,12 +1,8 @@
----
- arch/arm/mach-ixp4xx/nas100d-setup.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
 Index: linux-2.6.19/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/nas100d-setup.c
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/nas100d-setup.c
-@@ -145,13 +145,24 @@ static struct platform_device mac0 = {
+--- linux-2.6.19.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-01-23 03:11:24.000000000 -0800
++++ linux-2.6.19/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-01-23 03:11:34.000000000 -0800
+@@ -146,13 +146,24 @@
         .resource       = &res_mac0,
  };
  

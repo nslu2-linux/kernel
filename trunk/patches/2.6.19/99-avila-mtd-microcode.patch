@@ -1,8 +1,8 @@
 Index: linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/avila-setup.c
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
-@@ -149,6 +149,16 @@ static struct platform_device mac1 = {
+--- linux-2.6.19.orig/arch/arm/mach-ixp4xx/avila-setup.c	2007-01-23 03:12:21.000000000 -0800
++++ linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c	2007-01-23 03:12:36.000000000 -0800
+@@ -151,6 +151,16 @@
  	.resource       = &res_mac1,
  };
  
@@ -19,7 +19,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
  static struct resource avila_pata_resources[] = {
  	{
  		.flags	= IORESOURCE_MEM
-@@ -183,7 +193,7 @@ static struct platform_device *avila_dev
+@@ -185,7 +195,7 @@
  	&avila_uart,
  	&mac0,
  	&mac1,
