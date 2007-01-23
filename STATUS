@@ -12,7 +12,7 @@
 	Upstream in 2.6.20-rc1
 
 05-mtdpart-redboot-partition-truncate.patch [linux-mtd]
-	Upstream in the linux-mtd tree :)
+	Upstream in 2.6.20-rc5-git2
 
 07-remove-avila-ixdp425-setup.patch [l-a-k]
 	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4031/1
