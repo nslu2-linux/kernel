@@ -2,11 +2,11 @@ Wants testing... so test and report
 
 Signed-off-by: Alan Cox <alan@redhat.com>
 
-Index: linux-2.6.19/drivers/ata/sata_via.c
+Index: linux-2.6.20-rc5-git2/drivers/ata/sata_via.c
 ===================================================================
---- linux-2.6.19.orig/drivers/ata/sata_via.c
-+++ linux-2.6.19/drivers/ata/sata_via.c
-@@ -59,11 +59,14 @@ enum {
+--- linux-2.6.20-rc5-git2.orig/drivers/ata/sata_via.c	2007-01-23 02:39:11.000000000 -0800
++++ linux-2.6.20-rc5-git2/drivers/ata/sata_via.c	2007-01-23 02:40:26.000000000 -0800
+@@ -59,11 +59,14 @@
  	SATA_INT_GATE		= 0x41, /* SATA interrupt gating */
  	SATA_NATIVE_MODE	= 0x42, /* Native mode enable */
  	SATA_PATA_SHARING	= 0x49, /* PATA/SATA sharing func ctrl */
@@ -23,7 +23,7 @@ Index: linux-2.6.19/drivers/ata/sata_via.c
  
  	NATIVE_MODE_ALL		= (1 << 7) | (1 << 6) | (1 << 5) | (1 << 4),
  
-@@ -75,6 +78,10 @@ static int svia_init_one (struct pci_dev
+@@ -75,6 +78,10 @@
  static u32 svia_scr_read (struct ata_port *ap, unsigned int sc_reg);
  static void svia_scr_write (struct ata_port *ap, unsigned int sc_reg, u32 val);
  static void vt6420_error_handler(struct ata_port *ap);
@@ -33,8 +33,8 @@ Index: linux-2.6.19/drivers/ata/sata_via.c
 +static unsigned long vt6421_mode_filter(const struct ata_port *ap, struct ata_device *adev, unsigned long modes);
  
  static const struct pci_device_id svia_pci_tbl[] = {
- 	{ PCI_VDEVICE(VIA, 0x0591), vt6420 },
-@@ -140,8 +147,12 @@ static const struct ata_port_operations 
+ 	{ PCI_VDEVICE(VIA, 0x5337), vt6420 },
+@@ -141,8 +148,12 @@
  	.host_stop		= ata_host_stop,
  };
  
@@ -48,7 +48,7 @@ Index: linux-2.6.19/drivers/ata/sata_via.c
  
  	.tf_load		= ata_tf_load,
  	.tf_read		= ata_tf_read,
-@@ -160,7 +171,7 @@ static const struct ata_port_operations 
+@@ -161,7 +172,7 @@
  
  	.freeze			= ata_bmdma_freeze,
  	.thaw			= ata_bmdma_thaw,
@@ -57,7 +57,7 @@ Index: linux-2.6.19/drivers/ata/sata_via.c
  	.post_internal_cmd	= ata_bmdma_post_internal_cmd,
  
  	.irq_handler		= ata_interrupt,
-@@ -278,6 +289,55 @@ static void vt6420_error_handler(struct 
+@@ -279,6 +290,55 @@
  				  NULL, ata_std_postreset);
  }
  
@@ -113,7 +113,7 @@ Index: linux-2.6.19/drivers/ata/sata_via.c
  static const unsigned int svia_bar_sizes[] = {
  	8, 4, 8, 4, 16, 256
  };
-@@ -348,7 +408,7 @@ static struct ata_probe_ent *vt6421_init
+@@ -349,7 +409,7 @@
  
  	probe_ent->sht		= &svia_sht;
  	probe_ent->port_flags	= ATA_FLAG_SATA | ATA_FLAG_NO_LEGACY;
@@ -122,7 +122,7 @@ Index: linux-2.6.19/drivers/ata/sata_via.c
  	probe_ent->n_ports	= N_PORTS;
  	probe_ent->irq		= pdev->irq;
  	probe_ent->irq_flags	= IRQF_SHARED;
-@@ -500,4 +560,3 @@ static void __exit svia_exit(void)
+@@ -501,4 +561,3 @@
  
  module_init(svia_init);
  module_exit(svia_exit);
