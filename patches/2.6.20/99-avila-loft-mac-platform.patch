@@ -1,7 +1,7 @@
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
+Index: linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/avila-setup.c
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/avila-setup.c
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
+--- linux-2.6.20-rc5-git2.orig/arch/arm/mach-ixp4xx/avila-setup.c	2007-01-23 03:06:13.000000000 -0800
++++ linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/avila-setup.c	2007-01-23 03:06:13.000000000 -0800
 @@ -18,6 +18,10 @@
  #include <linux/tty.h>
  #include <linux/serial_8250.h>
@@ -13,7 +13,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
  
  #include <asm/types.h>
  #include <asm/setup.h>
-@@ -196,9 +200,34 @@ static struct platform_device *avila_dev
+@@ -198,9 +202,34 @@
  	&avila_npe_ucode,
  };
  

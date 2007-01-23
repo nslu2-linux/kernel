@@ -1,11 +1,7 @@
----
- arch/arm/mach-ixp4xx/nslu2-setup.c |   31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-Index: linux-2.6.20-rc3/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.20-rc3.orig/arch/arm/mach-ixp4xx/nslu2-setup.c
-+++ linux-2.6.20-rc3/arch/arm/mach-ixp4xx/nslu2-setup.c
+--- linux-2.6.20-rc5-git2.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-01-23 03:04:37.000000000 -0800
++++ linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-01-23 03:04:50.000000000 -0800
 @@ -20,6 +20,7 @@
  #include <linux/leds.h>
  #include <linux/mtd/mtd.h>
@@ -14,7 +10,7 @@ Index: linux-2.6.20-rc3/arch/arm/mach-ixp4xx/nslu2-setup.c
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
-@@ -239,11 +240,41 @@
+@@ -240,11 +241,41 @@
  	register_mtd_user(&nslu2_flash_notifier);
  }
  
