@@ -33,9 +33,9 @@ squashfs/squashfs-Makefile.patch
 80-kexec-arm-r3.patch
 85-nslu2-rtc-fixup.patch
 86-nas100d-rtc-fixup.patch
-#87-dsmg600-rtc-fixup.patch
-#88-dsmg600-dflt-cmdline.patch
-#96-fsg3-support.patch
-98-sata_via-add-pata-cleanly.patch
+87-dsmg600-rtc-fixup.patch
+88-dsmg600-dflt-cmdline.patch
+96-fsg3-support.patch
+98-sata_via-pata-support-upstream.patch
 99-avila-mtd-microcode.patch
 99-avila-loft-mac-platform.patch
