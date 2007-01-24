@@ -1,8 +1,8 @@
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
+Index: linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/Kconfig
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
-@@ -106,6 +106,14 @@ config	ARCH_IXDP4XX
+--- linux-2.6.20-rc5-git2.orig/arch/arm/mach-ixp4xx/Kconfig	2007-01-24 01:11:41.000000000 -0800
++++ linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/Kconfig	2007-01-24 01:11:41.000000000 -0800
+@@ -106,6 +106,14 @@
  	depends on ARCH_IXDP425 || MACH_IXDP465
  	default y
  
@@ -17,29 +17,29 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/Kconfig
  #
  # Certain registers and IRQs are only enabled if supporting IXP465 CPUs
  #
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/Makefile
+Index: linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.19.orig/arch/arm/mach-ixp4xx/Makefile
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/Makefile
-@@ -13,6 +13,7 @@ obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx
+--- linux-2.6.20-rc5-git2.orig/arch/arm/mach-ixp4xx/Makefile	2007-01-24 01:11:41.000000000 -0800
++++ linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/Makefile	2007-01-24 01:11:41.000000000 -0800
+@@ -13,6 +13,7 @@
  obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
  obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
- obj-pci-$(CONFIG_MACH_DSMG600)		+= dsmg600-pci.o 
+ obj-pci-$(CONFIG_MACH_DSMG600)		+= dsmg600-pci.o
 +obj-pci-$(CONFIG_MACH_FSG)		+= fsg-pci.o
  
  obj-y	+= common.o
  
-@@ -24,5 +25,6 @@ obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-
+@@ -24,5 +25,6 @@
  obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
  obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
  obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
 +obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o
  
  obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/fsg-pci.c
+Index: linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/fsg-pci.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/fsg-pci.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/fsg-pci.c	2007-01-24 01:11:41.000000000 -0800
 @@ -0,0 +1,66 @@
 +/*
 + * arch/arch/mach-ixp4xx/fsg-pci.c
@@ -107,10 +107,10 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/fsg-pci.c
 +}
 +
 +subsys_initcall(fsg_pci_init);
-Index: linux-2.6.19/arch/arm/mach-ixp4xx/fsg-setup.c
+Index: linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/fsg-setup.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/fsg-setup.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/fsg-setup.c	2007-01-24 01:16:45.000000000 -0800
 @@ -0,0 +1,209 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
@@ -227,7 +227,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/fsg-setup.c
 +        .eth_id         = 0,
 +        .rxq_id         = 27,
 +        .txq_id         = 24,
-+	 .rxdoneq_id	 = 4,
++	.rxdoneq_id     = 4,
 +};
 +
 +static struct mac_plat_info plat_mac1 = {
@@ -236,7 +236,7 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/fsg-setup.c
 +        .eth_id         = 1,
 +        .rxq_id         = 28,
 +        .txq_id         = 25,
-+	 .rxdoneq_id	 = 5,
++	.rxdoneq_id     = 5,
 +};
 +
 +static struct platform_device mac0 = {
@@ -321,10 +321,10 @@ Index: linux-2.6.19/arch/arm/mach-ixp4xx/fsg-setup.c
 +	.init_machine	= fsg_init,
 +MACHINE_END
 +
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/fsg.h
+Index: linux-2.6.20-rc5-git2/include/asm-arm/arch-ixp4xx/fsg.h
 ===================================================================
---- /dev/null
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/fsg.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.20-rc5-git2/include/asm-arm/arch-ixp4xx/fsg.h	2007-01-24 01:11:41.000000000 -0800
 @@ -0,0 +1,32 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/fsg.h
@@ -358,21 +358,21 @@ Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/fsg.h
 +#define	FSG_IDE_DATA_PORT	0xFFFE10E0
 +#define	FSG_IDE_CTRL_PORT	0xFFFE10FC
 +#define	FSG_IDE_ERROR_PORT	0xFFFE10E2
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/hardware.h
+Index: linux-2.6.20-rc5-git2/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/hardware.h
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/hardware.h
-@@ -48,5 +48,6 @@ extern unsigned int processor_id;
+--- linux-2.6.20-rc5-git2.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-01-24 01:11:41.000000000 -0800
++++ linux-2.6.20-rc5-git2/include/asm-arm/arch-ixp4xx/hardware.h	2007-01-24 01:11:41.000000000 -0800
+@@ -48,5 +48,6 @@
  #include "nslu2.h"
  #include "nas100d.h"
  #include "dsmg600.h"
 +#include "fsg.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
-Index: linux-2.6.19/include/asm-arm/arch-ixp4xx/irqs.h
+Index: linux-2.6.20-rc5-git2/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.19.orig/include/asm-arm/arch-ixp4xx/irqs.h
-+++ linux-2.6.19/include/asm-arm/arch-ixp4xx/irqs.h
+--- linux-2.6.20-rc5-git2.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-01-24 01:11:41.000000000 -0800
++++ linux-2.6.20-rc5-git2/include/asm-arm/arch-ixp4xx/irqs.h	2007-01-24 01:11:41.000000000 -0800
 @@ -128,4 +128,12 @@
  #define        IRQ_DSMG600_PCI_INTE    IRQ_IXP4XX_GPIO7
  #define        IRQ_DSMG600_PCI_INTF    IRQ_IXP4XX_GPIO6

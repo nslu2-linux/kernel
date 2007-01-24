@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.20-rc5-git2
-# Tue Jan 23 02:49:21 2007
+# Wed Jan 24 01:08:16 2007
 #
 CONFIG_ARM=y
 CONFIG_GENERIC_TIME=y
@@ -150,6 +150,7 @@ CONFIG_ARCH_IXCDP1100=y
 CONFIG_MACH_NAS100D=y
 CONFIG_MACH_DSMG600=y
 CONFIG_ARCH_IXDP4XX=y
+CONFIG_MACH_FSG=y
 # CONFIG_MACH_GTWX5715 is not set
 
 #
