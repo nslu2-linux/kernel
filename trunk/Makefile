@@ -55,7 +55,7 @@ endif
 
 all: kernel modules apex
 
-kernel: vmlinuz-nslu2-${SNAPSHOT} vmlinuz-nas100d-${SNAPSHOT} vmlinuz-loft-${SNAPSHOT} vmlinuz-dsmg600-${SNAPSHOT} vmlinuz-fsg3-${SNAPSHOT}
+kernel: vmlinuz-nslu2-${SNAPSHOT} vmlinuz-nas100d-${SNAPSHOT} vmlinuz-ixp4xx-${SNAPSHOT} vmlinuz-dsmg600-${SNAPSHOT} vmlinuz-fsg3-${SNAPSHOT}
 madwifi: lib/modules/${SNAPSHOT}/net/ath_hal.ko
 modules: modules-${SNAPSHOT}.tar.gz
 patched: linux-${SNAPSHOT}/.config 
@@ -135,14 +135,12 @@ downloads/madwifi-ng-${MADWIFIVER}.tar.gz :
 	( mkdir -p downloads ; cd downloads ; \
 	  wget ${MADWIFI_SOURCE} )
 
-vmlinuz-loft-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
+vmlinuz-ixp4xx-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
-		'wb 0xe3a01c03,4' 'wb 0xe3811051,4' \
 		'cp$$'
 else
 	devio '<<'$< >$@ \
-		'wb 0xe3a01c03,4' 'wb 0xe3811051,4' \
 		'wb 0xee110f10,4' \
 		'wb 0xe3c00080,4' \
 		'wb 0xee010f10,4' \
@@ -151,9 +149,12 @@ endif
 
 vmlinuz-nas100d-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
 ifeq (${ENDIAN},b)
-	cp $< $@
+	devio '<<'$< >$@ \
+		'wb 0xe3a01c03,4' 'wb 0xe3811061,4' \
+		'cp$$'
 else
 	devio '<<'$< >$@ \
+		'wb 0xe3a01c03,4' 'wb 0xe3811061,4' \
 		'wb 0xee110f10,4' \
 		'wb 0xe3c00080,4' \
 		'wb 0xee010f10,4' \
