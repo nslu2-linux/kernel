@@ -17,7 +17,7 @@
 ENDIAN = l
 #ENDIAN = b
 MAJORVER = 2.6
-BASEVER  = 2.6.19
+BASEVER  = 2.6.20
 PATCHVER = 2.6.20
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
