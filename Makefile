@@ -14,26 +14,27 @@
 #
 
 
-ENDIAN = l
-#ENDIAN = b
+#ENDIAN = l
+ENDIAN = b
 MAJORVER = 2.6
 BASEVER  = 2.6.20
 PATCHVER = 2.6.20
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
+MACHINE = nslu2
+
 APEX_REVISION = 1.4.11
-APEX_TARGET = nslu2
 APEX_CONFIG = slugos
 
-MADWIFIVER = r1503-20060415
+ARM_KERNEL_SHIM_REVISION = 1.2
 
 DEFCONFIG=defconfig
 
 ifeq (${ENDIAN},b)
-DEBIAN_ARCH = armeb
+ARCH = armeb
 else
-DEBIAN_ARCH = arm
+ARCH = arm
 endif
 
 KERNEL_SOURCE   = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${BASEVER}.tar.bz2
@@ -42,10 +43,10 @@ KERNEL_SNAPSHOT = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots
 
 APEX_SOURCE	= ftp://ftp.buici.com/pub/apex/apex-${APEX_REVISION}.tar.gz
 
-MADWIFI_SOURCE   = http://snapshots.madwifi.org/madwifi-ng/madwifi-ng-${MADWIFIVER}.tar.gz
+ARM_KERNEL_SHIM_SOURCE = ftp://ftp.buici.com/pub/arm/arm-kernel-shim/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz
 
-#CROSS_COMPILE = ${DEBIAN_ARCH}-linux-gnu-
-CROSS_COMPILE ?= ${DEBIAN_ARCH}-linux-
+#CROSS_COMPILE = ${ARCH}-linux-gnu-
+CROSS_COMPILE ?= ${ARCH}-linux-
 
 ifdef CROSS_COMPILE
 CROSS_COMPILE_FLAGS = CROSS_COMPILE=${CROSS_COMPILE}
@@ -53,21 +54,15 @@ else
 CROSS_COMPILE_FLAGS = 
 endif
 
-all: kernel modules apex
+all: kernel modules arm-kernel-shim
 
-kernel: vmlinuz-nslu2-${SNAPSHOT} vmlinuz-nas100d-${SNAPSHOT} vmlinuz-ixp4xx-${SNAPSHOT} vmlinuz-dsmg600-${SNAPSHOT} vmlinuz-fsg3-${SNAPSHOT}
-madwifi: lib/modules/${SNAPSHOT}/net/ath_hal.ko
-modules: modules-${SNAPSHOT}.tar.gz
-patched: linux-${SNAPSHOT}/.config 
-apex: apex-${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}-${APEX_REVISION}.bin
+kernel: vmlinuz-nslu2-${SNAPSHOT}-${ARCH} vmlinuz-nas100d-${SNAPSHOT}-${ARCH} vmlinuz-ixp4xx-${SNAPSHOT}-${ARCH} vmlinuz-dsmg600-${SNAPSHOT}-${ARCH} vmlinuz-fsg3-${SNAPSHOT}-${ARCH}
+modules: modules-${SNAPSHOT}-${ARCH}.tar.gz
+patched: linux-${SNAPSHOT}-${ARCH}/.config 
+apex: apex-${APEX_CONFIG}-${MACHINE}-${ARCH}-${APEX_REVISION}.bin
+arm-kernel-shim: arm-kernel-shim-${MACHINE}${ENDIAN}e.bin
 
-# ifeq (${APEX_TARGET},fsg3)
-# 	sed -i -e '/CONFIG_MACH_FSG/d' apex-${APEX_REVISION}/.config
-# 	echo 'CONFIG_MACH_FSG=y' >> apex-${APEX_REVISION}/.config
-# 	echo 'CONFIG_ARCH_NUMBER=1091' >> apex-${APEX_REVISION}/.config
-# endif
-
-apex-${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/.config
+apex-${APEX_CONFIG}-${MACHINE}-${ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/.config
 	( cd apex-${APEX_REVISION} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm all )
 ifeq (${ENDIAN},b)
@@ -76,12 +71,12 @@ else
 	devio '<<'apex-${APEX_REVISION}/apex.bin >$@ 'xp $$,4'
 endif
 
-apex-${APEX_REVISION}/.config: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}_config
+apex-${APEX_REVISION}/.config: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-${MACHINE}-${ARCH}_config
 	( cd apex-${APEX_REVISION} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm clean ; \
-	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm ${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}_config )
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm ${APEX_CONFIG}-${MACHINE}-${ARCH}_config )
 
-apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-${APEX_TARGET}-${DEBIAN_ARCH}_config: \
+apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-${MACHINE}-${ARCH}_config: \
 		downloads/apex-${APEX_REVISION}.tar.gz
 	[ -e apex-${APEX_REVISION} ] || \
 	( tar zxf downloads/apex-${APEX_REVISION}.tar.gz ; \
@@ -95,47 +90,32 @@ downloads/apex-${APEX_REVISION}.tar.gz :
 	( mkdir -p downloads ; cd downloads ; \
 	  wget ${APEX_SOURCE} )
 
-usr: usr-${SNAPSHOT}.tar.gz
+arm-kernel-shim-${MACHINE}${ENDIAN}e.bin: arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-${MACHINE}.h
+	( cd arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
+	  rm -f config.h ; cp config-${MACHINE}.h config.h ; \
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} clean arm-kernel-shim.bin )
+	cp arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/arm-kernel-shim.bin \
+		arm-kernel-shim-${MACHINE}${ENDIAN}e.bin
 
-usr-${SNAPSHOT}.tar.gz: vmlinuz-${SNAPSHOT} \
-	 usr/local/bin/wlanconfig
-	tar zcf usr-${SNAPSHOT}.tar.gz usr/local
+arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-${MACHINE}.h: \
+		downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz
+	[ -e arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ] || \
+	( tar zxf downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz ; \
+	  cd arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
+	  ln -s ../patches/arm-kernel-shim patches ; \
+	  quilt push -a )
+	cp patches/arm-kernel-shim/config-${MACHINE}.h \
+		arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-${MACHINE}.h
 
-# Add the following depedency if you want madwifi built.
-#	 lib/modules/${SNAPSHOT}/net/ath_hal.ko
-
-modules-${SNAPSHOT}.tar.gz: vmlinuz-${SNAPSHOT}
-	tar zcf modules-${SNAPSHOT}.tar.gz lib/modules/${SNAPSHOT}
-
-lib/modules/${SNAPSHOT}/net/ath_hal.ko usr/local/bin/wlanconfig: \
-		madwifi-ng/Makefile \
-		vmlinuz-${SNAPSHOT}
-	rm -rf lib/modules/${SNAPSHOT}/net
-	( cd madwifi-ng ; \
-	  ${MAKE} CROSS_COMPILE=${CROSS_COMPILE} TOOLPATH=${CROSS_COMPILE} \
-		TARGET=xscale-${ENDIAN}e-elf \
-		KERNELPATH=`cd .. ; pwd`/linux-${SNAPSHOT} \
-		DESTDIR=`cd .. ; pwd` \
-		all install )
-
-madwifi-ng/Makefile: \
-		downloads/madwifi-ng-${MADWIFIVER}.tar.gz
-	[ -e madwifi-ng ] || \
-	( tar zxf downloads/madwifi-ng-${MADWIFIVER}.tar.gz ; \
-	  mv madwifi-ng-${MADWIFIVER} madwifi-ng ; \
-	  ( cd patches/madwifi ; \
-	    grep -v \# series | \
-	    while read f; do case "$$f" in http:*) wget -O - "$$f";; *) cat "$$f";; esac; done \
-	  ) | \
-	  patch -d madwifi-ng -p1 )
-	touch $@
-
-downloads/madwifi-ng-${MADWIFIVER}.tar.gz :
-	[ -e downloads/madwifi-ng-${MADWIFIVER}.tar.gz ] || \
+downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz :
+	[ -e downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz ] || \
 	( mkdir -p downloads ; cd downloads ; \
-	  wget ${MADWIFI_SOURCE} )
+	  wget ${ARM_KERNEL_SHIM_SOURCE} )
 
-vmlinuz-ixp4xx-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
+modules-${SNAPSHOT}-${ARCH}.tar.gz: vmlinuz-${SNAPSHOT}-${ARCH}
+	tar -C modules-${SNAPSHOT}-${ARCH} -zcf modules-${SNAPSHOT}-${ARCH}.tar.gz lib/modules/${SNAPSHOT}
+
+vmlinuz-ixp4xx-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'cp$$'
@@ -147,7 +127,7 @@ else
 		'xp $$,4'
 endif
 
-vmlinuz-nas100d-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
+vmlinuz-nas100d-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c03,4' 'wb 0xe3811061,4' \
@@ -161,7 +141,7 @@ else
 		'xp $$,4'
 endif
 
-vmlinuz-nslu2-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
+vmlinuz-nslu2-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c02,4' 'wb 0xe3811055,4' \
@@ -175,7 +155,7 @@ else
 		'xp $$,4'
 endif
 
-vmlinuz-dsmg600-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
+vmlinuz-dsmg600-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c03,4' 'wb 0xe38110c4,4' \
@@ -190,7 +170,7 @@ else
 endif
 
 
-vmlinuz-fsg3-${SNAPSHOT}: vmlinuz-${SNAPSHOT}
+vmlinuz-fsg3-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
 		'wb 0xe3a01c04,4' 'wb 0xe3811043,4' \
@@ -205,62 +185,66 @@ else
 endif
 
 
-vmlinuz-${SNAPSHOT}: linux-${SNAPSHOT}/.config
-	( cd linux-${SNAPSHOT} ; \
+vmlinuz-${SNAPSHOT}-${ARCH}: linux-${SNAPSHOT}-${ARCH}/.config
+	( cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm bzImage modules )
-	( cd linux-${SNAPSHOT} ; \
-	  INSTALL_MOD_PATH=".." ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm modules_install )
-	rm -f lib/modules/${SNAPSHOT}/build lib/modules/${SNAPSHOT}/source
-	cp linux-${SNAPSHOT}/arch/arm/boot/zImage vmlinuz-${SNAPSHOT}
+	( cd linux-${SNAPSHOT}-${ARCH} ; \
+	  INSTALL_MOD_PATH="../modules-${SNAPSHOT}-${ARCH}" ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm modules_install )
+	rm -f modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/build modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/source
+	cp linux-${SNAPSHOT}-${ARCH}/arch/arm/boot/zImage vmlinuz-${SNAPSHOT}-${ARCH}
 
-menuconfig: linux-${SNAPSHOT}/.config
-	${MAKE} -C linux-${SNAPSHOT} ARCH=arm CROSS_COMPILE=${CROSS_COMPILE} menuconfig
+menuconfig: linux-${SNAPSHOT}-${ARCH}/.config
+	${MAKE} -C linux-${SNAPSHOT}-${ARCH} ARCH=arm CROSS_COMPILE=${CROSS_COMPILE} menuconfig
 
 ifeq (${SNAPSHOT},${BASEVER})
-linux-${SNAPSHOT}/.config: \
+linux-${SNAPSHOT}-${ARCH}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
-	[ -e linux-${REVISION} ] || \
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch \
+		patches/${PATCHVER}/$(DEFCONFIG)
+	[ -e linux-${SNAPSHOT}-${ARCH} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
-	  cd linux-${SNAPSHOT} ; \
+	  mv linux-${BASEVER} linux-${SNAPSHOT}-${ARCH} ; \
+	  cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
 	  quilt push -a )
 else
 ifeq (${REVISION},${SNAPSHOT})
-linux-${SNAPSHOT}/.config: \
+linux-${SNAPSHOT}-${ARCH}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
-	[ -e linux-${REVISION} ] || \
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch \
+		patches/${PATCHVER}/$(DEFCONFIG)
+	[ -e linux-${SNAPSHOT}-${ARCH} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
-	  mv linux-${BASEVER} linux-${SNAPSHOT} ; \
+	  mv linux-${BASEVER} linux-${SNAPSHOT}-${ARCH} ; \
 	  bzcat downloads/patch-${REVISION}.bz2 | \
-	  patch -d linux-${SNAPSHOT} -p1 ; \
-	  cd linux-${SNAPSHOT} ; \
+	  patch -d linux-${SNAPSHOT}-${ARCH} -p1 ; \
+	  cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
 	  quilt push -a )
 else
-linux-${SNAPSHOT}/.config: \
+linux-${SNAPSHOT}-${ARCH}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
 		downloads/patch-${SNAPSHOT}.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch patches/${PATCHVER}/$(DEFCONFIG)
-	[ -e linux-${REVISION} ] || \
+		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch \
+		patches/${PATCHVER}/$(DEFCONFIG)
+	[ -e linux-${SNAPSHOT}-${ARCH} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
-	  mv linux-${BASEVER} linux-${SNAPSHOT} ; \
+	  mv linux-${BASEVER} linux-${SNAPSHOT}-${ARCH} ; \
 	  bzcat downloads/patch-${REVISION}.bz2 downloads/patch-${SNAPSHOT}.bz2 | \
-	  patch -d linux-${SNAPSHOT} -p1 ; \
-	  cd linux-${SNAPSHOT} ; \
+	  patch -d linux-${SNAPSHOT}-${ARCH} -p1 ; \
+	  cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
 	  quilt push -a )
 endif
 endif
 ifeq (${ENDIAN},b)
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/CONFIG_CPU_BIG_ENDIAN=y/' \
-		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${SNAPSHOT}/.config
+		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${SNAPSHOT}-${ARCH}/.config
 else
 	sed -e 's/.*CONFIG_CPU_BIG_ENDIAN.*/\# CONFIG_CPU_BIG_ENDIAN is not set/' \
-		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${SNAPSHOT}/.config
+		< patches/${PATCHVER}/$(DEFCONFIG) > linux-${SNAPSHOT}-${ARCH}/.config
 endif
 
 downloads/linux-${BASEVER}.tar.bz2 :
@@ -283,15 +267,17 @@ endif
 downloads:
 	mkdir -p downloads
 
-clobber: clobber-apex
-	rm -rf vmlinuz-* modules-*.tar.gz usr-*.tar.gz
-	rm -rf linux-*
-	rm -rf madwifi-ng
-	rm -rf lib usr
+clobber: clobber-apex clobber-arm-kernel-shim
+	rm -rf vmlinuz-* modules-*.tar.gz
+	rm -rf linux-* modules-*
+	rm -rf *~
 
 clobber-apex:
 	rm -rf apex-*
 
-.PHONY: all kernel menuconfig modules clobber apex clobber-apex
+clobber-arm-kernel-shim:
+	rm -rf arm-kernel-shim-*
+
+.PHONY: all kernel menuconfig modules clobber apex clobber-apex clobber-arm-kernel-shim
 
 # End of Makefile
