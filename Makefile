@@ -14,8 +14,8 @@
 #
 
 
-#ENDIAN = l
-ENDIAN = b
+ENDIAN = l
+#ENDIAN = b
 MAJORVER = 2.6
 BASEVER  = 2.6.20
 PATCHVER = 2.6.20
@@ -27,7 +27,7 @@ MACHINE = nslu2
 APEX_REVISION = 1.4.11
 APEX_CONFIG = slugos
 
-ARM_KERNEL_SHIM_REVISION = 1.2
+ARM_KERNEL_SHIM_REVISION = 1.3
 
 DEFCONFIG=defconfig
 
@@ -100,10 +100,11 @@ arm-kernel-shim-${MACHINE}${ENDIAN}e.bin: arm-kernel-shim-${ARM_KERNEL_SHIM_REVI
 arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-${MACHINE}.h: \
 		downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz
 	[ -e arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ] || \
-	( tar zxf downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz ; \
+	( tar zxf downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz \
+		--transform='s|/${ARM_KERNEL_SHIM_REVISION}||' ; \
 	  cd arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
 	  ln -s ../patches/arm-kernel-shim patches ; \
-	  quilt push -a )
+	  [ ! -e patches/series ] || quilt push -a )
 	cp patches/arm-kernel-shim/config-${MACHINE}.h \
 		arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-${MACHINE}.h
 
