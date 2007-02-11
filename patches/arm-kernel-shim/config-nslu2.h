@@ -30,4 +30,9 @@
 
 #define MACH_TYPE		   597
 
+/* Uncomment one of these if you need to switch the CPU into a
+   specific mode. */
+//#define FORCE_LITTLEENDIAN
+//#define FORCE_BIGENDIAN
+
 #endif  /* __CONFIG_H__ */

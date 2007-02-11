@@ -22,8 +22,6 @@ PATCHVER = 2.6.20
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
-MACHINE = nslu2
-
 APEX_REVISION = 1.4.11
 APEX_CONFIG = slugos
 
@@ -54,15 +52,22 @@ else
 CROSS_COMPILE_FLAGS = 
 endif
 
-all: kernel modules arm-kernel-shim
+all: kernel modules arm-kernel-shim apex
 
 kernel: vmlinuz-nslu2-${SNAPSHOT}-${ARCH} vmlinuz-nas100d-${SNAPSHOT}-${ARCH} vmlinuz-ixp4xx-${SNAPSHOT}-${ARCH} vmlinuz-dsmg600-${SNAPSHOT}-${ARCH} vmlinuz-fsg3-${SNAPSHOT}-${ARCH}
 modules: modules-${SNAPSHOT}-${ARCH}.tar.gz
 patched: linux-${SNAPSHOT}-${ARCH}/.config 
-apex: apex-${APEX_CONFIG}-${MACHINE}-${ARCH}-${APEX_REVISION}.bin
-arm-kernel-shim: arm-kernel-shim-${MACHINE}${ENDIAN}e.bin
+apex:   apex-${APEX_CONFIG}-nslu2-${ARCH}-${APEX_REVISION}.bin \
+	apex-${APEX_CONFIG}-nas100d-${ARCH}-${APEX_REVISION}.bin \
+	apex-${APEX_CONFIG}-dsmg600-${ARCH}-${APEX_REVISION}.bin
+arm-kernel-shim: \
+	arm-kernel-shim-nslu2${ENDIAN}e.bin \
+	arm-kernel-shim-nas100d${ENDIAN}e.bin
 
-apex-${APEX_CONFIG}-${MACHINE}-${ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/.config
+apex-${APEX_CONFIG}-%-${ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config
+	( cd apex-${APEX_REVISION} ; \
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm clean ; \
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm ${APEX_CONFIG}-$*-${ARCH}_config )
 	( cd apex-${APEX_REVISION} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm all )
 ifeq (${ENDIAN},b)
@@ -71,12 +76,7 @@ else
 	devio '<<'apex-${APEX_REVISION}/apex.bin >$@ 'xp $$,4'
 endif
 
-apex-${APEX_REVISION}/.config: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-${MACHINE}-${ARCH}_config
-	( cd apex-${APEX_REVISION} ; \
-	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm clean ; \
-	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm ${APEX_CONFIG}-${MACHINE}-${ARCH}_config )
-
-apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-${MACHINE}-${ARCH}_config: \
+apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config: \
 		downloads/apex-${APEX_REVISION}.tar.gz
 	[ -e apex-${APEX_REVISION} ] || \
 	( tar zxf downloads/apex-${APEX_REVISION}.tar.gz ; \
@@ -90,23 +90,30 @@ downloads/apex-${APEX_REVISION}.tar.gz :
 	( mkdir -p downloads ; cd downloads ; \
 	  wget ${APEX_SOURCE} )
 
-arm-kernel-shim-${MACHINE}${ENDIAN}e.bin: arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-${MACHINE}.h
+arm-kernel-shim-%${ENDIAN}e.bin: arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-%${ENDIAN}e.h
 	( cd arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
-	  rm -f config.h ; cp config-${MACHINE}.h config.h ; \
+	  mv config.h config.h.orig ; cp config-$*${ENDIAN}e.h config.h ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} clean arm-kernel-shim.bin )
 	cp arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/arm-kernel-shim.bin \
-		arm-kernel-shim-${MACHINE}${ENDIAN}e.bin
+		arm-kernel-shim-$*${ENDIAN}e.bin
 
-arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-${MACHINE}.h: \
+arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-%${ENDIAN}e.h: \
 		downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz
 	[ -e arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ] || \
-	( tar zxf downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz \
-		--transform='s|/${ARM_KERNEL_SHIM_REVISION}||' ; \
+	( tar zxf downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz ; \
+          mv arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} foo ; \
+          mv foo/${ARM_KERNEL_SHIM_REVISION} arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
+	  rmdir foo ; \
 	  cd arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
 	  ln -s ../patches/arm-kernel-shim patches ; \
 	  [ ! -e patches/series ] || quilt push -a )
-	cp patches/arm-kernel-shim/config-${MACHINE}.h \
-		arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-${MACHINE}.h
+ifeq (${ENDIAN},b)
+	sed -e 's|//#define FORCE_BIGENDIAN|#define FORCE_BIGENDIAN|' patches/arm-kernel-shim/config-$*.h \
+		> arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-$*${ENDIAN}e.h
+else
+	sed -e 's|//#define FORCE_LITTLEENDIAN|#define FORCE_LITTLEENDIAN|' patches/arm-kernel-shim/config-$*.h \
+		> arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-$*${ENDIAN}e.h
+endif
 
 downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz :
 	[ -e downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz ] || \
@@ -122,34 +129,6 @@ ifeq (${ENDIAN},b)
 		'cp$$'
 else
 	devio '<<'$< >$@ \
-		'wb 0xee110f10,4' \
-		'wb 0xe3c00080,4' \
-		'wb 0xee010f10,4' \
-		'xp $$,4'
-endif
-
-vmlinuz-nas100d-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
-ifeq (${ENDIAN},b)
-	devio '<<'$< >$@ \
-		'wb 0xe3a01c03,4' 'wb 0xe3811061,4' \
-		'cp$$'
-else
-	devio '<<'$< >$@ \
-		'wb 0xe3a01c03,4' 'wb 0xe3811061,4' \
-		'wb 0xee110f10,4' \
-		'wb 0xe3c00080,4' \
-		'wb 0xee010f10,4' \
-		'xp $$,4'
-endif
-
-vmlinuz-nslu2-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
-ifeq (${ENDIAN},b)
-	devio '<<'$< >$@ \
-		'wb 0xe3a01c02,4' 'wb 0xe3811055,4' \
-		'cp$$'
-else
-	devio '<<'$< >$@ \
-		'wb 0xe3a01c02,4' 'wb 0xe3811055,4' \
 		'wb 0xee110f10,4' \
 		'wb 0xe3c00080,4' \
 		'wb 0xee010f10,4' \
@@ -185,6 +164,10 @@ else
 		'xp $$,4'
 endif
 
+vmlinuz-%-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH} arm-kernel-shim-%${ENDIAN}e.bin
+	( cat arm-kernel-shim-$*${ENDIAN}e.bin vmlinuz-${SNAPSHOT}-${ARCH} >$$$$ ; \
+	  devio '<<'$$$$ >$@ 'xp $$,4' ; \
+	  rm -f $$$$ )
 
 vmlinuz-${SNAPSHOT}-${ARCH}: linux-${SNAPSHOT}-${ARCH}/.config
 	( cd linux-${SNAPSHOT}-${ARCH} ; \
