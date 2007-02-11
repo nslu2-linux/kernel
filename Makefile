@@ -164,15 +164,19 @@ else
 endif
 
 vmlinuz-%-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH} arm-kernel-shim-%${ENDIAN}e.bin
+ifeq (${ENDIAN},b)
+	cat arm-kernel-shim-$*${ENDIAN}e.bin vmlinuz-${SNAPSHOT}-${ARCH}>$@
+else
 	( cat arm-kernel-shim-$*${ENDIAN}e.bin vmlinuz-${SNAPSHOT}-${ARCH} >$$$$ ; \
 	  devio '<<'$$$$ >$@ 'xp $$,4' ; \
 	  rm -f $$$$ )
+endif
 
 vmlinuz-${SNAPSHOT}-${ARCH}: linux-${SNAPSHOT}-${ARCH}/.config
 	( cd linux-${SNAPSHOT}-${ARCH} ; \
-	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm bzImage modules )
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm bzImage )
 	( cd linux-${SNAPSHOT}-${ARCH} ; \
-	  INSTALL_MOD_PATH="../modules-${SNAPSHOT}-${ARCH}" ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm modules_install )
+	  INSTALL_MOD_PATH="../modules-${SNAPSHOT}-${ARCH}" ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm modules modules_install ) || true
 	rm -f modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/build modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/source
 	cp linux-${SNAPSHOT}-${ARCH}/arch/arm/boot/zImage vmlinuz-${SNAPSHOT}-${ARCH}
 
