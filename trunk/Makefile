@@ -134,21 +134,6 @@ else
 		'xp $$,4'
 endif
 
-vmlinuz-dsmg600-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
-ifeq (${ENDIAN},b)
-	devio '<<'$< >$@ \
-		'wb 0xe3a01c03,4' 'wb 0xe38110c4,4' \
-		'cp$$'
-else
-		devio '<<'$< >$@ \
-		'wb 0xe3a01c03,4' 'wb 0xe38110c4,4' \
-		'wb 0xee110f10,4' \
-		'wb 0xe3c00080,4' \
-		'wb 0xee010f10,4' \
-		'xp $$,4'
-endif
-
-
 vmlinuz-fsg3-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
 ifeq (${ENDIAN},b)
 	devio '<<'$< >$@ \
