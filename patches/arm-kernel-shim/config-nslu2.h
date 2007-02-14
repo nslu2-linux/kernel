@@ -23,10 +23,7 @@
 //#define RAM_BANK1_LENGTH   0x10000000
 
 #define COMMANDLINE\
- "console=ttyS0,115200n8"
-// "snoc=eloSytt11,00025  8n  console=ttyS0,115200n8"
-// "snoc=eloSytt11,00025  8n console=ttyS0,115200n8 "
-// "init=/linuxrc root=/dev/mtdblock4 rootfstype=jffs rw noirqdebug console=ttyS0,115200n8  "
+ "init=/linuxrc root=/dev/mtdblock4 rootfstype=jffs2 rw noirqdebug console=ttyS0,115200n8"
 
 #define MACH_TYPE		   597
 

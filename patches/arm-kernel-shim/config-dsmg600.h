@@ -25,7 +25,7 @@
 #define COMMANDLINE\
  "init=/linuxrc root=/dev/mtdblock2 rootfstype=jffs2 rw noirqdebug console=ttyS0,115200n8"
 
-#define MACH_TYPE		   865
+#define MACH_TYPE		   964
 
 /* Uncomment one of these if you need to switch the CPU into a
    specific mode. */
