@@ -1,16 +1,10 @@
----
- src/mach-ixp42x/slugos-dsmg600-armeb_config |  125 ++++++++++++++++++++++++++++
- 1 file changed, 125 insertions(+)
-
-Index: apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-armeb_config
-===================================================================
---- /dev/null
-+++ apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-armeb_config
-@@ -0,0 +1,125 @@
+--- /dev/null	2007-01-12 23:31:09.632267784 -0600
++++ apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-armeb_config	2007-02-14 09:41:55.000000000 -0600
+@@ -0,0 +1,126 @@
 +#
 +# Automatically generated make config: don't edit
 +# Linux kernel version: 
-+# Sun Oct 22 14:17:09 2006
++# Mon Jan  1 01:01:20 2007
 +#
 +CONFIG_ARM=y
 +CONFIG_CPU_ARMV5=y
@@ -26,8 +20,8 @@ Index: apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-armeb_config
 +# General Setup
 +#
 +CONFIG_CROSS_COMPILE=""
-+CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+# CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
++# CONFIG_CC_OPTIMIZE_FOR_SIZE is not set
++CONFIG_CC_OPTIMIZE_FOR_SPEED=y
 +# CONFIG_CC_NO_OPTIMIZATION is not set
 +CONFIG_STARTUP_UART=y
 +# CONFIG_DEBUG_LL is not set
@@ -41,8 +35,9 @@ Index: apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-armeb_config
 +CONFIG_STACK_SIZE=0x1000
 +CONFIG_STACKLIMIT=y
 +CONFIG_ATAG_PHYS=0x00000100
++CONFIG_ARCH_NUMBER=964
 +CONFIG_APEX_VMA=0x00200000
-+CONFIG_KERNEL_LMA=0x00400000
++CONFIG_KERNEL_LMA=0x00600000
 +# CONFIG_USE_RAMDISK is not set
 +CONFIG_SDRAM_BANK0=y
 +# CONFIG_SDRAM_BANK1 is not set
@@ -117,7 +112,7 @@ Index: apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-armeb_config
 +# CONFIG_COMPANION_EVT1_BOOT is not set
 +# CONFIG_COMPANION_EVT2_BOOT is not set
 +CONFIG_AUTOBOOT=y
-+CONFIG_AUTOBOOT_DELAY=10
++CONFIG_AUTOBOOT_DELAY=100
 +CONFIG_ENV_MUTABLE=y
 +CONFIG_ENV_LINK=y
 +CONFIG_ENV_REGION="nor:0xee0000+15k"
@@ -126,7 +121,7 @@ Index: apex-1.4.7/src/mach-ixp42x/slugos-dsmg600-armeb_config
 +CONFIG_ENV_REGION_KERNEL="fis://kernel"
 +# CONFIG_ENV_REGION_KERNEL_SWAP is not set
 +CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
-+CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 rw init=/linuxrc console=ttyS0,115200 "
 +# CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
 +CONFIG_USES_NOR_BOOTFLASH=y
 +CONFIG_BIGENDIAN=y
