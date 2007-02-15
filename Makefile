@@ -61,7 +61,8 @@ apex:   apex-${APEX_CONFIG}-nslu2-${ARCH}-${APEX_REVISION}.bin \
 	apex-${APEX_CONFIG}-nas100d-${ARCH}-${APEX_REVISION}.bin
 arm-kernel-shim: \
 	arm-kernel-shim-nslu2${ENDIAN}e.bin \
-	arm-kernel-shim-nas100d${ENDIAN}e.bin
+	arm-kernel-shim-nas100d${ENDIAN}e.bin \
+	arm-kernel-shim-dsmg600${ENDIAN}e.bin
 
 apex-${APEX_CONFIG}-%-${ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config
 	( cd apex-${APEX_REVISION} ; \
