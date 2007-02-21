@@ -7,44 +7,23 @@
 [linux-mtd] - patch submitted to the linux-mtd mailing list (because
 	it is not ARM specific.)
 
-01-nslu2-led-swap.patch [l-a-k]
-	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3944/1
-	Upstream in 2.6.20-rc1
-
-05-mtdpart-redboot-partition-truncate.patch [linux-mtd]
-	Upstream in 2.6.20-rc5-git2
-
 07-remove-avila-ixdp425-setup.patch [l-a-k]
 	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4031/1
-	Upstream in ARM git-curr
+	Upstream in 2.6.21-rc1
 
 08-avila-loft-setup.patch [l-a-k]
 	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4033/1
-	Upstream in ARM git-curr
+	Upstream in 2.6.21-rc1
 
 09-avila-setup-pata.patch [l-a-k]
 	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4032/1
-	Upstream in ARM git-curr
+	Upstream in 2.6.21-rc1
 
-10-bridging-fix.patch
-	Who added this, and why are we carrying it? -- [g2] & don't know
-	Temporarily disabled in 2.6.20-rc1
-
-11-mtdpart-redboot-config-byteswap.patch
-	Is this really required in our target devices?
-	Temporarily disabled in 2.6.20-rc1
-
-12-fix-ext3-corruption.patch
-	Will be fixed upstream forthwith, but we should to test this
-	here as the NSLU2 was one of the devices this issue appeared with
-
-30-ixp4xx-0.2.1-driver.patch
+30-ixp4xx-0.3.1-driver.patch
 	driver being actively developed. Developer will probably push
 	upstream when properly tested.
 
-31-ixp4xx-2.6.19-cleanup.patch
-32-ixp4xx-net-driver-fix-qmgr.patch
-33-ixp4xx-net-driver-improve-mac-handling.patch
+37-ixp4xx-net-driver-improve-mac-handling.patch
 39-ixp4xx-net-driver-mtd-load-fw.patch
 	Should all be submitted to Christian.
 
@@ -91,20 +70,14 @@
 78-velocity-BE.patch
 	??
 
-80-kexec-arm-r3.patch
-	??
-
 85-nslu2-rtc-fixup.patch
 86-nas100d-rtc-fixup.patch
 87-dsmg600-rtc-fixup.patch
 	Dunno whether upstream will accept this.
 	We may need to carry them ourselves until i2c update 2.6.21/22
 
-95-pata-ixp4xx.patch
-	Upstream in 2.6.20-rc1
-
 96-fsg3-support.patch
-	Untested, should allow all functionality except PATA & wireless.
+	Untested, should allow all functionality except wireless.
 
 99-avila-mtd-microcode.patch
 99-avila-loft-mac-platform.patch

@@ -22,7 +22,6 @@ squashfs/squashfs-Makefile.patch
 52-nas100d-mtd-load-mac.patch
 53-nslu2-mtd-load-mac.patch
 55-increase-entropy-pools.patch
-60-nas100d-artop-temp-fix.patch
 66-hwmon-ad7418.patch
 75-dsmg600-support.patch
 76-dsmg600-pwrbtn.patch
