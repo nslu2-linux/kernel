@@ -4,6 +4,7 @@ Should fully support NSLU2, NAS-100D, FSG-3
 2.6.19.2 + IXP_NPE 0.3.1 builds
 Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
 
-2.6.20-rc5 + IXP_NPE 0.3.1 builds
-Bridging and Reboot FIS Directory Byteswap patch disabled 
- (rinsed) to check if still required (otherwise drop)
+2.6.20.1 + IXP_NPE 0.3.1 builds
+Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
+
+2.6.21-rc1 + IXP_NPE 0.3.1 build fails
