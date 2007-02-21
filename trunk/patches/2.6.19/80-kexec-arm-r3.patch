@@ -1,8 +1,19 @@
-Index: linux-2.6.19/arch/arm/Kconfig
+---
+ arch/arm/Kconfig                  |   17 ++++++++
+ arch/arm/kernel/Makefile          |    1 
+ arch/arm/kernel/calls.S           |   13 ++++++
+ arch/arm/kernel/machine_kexec.c   |   78 ++++++++++++++++++++++++++++++++++++++
+ arch/arm/kernel/relocate_kernel.S |   74 ++++++++++++++++++++++++++++++++++++
+ include/asm-arm/kexec.h           |   30 ++++++++++++++
+ include/asm-arm/unistd.h          |    2 
+ include/linux/kexec.h             |    1 
+ 8 files changed, 216 insertions(+)
+
+Index: linux-2.6.19-arm/arch/arm/Kconfig
 ===================================================================
---- linux-2.6.19.orig/arch/arm/Kconfig
-+++ linux-2.6.19/arch/arm/Kconfig
-@@ -384,6 +384,23 @@ if !MMU
+--- linux-2.6.19-arm.orig/arch/arm/Kconfig
++++ linux-2.6.19-arm/arch/arm/Kconfig
+@@ -384,6 +384,23 @@
  source "arch/arm/Kconfig-nommu"
  endif
  
@@ -26,23 +37,34 @@ Index: linux-2.6.19/arch/arm/Kconfig
  endmenu
  
  source "arch/arm/common/Kconfig"
-Index: linux-2.6.19/arch/arm/kernel/calls.S
+Index: linux-2.6.19-arm/arch/arm/kernel/calls.S
 ===================================================================
---- linux-2.6.19.orig/arch/arm/kernel/calls.S
-+++ linux-2.6.19/arch/arm/kernel/calls.S
-@@ -198,7 +198,7 @@
- 		CALL(sys_sigaltstack_wrapper)
- 		CALL(sys_sendfile)
- 		CALL(sys_ni_syscall)
--		CALL(sys_ni_syscall)
+--- linux-2.6.19-arm.orig/arch/arm/kernel/calls.S
++++ linux-2.6.19-arm/arch/arm/kernel/calls.S
+@@ -344,6 +344,19 @@
+ 		CALL(sys_readlinkat)
+ 		CALL(sys_fchmodat)
+ 		CALL(sys_faccessat)
++/* 335 */	CALL(sys_ni_syscall)
++		CALL(sys_ni_syscall)
++		CALL(sys_ni_syscall)
++		CALL(sys_ni_syscall)
++		CALL(sys_ni_syscall)
++/* 340 */	CALL(sys_ni_syscall)
++		CALL(sys_ni_syscall)
++		CALL(sys_ni_syscall)
++		CALL(sys_ni_syscall)
++		CALL(sys_ni_syscall)
++/* 345 */	CALL(sys_ni_syscall)
++		CALL(sys_ni_syscall)
 +		CALL(sys_kexec_load)
- /* 190 */	CALL(sys_vfork_wrapper)
- 		CALL(sys_getrlimit)
- 		CALL(sys_mmap2)
-Index: linux-2.6.19/arch/arm/kernel/machine_kexec.c
+ #ifndef syscalls_counted
+ .equ syscalls_padding, ((NR_syscalls + 3) & ~3) - NR_syscalls
+ #define syscalls_counted
+Index: linux-2.6.19-arm/arch/arm/kernel/machine_kexec.c
 ===================================================================
 --- /dev/null
-+++ linux-2.6.19/arch/arm/kernel/machine_kexec.c
++++ linux-2.6.19-arm/arch/arm/kernel/machine_kexec.c
 @@ -0,0 +1,78 @@
 +/*
 + * machine_kexec.c - handle transition of Linux booting another kernel
@@ -122,11 +144,11 @@ Index: linux-2.6.19/arch/arm/kernel/machine_kexec.c
 +	setup_mm_for_reboot(0); /* mode is not used, so just pass 0*/
 +	cpu_reset(reboot_code_buffer_phys);
 +}
-Index: linux-2.6.19/arch/arm/kernel/Makefile
+Index: linux-2.6.19-arm/arch/arm/kernel/Makefile
 ===================================================================
---- linux-2.6.19.orig/arch/arm/kernel/Makefile
-+++ linux-2.6.19/arch/arm/kernel/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_ARTHUR)		+= arthur.o
+--- linux-2.6.19-arm.orig/arch/arm/kernel/Makefile
++++ linux-2.6.19-arm/arch/arm/kernel/Makefile
+@@ -19,6 +19,7 @@
  obj-$(CONFIG_ISA_DMA)		+= dma-isa.o
  obj-$(CONFIG_PCI)		+= bios32.o isa.o
  obj-$(CONFIG_SMP)		+= smp.o
@@ -134,10 +156,10 @@ Index: linux-2.6.19/arch/arm/kernel/Makefile
  obj-$(CONFIG_OABI_COMPAT)	+= sys_oabi-compat.o
  
  obj-$(CONFIG_CRUNCH)		+= crunch.o crunch-bits.o
-Index: linux-2.6.19/arch/arm/kernel/relocate_kernel.S
+Index: linux-2.6.19-arm/arch/arm/kernel/relocate_kernel.S
 ===================================================================
 --- /dev/null
-+++ linux-2.6.19/arch/arm/kernel/relocate_kernel.S
++++ linux-2.6.19-arm/arch/arm/kernel/relocate_kernel.S
 @@ -0,0 +1,74 @@
 +/*
 + * relocate_kernel.S - put the kernel image in place to boot
@@ -213,10 +235,10 @@ Index: linux-2.6.19/arch/arm/kernel/relocate_kernel.S
 +	.long relocate_new_kernel_end - relocate_new_kernel
 +
 +
-Index: linux-2.6.19/include/asm-arm/kexec.h
+Index: linux-2.6.19-arm/include/asm-arm/kexec.h
 ===================================================================
 --- /dev/null
-+++ linux-2.6.19/include/asm-arm/kexec.h
++++ linux-2.6.19-arm/include/asm-arm/kexec.h
 @@ -0,0 +1,30 @@
 +#ifndef _ARM_KEXEC_H
 +#define _ARM_KEXEC_H
@@ -248,24 +270,24 @@ Index: linux-2.6.19/include/asm-arm/kexec.h
 +#endif /* CONFIG_KEXEC */
 +
 +#endif /* _ARM_KEXEC_H */
-Index: linux-2.6.19/include/asm-arm/unistd.h
+Index: linux-2.6.19-arm/include/asm-arm/unistd.h
 ===================================================================
---- linux-2.6.19.orig/include/asm-arm/unistd.h
-+++ linux-2.6.19/include/asm-arm/unistd.h
-@@ -214,7 +214,7 @@
- #define __NR_sigaltstack		(__NR_SYSCALL_BASE+186)
- #define __NR_sendfile			(__NR_SYSCALL_BASE+187)
- 					/* 188 reserved */
--					/* 189 reserved */
-+#define __NR_sys_kexec_load		(__NR_SYSCALL_BASE+189)	/* 189 was reserved, temporarily use it for sys_kexec_load */
- #define __NR_vfork			(__NR_SYSCALL_BASE+190)
- #define __NR_ugetrlimit			(__NR_SYSCALL_BASE+191)	/* SuS compliant getrlimit */
- #define __NR_mmap2			(__NR_SYSCALL_BASE+192)
-Index: linux-2.6.19/include/linux/kexec.h
+--- linux-2.6.19-arm.orig/include/asm-arm/unistd.h
++++ linux-2.6.19-arm/include/asm-arm/unistd.h
+@@ -361,6 +361,8 @@
+ #define __NR_fchmodat			(__NR_SYSCALL_BASE+333)
+ #define __NR_faccessat			(__NR_SYSCALL_BASE+334)
+ 
++#define __NR_sys_kexec_load		(__NR_SYSCALL_BASE+347)
++
+ /*
+  * The following SWIs are ARM private.
+  */
+Index: linux-2.6.19-arm/include/linux/kexec.h
 ===================================================================
---- linux-2.6.19.orig/include/linux/kexec.h
-+++ linux-2.6.19/include/linux/kexec.h
-@@ -120,6 +120,7 @@ extern struct kimage *kexec_crash_image;
+--- linux-2.6.19-arm.orig/include/linux/kexec.h
++++ linux-2.6.19-arm/include/linux/kexec.h
+@@ -120,6 +120,7 @@
  #define KEXEC_ARCH_PPC     (20 << 16)
  #define KEXEC_ARCH_PPC64   (21 << 16)
  #define KEXEC_ARCH_IA_64   (50 << 16)
