@@ -1,0 +1,11 @@
+--- linux-2.6.12.3/drivers/i2c/chips/Makefile	2005-07-15 17:18:57.000000000 -0400
++++ linux-2.6.12.3-qnap/drivers/i2c/chips/Makefile	2007-02-17 14:10:17.000000000 -0500
+@@ -41,6 +41,8 @@
+ obj-$(CONFIG_SENSORS_VIA686A)	+= via686a.o
+ obj-$(CONFIG_SENSORS_W83L785TS)	+= w83l785ts.o
+ obj-$(CONFIG_ISP1301_OMAP)	+= isp1301_omap.o
++obj-$(CONFIG_SENSORS_RS5C372A) 	+= rs5c372a.o
++obj-$(CONFIG_SENSORS_S35390A) 	+= i2c-s3531a.o
+ 
+ ifeq ($(CONFIG_I2C_DEBUG_CHIP),y)
+ EXTRA_CFLAGS += -DDEBUG
