@@ -1,8 +1,8 @@
-Index: linux-2.6.20.1/drivers/i2c/chips/i2c-s3531a.c
+Index: linux-2.6.20.1.orig/drivers/i2c/chips/i2c-s3531a.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20.1/drivers/i2c/chips/i2c-s3531a.c	2007-02-22 17:56:33.000000000 -0500
-@@ -0,0 +1,655 @@
++++ linux-2.6.20.1.orig/drivers/i2c/chips/i2c-s3531a.c	2007-02-23 18:12:40.000000000 -0500
+@@ -0,0 +1,654 @@
 +/*
 + *  linux/drivers/i2c/chips/i2c-s3531a.c
 + *
@@ -17,7 +17,6 @@ Index: linux-2.6.20.1/drivers/i2c/chips/i2c-s3531a.c
 +#include <linux/delay.h>
 +#include <linux/sched.h>
 +#include <linux/ioctl.h>
-+#include <linux/config.h>
 +#include <linux/version.h>
 +#include <linux/kernel.h>
 +#include <linux/poll.h>
@@ -658,10 +657,10 @@ Index: linux-2.6.20.1/drivers/i2c/chips/i2c-s3531a.c
 +
 +module_init (s3531a_init);
 +module_exit (s3531a_exit);
-Index: linux-2.6.20.1/drivers/i2c/chips/i2c-s3531a.h
+Index: linux-2.6.20.1.orig/drivers/i2c/chips/i2c-s3531a.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20.1/drivers/i2c/chips/i2c-s3531a.h	2007-02-22 17:48:02.000000000 -0500
++++ linux-2.6.20.1.orig/drivers/i2c/chips/i2c-s3531a.h	2007-02-23 18:00:40.000000000 -0500
 @@ -0,0 +1,58 @@
 +/*
 + *  linux/include/linux/i2c-s3531a.h
@@ -721,10 +720,10 @@ Index: linux-2.6.20.1/drivers/i2c/chips/i2c-s3531a.h
 +  int min;  /* Minutes.     [0-59] */
 +  int sec;  /* Seconds.     [0-59] */
 +};
-Index: linux-2.6.20.1/drivers/i2c/chips/Kconfig
+Index: linux-2.6.20.1.orig/drivers/i2c/chips/Kconfig
 ===================================================================
---- linux-2.6.20.1.orig/drivers/i2c/chips/Kconfig	2007-02-22 17:48:14.000000000 -0500
-+++ linux-2.6.20.1/drivers/i2c/chips/Kconfig	2007-02-22 17:51:11.000000000 -0500
+--- linux-2.6.20.1.orig.orig/drivers/i2c/chips/Kconfig	2007-02-23 17:58:33.000000000 -0500
++++ linux-2.6.20.1.orig/drivers/i2c/chips/Kconfig	2007-02-23 18:00:40.000000000 -0500
 @@ -125,4 +125,13 @@
  	  This driver can also be built as a module.  If so, the module
  	  will be called max6875.
@@ -739,10 +738,10 @@ Index: linux-2.6.20.1/drivers/i2c/chips/Kconfig
 +	  will be called i2c-s3531a
 +
  endmenu
-Index: linux-2.6.20.1/drivers/i2c/chips/Makefile
+Index: linux-2.6.20.1.orig/drivers/i2c/chips/Makefile
 ===================================================================
---- linux-2.6.20.1.orig/drivers/i2c/chips/Makefile	2007-02-22 17:52:03.000000000 -0500
-+++ linux-2.6.20.1/drivers/i2c/chips/Makefile	2007-02-22 17:52:13.000000000 -0500
+--- linux-2.6.20.1.orig.orig/drivers/i2c/chips/Makefile	2007-02-23 17:58:33.000000000 -0500
++++ linux-2.6.20.1.orig/drivers/i2c/chips/Makefile	2007-02-23 18:00:40.000000000 -0500
 @@ -12,6 +12,7 @@
  obj-$(CONFIG_SENSORS_PCF8591)	+= pcf8591.o
  obj-$(CONFIG_ISP1301_OMAP)	+= isp1301_omap.o
