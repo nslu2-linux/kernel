@@ -5,3 +5,4 @@ linux-2.6.12.3_arch_ppc_Kconfig
 linux-2.6.12.3_arch_ppc_platforms_Makefile
 linux-2.6.12.3_arch_ppc_syslib_open_pic.c
 linux-2.6.12.3_include_asm-ppc_mpc10x.h
+mpc10x_common.diff
