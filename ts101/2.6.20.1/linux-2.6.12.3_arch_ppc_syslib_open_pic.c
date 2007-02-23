@@ -1,6 +1,8 @@
---- linux-2.6.12.3/arch/ppc/syslib/open_pic.c	2005-07-15 17:18:57.000000000 -0400
-+++ linux-2.6.12.3-qnap/arch/ppc/syslib/open_pic.c	2007-02-17 14:10:23.000000000 -0500
-@@ -322,7 +322,8 @@
+Index: linux-2.6.20.1/arch/ppc/syslib/open_pic.c
+===================================================================
+--- linux-2.6.20.1.orig/arch/ppc/syslib/open_pic.c	2007-02-23 16:14:21.000000000 -0500
++++ linux-2.6.20.1/arch/ppc/syslib/open_pic.c	2007-02-23 16:14:34.000000000 -0500
+@@ -318,7 +318,8 @@
  #ifdef CONFIG_EPIC_SERIAL_MODE
  	/* Have to start from ground zero.
  	*/
