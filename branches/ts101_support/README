@@ -1,0 +1,26 @@
+Patch status:
+
+Patches with numerical prefix apply cleanly to 2.6.20.1
+
+001-sata_sii_3512.diff [Done?]
+	Simple patch to add the PCI ids of the controller used in the TS101
+
+002-i2c_s3531a.diff [Done?]
+	Driver for the S3531A RTC device.
+
+linux-2.6.12.3_arch_ppc_platforms_sandpoint.h
+	Ugly hack to the sandpoint definitions. Should be moved into a
+	separate one for ts101/ts201
+
+linux-2.6.12.3_arch_ppc_syslib_Makefile
+linux-2.6.12.3_arch_ppc_syslib_mpc10x_common.c
+linux-2.6.12.3_arch_ppc_Kconfig
+linux-2.6.12.3_arch_ppc_syslib_open_pic.c
+linux-2.6.12.3_arch_ppc_platforms_Makefile
+linux-2.6.12.3_drivers_mtd_maps_physmap.c
+linux-2.6.12.3_arch_ppc_platforms_qnap_pic.c
+linux-2.6.12.3_include_asm-ppc_mpc10x.h
+linux-2.6.12.3_arch_ppc_platforms_qnap_pic.h
+linux-2.6.12.3_include_scsi_scsi.h
+linux-2.6.12.3_arch_ppc_platforms_qnap_pic_user.h  series
+linux-2.6.12.3_arch_ppc_platforms_sandpoint.c
