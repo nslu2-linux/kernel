@@ -3,7 +3,7 @@
 # must be all able to be applied independently in any order.
 # Patches marked with ## need reworking and are currently disabled
 
-00-linux-2.6.18.6.patch
+00-linux-2.6.18.8.patch
 00-squashfs3.1.patch
 02-mtdpart-redboot-byteswap-partition-truncate.patch
 10-bridging-fix.patch

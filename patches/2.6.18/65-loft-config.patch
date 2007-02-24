@@ -7,9 +7,11 @@ variation on a standard Avila board
  include/asm-arm/arch-ixp4xx/ixdp425.h |    1 
  4 files changed, 66 insertions(+), 3 deletions(-)
 
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/Kconfig	2006-10-23 22:58:29.000000000 +0200
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/Kconfig	2006-10-23 22:59:11.000000000 +0200
-@@ -25,6 +25,12 @@ config ARCH_AVILA
+Index: linux-2.6.18-arm/arch/arm/mach-ixp4xx/Kconfig
+===================================================================
+--- linux-2.6.18-arm.orig/arch/arm/mach-ixp4xx/Kconfig	2006-09-20 04:42:06.000000000 +0100
++++ linux-2.6.18-arm/arch/arm/mach-ixp4xx/Kconfig	2007-02-24 10:57:55.369945213 +0000
+@@ -25,6 +25,12 @@
  	  Avila Network Platform. For more information on this platform,
  	  see <file:Documentation/arm/IXP4xx>.
  
@@ -22,7 +24,7 @@ variation on a standard Avila board
  config ARCH_ADI_COYOTE
  	bool "Coyote"
  	select PCI
-@@ -86,7 +92,7 @@ config MACH_NAS100D
+@@ -86,7 +92,7 @@
  #
  config	ARCH_IXDP4XX
  	bool
@@ -31,9 +33,11 @@ variation on a standard Avila board
  	default y
  
  #
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-10-23 22:58:29.000000000 +0200
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-10-23 22:59:11.000000000 +0200
-@@ -46,7 +46,8 @@ static int __init ixdp425_map_irq(struct
+Index: linux-2.6.18-arm/arch/arm/mach-ixp4xx/ixdp425-pci.c
+===================================================================
+--- linux-2.6.18-arm.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-09-20 04:42:06.000000000 +0100
++++ linux-2.6.18-arm/arch/arm/mach-ixp4xx/ixdp425-pci.c	2007-02-24 10:56:21.944106463 +0000
+@@ -46,7 +46,8 @@
  
  	int irq = -1;
  
@@ -43,7 +47,7 @@ variation on a standard Avila board
  		pin >= 1 && pin <= IXDP425_PCI_IRQ_LINES) {
  		irq = pci_irq_table[(slot + pin - 2) % 4];
  	}
-@@ -66,7 +67,8 @@ struct hw_pci ixdp425_pci __initdata = {
+@@ -66,7 +67,8 @@
  int __init ixdp425_pci_init(void)
  {
  	if (machine_is_ixdp425() || machine_is_ixcdp1100() ||
@@ -53,8 +57,10 @@ variation on a standard Avila board
  		pci_common_init(&ixdp425_pci);
  	return 0;
  }
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-10-23 22:58:29.000000000 +0200
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-10-23 22:59:11.000000000 +0200
+Index: linux-2.6.18-arm/arch/arm/mach-ixp4xx/ixdp425-setup.c
+===================================================================
+--- linux-2.6.18-arm.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-02-24 10:56:21.540081213 +0000
++++ linux-2.6.18-arm/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-02-24 10:56:21.944106463 +0000
 @@ -15,6 +15,10 @@
  #include <linux/tty.h>
  #include <linux/serial_8250.h>
@@ -66,7 +72,7 @@ variation on a standard Avila board
  
  #include <asm/types.h>
  #include <asm/setup.h>
-@@ -223,3 +227,53 @@ MACHINE_START(AVILA, "Gateworks Avila Ne
+@@ -225,3 +229,53 @@
  MACHINE_END
  #endif
  
@@ -120,8 +126,10 @@ variation on a standard Avila board
 +MACHINE_END
 +#endif
 +
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-10-23 22:58:29.000000000 +0200
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-10-23 22:59:11.000000000 +0200
+Index: linux-2.6.18-arm/include/asm-arm/arch-ixp4xx/ixdp425.h
+===================================================================
+--- linux-2.6.18-arm.orig/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-09-20 04:42:06.000000000 +0100
++++ linux-2.6.18-arm/include/asm-arm/arch-ixp4xx/ixdp425.h	2007-02-24 10:56:21.944106463 +0000
 @@ -23,6 +23,7 @@
   * IXDP425 PCI IRQs
   */
