@@ -26,7 +26,7 @@ KERNEL_SOURCE   = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${B
 KERNEL_PATCH    = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.bz2
 KERNEL_SNAPSHOT = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots/patch-${SNAPSHOT}.bz2
 
-CROSS_COMPILE = ${ARCH}-linux-gnu-
+CROSS_COMPILE = ${ARCH}-linux-uclibc-
 
 ifdef CROSS_COMPILE
 CROSS_COMPILE_FLAGS = CROSS_COMPILE=${CROSS_COMPILE}
@@ -36,20 +36,20 @@ endif
 
 all: kernel modules
 
-kernel: vmlinuz-${SNAPSHOT}-${ARCH}
+kernel: uImage-${SNAPSHOT}-${ARCH}
 modules: modules-${SNAPSHOT}-${ARCH}.tar.gz
 patched: linux-${SNAPSHOT}-${ARCH}/.config 
 
-modules-${SNAPSHOT}-${ARCH}.tar.gz: vmlinuz-${SNAPSHOT}-${ARCH}
+modules-${SNAPSHOT}-${ARCH}.tar.gz: uImage-${SNAPSHOT}-${ARCH}
 	tar -C modules-${SNAPSHOT}-${ARCH} -zcf modules-${SNAPSHOT}-${ARCH}.tar.gz lib/modules/${SNAPSHOT}
 
-vmlinuz-${SNAPSHOT}-${ARCH}: linux-${SNAPSHOT}-${ARCH}/.config
+uImage-${SNAPSHOT}-${ARCH}: linux-${SNAPSHOT}-${ARCH}/.config
 	( cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=${ARCH} uImage )
 	( cd linux-${SNAPSHOT}-${ARCH} ; \
 	  INSTALL_MOD_PATH="../modules-${SNAPSHOT}-${ARCH}" ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=${ARCH} modules modules_install ) || true
 	rm -f modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/build modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/source
-	cp linux-${SNAPSHOT}-${ARCH}/arch/${ARCH}/boot/uImage vmlinuz-${SNAPSHOT}-${ARCH}
+	cp linux-${SNAPSHOT}-${ARCH}/arch/${ARCH}/boot/uImage uImage-${SNAPSHOT}-${ARCH}
 
 menuconfig: linux-${SNAPSHOT}-${ARCH}/.config
 	${MAKE} -C linux-${SNAPSHOT}-${ARCH} ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} menuconfig
@@ -120,7 +120,7 @@ downloads:
 	mkdir -p downloads
 
 clobber:
-	rm -rf vmlinuz-* modules-*.tar.gz
+	rm -rf uImage-* modules-*.tar.gz
 	rm -rf linux-* modules-*
 	rm -rf *~
 
