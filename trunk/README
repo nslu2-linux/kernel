@@ -1,5 +1,6 @@
-2.6.18.6 + IXP_NPE 0.3.1 builds
+2.6.18.8 + IXP_NPE 0.3.1 builds
 Should fully support NSLU2, NAS-100D, FSG-3
+No longer maintained
 
 2.6.19.2 + IXP_NPE 0.3.1 builds
 Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
@@ -8,3 +9,4 @@ Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
 Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
 
 2.6.21-rc1 + IXP_NPE 0.3.1 build fails
+http://bugzilla.kernel.org/show_bug.cgi?id=8050
