@@ -44,7 +44,7 @@ APEX_SOURCE	= ftp://ftp.buici.com/pub/apex/apex-${APEX_REVISION}.tar.gz
 ARM_KERNEL_SHIM_SOURCE = ftp://ftp.buici.com/pub/arm/arm-kernel-shim/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz
 
 #CROSS_COMPILE = ${ARCH}-linux-gnu-
-CROSS_COMPILE ?= ${ARCH}-linux-
+CROSS_COMPILE ?= 'ccache /home/slug/HEAD/openslug/tmp/cross/bin/armeb-linux-'
 
 ifdef CROSS_COMPILE
 CROSS_COMPILE_FLAGS = CROSS_COMPILE=${CROSS_COMPILE}

@@ -1,9 +1,0 @@
-001-sata_sii_3512.diff
-002-i2c_s3531a.diff
-003-qnap_pic.diff
-004-mpc10x_common.diff
-005-ppc_Kconfig.diff
-006-ppc_platforms_Makefile.diff
-007-ppc_syslib_Makefile.diff
-008-sandpoint.h.diff
-009-sandpoint.c.diff
