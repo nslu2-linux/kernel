@@ -1,7 +1,8 @@
-diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/common.c linux-2.6.18/arch/arm/mach-ixp4xx/common.c
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/common.c	2006-09-19 21:42:06.000000000 -0600
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/common.c	2007-01-08 18:25:57.000000000 -0700
-@@ -340,6 +340,90 @@
+Index: linux-2.6.18-arm/arch/arm/mach-ixp4xx/common.c
+===================================================================
+--- linux-2.6.18-arm.orig/arch/arm/mach-ixp4xx/common.c	2007-02-24 10:56:21.232061964 +0000
++++ linux-2.6.18-arm/arch/arm/mach-ixp4xx/common.c	2007-02-24 10:56:21.540081213 +0000
+@@ -330,6 +330,90 @@
  	&ixp46x_i2c_controller
  };
  
@@ -92,7 +93,7 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/common.c linux-2.6.18/arch/arm
  unsigned long ixp4xx_exp_bus_size;
  EXPORT_SYMBOL(ixp4xx_exp_bus_size);
  
-@@ -359,8 +443,19 @@
+@@ -349,8 +433,19 @@
  				break;
  			}
  		}
@@ -112,9 +113,10 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/common.c linux-2.6.18/arch/arm
  	printk("IXP4xx: Using %luMiB expansion bus window size\n",
  			ixp4xx_exp_bus_size >> 20);
  }
-diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c linux-2.6.18/arch/arm/mach-ixp4xx/ixdp425-setup.c
---- linux-2.6.18.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-09-19 21:42:06.000000000 -0600
-+++ linux-2.6.18/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/arch/arm/mach-ixp4xx/ixdp425-setup.c
+===================================================================
+--- linux-2.6.18-arm.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2006-09-20 04:42:06.000000000 +0100
++++ linux-2.6.18-arm/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-02-24 10:58:01.390321464 +0000
 @@ -101,10 +101,59 @@
  	.resource		= ixdp425_uart_resources
  };
@@ -176,9 +178,10 @@ diff -Naur linux-2.6.18.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c linux-2.6.18/a
  };
  
  static void __init ixdp425_init(void)
-diff -Naur linux-2.6.18.orig/Documentation/networking/ixp4xx/IxNpeMicrocode.h linux-2.6.18/Documentation/networking/ixp4xx/IxNpeMicrocode.h
---- linux-2.6.18.orig/Documentation/networking/ixp4xx/IxNpeMicrocode.h	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/Documentation/networking/ixp4xx/IxNpeMicrocode.h	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/Documentation/networking/ixp4xx/IxNpeMicrocode.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/Documentation/networking/ixp4xx/IxNpeMicrocode.h	2007-02-24 10:56:21.540081213 +0000
 @@ -0,0 +1,143 @@
 +/*
 + * IxNpeMicrocode.h - Headerfile for compiling the Intel microcode C file
@@ -323,9 +326,10 @@ diff -Naur linux-2.6.18.orig/Documentation/networking/ixp4xx/IxNpeMicrocode.h li
 +	close(fd);
 +	return 0;
 +}
-diff -Naur linux-2.6.18.orig/Documentation/networking/ixp4xx/mc_grab.c linux-2.6.18/Documentation/networking/ixp4xx/mc_grab.c
---- linux-2.6.18.orig/Documentation/networking/ixp4xx/mc_grab.c	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/Documentation/networking/ixp4xx/mc_grab.c	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/Documentation/networking/ixp4xx/mc_grab.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/Documentation/networking/ixp4xx/mc_grab.c	2007-02-24 10:56:21.544081463 +0000
 @@ -0,0 +1,97 @@
 +/*
 + * mc_grab.c  - grabs IXP4XX microcode from a binary datastream
@@ -424,9 +428,10 @@ diff -Naur linux-2.6.18.orig/Documentation/networking/ixp4xx/mc_grab.c linux-2.6
 +		fprintf(stderr, "Error reading  Microcode\n");
 +	return ret;
 +}
-diff -Naur linux-2.6.18.orig/Documentation/networking/ixp4xx/README linux-2.6.18/Documentation/networking/ixp4xx/README
---- linux-2.6.18.orig/Documentation/networking/ixp4xx/README	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/Documentation/networking/ixp4xx/README	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/Documentation/networking/ixp4xx/README
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/Documentation/networking/ixp4xx/README	2007-02-24 10:56:21.544081463 +0000
 @@ -0,0 +1,62 @@
 +Informations about the Networking Driver using the IXP4XX CPU internal NPEs
 +and Queue manager.
@@ -490,9 +495,10 @@ diff -Naur linux-2.6.18.orig/Documentation/networking/ixp4xx/README linux-2.6.18
 +   to grab the microcode from a binary image like the RedBoot bootloader.
 +
 +
-diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/ixp4xx_crypto.c linux-2.6.18/drivers/net/ixp4xx/ixp4xx_crypto.c
---- linux-2.6.18.orig/drivers/net/ixp4xx/ixp4xx_crypto.c	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/drivers/net/ixp4xx/ixp4xx_crypto.c	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/ixp4xx/ixp4xx_crypto.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/drivers/net/ixp4xx/ixp4xx_crypto.c	2007-02-24 10:56:21.544081463 +0000
 @@ -0,0 +1,851 @@
 +/*
 + * ixp4xx_crypto.c - interface to the HW crypto
@@ -1345,9 +1351,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/ixp4xx_crypto.c linux-2.6.18/dri
 +module_init(init_crypto);
 +module_exit(finish_crypto);
 +
-diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c linux-2.6.18/drivers/net/ixp4xx/ixp4xx_qmgr.c
---- linux-2.6.18.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/drivers/net/ixp4xx/ixp4xx_qmgr.c	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/ixp4xx/ixp4xx_qmgr.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/drivers/net/ixp4xx/ixp4xx_qmgr.c	2007-02-24 10:56:21.548081713 +0000
 @@ -0,0 +1,474 @@
 +/*
 + * qmgr.c - reimplementation of the queue configuration interface.
@@ -1823,9 +1830,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/ixp4xx_qmgr.c linux-2.6.18/drive
 +EXPORT_SYMBOL(queue_set_irq_src);
 +EXPORT_SYMBOL(queue_set_watermarks);
 +EXPORT_SYMBOL(queue_len);
-diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/Kconfig linux-2.6.18/drivers/net/ixp4xx/Kconfig
---- linux-2.6.18.orig/drivers/net/ixp4xx/Kconfig	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/drivers/net/ixp4xx/Kconfig	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/ixp4xx/Kconfig
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/drivers/net/ixp4xx/Kconfig	2007-02-24 10:56:21.548081713 +0000
 @@ -0,0 +1,48 @@
 +config IXP4XX_QMGR
 +	tristate "IXP4xx Queue Manager support"
@@ -1875,9 +1883,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/Kconfig linux-2.6.18/drivers/net
 +	help
 +	  This driver is a generic NPE-crypto access layer.
 +	  You need additional code in OCF for example.
-diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/mac_driver.c linux-2.6.18/drivers/net/ixp4xx/mac_driver.c
---- linux-2.6.18.orig/drivers/net/ixp4xx/mac_driver.c	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/drivers/net/ixp4xx/mac_driver.c	2007-01-08 20:42:34.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/ixp4xx/mac_driver.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/drivers/net/ixp4xx/mac_driver.c	2007-02-24 10:58:06.406634963 +0000
 @@ -0,0 +1,849 @@
 +/*
 + * mac_driver.c - provide a network interface for each MAC
@@ -2728,9 +2737,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/mac_driver.c linux-2.6.18/driver
 +MODULE_LICENSE("GPL");
 +MODULE_AUTHOR("Christian Hohnstaedt <chohnstaedt@innominate.com>");
 +
-diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/mac.h linux-2.6.18/drivers/net/ixp4xx/mac.h
---- linux-2.6.18.orig/drivers/net/ixp4xx/mac.h	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/drivers/net/ixp4xx/mac.h	2007-01-08 20:19:20.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/ixp4xx/mac.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/drivers/net/ixp4xx/mac.h	2007-02-24 10:56:21.552081964 +0000
 @@ -0,0 +1,275 @@
 +/*
 + * Copyright (C) 2002-2006 Christian Hohnstaedt <chohnstaedt@innominate.com>
@@ -3007,9 +3017,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/mac.h linux-2.6.18/drivers/net/i
 +	{"RxInternalNPEReceiveErrors    "}, \
 +	{"TxInternalNPETransmitErrors   "}
 +
-diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/Makefile linux-2.6.18/drivers/net/ixp4xx/Makefile
---- linux-2.6.18.orig/drivers/net/ixp4xx/Makefile	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/drivers/net/ixp4xx/Makefile	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/ixp4xx/Makefile
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/drivers/net/ixp4xx/Makefile	2007-02-24 10:56:21.552081964 +0000
 @@ -0,0 +1,7 @@
 +obj-$(CONFIG_IXP4XX_QMGR) += ixp4xx_qmgr.o
 +obj-$(CONFIG_IXP4XX_NPE) += ixp4xx_npe.o
@@ -3018,9 +3029,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/Makefile linux-2.6.18/drivers/ne
 +
 +ixp4xx_npe-objs := ucode_dl.o npe_mh.o npe.o
 +ixp4xx_mac-objs := mac_driver.o phy.o
-diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/npe.c linux-2.6.18/drivers/net/ixp4xx/npe.c
---- linux-2.6.18.orig/drivers/net/ixp4xx/npe.c	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/drivers/net/ixp4xx/npe.c	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/ixp4xx/npe.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/drivers/net/ixp4xx/npe.c	2007-02-24 10:56:21.552081964 +0000
 @@ -0,0 +1,291 @@
 +
 +#include <linux/ixp_npe.h>
@@ -3313,9 +3325,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/npe.c linux-2.6.18/drivers/net/i
 +EXPORT_SYMBOL(npe_stop);
 +EXPORT_SYMBOL(npe_start);
 +EXPORT_SYMBOL(npe_reset);
-diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/npe_mh.c linux-2.6.18/drivers/net/ixp4xx/npe_mh.c
---- linux-2.6.18.orig/drivers/net/ixp4xx/npe_mh.c	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/drivers/net/ixp4xx/npe_mh.c	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/ixp4xx/npe_mh.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/drivers/net/ixp4xx/npe_mh.c	2007-02-24 10:56:21.552081964 +0000
 @@ -0,0 +1,170 @@
 +/*
 + * npe_mh.c - NPE message handler.
@@ -3487,9 +3500,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/npe_mh.c linux-2.6.18/drivers/ne
 +EXPORT_SYMBOL(npe_mh_set_rxqid);
 +EXPORT_SYMBOL(npe_mh_npe_loopback_mode);
 +EXPORT_SYMBOL(npe_mh_get_stats);
-diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/phy.c linux-2.6.18/drivers/net/ixp4xx/phy.c
---- linux-2.6.18.orig/drivers/net/ixp4xx/phy.c	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/drivers/net/ixp4xx/phy.c	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/ixp4xx/phy.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/drivers/net/ixp4xx/phy.c	2007-02-24 10:56:21.556082214 +0000
 @@ -0,0 +1,113 @@
 +/*
 + * phy.c - MDIO functions and mii initialisation
@@ -3604,9 +3618,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/phy.c linux-2.6.18/drivers/net/i
 +	mac->mii.mdio_write = mdio_write_register;
 +}
 +
-diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/ucode_dl.c linux-2.6.18/drivers/net/ixp4xx/ucode_dl.c
---- linux-2.6.18.orig/drivers/net/ixp4xx/ucode_dl.c	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/drivers/net/ixp4xx/ucode_dl.c	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/ixp4xx/ucode_dl.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/drivers/net/ixp4xx/ucode_dl.c	2007-02-24 10:56:21.556082214 +0000
 @@ -0,0 +1,479 @@
 +/*
 + * ucode_dl.c - provide an NPE device and a char-dev for microcode download
@@ -4087,9 +4102,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/ixp4xx/ucode_dl.c linux-2.6.18/drivers/
 +
 +EXPORT_SYMBOL(get_npe_by_id);
 +EXPORT_SYMBOL(return_npe_dev);
-diff -Naur linux-2.6.18.orig/drivers/net/Kconfig linux-2.6.18/drivers/net/Kconfig
---- linux-2.6.18.orig/drivers/net/Kconfig	2006-09-19 21:42:06.000000000 -0600
-+++ linux-2.6.18/drivers/net/Kconfig	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/Kconfig
+===================================================================
+--- linux-2.6.18-arm.orig/drivers/net/Kconfig	2006-09-20 04:42:06.000000000 +0100
++++ linux-2.6.18-arm/drivers/net/Kconfig	2007-02-24 10:56:21.556082214 +0000
 @@ -187,6 +187,8 @@
  
  source "drivers/net/arm/Kconfig"
@@ -4099,9 +4115,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/Kconfig linux-2.6.18/drivers/net/Kconfi
  config MACE
  	tristate "MACE (Power Mac ethernet) support"
  	depends on NET_ETHERNET && PPC_PMAC && PPC32
-diff -Naur linux-2.6.18.orig/drivers/net/Makefile linux-2.6.18/drivers/net/Makefile
---- linux-2.6.18.orig/drivers/net/Makefile	2006-09-19 21:42:06.000000000 -0600
-+++ linux-2.6.18/drivers/net/Makefile	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/drivers/net/Makefile
+===================================================================
+--- linux-2.6.18-arm.orig/drivers/net/Makefile	2006-09-20 04:42:06.000000000 +0100
++++ linux-2.6.18-arm/drivers/net/Makefile	2007-02-24 10:56:21.560082462 +0000
 @@ -214,6 +214,7 @@
  obj-$(CONFIG_IRDA) += irda/
  obj-$(CONFIG_ETRAX_ETHERNET) += cris/
@@ -4110,9 +4127,10 @@ diff -Naur linux-2.6.18.orig/drivers/net/Makefile linux-2.6.18/drivers/net/Makef
  
  obj-$(CONFIG_NETCONSOLE) += netconsole.o
  
-diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h linux-2.6.18/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
---- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h	2006-09-19 21:42:06.000000000 -0600
-+++ linux-2.6.18/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
+===================================================================
+--- linux-2.6.18-arm.orig/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h	2006-09-20 04:42:06.000000000 +0100
++++ linux-2.6.18-arm/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h	2007-02-24 10:56:21.560082462 +0000
 @@ -22,6 +22,8 @@
  #ifndef _ASM_ARM_IXP4XX_H_
  #define _ASM_ARM_IXP4XX_H_
@@ -4214,9 +4232,10 @@ diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h linux-2.6
  #endif
  
  #endif
-diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/npe_regs.h linux-2.6.18/include/asm-arm/arch-ixp4xx/npe_regs.h
---- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/npe_regs.h	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/include/asm-arm/arch-ixp4xx/npe_regs.h	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/include/asm-arm/arch-ixp4xx/npe_regs.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/include/asm-arm/arch-ixp4xx/npe_regs.h	2007-02-24 10:56:21.560082462 +0000
 @@ -0,0 +1,82 @@
 +#ifndef NPE_REGS_H
 +#define NPE_REGS_H
@@ -4300,9 +4319,10 @@ diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/npe_regs.h linux-2.6.18
 +
 +#endif
 +
-diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/platform.h linux-2.6.18/include/asm-arm/arch-ixp4xx/platform.h
---- linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/platform.h	2006-09-19 21:42:06.000000000 -0600
-+++ linux-2.6.18/include/asm-arm/arch-ixp4xx/platform.h	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/include/asm-arm/arch-ixp4xx/platform.h
+===================================================================
+--- linux-2.6.18-arm.orig/include/asm-arm/arch-ixp4xx/platform.h	2007-02-24 10:56:21.236062214 +0000
++++ linux-2.6.18-arm/include/asm-arm/arch-ixp4xx/platform.h	2007-02-24 10:56:21.560082462 +0000
 @@ -89,6 +89,25 @@
  
  struct sys_timer;
@@ -4329,9 +4349,10 @@ diff -Naur linux-2.6.18.orig/include/asm-arm/arch-ixp4xx/platform.h linux-2.6.18
  /*
   * Frequency of clock used for primary clocksource
   */
-diff -Naur linux-2.6.18.orig/include/linux/ixp_crypto.h linux-2.6.18/include/linux/ixp_crypto.h
---- linux-2.6.18.orig/include/linux/ixp_crypto.h	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/include/linux/ixp_crypto.h	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/include/linux/ixp_crypto.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/include/linux/ixp_crypto.h	2007-02-24 10:56:21.560082462 +0000
 @@ -0,0 +1,192 @@
 +
 +#ifndef IX_CRYPTO_H
@@ -4525,9 +4546,10 @@ diff -Naur linux-2.6.18.orig/include/linux/ixp_crypto.h linux-2.6.18/include/lin
 +		const struct ix_hash_algo *auth, int len);
 +
 +#endif
-diff -Naur linux-2.6.18.orig/include/linux/ixp_npe.h linux-2.6.18/include/linux/ixp_npe.h
---- linux-2.6.18.orig/include/linux/ixp_npe.h	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/include/linux/ixp_npe.h	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/include/linux/ixp_npe.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/include/linux/ixp_npe.h	2007-02-24 10:56:21.564082712 +0000
 @@ -0,0 +1,117 @@
 +/*
 + * Copyright (C) 2006 Christian Hohnstaedt <chohnstaedt@innominate.com>
@@ -4646,9 +4668,10 @@ diff -Naur linux-2.6.18.orig/include/linux/ixp_npe.h linux-2.6.18/include/linux/
 +npe_mh_get_stats(struct npe_info *npe, struct mac_plat_info *mp, u32 phys, int reset);
 +
 +#endif
-diff -Naur linux-2.6.18.orig/include/linux/ixp_qmgr.h linux-2.6.18/include/linux/ixp_qmgr.h
---- linux-2.6.18.orig/include/linux/ixp_qmgr.h	1969-12-31 17:00:00.000000000 -0700
-+++ linux-2.6.18/include/linux/ixp_qmgr.h	2007-01-08 18:25:57.000000000 -0700
+Index: linux-2.6.18-arm/include/linux/ixp_qmgr.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.18-arm/include/linux/ixp_qmgr.h	2007-02-24 10:56:21.564082712 +0000
 @@ -0,0 +1,202 @@
 +/*
 + * Copyright (C) 2006 Christian Hohnstaedt <chohnstaedt@innominate.com>
