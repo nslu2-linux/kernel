@@ -1,0 +1,13 @@
+--- linux-2.6.12.3/arch/ppc/syslib/Makefile	2005-07-15 17:18:57.000000000 -0400
++++ linux-2.6.12.3-qnap/arch/ppc/syslib/Makefile	2007-02-17 14:10:23.000000000 -0500
+@@ -76,7 +76,9 @@
+ obj-$(CONFIG_HARRIER)		+= harrier.o
+ obj-$(CONFIG_PRPMC800)		+= open_pic.o indirect_pci.o pci_auto.o
+ obj-$(CONFIG_RADSTONE_PPC7D)	+= i8259.o pci_auto.o
+-obj-$(CONFIG_SANDPOINT)		+= i8259.o pci_auto.o todc_time.o
++# 2005.09.06, JohnsonCheng Fixed USB device Oops bug
++#obj-$(CONFIG_SANDPOINT)		+= i8259.o pci_auto.o todc_time.o
++obj-$(CONFIG_SANDPOINT)		+= pci_auto.o
+ obj-$(CONFIG_SBC82xx)		+= todc_time.o
+ obj-$(CONFIG_SPRUCE)		+= cpc700_pic.o indirect_pci.o pci_auto.o \
+ 				   todc_time.o
