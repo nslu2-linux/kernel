@@ -26,7 +26,7 @@ KERNEL_SOURCE   = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${B
 KERNEL_PATCH    = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.bz2
 KERNEL_SNAPSHOT = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots/patch-${SNAPSHOT}.bz2
 
-CROSS_COMPILE = ${ARCH}-linux-uclibc-
+CROSS_COMPILE = powerpc-linux-uclibc-
 
 ifdef CROSS_COMPILE
 CROSS_COMPILE_FLAGS = CROSS_COMPILE=${CROSS_COMPILE}
