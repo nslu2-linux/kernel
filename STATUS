@@ -79,6 +79,9 @@
 78-velocity-BE.patch
 	??
 
+80-kexec-arm-upstream.patch
+	Backported from 2.6.21-rc1	
+
 85-nslu2-rtc-fixup.patch
 86-nas100d-rtc-fixup.patch
 87-dsmg600-rtc-fixup.patch

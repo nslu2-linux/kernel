@@ -1,21 +1,33 @@
----
- arch/arm/Kconfig                  |   17 ++++++++
- arch/arm/kernel/Makefile          |    1 
- arch/arm/kernel/calls.S           |    3 -
- arch/arm/kernel/machine_kexec.c   |   78 ++++++++++++++++++++++++++++++++++++++
- arch/arm/kernel/relocate_kernel.S |   74 ++++++++++++++++++++++++++++++++++++
- include/asm-arm/kexec.h           |   30 ++++++++++++++
- include/asm-arm/unistd.h          |    1 
- include/linux/kexec.h             |    1 
- 8 files changed, 204 insertions(+), 1 deletion(-)
+From: Richard Purdie <rpurdie@rpsys.net>
+Date: Tue, 6 Feb 2007 20:29:00 +0000 (+0100)
+Subject: [ARM] 4137/1: Add kexec support
+X-Git-Tag: v2.6.21-rc1^0~75^2~10
+X-Git-Url: http://www2.kernel.org/git/?p=linux%2Fkernel%2Fgit%2Ftorvalds%2Flinux-2.6.git;a=commitdiff_plain;h=c587e4a6a4d808fd2a1c4e7fb2d5a3a31e300d23;hp=3b581f5485c180016a6c36c4c7007e21c53f8a63
 
-Index: linux-2.6.20-arm/arch/arm/Kconfig
-===================================================================
---- linux-2.6.20-arm.orig/arch/arm/Kconfig
-+++ linux-2.6.20-arm/arch/arm/Kconfig
-@@ -408,6 +408,23 @@
- source "arch/arm/Kconfig-nommu"
- endif
+[ARM] 4137/1: Add kexec support
+
+Add kexec support to ARM.
+
+Improvements like commandline handling could be made but this patch gives
+basic functional support. It uses the next available syscall number, 347.
+
+Once the syscall number is known, userspace support will be
+finalised/submitted to kexec-tools, various patches already exist.
+
+Originally based on a patch by Maxim Syrchin but updated and forward
+ported by various people.
+
+Signed-off-by: Richard Purdie <rpurdie@rpsys.net>
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 6783c2e..a829894 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -738,6 +738,20 @@ config XIP_PHYS_ADDR
+ 	  be linked for and stored to.  This address is dependent on your
+ 	  own flash usage.
  
 +config KEXEC
 +	bool "Kexec system call (EXPERIMENTAL)"
@@ -26,21 +38,43 @@ Index: linux-2.6.20-arm/arch/arm/Kconfig
 +	  but it is indepedent of the system firmware.   And like a reboot
 +	  you can start any kernel with it, not just Linux.
 +
-+	  The name comes from the similiarity to the exec system call.
-+
 +	  It is an ongoing process to be certain the hardware in a machine
 +	  is properly shutdown, so do not be surprised if this code does not
 +	  initially work for you.  It may help to enable device hotplugging
-+	  support.  As of this writing the exact hardware interface is
-+	  strongly in flux, so no good recommendation can be made.
++	  support.
 +
  endmenu
  
- source "arch/arm/common/Kconfig"
-Index: linux-2.6.20-arm/arch/arm/kernel/machine_kexec.c
-===================================================================
+ if (ARCH_SA1100 || ARCH_INTEGRATOR || ARCH_OMAP || ARCH_IMX )
+diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
+index ab06a86..d500288 100644
+--- a/arch/arm/kernel/Makefile
++++ b/arch/arm/kernel/Makefile
+@@ -19,6 +19,7 @@ obj-$(CONFIG_ARTHUR)		+= arthur.o
+ obj-$(CONFIG_ISA_DMA)		+= dma-isa.o
+ obj-$(CONFIG_PCI)		+= bios32.o isa.o
+ obj-$(CONFIG_SMP)		+= smp.o
++obj-$(CONFIG_KEXEC)		+= machine_kexec.o relocate_kernel.o
+ obj-$(CONFIG_OABI_COMPAT)	+= sys_oabi-compat.o
+ 
+ obj-$(CONFIG_CRUNCH)		+= crunch.o crunch-bits.o
+diff --git a/arch/arm/kernel/calls.S b/arch/arm/kernel/calls.S
+index f7598cb..ae89cdd 100644
+--- a/arch/arm/kernel/calls.S
++++ b/arch/arm/kernel/calls.S
+@@ -356,6 +356,7 @@
+ 		CALL(sys_move_pages)
+ /* 345 */	CALL(sys_getcpu)
+ 		CALL(sys_ni_syscall)		/* eventually epoll_pwait */
++		CALL(sys_kexec_load)
+ #ifndef syscalls_counted
+ .equ syscalls_padding, ((NR_syscalls + 3) & ~3) - NR_syscalls
+ #define syscalls_counted
+diff --git a/arch/arm/kernel/machine_kexec.c b/arch/arm/kernel/machine_kexec.c
+new file mode 100644
+index 0000000..863c664
 --- /dev/null
-+++ linux-2.6.20-arm/arch/arm/kernel/machine_kexec.c
++++ b/arch/arm/kernel/machine_kexec.c
 @@ -0,0 +1,78 @@
 +/*
 + * machine_kexec.c - handle transition of Linux booting another kernel
@@ -120,22 +154,11 @@ Index: linux-2.6.20-arm/arch/arm/kernel/machine_kexec.c
 +	setup_mm_for_reboot(0); /* mode is not used, so just pass 0*/
 +	cpu_reset(reboot_code_buffer_phys);
 +}
-Index: linux-2.6.20-arm/arch/arm/kernel/Makefile
-===================================================================
---- linux-2.6.20-arm.orig/arch/arm/kernel/Makefile
-+++ linux-2.6.20-arm/arch/arm/kernel/Makefile
-@@ -19,6 +19,7 @@
- obj-$(CONFIG_ISA_DMA)		+= dma-isa.o
- obj-$(CONFIG_PCI)		+= bios32.o isa.o
- obj-$(CONFIG_SMP)		+= smp.o
-+obj-$(CONFIG_KEXEC)		+= machine_kexec.o relocate_kernel.o
- obj-$(CONFIG_OABI_COMPAT)	+= sys_oabi-compat.o
- 
- obj-$(CONFIG_CRUNCH)		+= crunch.o crunch-bits.o
-Index: linux-2.6.20-arm/arch/arm/kernel/relocate_kernel.S
-===================================================================
+diff --git a/arch/arm/kernel/relocate_kernel.S b/arch/arm/kernel/relocate_kernel.S
+new file mode 100644
+index 0000000..7baadae
 --- /dev/null
-+++ linux-2.6.20-arm/arch/arm/kernel/relocate_kernel.S
++++ b/arch/arm/kernel/relocate_kernel.S
 @@ -0,0 +1,74 @@
 +/*
 + * relocate_kernel.S - put the kernel image in place to boot
@@ -211,10 +234,11 @@ Index: linux-2.6.20-arm/arch/arm/kernel/relocate_kernel.S
 +	.long relocate_new_kernel_end - relocate_new_kernel
 +
 +
-Index: linux-2.6.20-arm/include/asm-arm/kexec.h
-===================================================================
+diff --git a/include/asm-arm/kexec.h b/include/asm-arm/kexec.h
+new file mode 100644
+index 0000000..8c1c616
 --- /dev/null
-+++ linux-2.6.20-arm/include/asm-arm/kexec.h
++++ b/include/asm-arm/kexec.h
 @@ -0,0 +1,30 @@
 +#ifndef _ARM_KEXEC_H
 +#define _ARM_KEXEC_H
@@ -246,10 +270,10 @@ Index: linux-2.6.20-arm/include/asm-arm/kexec.h
 +#endif /* CONFIG_KEXEC */
 +
 +#endif /* _ARM_KEXEC_H */
-Index: linux-2.6.20-arm/include/asm-arm/unistd.h
-===================================================================
---- linux-2.6.20-arm.orig/include/asm-arm/unistd.h
-+++ linux-2.6.20-arm/include/asm-arm/unistd.h
+diff --git a/include/asm-arm/unistd.h b/include/asm-arm/unistd.h
+index 97e7060..0991b7b 100644
+--- a/include/asm-arm/unistd.h
++++ b/include/asm-arm/unistd.h
 @@ -372,6 +372,7 @@
  #define __NR_move_pages			(__NR_SYSCALL_BASE+344)
  #define __NR_getcpu			(__NR_SYSCALL_BASE+345)
@@ -258,11 +282,11 @@ Index: linux-2.6.20-arm/include/asm-arm/unistd.h
  
  /*
   * The following SWIs are ARM private.
-Index: linux-2.6.20-arm/include/linux/kexec.h
-===================================================================
---- linux-2.6.20-arm.orig/include/linux/kexec.h
-+++ linux-2.6.20-arm/include/linux/kexec.h
-@@ -125,6 +125,7 @@
+diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+index d02425c..696e5ec 100644
+--- a/include/linux/kexec.h
++++ b/include/linux/kexec.h
+@@ -125,6 +125,7 @@ extern struct kimage *kexec_crash_image;
  #define KEXEC_ARCH_PPC     (20 << 16)
  #define KEXEC_ARCH_PPC64   (21 << 16)
  #define KEXEC_ARCH_IA_64   (50 << 16)
@@ -270,24 +294,4 @@ Index: linux-2.6.20-arm/include/linux/kexec.h
  #define KEXEC_ARCH_S390    (22 << 16)
  #define KEXEC_ARCH_SH      (42 << 16)
  #define KEXEC_ARCH_MIPS_LE (10 << 16)
-Index: linux-2.6.20-arm/arch/arm/kernel/calls.S
-===================================================================
---- linux-2.6.20-arm.orig/arch/arm/kernel/calls.S
-+++ linux-2.6.20-arm/arch/arm/kernel/calls.S
-@@ -198,7 +198,7 @@
- 		CALL(sys_sigaltstack_wrapper)
- 		CALL(sys_sendfile)
- 		CALL(sys_ni_syscall)		/* getpmsg */
--		CALL(sys_ni_syscall)		/* putpmsg */
-+		CALL(sys_ni_syscall)		/* pupmsg */
- /* 190 */	CALL(sys_vfork_wrapper)
- 		CALL(sys_getrlimit)
- 		CALL(sys_mmap2)
-@@ -356,6 +356,7 @@
- 		CALL(sys_move_pages)
- /* 345 */	CALL(sys_getcpu)
- 		CALL(sys_ni_syscall)		/* eventually epoll_pwait */
-+		CALL(sys_kexec_load)
- #ifndef syscalls_counted
- .equ syscalls_padding, ((NR_syscalls + 3) & ~3) - NR_syscalls
- #define syscalls_counted
+
