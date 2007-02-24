@@ -19,7 +19,7 @@ PATCHVER = 2.6.20
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
-ARCH=ppc
+ARCH=powerpc
 DEFCONFIG=defconfig
 
 KERNEL_SOURCE   = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${BASEVER}.tar.bz2
@@ -45,11 +45,11 @@ modules-${SNAPSHOT}-${ARCH}.tar.gz: vmlinuz-${SNAPSHOT}-${ARCH}
 
 vmlinuz-${SNAPSHOT}-${ARCH}: linux-${SNAPSHOT}-${ARCH}/.config
 	( cd linux-${SNAPSHOT}-${ARCH} ; \
-	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=${ARCH} bzImage )
+	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=${ARCH} uImage )
 	( cd linux-${SNAPSHOT}-${ARCH} ; \
 	  INSTALL_MOD_PATH="../modules-${SNAPSHOT}-${ARCH}" ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=${ARCH} modules modules_install ) || true
 	rm -f modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/build modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/source
-	cp linux-${SNAPSHOT}-${ARCH}/arch/${ARCH}/boot/zImage vmlinuz-${SNAPSHOT}-${ARCH}
+	cp linux-${SNAPSHOT}-${ARCH}/arch/${ARCH}/boot/uImage vmlinuz-${SNAPSHOT}-${ARCH}
 
 menuconfig: linux-${SNAPSHOT}-${ARCH}/.config
 	${MAKE} -C linux-${SNAPSHOT}-${ARCH} ARCH=${ARCH} CROSS_COMPILE=${CROSS_COMPILE} menuconfig
