@@ -1,0 +1,11 @@
+--- linux-2.6.16.vanilla/arch/ppc/platforms/Makefile	2007-02-25 05:34:58.000000000 +0100
++++ linux-2.6.16/arch/ppc/platforms/Makefile	2007-02-25 05:11:25.000000000 +0100
+@@ -32,7 +32,7 @@
+ obj-$(CONFIG_PRPMC750)		+= prpmc750.o
+ obj-$(CONFIG_PRPMC800)		+= prpmc800.o
+ obj-$(CONFIG_RADSTONE_PPC7D)	+= radstone_ppc7d.o
+-obj-$(CONFIG_SANDPOINT)		+= sandpoint.o
++obj-$(CONFIG_SANDPOINT)		+= sandpoint.o qnap_pic.o
+ obj-$(CONFIG_SBC82xx)		+= sbc82xx.o
+ obj-$(CONFIG_SPRUCE)		+= spruce.o
+ obj-$(CONFIG_LITE5200)		+= lite5200.o
