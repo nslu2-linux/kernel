@@ -15,7 +15,7 @@ linux-2.6.16_drivers_i2c_chips_Makefile
 linux-2.6.16_drivers_i2c_chips_rs5c372a.c
 linux-2.6.16_drivers_ide_pci_siimage.c
 #linux-2.6.16_drivers_mtd_maps_physmap.c
-linux-2.6.16_drivers_net_r8169.c
+#linux-2.6.16_drivers_net_r8169.c
 linux-2.6.16_include_asm-ppc_mpc10x.h
 linux-2.6.16_include_linux_pci_ids.h
 linux-2.6.16_include_scsi_scsi.h
