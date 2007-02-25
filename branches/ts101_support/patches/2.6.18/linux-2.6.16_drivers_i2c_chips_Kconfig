@@ -1,0 +1,24 @@
+--- linux-2.6.16.vanilla/drivers/i2c/chips/Kconfig	2006-01-03 04:21:10.000000000 +0100
++++ linux-2.6.16/drivers/i2c/chips/Kconfig	2007-02-25 05:09:57.000000000 +0100
+@@ -135,4 +135,21 @@
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called x1205.
+ 
++config SENSORS_RS5C372A
++	tristate "RICOH RS5C372A RTC chip"
++	depends on I2C && PPC32 && SANDPOINT
++	help
++	  If you say yes here you get support for the RICOH RS5C372A RTC chip.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called rs5c372a.
++
++config SENSORS_S35390A
++	tristate "S-35390A RTC chip"
++	depends on I2C && PPC32 && SANDPOINT
++	help
++	  If you say yes here you get support for the S-35390A RTC chip/
++	  
++	  This driver can also be built as a module.  If so, the module
++	  will be called i2c-s3531a
+ endmenu

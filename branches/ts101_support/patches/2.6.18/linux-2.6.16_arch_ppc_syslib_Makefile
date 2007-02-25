@@ -1,0 +1,11 @@
+--- linux-2.6.16.vanilla/arch/ppc/syslib/Makefile	2007-02-25 05:34:59.000000000 +0100
++++ linux-2.6.16/arch/ppc/syslib/Makefile	2007-02-25 05:11:25.000000000 +0100
+@@ -68,7 +68,7 @@
+ obj-$(CONFIG_HARRIER)		+= harrier.o
+ obj-$(CONFIG_PRPMC800)		+= open_pic.o pci_auto.o
+ obj-$(CONFIG_RADSTONE_PPC7D)	+= pci_auto.o
+-obj-$(CONFIG_SANDPOINT)		+= pci_auto.o todc_time.o
++obj-$(CONFIG_SANDPOINT)		+= pci_auto.o
+ obj-$(CONFIG_SBC82xx)		+= todc_time.o
+ obj-$(CONFIG_SPRUCE)		+= cpc700_pic.o pci_auto.o \
+ 				   todc_time.o
