@@ -1,1 +1,2 @@
 This kernel has IRQ-problems related to USB
+the physmap-stuff no longer applies without a lot of fudging. Disabled
