@@ -1,0 +1,35 @@
+From: David S. Miller <davem@sunset.davemloft.net>
+Date: Thu, 22 Feb 2007 07:26:56 +0000 (-0800)
+Subject: [IPV6]: Fix __ipv6_addr_type() export in correct place.
+X-Git-Url: http://www2.kernel.org/git/?p=linux%2Fkernel%2Fgit%2Fdavem%2Fnet-2.6.git;a=commitdiff_plain;h=be6b5ea03b10021d0afa7f72b4d930904853df0c
+
+[IPV6]: Fix __ipv6_addr_type() export in correct place.
+
+It needs to be in net/ipv6/addrconf_core.c
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
+---
+
+diff --git a/net/ipv6/addrconf_core.c b/net/ipv6/addrconf_core.c
+index 644e0c7..faaefb6 100644
+--- a/net/ipv6/addrconf_core.c
++++ b/net/ipv6/addrconf_core.c
+@@ -72,4 +72,5 @@ int __ipv6_addr_type(const struct in6_addr *addr)
+ 	return (IPV6_ADDR_RESERVED |
+ 		IPV6_ADDR_SCOPE_TYPE(IPV6_ADDR_SCOPE_GLOBAL));	/* addr-select 3.4 */
+ }
++EXPORT_SYMBOL(__ipv6_addr_type);
+ 
+diff --git a/net/ipv6/ipv6_syms.c b/net/ipv6/ipv6_syms.c
+index 0e8e067..e12e3d4 100644
+--- a/net/ipv6/ipv6_syms.c
++++ b/net/ipv6/ipv6_syms.c
+@@ -6,7 +6,6 @@
+ #include <net/ip6_route.h>
+ #include <net/xfrm.h>
+ 
+-EXPORT_SYMBOL(__ipv6_addr_type);
+ EXPORT_SYMBOL(icmpv6_send);
+ EXPORT_SYMBOL(icmpv6_statistics);
+ EXPORT_SYMBOL(icmpv6_err_convert);
+
