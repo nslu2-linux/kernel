@@ -1,7 +1,5 @@
 downloads
-ixp400_eth
-ixp400_xscale_sw
-ixp_osal
+arm-kernel-shim-*
 linux-*
 madwifi-ng
 modules-*
