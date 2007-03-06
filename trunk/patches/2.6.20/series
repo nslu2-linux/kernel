@@ -41,6 +41,8 @@ squashfs/squashfs-Makefile.patch
 #88-dsmg600-dflt-cmdline.patch
 #88-nas100d-dflt-cmdline.patch
 #88-nslu2-dflt-cmdline.patch
+89-dsmg600-mv-freq-fixup.patch
+89-nslu2-mv-freq-fixup.patch
 96-fsg3-support.patch
 98-sata_via-pata-support-upstream.patch
 99-avila-mtd-microcode.patch
