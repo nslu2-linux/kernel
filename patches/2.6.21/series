@@ -22,6 +22,7 @@ squashfs/squashfs-Makefile.patch
 52-nas100d-mtd-load-mac.patch
 53-nslu2-mtd-load-mac.patch
 55-increase-entropy-pools.patch
+60-nas100d-artop-temp-fix.patch
 66-hwmon-ad7418.patch
 75-dsmg600-support.patch
 76-dsmg600-pwrbtn.patch
@@ -29,9 +30,8 @@ squashfs/squashfs-Makefile.patch
 85-nslu2-rtc-fixup.patch
 86-nas100d-rtc-fixup.patch
 87-dsmg600-rtc-fixup.patch
-#88-dsmg600-dflt-cmdline.patch
-#88-nas100d-dflt-cmdline.patch
-#88-nslu2-dflt-cmdline.patch
+89-dsmg600-mv-freq-fixup.patch
+89-nslu2-mv-freq-fixup.patch
 96-fsg3-support.patch
 99-avila-mtd-microcode.patch
 99-avila-loft-mac-platform.patch
