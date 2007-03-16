@@ -35,9 +35,6 @@ squashfs/squashfs-Makefile.patch
 85-nslu2-rtc-fixup.patch
 86-nas100d-rtc-fixup.patch
 87-dsmg600-rtc-fixup.patch
-#88-dsmg600-dflt-cmdline.patch
-#88-nas100d-dflt-cmdline.patch
-#88-nslu2-dflt-cmdline.patch
 89-dsmg600-mv-freq-fixup.patch
 89-nslu2-mv-freq-fixup.patch
 96-fsg3-support.patch
