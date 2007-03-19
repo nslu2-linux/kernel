@@ -1,0 +1,25 @@
+# Patches numbered 00 are externally maintained (large) patchsets
+# Patches numbered 01 to 10 are for immediate push upstream, and
+# must be all able to be applied independently in any order.
+# Patches marked with ## need reworking and are currently disabled
+
+00-linux-2.6.20.3.patch
+07-remove-avila-ixdp425-setup.patch
+08-avila-loft-setup.patch
+09-avila-setup-pata.patch
+30-ixp4xx-npe-driver-0.3.1.patch
+50-leds-arm-cpu-activity.patch
+55-increase-entropy-pools.patch
+60-nas100d-artop-temp-fix.patch
+66-hwmon-ad7418.patch
+75-dsmg600-support.patch
+76-dsmg600-pwrbtn.patch
+78-velocity-BE.patch
+80-kexec-arm-upstream.patch
+85-nslu2-rtc-fixup.patch
+86-nas100d-rtc-fixup.patch
+87-dsmg600-rtc-fixup.patch
+89-dsmg600-mv-freq-fixup.patch
+89-nslu2-mv-freq-fixup.patch
+96-fsg3-support.patch
+98-sata_via-pata-support-upstream.patch
