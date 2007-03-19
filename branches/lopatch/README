@@ -16,16 +16,18 @@ loadmicrocode will:
 1) check for the presence of /lib/NPE-B
    if not present, use devio or mc_grab to extract an image to this filesystem location
 2) regardless of previous /lib/NPE-B presence
-   check /sys/bus/platform/devices/ixp4xx_npe.1/state to see if npe is stopped
-   modprobe ixp4xx_npe
-   mknod /dev/tempnpeload c 10 184
+   check /sys/bus/platform/devices/ixp4xx_npe.1/state existence to see if ixp4xx_npe compiled in
+   if not compiled in, modprobe ixp4xx_npe
+3) check /sys/bus/platform/devices/ixp4xx_npe.1/state contents to see if npe-b is running already
+   if not running, mknod /dev/tempnpeload c 10 184
    cat /lib/NPE-B > /dev/tempnpeload
    rm /dev/tempnpeload
 setmacaddress will:
 1) use devio to read MAC address from sysconf area
    process with regexp to add colons between second digits
    write to /etc/mac_address
-2) modprobe ixp4xx_mac
-   ifconfig eth0 hw ether $1 (where $1 is mac address)
+2) find a file that appears in sysfs only when ixp4xx_mac is loaded, and check for it
+   if not, modprobe ixp4xx_mac
+3) ifconfig eth0 hw ether $1 (where $1 is mac address)
 These need to be conditional on machine type and run after /sys and /proc mount
 Potentially, USB and SCSI (and NFS?) modules need to be loaded before final root filesystem mount
