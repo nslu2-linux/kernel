@@ -2,32 +2,36 @@ Changes from trunk kernel
 Removal of in-kernel MAC handling
 Removal of in-kernel Microcode handling
 Removal of squashfs (potentially unmasks a gcc bug affecting our toolchain)
-Kernel modularized (NFS/USB/SCSI no longer built-in)
+NFS no longer built-in
 
 Changes to OE HEAD required to use this branch
 Devio copy of microcode from flash location to root filesystem before interface up
 Userspace MAC Handling before interface up
-Unsure about modularization, I'm not sure what the OE defconfig is like
- Potentially: adding modules to the root image
+Add NFS moduless to root image
 
 Details of implementation
 We need to add functions loadmicrocode and setmacaddress which can be sourced by early bootscripts in /boot
 loadmicrocode will:
-1) check for the presence of /lib/NPE-B
+1) check for the presence of /lib/firmware/NPE-B
    if not present, use devio or mc_grab to extract an image to this filesystem location
-2) regardless of previous /lib/NPE-B presence
-   check /sys/bus/platform/devices/ixp4xx_npe.1/state existence to see if ixp4xx_npe compiled in
-   if not compiled in, modprobe ixp4xx_npe
-3) check /sys/bus/platform/devices/ixp4xx_npe.1/state contents to see if npe-b is running already
+2) regardless of previous /lib/firmware/NPE-B presence
+   check /sys/bus/platform/devices/ixp4xx_npe.1/state contents to see if npe-b is running already
    if not running, mknod /dev/tempnpeload c 10 184
    cat /lib/NPE-B > /dev/tempnpeload
    rm /dev/tempnpeload
 setmacaddress will:
-1) use devio to read MAC address from sysconf area
+1) check for presence of /etc/mac_address
+   if not present, use devio to read MAC address from sysconf area
    process with regexp to add colons between second digits
    write to /etc/mac_address
-2) find a file that appears in sysfs only when ixp4xx_mac is loaded, and check for it
-   if not, modprobe ixp4xx_mac
-3) ifconfig eth0 hw ether $1 (where $1 is mac address)
+2) regardless of previous /etc/mac_address presence
+   read /etc/mac_address
+   ifconfig eth0 hw ether $1 (where $1 is mac address)
 These need to be conditional on machine type and run after /sys and /proc mount
-Potentially, USB and SCSI (and NFS?) modules need to be loaded before final root filesystem mount
+
+In both cases, this behaviour will not conflict with in-kernel measures
+/lib/firmware/NPE-B and /etc/mac_address should be copied to any external boot device
+
+Finally, the use of the svnpatch system for kernel patching should be removed for release
+The standard OE patching system should be used instead for the final builds
+
