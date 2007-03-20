@@ -1,7 +1,7 @@
 Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-20 01:30:47.000000000 -0800
-+++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-20 01:39:29.000000000 -0800
+--- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-20 11:52:27.000000000 -0800
++++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-20 11:53:00.000000000 -0800
 @@ -20,6 +20,7 @@
  #include <linux/leds.h>
  #include <linux/mtd/mtd.h>
@@ -10,21 +10,17 @@ Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
-@@ -238,10 +239,36 @@
+@@ -238,9 +239,34 @@
  	register_mtd_user(&nslu2_flash_notifier);
  }
  
--static void __init nslu2_fixup(void)
 +static char nslu2_rtc_probe[] __initdata = "rtc-x1205.probe=0,0x6f ";
-+        
-+static void __init nslu2_fixup(struct machine_desc *desc,
-+                struct tag *tags, char **cmdline, struct meminfo *mi)
++
+ static void __init nslu2_fixup(struct machine_desc *desc,
+                 struct tag *tags, char **cmdline, struct meminfo *mi)
  {
 +        struct tag *t = tags;
 +        char *p = *cmdline;
-+
- 	/* The xtal on this machine is non-standard. */
- 	ixp4xx_timer_freq = NSLU2_FREQ;
 +
 +        /* Find the end of the tags table, taking note of any cmdline tag. */
 +        for (; t->hdr.size; t = tag_next(t)) {
@@ -45,6 +41,7 @@ Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
 +        t = tag_next(t);
 +        t->hdr.tag = ATAG_NONE;
 +        t->hdr.size = 0;
++
+ 	/* The xtal on this machine is non-standard. */
+ 	ixp4xx_timer_freq = NSLU2_FREQ;
  }
- 
- MACHINE_START(NSLU2, "Linksys NSLU2")

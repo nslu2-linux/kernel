@@ -1,7 +1,7 @@
 Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 ===================================================================
---- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 01:37:45.000000000 -0800
-+++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 01:41:06.000000000 -0800
+--- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 12:06:11.000000000 -0800
++++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 12:08:11.000000000 -0800
 @@ -15,6 +15,7 @@
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
@@ -10,21 +10,17 @@ Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
-@@ -156,10 +157,37 @@
+@@ -156,9 +157,35 @@
  #endif
  }
  
--static void __init dsmg600_fixup(void)
-+static char dsmg600_rtc_probe[] __initdata = "rtc-pcf8563.probe=0,0x51 ";
-+        
-+static void __init dsmg600_fixup(struct machine_desc *desc,
-+                struct tag *tags, char **cmdline, struct meminfo *mi)
++static char dsmg600_rtc_probe[] __initdata = "rtc-pcf8563.probe=0,0x51 "; 
++
+ static void __init dsmg600_fixup(struct machine_desc *desc,   
+                 struct tag *tags, char **cmdline, struct meminfo *mi)
  {
 +        struct tag *t = tags;
 +        char *p = *cmdline;
-+
-        /* The xtal on this machine is non-standard. */
-         ixp4xx_timer_freq = DSMG600_FREQ;
 +        
 +        /* Find the end of the tags table, taking note of any cmdline tag. */
 +        for (; t->hdr.size; t = tag_next(t)) {
@@ -46,6 +42,7 @@ Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +        t = tag_next(t);
 +        t->hdr.tag = ATAG_NONE;                        
 +        t->hdr.size = 0;
++
+        /* The xtal on this machine is non-standard. */
+         ixp4xx_timer_freq = DSMG600_FREQ;
  }
- 
- MACHINE_START(DSMG600, "D-Link DSM-G600 RevA")
