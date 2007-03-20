@@ -22,9 +22,6 @@ PATCHVER = 4.4
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
-APEX_REVISION = 1.4.11
-APEX_CONFIG = slugos
-
 ARM_KERNEL_SHIM_REVISION = 1.3
 
 DEFCONFIG=defconfig
@@ -39,8 +36,6 @@ KERNEL_SOURCE   = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/linux-${B
 KERNEL_PATCH    = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/testing/patch-${REVISION}.bz2
 KERNEL_SNAPSHOT = http://www2.kernel.org/pub/linux/kernel/v${MAJORVER}/snapshots/patch-${SNAPSHOT}.bz2
 
-APEX_SOURCE	= ftp://ftp.buici.com/pub/apex/apex-${APEX_REVISION}.tar.gz
-
 ARM_KERNEL_SHIM_SOURCE = ftp://ftp.buici.com/pub/arm/arm-kernel-shim/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz
 
 #CROSS_COMPILE = ${ARCH}-linux-gnu-
@@ -52,43 +47,15 @@ else
 CROSS_COMPILE_FLAGS = 
 endif
 
-all: kernel modules arm-kernel-shim apex
+all: kernel modules arm-kernel-shim
 
 kernel: vmlinuz-nslu2-${SNAPSHOT}-${ARCH} vmlinuz-nas100d-${SNAPSHOT}-${ARCH} vmlinuz-ixp4xx-${SNAPSHOT}-${ARCH} vmlinuz-dsmg600-${SNAPSHOT}-${ARCH} vmlinuz-fsg3-${SNAPSHOT}-${ARCH}
 modules: modules-${SNAPSHOT}-${ARCH}.tar.gz
 patched: linux-${SNAPSHOT}-${ARCH}/.config 
-apex:   apex-${APEX_CONFIG}-nslu2-${ARCH}-${APEX_REVISION}.bin \
-	apex-${APEX_CONFIG}-nas100d-${ARCH}-${APEX_REVISION}.bin
 arm-kernel-shim: \
 	arm-kernel-shim-nslu2${ENDIAN}e.bin \
 	arm-kernel-shim-nas100d${ENDIAN}e.bin \
 	arm-kernel-shim-dsmg600${ENDIAN}e.bin
-
-apex-${APEX_CONFIG}-%-${ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config
-	( cd apex-${APEX_REVISION} ; \
-	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm clean ; \
-	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm ${APEX_CONFIG}-$*-${ARCH}_config )
-	( cd apex-${APEX_REVISION} ; \
-	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm all )
-ifeq (${ENDIAN},b)
-	devio '<<'apex-${APEX_REVISION}/apex.bin >$@ 'cp$$'
-else
-	devio '<<'apex-${APEX_REVISION}/apex.bin >$@ 'xp $$,4'
-endif
-
-apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config: \
-		downloads/apex-${APEX_REVISION}.tar.gz
-	[ -e apex-${APEX_REVISION} ] || \
-	( tar zxf downloads/apex-${APEX_REVISION}.tar.gz ; \
-	  cd apex-${APEX_REVISION} ; \
-	  ln -s ../patches/apex patches ; \
-	  quilt push -a )
-	touch apex-${APEX_REVISION}/Makefile
-
-downloads/apex-${APEX_REVISION}.tar.gz :
-	[ -e downloads/apex-${APEX_REVISION}.tar.gz ] || \
-	( mkdir -p downloads ; cd downloads ; \
-	  wget ${APEX_SOURCE} )
 
 arm-kernel-shim-%${ENDIAN}e.bin: arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-%${ENDIAN}e.h
 	( cd arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
@@ -240,18 +207,15 @@ endif
 downloads:
 	mkdir -p downloads
 
-clobber: clobber-apex clobber-arm-kernel-shim
+clobber: clobber-arm-kernel-shim
 	rm -rf vmlinuz-* modules-*.tar.gz
 	rm -rf linux-* modules-*
 	rm -rf *~
 
-clobber-apex:
-	rm -rf apex-*
-
 clobber-arm-kernel-shim:
 	rm -rf arm-kernel-shim-*
 
-.PHONY: all kernel menuconfig modules clobber apex clobber-apex clobber-arm-kernel-shim
+.PHONY: all kernel menuconfig modules clobber clobber-arm-kernel-shim
 
 # End of Makefile
 
