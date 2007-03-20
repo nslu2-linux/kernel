@@ -1,24 +1,27 @@
---- linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-setup.c~	2006-12-23 22:24:50.000000000 -0600
-+++ linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-setup.c	2006-12-25 23:23:40.000000000 -0600
-@@ -159,6 +159,9 @@
+Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
+===================================================================
+--- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 01:03:26.000000000 -0800
++++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 01:08:40.000000000 -0800
+@@ -158,6 +158,10 @@
  }
  
  static char dsmg600_rtc_probe[] __initdata = "rtc-pcf8563.probe=0,0x51 ";
++
 +static char dsmg600_default_cmdline[] __initdata = 
 +	"init=/linuxrc root=/dev/mtdblock2 rootfstype=jffs2 rw "
 +	CONFIG_CMDLINE;
- 
+         
  static void __init dsmg600_fixup(struct machine_desc *desc,
- 		struct tag *tags, char **cmdline, struct meminfo *mi)
-@@ -166,6 +169,11 @@
- 	struct tag *t = tags;
- 	char *p = *cmdline;
+                 struct tag *tags, char **cmdline, struct meminfo *mi)
+@@ -167,6 +171,11 @@
  
+         struct tag *t = tags;
+         char *p = *cmdline;
++
 +	/* A command line in the ATAG list will override this one,
 +	 * as is intended.
 +	 */
 +	strlcpy(*cmdline, dsmg600_default_cmdline, COMMAND_LINE_SIZE);
-+
- 	/* Find the end of the tags table, taking note of any cmdline tag. */
- 	for (; t->hdr.size; t = tag_next(t)) {
- 		if (t->hdr.tag == ATAG_CMDLINE) {
+         
+         /* Find the end of the tags table, taking note of any cmdline tag. */
+         for (; t->hdr.size; t = tag_next(t)) {

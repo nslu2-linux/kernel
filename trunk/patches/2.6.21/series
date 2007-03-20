@@ -9,6 +9,7 @@ squashfs/squashfs-force-O2.patch
 squashfs/squashfs-lzma.patch
 squashfs/squashfs-Kconfig.patch
 squashfs/squashfs-Makefile.patch
+05-nslu2-freq-fixup.patch
 30-ixp4xx-npe-driver-0.3.1.patch
 37-ixp4xx-net-driver-improve-mac-handling.patch
 39-ixp4xx-net-driver-mtd-load-fw.patch
@@ -26,12 +27,14 @@ squashfs/squashfs-Makefile.patch
 66-hwmon-ad7418.patch
 75-dsmg600-support.patch
 76-dsmg600-pwrbtn.patch
+77-dsmg600-freq-fixup.patch
 78-velocity-BE.patch
 85-nslu2-rtc-fixup.patch
 86-nas100d-rtc-fixup.patch
 87-dsmg600-rtc-fixup.patch
-89-dsmg600-mv-freq-fixup.patch
-89-nslu2-mv-freq-fixup.patch
+#88-dsmg600-dflt-cmdline.patch
+#88-nas100d-dflt-cmdline.patch
+#88-nslu2-dflt-cmdline.patch
 96-fsg3-support.patch
 99-avila-mtd-microcode.patch
 99-avila-loft-mac-platform.patch
