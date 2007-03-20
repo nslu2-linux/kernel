@@ -32,6 +32,7 @@ These need to be conditional on machine type and run after /sys and /proc mount
 In both cases, this behaviour will not conflict with in-kernel measures
 /lib/firmware/NPE-B and /etc/default/macaddress should be copied to any external boot device
 NB: /etc/default/macaddress should either *not* exist or reliably contain the correct MAC address
+NB 2: mc_grab.c does not handle a byteswapped firmware image - support for this must be added
 
 Finally, the use of the svnpatch system for kernel patching should be removed for release
 The standard OE patching system should be used instead for the final builds
