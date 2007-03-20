@@ -1,7 +1,7 @@
-Index: linux-2.6.20-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
+Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 ===================================================================
---- linux-2.6.20-arm.orig/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 00:38:53.000000000 -0800
-+++ linux-2.6.20-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 00:42:51.000000000 -0800
+--- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 01:37:45.000000000 -0800
++++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 01:41:06.000000000 -0800
 @@ -15,6 +15,7 @@
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
@@ -20,11 +20,11 @@ Index: linux-2.6.20-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +static void __init dsmg600_fixup(struct machine_desc *desc,
 +                struct tag *tags, char **cmdline, struct meminfo *mi)
  {
-        /* The xtal on this machine is non-standard. */
-         ixp4xx_timer_freq = DSMG600_FREQ;
-+
 +        struct tag *t = tags;
 +        char *p = *cmdline;
++
+        /* The xtal on this machine is non-standard. */
+         ixp4xx_timer_freq = DSMG600_FREQ;
 +        
 +        /* Find the end of the tags table, taking note of any cmdline tag. */
 +        for (; t->hdr.size; t = tag_next(t)) {
