@@ -1,11 +1,7 @@
----
- arch/arm/mach-ixp4xx/nslu2-setup.c |   38 ++++++++++++++-----------------------
- 1 file changed, 15 insertions(+), 23 deletions(-)
-
-Index: linux-2.6.20-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.20-rc6.orig/arch/arm/mach-ixp4xx/nslu2-setup.c
-+++ linux-2.6.20-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
+--- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-20 01:03:26.000000000 -0800
++++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-20 01:12:43.000000000 -0800
 @@ -21,6 +21,7 @@
  #include <linux/mtd/mtd.h>
  
@@ -14,7 +10,7 @@ Index: linux-2.6.20-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
-@@ -241,40 +242,31 @@
+@@ -239,7 +240,9 @@
  	register_mtd_user(&nslu2_flash_notifier);
  }
  
@@ -22,19 +18,15 @@ Index: linux-2.6.20-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
 +static char nslu2_default_cmdline[] __initdata =
 +	"init=/linuxrc root=/dev/mtdblock4 rootfstype=jffs2 rw rtc-x1205.probe=0,0x6f "
 +	CONFIG_CMDLINE;
- 
+         
  static void __init nslu2_fixup(struct machine_desc *desc,
- 		struct tag *tags, char **cmdline, struct meminfo *mi)
- {
--	struct tag *t = tags;
--	char *p = *cmdline;
--
--	/* Find the end of the tags table, taking note of any cmdline tag. */
--	for (; t->hdr.size; t = tag_next(t)) {
--		if (t->hdr.tag == ATAG_CMDLINE) {
--			p = t->u.cmdline.cmdline;
--		}
--	}
+                 struct tag *tags, char **cmdline, struct meminfo *mi)
+@@ -247,35 +250,24 @@
+ 	/* The xtal on this machine is non-standard. */
+ 	ixp4xx_timer_freq = NSLU2_FREQ;
+ 
+-        struct tag *t = tags;
+-        char *p = *cmdline;
 +	/* The NSLU2 has one bank of 32MByte memory.
 +	 * NOTE: setting nr_banks != 0 causes kernel/setup.c to remove
 +	 * the mem tags from the tag list.  We need do nothing here!
@@ -44,18 +36,25 @@ Index: linux-2.6.20-rc6/arch/arm/mach-ixp4xx/nslu2-setup.c
 +	mi->bank[0].size = (32*1024*1024);
 +	mi->bank[0].node = PHYS_TO_NID(0);
  
--	/* Overwrite the end of the table with a new cmdline tag. */
--	t->hdr.tag = ATAG_CMDLINE;
--	t->hdr.size = (sizeof (struct tag_header) +
--		       strlen(nslu2_rtc_probe) + strlen(p) + 1 + 4) >> 2;
--	strlcpy(t->u.cmdline.cmdline, nslu2_rtc_probe, COMMAND_LINE_SIZE);
--	strlcpy(t->u.cmdline.cmdline + strlen(nslu2_rtc_probe), p,
--		COMMAND_LINE_SIZE - strlen(nslu2_rtc_probe));
+-        /* Find the end of the tags table, taking note of any cmdline tag. */
+-        for (; t->hdr.size; t = tag_next(t)) {
+-                if (t->hdr.tag == ATAG_CMDLINE) {
+-                        p = t->u.cmdline.cmdline;
+-                }
+-        }
 -
--	/* Terminate the table. */
--	t = tag_next(t);
--	t->hdr.tag = ATAG_NONE;
--	t->hdr.size = 0;
+-        /* Overwrite the end of the table with a new cmdline tag. */
+-        t->hdr.tag = ATAG_CMDLINE;
+-        t->hdr.size = (sizeof (struct tag_header) +
+-                       strlen(nslu2_rtc_probe) + strlen(p) + 1 + 4) >> 2;
+-        strlcpy(t->u.cmdline.cmdline, nslu2_rtc_probe, COMMAND_LINE_SIZE);
+-        strlcpy(t->u.cmdline.cmdline + strlen(nslu2_rtc_probe), p,
+-                COMMAND_LINE_SIZE - strlen(nslu2_rtc_probe));
+-
+-        /* Terminate the table. */
+-        t = tag_next(t);
+-        t->hdr.tag = ATAG_NONE;
+-        t->hdr.size = 0;
 +	/* Hard coded command line. */
 +	strlcpy(*cmdline, nslu2_default_cmdline, COMMAND_LINE_SIZE);
  }
