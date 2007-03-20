@@ -1,7 +1,7 @@
 Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-20 00:58:58.000000000 -0800
-+++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-20 01:00:52.000000000 -0800
+--- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-20 01:30:47.000000000 -0800
++++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-20 01:39:29.000000000 -0800
 @@ -20,6 +20,7 @@
  #include <linux/leds.h>
  #include <linux/mtd/mtd.h>
@@ -20,11 +20,11 @@ Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
 +static void __init nslu2_fixup(struct machine_desc *desc,
 +                struct tag *tags, char **cmdline, struct meminfo *mi)
  {
- 	/* The xtal on this machine is non-standard. */
- 	ixp4xx_timer_freq = NSLU2_FREQ;
-+
 +        struct tag *t = tags;
 +        char *p = *cmdline;
++
+ 	/* The xtal on this machine is non-standard. */
+ 	ixp4xx_timer_freq = NSLU2_FREQ;
 +
 +        /* Find the end of the tags table, taking note of any cmdline tag. */
 +        for (; t->hdr.size; t = tag_next(t)) {
