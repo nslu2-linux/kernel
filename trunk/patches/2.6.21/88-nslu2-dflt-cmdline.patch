@@ -1,7 +1,7 @@
 Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-21 02:37:02.000000000 -0800
-+++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-21 02:45:09.000000000 -0800
+--- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-21 02:48:16.000000000 -0800
++++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-21 02:48:41.000000000 -0800
 @@ -21,6 +21,7 @@
  #include <linux/mtd/mtd.h>
  
@@ -25,9 +25,9 @@ Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
 -        struct tag *t = tags;
 -        char *p = *cmdline;
 +	/* The NSLU2 has one bank of 32MByte memory.
-+	* NOTE: setting nr_banks != 0 causes kernel/setup.c to remove
-+	* the mem tags from the tag list.  We need do nothing here!
-+	*/
++	 * NOTE: setting nr_banks != 0 causes kernel/setup.c to remove
++	 * the mem tags from the tag list.  We need do nothing here!
++	 */
 +	mi->nr_banks=1;
 +	mi->bank[0].start = 0;
 +	mi->bank[0].size = (32*1024*1024);
