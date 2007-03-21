@@ -1,7 +1,7 @@
 Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 ===================================================================
---- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 12:06:11.000000000 -0800
-+++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-20 12:08:11.000000000 -0800
+--- linux-2.6.21-rc4-arm.orig/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-21 02:37:02.000000000 -0800
++++ linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-03-21 02:37:34.000000000 -0800
 @@ -15,6 +15,7 @@
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
@@ -14,7 +14,7 @@ Index: linux-2.6.21-rc4-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
  #endif
  }
  
-+static char dsmg600_rtc_probe[] __initdata = "rtc-pcf8563.probe=0,0x51 "; 
++static char dsmg600_rtc_probe[] __initdata = "rtc-pcf8563.probe=0,0x51 ";
 +
  static void __init dsmg600_fixup(struct machine_desc *desc,   
                  struct tag *tags, char **cmdline, struct meminfo *mi)
