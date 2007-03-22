@@ -1,6 +1,8 @@
---- linux-2.6.20/arch/arm/mach-ixp4xx/nslu2-setup.c.orig	2007-03-05 22:43:27.000000000 -0600
-+++ linux-2.6.20/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-05 22:44:23.000000000 -0600
-@@ -220,8 +220,6 @@
+Index: linux-2.6.20-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
+===================================================================
+--- linux-2.6.20-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-22 10:57:42.875509584 +0000
++++ linux-2.6.20-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-03-22 10:58:02.602599834 +0000
+@@ -209,8 +209,6 @@
  
  static void __init nslu2_init(void)
  {
@@ -9,7 +11,7 @@
  	ixp4xx_sys_init();
  
  	nslu2_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
-@@ -268,6 +266,9 @@
+@@ -257,6 +255,9 @@
  	t = tag_next(t);
  	t->hdr.tag = ATAG_NONE;
  	t->hdr.size = 0;

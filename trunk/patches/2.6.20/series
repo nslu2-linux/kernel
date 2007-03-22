@@ -14,7 +14,7 @@ squashfs/squashfs-Makefile.patch
 08-avila-loft-setup.patch
 09-avila-setup-pata.patch
 30-ixp4xx-npe-driver-0.3.1.patch
-37-ixp4xx-net-driver-improve-mac-handling.patch
+37-ixp4xx-net-driver-fix-mac-handling.patch
 39-ixp4xx-net-driver-mtd-load-fw.patch
 40-avila-setup-mac.patch
 41-nslu2-setup-mac.patch

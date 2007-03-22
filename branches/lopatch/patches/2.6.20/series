@@ -8,10 +8,14 @@
 08-avila-loft-setup.patch
 09-avila-setup-pata.patch
 30-ixp4xx-npe-driver-0.3.1.patch
+37-ixp4xx-net-driver-fix-mac-handling.patch
 40-avila-setup-mac.patch
 41-nslu2-setup-mac.patch
 42-nas100d-setup-mac.patch
+45-eeprom-new-notifier.patch
 50-leds-arm-cpu-activity.patch
+52-nas100d-mtd-load-mac.patch
+53-nslu2-mtd-load-mac.patch
 55-increase-entropy-pools.patch
 60-nas100d-artop-temp-fix.patch
 66-hwmon-ad7418.patch
@@ -27,3 +31,4 @@
 92-pata_ixp4xx_cf-fix-interrupt.patch
 96-fsg3-support.patch
 98-sata_via-pata-support-upstream.patch
+99-avila-loft-mac-platform.patch
