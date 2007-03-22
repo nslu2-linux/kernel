@@ -37,6 +37,7 @@ squashfs/squashfs-Makefile.patch
 87-dsmg600-rtc-fixup.patch
 89-dsmg600-mv-freq-fixup.patch
 89-nslu2-mv-freq-fixup.patch
+92-pata_ixp4xx_cf-fix-interrupt.patch
 96-fsg3-support.patch
 98-sata_via-pata-support-upstream.patch
 99-avila-mtd-microcode.patch
