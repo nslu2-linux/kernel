@@ -1,12 +1,16 @@
-Index: apex-1.4.11/src/mach-ixp42x/debian-nas100d-armeb_config
+---
+ src/mach-ixp42x/debian-nas100d-armeb_config |  149 ++++++++++++++++++++++++++++
+ 1 file changed, 149 insertions(+)
+
+Index: apex-1.4.17/src/mach-ixp42x/debian-nas100d-armeb_config
 ===================================================================
 --- /dev/null
-+++ apex-1.4.11/src/mach-ixp42x/debian-nas100d-armeb_config
-@@ -0,0 +1,145 @@
++++ apex-1.4.17/src/mach-ixp42x/debian-nas100d-armeb_config
+@@ -0,0 +1,149 @@
 +#
 +# Automatically generated make config: don't edit
 +# Linux kernel version: 
-+# Tue Jan  9 20:55:40 2007
++# Mon Mar 26 06:03:26 2007
 +#
 +CONFIG_ARM=y
 +CONFIG_CPU_ARMV5=y
@@ -77,6 +81,7 @@ Index: apex-1.4.11/src/mach-ixp42x/debian-nas100d-armeb_config
 +CONFIG_ANSI_KEYS=y
 +CONFIG_COMMAND_HISTORY=y
 +CONFIG_COMMAND_EDITING=y
++# CONFIG_TIME_COMMANDS is not set
 +CONFIG_CMD_ALIAS=y
 +CONFIG_CMD_CHECKSUM=y
 +CONFIG_CMD_COPY=y
@@ -93,6 +98,7 @@ Index: apex-1.4.11/src/mach-ixp42x/debian-nas100d-armeb_config
 +CONFIG_CMD_WAIT=y
 +CONFIG_CMD_XRECEIVE=y
 +# CONFIG_CMD_MEMLIMIT is not set
++CONFIG_CMD_MEMSCAN=y
 +
 +#
 +# Generic Drivers
@@ -104,6 +110,8 @@ Index: apex-1.4.11/src/mach-ixp42x/debian-nas100d-armeb_config
 +CONFIG_DRIVER_FIS_BLOCKDEVICE="nor:0xfe0000+4k"
 +CONFIG_DRIVER_NOR_CFI=y
 +# CONFIG_DRIVER_NOR_CFI_NO_BUFFERED is not set
++CONFIG_DRIVER_NOR_CFI_TYPE_INTEL=y
++# CONFIG_DRIVER_NOR_CFI_TYPE_SPANSION is not set
 +CONFIG_USES_NOR_CFI=y
 +CONFIG_USES_PATHNAME_PARSER=y
 +

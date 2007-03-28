@@ -1,2 +1,2 @@
 debian-nas100d-armeb_config.patch
-30-variations.patch
+missing-cp15.patch
