@@ -18,7 +18,7 @@ ENDIAN = l
 #ENDIAN = b
 MAJORVER = 2.6
 BASEVER  = 2.6.20
-PATCHVER = 2.6.20
+PATCHVER = 2.6.21
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
@@ -75,6 +75,8 @@ ifeq (${ENDIAN},b)
 else
 	devio '<<'apex-${APEX_REVISION}/apex.bin >$@ 'xp $$,4'
 endif
+
+.PRECIOUS: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config
 
 apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config: \
 		downloads/apex-${APEX_REVISION}.tar.gz
