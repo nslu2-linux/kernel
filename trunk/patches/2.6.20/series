@@ -32,6 +32,7 @@ squashfs/squashfs-Makefile.patch
 76-dsmg600-pwrbtn.patch
 78-velocity-BE.patch
 80-kexec-arm-upstream.patch
+81-kexec-arm-upstream-fix.patch
 85-nslu2-rtc-fixup.patch
 86-nas100d-rtc-fixup.patch
 87-dsmg600-rtc-fixup.patch

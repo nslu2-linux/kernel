@@ -1,0 +1,26 @@
+From: Russell King <rmk@dyn-67.arm.linux.org.uk>
+Date: Sun, 1 Apr 2007 21:35:01 +0000 (+0100)
+Subject: [ARM] Fix __NR_kexec_load
+X-Git-Url: http://git.kernel.org/?p=linux%2Fkernel%2Fgit%2Ftorvalds%2Flinux-2.6.git;a=commitdiff_plain;h=6c330ba72c45007a9ef681396925c22d11029008
+
+[ARM] Fix __NR_kexec_load
+
+It's __NR_kexec_load, not __NR_sys_kexec_load
+
+Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+---
+
+diff --git a/include/asm-arm/unistd.h b/include/asm-arm/unistd.h
+index 0991b7b..c025ab4 100644
+--- a/include/asm-arm/unistd.h
++++ b/include/asm-arm/unistd.h
+@@ -372,7 +372,7 @@
+ #define __NR_move_pages			(__NR_SYSCALL_BASE+344)
+ #define __NR_getcpu			(__NR_SYSCALL_BASE+345)
+ 					/* 346 for epoll_pwait */
+-#define __NR_sys_kexec_load		(__NR_SYSCALL_BASE+347)
++#define __NR_kexec_load			(__NR_SYSCALL_BASE+347)
+ 
+ /*
+  * The following SWIs are ARM private.
+
