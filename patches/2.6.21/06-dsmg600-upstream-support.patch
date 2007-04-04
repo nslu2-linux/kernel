@@ -4,8 +4,8 @@ the NSLU2 and NAS-100D already supported by mainline. An
 important difference is Gigabit Ethernet support using
 the Via Velocity chipset.
 
-Signed-off-by: 
 Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
+Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
 
 Index: linux-2.6.21-rc5-arm/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
@@ -54,7 +54,7 @@ Index: linux-2.6.21-rc5-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c
 +/*
 + * DSM-G600 board-level PCI initialization
 + *
-+ * Copyright (c) 2006 Tower Technologies
++ * Copyright (C) 2006 Tower Technologies
 + * Author: Alessandro Zummo <a.zummo@towertech.it>
 + *
 + * based on ixdp425-pci.c:
@@ -283,7 +283,7 @@ Index: linux-2.6.21-rc5-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +/*
 + * DSM-G600 board-setup
 + *
-+ * Copyright (c) 2006 Tower Technologies
++ * Copyright (C) 2006 Tower Technologies
 + * Author: Alessandro Zummo <a.zummo@towertech.it>
 + *
 + * based ixdp425-setup.c:
@@ -464,11 +464,11 @@ Index: linux-2.6.21-rc5-arm/include/asm-arm/arch-ixp4xx/dsmg600.h
 +/*
 + * DSM-G600 platform specific definitions
 + *
-+ * Copyright (c) 2006 Tower Technologies
++ * Copyright (C) 2006 Tower Technologies
 + * Author: Alessandro Zummo <a.zummo@towertech.it>
 + *
 + * based on ixdp425.h:
-+ *	Copyright 2004 (c) MontaVista, Software, Inc.
++ *	Copyright 2004 (C) MontaVista, Software, Inc.
 + *
 + * This file is licensed under  the terms of the GNU General Public
 + * License version 2. This program is licensed "as is" without any
