@@ -10,6 +10,7 @@ squashfs/squashfs-lzma.patch
 squashfs/squashfs-Kconfig.patch
 squashfs/squashfs-Makefile.patch
 05-nslu2-freq-fixup.patch
+06-dsmg600-upstream-support.patch
 30-ixp4xx-npe-driver-0.3.1.patch
 37-ixp4xx-net-driver-fix-mac-handling.patch
 39-ixp4xx-net-driver-mtd-load-fw.patch
@@ -25,9 +26,6 @@ squashfs/squashfs-Makefile.patch
 55-increase-entropy-pools.patch
 60-nas100d-artop-temp-fix.patch
 66-hwmon-ad7418.patch
-75-dsmg600-support.patch
-76-dsmg600-pwrbtn.patch
-77-dsmg600-freq-fixup.patch
 78-velocity-BE.patch
 85-nslu2-rtc-fixup.patch
 86-nas100d-rtc-fixup.patch
