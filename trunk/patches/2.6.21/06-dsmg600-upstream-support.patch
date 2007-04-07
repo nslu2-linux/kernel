@@ -6,6 +6,7 @@ the Via Velocity chipset.
 
 Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
 Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
+Signed-off-by: Michael Westerhof <mwester@dls.net>
 
 Index: linux-2.6.21-rc5-arm/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
