@@ -4,9 +4,11 @@
  drivers/hwmon/ad7418.c |  367 +++++++++++++++++++++++++++++++++++++++++++++++++
  3 files changed, 378 insertions(+)
 
---- linux-ixp4xx.orig/drivers/hwmon/Makefile	2007-03-24 12:02:36.000000000 +0100
-+++ linux-ixp4xx/drivers/hwmon/Makefile	2007-03-24 12:02:54.000000000 +0100
-@@ -14,6 +14,7 @@ obj-$(CONFIG_SENSORS_W83781D)	+= w83781d
+Index: linux-2.6.21-rc6-arm/drivers/hwmon/Makefile
+===================================================================
+--- linux-2.6.21-rc6-arm.orig/drivers/hwmon/Makefile	2007-04-07 13:28:49.000000000 +0100
++++ linux-2.6.21-rc6-arm/drivers/hwmon/Makefile	2007-04-07 13:37:43.000000000 +0100
+@@ -14,6 +14,7 @@
  obj-$(CONFIG_SENSORS_W83791D)	+= w83791d.o
  
  obj-$(CONFIG_SENSORS_ABITUGURU)	+= abituguru.o
@@ -14,8 +16,10 @@
  obj-$(CONFIG_SENSORS_ADM1021)	+= adm1021.o
  obj-$(CONFIG_SENSORS_ADM1025)	+= adm1025.o
  obj-$(CONFIG_SENSORS_ADM1026)	+= adm1026.o
+Index: linux-2.6.21-rc6-arm/drivers/hwmon/ad7418.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/drivers/hwmon/ad7418.c	2007-03-24 15:05:53.000000000 +0100
++++ linux-2.6.21-rc6-arm/drivers/hwmon/ad7418.c	2007-04-07 13:37:43.000000000 +0100
 @@ -0,0 +1,367 @@
 +/*
 + * An hwmon driver for the Analog Devices AD7416/17/18
@@ -384,9 +388,11 @@
 +
 +module_init(ad7418_init);
 +module_exit(ad7418_exit);
---- linux-ixp4xx.orig/drivers/hwmon/Kconfig	2007-03-24 12:02:36.000000000 +0100
-+++ linux-ixp4xx/drivers/hwmon/Kconfig	2007-03-24 13:33:14.000000000 +0100
-@@ -574,6 +574,16 @@ config SENSORS_W83627EHF
+Index: linux-2.6.21-rc6-arm/drivers/hwmon/Kconfig
+===================================================================
+--- linux-2.6.21-rc6-arm.orig/drivers/hwmon/Kconfig	2007-04-07 13:28:49.000000000 +0100
++++ linux-2.6.21-rc6-arm/drivers/hwmon/Kconfig	2007-04-07 13:37:43.000000000 +0100
+@@ -575,6 +575,16 @@
  	  This driver can also be built as a module.  If so, the module
  	  will be called w83627ehf.
  
