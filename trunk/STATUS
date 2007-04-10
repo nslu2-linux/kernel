@@ -11,7 +11,8 @@
 	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4274/1
 
 06-dsmg600-upstream-support.patch [l-a-k]
-	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4312/1
+	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4318/1
+	rmk review comments addressed
 
 07-trivial-Kconfig-cleanup.patch [l-a-k]
 	Not for upstream till DSM-G600 is applied (may confuse previous patch)
