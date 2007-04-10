@@ -11,11 +11,12 @@ Jones.
 Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
 Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
 Signed-off-by: Michael Westerhof <mwester@dls.net>
+[ review comments addressed by M-L Jones <mlj28@cam.ac.uk> ]
 
 Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.21-rc6-arm.orig/arch/arm/mach-ixp4xx/Kconfig	2007-04-06 11:12:38.000000000 +0100
-+++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Kconfig	2007-04-07 09:35:01.000000000 +0100
+--- linux-2.6.21-rc6-arm.orig/arch/arm/mach-ixp4xx/Kconfig	2007-04-07 13:29:24.000000000 +0100
++++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Kconfig	2007-04-10 19:23:59.000000000 +0100
 @@ -89,6 +89,15 @@
  	  NAS 100d device. For more information on this platform,
  	  see http://www.nslu2-linux.org/wiki/NAS100d/HomePage
@@ -34,8 +35,8 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Kconfig
  #
 Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.21-rc6-arm.orig/arch/arm/mach-ixp4xx/Makefile	2007-04-06 11:12:38.000000000 +0100
-+++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Makefile	2007-04-07 09:35:01.000000000 +0100
+--- linux-2.6.21-rc6-arm.orig/arch/arm/mach-ixp4xx/Makefile	2007-04-07 13:29:23.000000000 +0100
++++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Makefile	2007-04-10 19:23:49.000000000 +0100
 @@ -12,6 +12,7 @@
  obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx5715-pci.o
  obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
@@ -54,7 +55,7 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Makefile
 Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c	2007-04-06 11:13:20.000000000 +0100
++++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c	2007-04-07 13:30:00.000000000 +0100
 @@ -0,0 +1,74 @@
 +/*
 + * DSM-G600 board-level PCI initialization
@@ -133,8 +134,8 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c
 Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c	2007-04-06 11:13:20.000000000 +0100
-@@ -0,0 +1,145 @@
++++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c	2007-04-10 19:31:54.000000000 +0100
+@@ -0,0 +1,144 @@
 +/*
 + * arch/arm/mach-ixp4xx/dsmg600-power.c
 + *
@@ -228,10 +229,9 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 +	if (!(machine_is_dsmg600()))
 +		return 0;
 +
-+	set_irq_type(DSMG600_RB_IRQ, IRQT_LOW);
-+
 +	if (request_irq(DSMG600_RB_IRQ, &dsmg600_reset_handler,
-+		IRQF_DISABLED, "DSM-G600 reset button", NULL) < 0) {
++		IRQF_DISABLED | IRQF_TRIGGER_LOW, "DSM-G600 reset button",
++		NULL) < 0) {
 +
 +		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
 +			DSMG600_RB_IRQ);
@@ -283,8 +283,8 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-04-07 09:35:01.000000000 +0100
-@@ -0,0 +1,176 @@
++++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-04-10 19:26:48.000000000 +0100
+@@ -0,0 +1,175 @@
 +/*
 + * DSM-G600 board-setup
 + *
@@ -332,7 +332,6 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +	.name			= "IXP4XX-I2C",
 +	.id			= 0,
 +	.dev.platform_data	= &dsmg600_i2c_gpio_pins,
-+	.num_resources		= 0,
 +};
 +
 +#ifdef CONFIG_LEDS_CLASS
@@ -398,7 +397,7 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +	.name			= "serial8250",
 +	.id			= PLAT8250_DEV_PLATFORM,
 +	.dev.platform_data	= dsmg600_uart_data,
-+	.num_resources		= 2,
++	.num_resources		= ARRAY_SIZE(dsmg600_uart_resources),
 +	.resource		= dsmg600_uart_resources,
 +};
 +
@@ -464,7 +463,7 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 Index: linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/dsmg600.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/dsmg600.h	2007-04-06 11:13:20.000000000 +0100
++++ linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/dsmg600.h	2007-04-07 13:30:00.000000000 +0100
 @@ -0,0 +1,76 @@
 +/*
 + * DSM-G600 platform specific definitions
@@ -544,8 +543,8 @@ Index: linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/dsmg600.h
 +#define DSMG600_LED_WLAN_BM	(1L << DSMG600_LED_WLAN)
 Index: linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.21-rc6-arm.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-06 11:13:03.000000000 +0100
-+++ linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-07 09:35:01.000000000 +0100
+--- linux-2.6.21-rc6-arm.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-07 13:29:25.000000000 +0100
++++ linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-10 19:23:49.000000000 +0100
 @@ -47,5 +47,6 @@
  #include "prpmc1100.h"
  #include "nslu2.h"
@@ -555,8 +554,8 @@ Index: linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/hardware.h
  #endif  /* _ASM_ARCH_HARDWARE_H */
 Index: linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.21-rc6-arm.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-06 11:13:03.000000000 +0100
-+++ linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-07 09:35:01.000000000 +0100
+--- linux-2.6.21-rc6-arm.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-07 13:29:24.000000000 +0100
++++ linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-10 19:23:49.000000000 +0100
 @@ -118,4 +118,14 @@
  #define        IRQ_NAS100D_PCI_INTD    IRQ_IXP4XX_GPIO8
  #define        IRQ_NAS100D_PCI_INTE    IRQ_IXP4XX_GPIO7
