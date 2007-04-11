@@ -1,7 +1,2 @@
-squashfs.patch
-squashfs-ramdisk.patch
+squashfs-3.2r2.patch
 squashfs-force-O2.patch
-squashfs-lzma.patch
-squashfs-Kconfig.patch
-squashfs-Makefile.patch
-
