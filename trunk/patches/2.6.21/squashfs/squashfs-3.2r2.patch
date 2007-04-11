@@ -1,20 +1,100 @@
-This is basically squashfs release 3.1-r2, but with the 2.6.19 patches from
-http://squashfs.cvs.sourceforge.net/squashfs/squashfs/kernel/
-
-Signed-off-by: Leon Woestenberg <leonw@mailcan.com>
-
-Modified to remove reference to deprecated kmem_cache_t
--- Michael-Luke Jones
-
-Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
+Index: linux-2.6.21-rc6-arm/fs/Kconfig
+===================================================================
+--- linux-2.6.21-rc6-arm.orig/fs/Kconfig	2007-04-11 20:39:59.000000000 +0100
++++ linux-2.6.21-rc6-arm/fs/Kconfig	2007-04-11 20:40:04.000000000 +0100
+@@ -1371,6 +1371,71 @@
+ 
+ 	  If unsure, say N.
+ 
++config SQUASHFS
++	tristate "SquashFS 3.2 - Squashed file system support"
++	select ZLIB_INFLATE
++	help
++	  Saying Y here includes support for SquashFS 3.2 (a Compressed Read-Only File
++	  System).  Squashfs is a highly compressed read-only filesystem for Linux.
++	  It uses zlib compression to compress both files, inodes and directories.
++	  Inodes in the system are very small and all blocks are packed to minimise
++	  data overhead. Block sizes greater than 4K are supported up to a maximum of 64K.
++	  SquashFS 3.1 supports 64 bit filesystems and files (larger than 4GB), full
++	  uid/gid information, hard links and timestamps.
++
++	  Squashfs is intended for general read-only filesystem use, for archival
++	  use (i.e. in cases where a .tar.gz file may be used), and in embedded
++	  systems where low overhead is needed.  Further information and filesystem tools
++	  are available from http://squashfs.sourceforge.net.
++
++	  If you want to compile this as a module ( = code which can be
++	  inserted in and removed from the running kernel whenever you want),
++	  say M here and read <file:Documentation/modules.txt>.  The module
++	  will be called squashfs.  Note that the root file system (the one
++	  containing the directory /) cannot be compiled as a module.
++
++	  If unsure, say N.
++
++config SQUASHFS_EMBEDDED
++
++	bool "Additional options for memory-constrained systems"
++	depends on SQUASHFS
++	default n
++	help
++	  Saying Y here allows you to specify cache sizes and how Squashfs
++	  allocates memory.  This is only intended for memory constrained
++	  systems.
++
++	  If unsure, say N.
++
++config SQUASHFS_FRAGMENT_CACHE_SIZE
++	int "Number of fragments cached" if SQUASHFS_EMBEDDED
++	depends on SQUASHFS
++	default "3"
++	help
++	  By default SquashFS caches the last 3 fragments read from
++	  the filesystem.  Increasing this amount may mean SquashFS
++	  has to re-read fragments less often from disk, at the expense
++	  of extra system memory.  Decreasing this amount will mean
++	  SquashFS uses less memory at the expense of extra reads from disk.
++
++	  Note there must be at least one cached fragment.  Anything
++	  much more than three will probably not make much difference.
++
++config SQUASHFS_VMALLOC
++	bool "Use Vmalloc rather than Kmalloc" if SQUASHFS_EMBEDDED
++	depends on SQUASHFS
++	default n
++	help
++	  By default SquashFS uses kmalloc to obtain fragment cache memory.
++	  Kmalloc memory is the standard kernel allocator, but it can fail
++	  on memory constrained systems.  Because of the way Vmalloc works,
++	  Vmalloc can succeed when kmalloc fails.  Specifying this option
++	  will make SquashFS always use Vmalloc to allocate the
++	  fragment cache memory.
++
++	  If unsure, say N.
++
+ config VXFS_FS
+ 	tristate "FreeVxFS file system support (VERITAS VxFS(TM) compatible)"
+ 	depends on BLOCK
+Index: linux-2.6.21-rc6-arm/fs/Makefile
+===================================================================
+--- linux-2.6.21-rc6-arm.orig/fs/Makefile	2007-04-11 20:39:59.000000000 +0100
++++ linux-2.6.21-rc6-arm/fs/Makefile	2007-04-11 20:40:04.000000000 +0100
+@@ -68,6 +68,7 @@
+ obj-$(CONFIG_JBD2)		+= jbd2/
+ obj-$(CONFIG_EXT2_FS)		+= ext2/
+ obj-$(CONFIG_CRAMFS)		+= cramfs/
++obj-$(CONFIG_SQUASHFS)		+= squashfs/
+ obj-$(CONFIG_RAMFS)		+= ramfs/
+ obj-$(CONFIG_HUGETLBFS)		+= hugetlbfs/
+ obj-$(CONFIG_CODA_FS)		+= coda/
+Index: linux-2.6.21-rc6-arm/fs/squashfs/inode.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1-git5/fs/squashfs/inode.c	2006-12-19 22:37:48.160152713 +0000
-@@ -0,0 +1,2293 @@
++++ linux-2.6.21-rc6-arm/fs/squashfs/inode.c	2007-04-11 20:44:46.000000000 +0100
+@@ -0,0 +1,2329 @@
 +/*
 + * Squashfs - a compressed read only filesystem for Linux
 + *
-+ * Copyright (c) 2002, 2003, 2004, 2005, 2006
++ * Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007
 + * Phillip Lougher <phillip@lougher.org.uk>
 + *
 + * This program is free software; you can redistribute it and/or
@@ -34,49 +114,40 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 + * inode.c
 + */
 +
-+#include <linux/types.h>
 +#include <linux/squashfs_fs.h>
 +#include <linux/module.h>
-+#include <linux/errno.h>
-+#include <linux/slab.h>
 +#include <linux/zlib.h>
 +#include <linux/fs.h>
-+#include <linux/smp_lock.h>
-+#include <linux/slab.h>
 +#include <linux/squashfs_fs_sb.h>
 +#include <linux/squashfs_fs_i.h>
 +#include <linux/buffer_head.h>
 +#include <linux/vfs.h>
-+#include <linux/init.h>
-+#include <linux/dcache.h>
-+#include <linux/wait.h>
-+#include <linux/blkdev.h>
 +#include <linux/vmalloc.h>
-+#include <asm/uaccess.h>
-+#include <asm/semaphore.h>
++#include <linux/smp_lock.h>
 +
 +#include "squashfs.h"
 +
-+static void squashfs_put_super(struct super_block *);
++static void vfs_read_inode(struct inode *i);
++static struct dentry *squashfs_get_parent(struct dentry *child);
++static int squashfs_read_inode(struct inode *i, squashfs_inode_t inode);
 +static int squashfs_statfs(struct dentry *, struct kstatfs *);
 +static int squashfs_symlink_readpage(struct file *file, struct page *page);
++static long long read_blocklist(struct inode *inode, int index,
++				int readahead_blks, char *block_list,
++				unsigned short **block_p, unsigned int *bsize);
 +static int squashfs_readpage(struct file *file, struct page *page);
 +static int squashfs_readpage4K(struct file *file, struct page *page);
 +static int squashfs_readdir(struct file *, void *, filldir_t);
++static struct dentry *squashfs_lookup(struct inode *, struct dentry *,
++				struct nameidata *);
++static int squashfs_remount(struct super_block *s, int *flags, char *data);
++static void squashfs_put_super(struct super_block *);
++static int squashfs_get_sb(struct file_system_type *,int, const char *, void *,
++				struct vfsmount *);
 +static struct inode *squashfs_alloc_inode(struct super_block *sb);
 +static void squashfs_destroy_inode(struct inode *inode);
 +static int init_inodecache(void);
 +static void destroy_inodecache(void);
-+static struct dentry *squashfs_lookup(struct inode *, struct dentry *,
-+				struct nameidata *);
-+static int squashfs_read_inode(struct inode *i, squashfs_inode_t inode);
-+static long long read_blocklist(struct inode *inode, int index,
-+				int readahead_blks, char *block_list,
-+				unsigned short **block_p, unsigned int *bsize);
-+static int squashfs_get_sb(struct file_system_type *, int, const char *, void *,
-+				struct vfsmount *);
-+static void vfs_read_inode(struct inode *i);
-+static struct dentry *squashfs_get_parent(struct dentry *child);
 +
 +static struct file_system_type squashfs_fs_type = {
 +	.owner = THIS_MODULE,
@@ -86,7 +157,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	.fs_flags = FS_REQUIRES_DEV
 +};
 +
-+static unsigned char squashfs_filetype_table[] = {
++static const unsigned char squashfs_filetype_table[] = {
 +	DT_UNKNOWN, DT_DIR, DT_REG, DT_LNK, DT_BLK, DT_CHR, DT_FIFO, DT_SOCK
 +};
 +
@@ -95,6 +166,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	.destroy_inode = squashfs_destroy_inode,
 +	.statfs = squashfs_statfs,
 +	.put_super = squashfs_put_super,
++	.remount_fs = squashfs_remount
 +};
 +
 +static struct super_operations squashfs_export_super_ops = {
@@ -105,23 +177,23 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	.read_inode = vfs_read_inode
 +};
 +
-+struct export_operations squashfs_export_ops = {
++static struct export_operations squashfs_export_ops = {
 +	.get_parent = squashfs_get_parent
 +};
 +
-+SQSH_EXTERN struct address_space_operations squashfs_symlink_aops = {
++SQSH_EXTERN const struct address_space_operations squashfs_symlink_aops = {
 +	.readpage = squashfs_symlink_readpage
 +};
 +
-+SQSH_EXTERN struct address_space_operations squashfs_aops = {
++SQSH_EXTERN const struct address_space_operations squashfs_aops = {
 +	.readpage = squashfs_readpage
 +};
 +
-+SQSH_EXTERN struct address_space_operations squashfs_aops_4K = {
++SQSH_EXTERN const struct address_space_operations squashfs_aops_4K = {
 +	.readpage = squashfs_readpage4K
 +};
 +
-+static struct file_operations squashfs_dir_ops = {
++static const struct file_operations squashfs_dir_ops = {
 +	.read = generic_read_dir,
 +	.readdir = squashfs_readdir
 +};
@@ -153,10 +225,10 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +			goto out;
 +		if (msblk->swap)
 +			((unsigned char *) &temp)[0] = *((unsigned char *)
-+				bh->b_data); 
++				bh->b_data);
 +		else
 +			((unsigned char *) &temp)[1] = *((unsigned char *)
-+				bh->b_data); 
++				bh->b_data);
 +		*c_byte = temp;
 +		*offset = 1;
 +	} else {
@@ -164,12 +236,12 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +			((unsigned char *) &temp)[1] = *((unsigned char *)
 +				(bh->b_data + *offset));
 +			((unsigned char *) &temp)[0] = *((unsigned char *)
-+				(bh->b_data + *offset + 1)); 
++				(bh->b_data + *offset + 1));
 +		} else {
 +			((unsigned char *) &temp)[0] = *((unsigned char *)
 +				(bh->b_data + *offset));
 +			((unsigned char *) &temp)[1] = *((unsigned char *)
-+				(bh->b_data + *offset + 1)); 
++				(bh->b_data + *offset + 1));
 +		}
 +		*c_byte = temp;
 +		*offset += 2;
@@ -209,14 +281,12 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	unsigned int offset = index & ((1 << msblk->devblksize_log2) - 1);
 +	unsigned int cur_index = index >> msblk->devblksize_log2;
 +	int bytes, avail_bytes, b = 0, k = 0;
-+	char *c_buffer;
 +	unsigned int compressed;
 +	unsigned int c_byte = length;
 +
 +	if (c_byte) {
 +		bytes = msblk->devblksize - offset;
 +		compressed = SQUASHFS_COMPRESSED_BLOCK(c_byte);
-+		c_buffer = compressed ? msblk->read_data : buffer;
 +		c_byte = SQUASHFS_COMPRESSED_SIZE_BLOCK(c_byte);
 +
 +		TRACE("Block @ 0x%llx, %scompressed size %d, src size %d\n", index, compressed
@@ -244,7 +314,6 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +
 +		bytes = msblk->devblksize - offset;
 +		compressed = SQUASHFS_COMPRESSED(c_byte);
-+		c_buffer = compressed ? msblk->read_data : buffer;
 +		c_byte = SQUASHFS_COMPRESSED_SIZE(c_byte);
 +
 +		TRACE("Block @ 0x%llx, %scompressed size %d\n", index, compressed
@@ -261,47 +330,85 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +		ll_rw_block(READ, b - 1, bh + 1);
 +	}
 +
-+	if (compressed)
-+		down(&msblk->read_data_mutex);
-+
-+	for (bytes = 0; k < b; k++) {
-+		avail_bytes = (c_byte - bytes) > (msblk->devblksize - offset) ?
-+					msblk->devblksize - offset :
-+					c_byte - bytes;
-+		wait_on_buffer(bh[k]);
-+		if (!buffer_uptodate(bh[k]))
-+			goto block_release;
-+		memcpy(c_buffer + bytes, bh[k]->b_data + offset, avail_bytes);
-+		bytes += avail_bytes;
-+		offset = 0;
-+		brelse(bh[k]);
-+	}
-+
-+	/*
-+	 * uncompress block
-+	 */
 +	if (compressed) {
-+		int zlib_err;
++		int zlib_err = 0;
 +
-+		msblk->stream.next_in = c_buffer;
-+		msblk->stream.avail_in = c_byte;
++		/*
++	 	* uncompress block
++	 	*/
++
++		mutex_lock(&msblk->read_data_mutex);
++
 +		msblk->stream.next_out = buffer;
-+		//msblk->stream.avail_out = msblk->read_size;//srclength;
 +		msblk->stream.avail_out = srclength;
 +
-+		if (((zlib_err = zlib_inflateInit(&msblk->stream)) != Z_OK) ||
-+				((zlib_err = zlib_inflate(&msblk->stream, Z_FINISH))
-+				 != Z_STREAM_END) || ((zlib_err =
-+				zlib_inflateEnd(&msblk->stream)) != Z_OK)) {
-+			//ERROR("zlib_fs returned unexpected result 0x%x\n",
-+			//	zlib_err);
-+			ERROR("zlib_fs returned unexpected result 0x%x, srclength %d\n",
++		for (bytes = 0; k < b; k++) {
++			avail_bytes = (c_byte - bytes) > (msblk->devblksize - offset) ?
++					msblk->devblksize - offset :
++					c_byte - bytes;
++			wait_on_buffer(bh[k]);
++			if (!buffer_uptodate(bh[k]))
++				goto release_mutex;
++
++			msblk->stream.next_in = bh[k]->b_data + offset;
++			msblk->stream.avail_in = avail_bytes;
++
++			if (k == 0) {
++				zlib_err = zlib_inflateInit(&msblk->stream);
++				if (zlib_err != Z_OK) {
++					ERROR("zlib_inflateInit returned unexpected result 0x%x, srclength %d\n",
++						zlib_err, srclength);
++					goto release_mutex;
++				}
++
++				if (avail_bytes == 0) {
++					offset = 0;
++					brelse(bh[k]);
++					continue;
++				}
++			}
++
++			zlib_err = zlib_inflate(&msblk->stream, Z_NO_FLUSH);
++			if (zlib_err != Z_OK && zlib_err != Z_STREAM_END) {
++				ERROR("zlib_inflate returned unexpected result 0x%x, srclength %d, avail_in %d, avail_out %d\n",
++					zlib_err, srclength, msblk->stream.avail_in, msblk->stream.avail_out);
++				goto release_mutex;
++			}
++
++			bytes += avail_bytes;
++			offset = 0;
++			brelse(bh[k]);
++		}
++
++		if (zlib_err != Z_STREAM_END)
++			goto release_mutex;
++
++		zlib_err = zlib_inflateEnd(&msblk->stream);
++		if (zlib_err != Z_OK) {
++			ERROR("zlib_inflateEnd returned unexpected result 0x%x, srclength %d\n",
 +				zlib_err, srclength);
-+			bytes = 0;
-+		} else
-+			bytes = msblk->stream.total_out;
-+		
-+		up(&msblk->read_data_mutex);
++			goto release_mutex;
++		}
++		bytes = msblk->stream.total_out;
++		mutex_unlock(&msblk->read_data_mutex);
++	} else {
++		int i;
++
++		for(i = 0; i < b; i++) {
++			wait_on_buffer(bh[i]);
++			if(!buffer_uptodate(bh[i]))
++				goto block_release;
++		}
++
++		for (bytes = 0; k < b; k++) {
++			avail_bytes = (c_byte - bytes) > (msblk->devblksize - offset) ?
++					msblk->devblksize - offset :
++					c_byte - bytes;
++			memcpy(buffer + bytes, bh[k]->b_data + offset, avail_bytes);
++			bytes += avail_bytes;
++			offset = 0;
++			brelse(bh[k]);
++		}
 +	}
 +
 +	if (next_index)
@@ -309,6 +416,9 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +				(SQUASHFS_CHECK_DATA(msblk->sblk.flags)
 +				 ? 3 : 2));
 +	return bytes;
++
++release_mutex:
++	mutex_unlock(&msblk->read_data_mutex);
 +
 +block_release:
 +	for (; k < b; k++)
@@ -332,11 +442,11 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	TRACE("Entered squashfs_get_cached_block [%llx:%x]\n", block, offset);
 +
 +	while ( 1 ) {
-+		for (i = 0; i < SQUASHFS_CACHED_BLKS; i++) 
++		for (i = 0; i < SQUASHFS_CACHED_BLKS; i++)
 +			if (msblk->block_cache[i].block == block)
-+				break; 
-+		
-+		down(&msblk->block_cache_mutex);
++				break;
++
++		mutex_lock(&msblk->block_cache_mutex);
 +
 +		if (i == SQUASHFS_CACHED_BLKS) {
 +			/* read inode header block */
@@ -353,7 +463,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +				init_waitqueue_entry(&wait, current);
 +				add_wait_queue(&msblk->waitq, &wait);
 +				set_current_state(TASK_UNINTERRUPTIBLE);
-+ 				up(&msblk->block_cache_mutex);
++ 				mutex_unlock(&msblk->block_cache_mutex);
 +				schedule();
 +				set_current_state(TASK_RUNNING);
 +				remove_wait_queue(&msblk->waitq, &wait);
@@ -368,28 +478,28 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +						GFP_KERNEL))) {
 +					ERROR("Failed to allocate cache"
 +							"block\n");
-+					up(&msblk->block_cache_mutex);
++					mutex_unlock(&msblk->block_cache_mutex);
 +					goto out;
 +				}
 +			}
-+	
++
 +			msblk->block_cache[i].block = SQUASHFS_USED_BLK;
-+			up(&msblk->block_cache_mutex);
++			mutex_unlock(&msblk->block_cache_mutex);
 +
 +			msblk->block_cache[i].length = squashfs_read_data(s,
 +				msblk->block_cache[i].data, block, 0, &next_index, SQUASHFS_METADATA_SIZE);
 +			if (msblk->block_cache[i].length == 0) {
 +				ERROR("Unable to read cache block [%llx:%x]\n",
 +						block, offset);
-+				down(&msblk->block_cache_mutex);
++				mutex_lock(&msblk->block_cache_mutex);
 +				msblk->block_cache[i].block = SQUASHFS_INVALID_BLK;
 +				kfree(msblk->block_cache[i].data);
 +				wake_up(&msblk->waitq);
-+				up(&msblk->block_cache_mutex);
++				mutex_unlock(&msblk->block_cache_mutex);
 +				goto out;
 +			}
 +
-+			down(&msblk->block_cache_mutex);
++			mutex_lock(&msblk->block_cache_mutex);
 +			wake_up(&msblk->waitq);
 +			msblk->block_cache[i].block = block;
 +			msblk->block_cache[i].next_index = next_index;
@@ -397,15 +507,16 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +		}
 +
 +		if (msblk->block_cache[i].block != block) {
-+			up(&msblk->block_cache_mutex);
++			mutex_unlock(&msblk->block_cache_mutex);
 +			continue;
 +		}
 +
 +		bytes = msblk->block_cache[i].length - offset;
 +
-+		if (bytes < 1)
++		if (bytes < 1) {
++			mutex_unlock(&msblk->block_cache_mutex);
 +			goto out;
-+		else if (bytes >= length) {
++		} else if (bytes >= length) {
 +			if (buffer)
 +				memcpy(buffer, msblk->block_cache[i].data +
 +						offset, length);
@@ -416,7 +527,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +				*next_block = block;
 +				*next_offset = offset + length;
 +			}
-+			up(&msblk->block_cache_mutex);
++			mutex_unlock(&msblk->block_cache_mutex);
 +			goto finish;
 +		} else {
 +			if (buffer) {
@@ -425,7 +536,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +				buffer += bytes;
 +			}
 +			block = msblk->block_cache[i].next_index;
-+			up(&msblk->block_cache_mutex);
++			mutex_unlock(&msblk->block_cache_mutex);
 +			length -= bytes;
 +			offset = 0;
 +		}
@@ -477,10 +588,10 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +SQSH_EXTERN void release_cached_fragment(struct squashfs_sb_info *msblk, struct
 +					squashfs_fragment_cache *fragment)
 +{
-+	down(&msblk->fragment_mutex);
++	mutex_lock(&msblk->fragment_mutex);
 +	fragment->locked --;
 +	wake_up(&msblk->fragment_wait_queue);
-+	up(&msblk->fragment_mutex);
++	mutex_unlock(&msblk->fragment_mutex);
 +}
 +
 +
@@ -493,7 +604,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	struct squashfs_super_block *sblk = &msblk->sblk;
 +
 +	while ( 1 ) {
-+		down(&msblk->fragment_mutex);
++		mutex_lock(&msblk->fragment_mutex);
 +
 +		for (i = 0; i < SQUASHFS_CACHED_FRAGMENTS &&
 +				msblk->fragment[i].block != start_block; i++);
@@ -511,7 +622,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +				add_wait_queue(&msblk->fragment_wait_queue,
 +									&wait);
 +				set_current_state(TASK_UNINTERRUPTIBLE);
-+				up(&msblk->fragment_mutex);
++				mutex_unlock(&msblk->fragment_mutex);
 +				schedule();
 +				set_current_state(TASK_RUNNING);
 +				remove_wait_queue(&msblk->fragment_wait_queue,
@@ -520,19 +631,19 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +			}
 +			msblk->next_fragment = (msblk->next_fragment + 1) %
 +				SQUASHFS_CACHED_FRAGMENTS;
-+			
++
 +			if (msblk->fragment[i].data == NULL)
 +				if (!(msblk->fragment[i].data = SQUASHFS_ALLOC
 +						(SQUASHFS_FILE_MAX_SIZE))) {
 +					ERROR("Failed to allocate fragment "
 +							"cache block\n");
-+					up(&msblk->fragment_mutex);
++					mutex_unlock(&msblk->fragment_mutex);
 +					goto out;
 +				}
 +
 +			msblk->fragment[i].block = SQUASHFS_INVALID_BLK;
 +			msblk->fragment[i].locked = 1;
-+			up(&msblk->fragment_mutex);
++			mutex_unlock(&msblk->fragment_mutex);
 +
 +			if (!(msblk->fragment[i].length = squashfs_read_data(s,
 +						msblk->fragment[i].data,
@@ -540,18 +651,21 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +				ERROR("Unable to read fragment cache block "
 +							"[%llx]\n", start_block);
 +				msblk->fragment[i].locked = 0;
++				smp_mb();
 +				goto out;
 +			}
 +
++			mutex_lock(&msblk->fragment_mutex);
 +			msblk->fragment[i].block = start_block;
 +			TRACE("New fragment %d, start block %lld, locked %d\n",
 +						i, msblk->fragment[i].block,
 +						msblk->fragment[i].locked);
++			mutex_unlock(&msblk->fragment_mutex);
 +			break;
 +		}
 +
 +		msblk->fragment[i].locked++;
-+		up(&msblk->fragment_mutex);
++		mutex_unlock(&msblk->fragment_mutex);
 +		TRACE("Got fragment %d, start block %lld, locked %d\n", i,
 +						msblk->fragment[i].block,
 +						msblk->fragment[i].locked);
@@ -602,14 +716,14 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +					sizeof(inode), &start, &offset))
 +			goto out;
 +
-+    TRACE("squashfs_inode_lookup, inode = 0x%llx\n", inode);
++	TRACE("squashfs_inode_lookup, inode = 0x%llx\n", inode);
 +
 +	return inode;
 +
 +out:
 +	return SQUASHFS_INVALID_BLK;
 +}
-+	
++
 +
 +static void vfs_read_inode(struct inode *i)
 +{
@@ -644,7 +758,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	return rv;
 +}
 +
-+	
++
 +SQSH_EXTERN struct inode *squashfs_iget(struct super_block *s, squashfs_inode_t inode, unsigned int inode_number)
 +{
 +	struct squashfs_sb_info *msblk = s->s_fs_info;
@@ -698,7 +812,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +			long long frag_blk;
 +			struct squashfs_reg_inode_header *inodep = &id.reg;
 +			struct squashfs_reg_inode_header *sinodep = &sid.reg;
-+				
++
 +			if (msblk->swap) {
 +				if (!squashfs_get_cached_block(s, (char *)
 +						sinodep, block, offset,
@@ -718,7 +832,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +					!get_fragment_location(s,
 +					inodep->fragment, &frag_blk, &frag_size))
 +				goto failed_read;
-+				
++
 +			i->i_nlink = 1;
 +			i->i_size = inodep->file_size;
 +			i->i_fop = &generic_ro_fops;
@@ -747,7 +861,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +			long long frag_blk;
 +			struct squashfs_lreg_inode_header *inodep = &id.lreg;
 +			struct squashfs_lreg_inode_header *sinodep = &sid.lreg;
-+				
++
 +			if (msblk->swap) {
 +				if (!squashfs_get_cached_block(s, (char *)
 +						sinodep, block, offset,
@@ -767,7 +881,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +					!get_fragment_location(s,
 +					inodep->fragment, &frag_blk, &frag_size))
 +				goto failed_read;
-+				
++
 +			i->i_nlink = inodep->nlink;
 +			i->i_size = inodep->file_size;
 +			i->i_fop = &generic_ro_fops;
@@ -869,7 +983,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +								&id.symlink;
 +			struct squashfs_symlink_inode_header *sinodep =
 +								&sid.symlink;
-+	
++
 +			if (msblk->swap) {
 +				if (!squashfs_get_cached_block(s, (char *)
 +						sinodep, block, offset,
@@ -911,7 +1025,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +						&next_offset))
 +					goto failed_read;
 +				SQUASHFS_SWAP_DEV_INODE_HEADER(inodep, sinodep);
-+			} else	
++			} else
 +				if (!squashfs_get_cached_block(s, (char *)
 +						inodep, block, offset,
 +						sizeof(*inodep), &next_block,
@@ -942,7 +1056,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +						&next_offset))
 +					goto failed_read;
 +				SQUASHFS_SWAP_IPC_INODE_HEADER(inodep, sinodep);
-+			} else	
++			} else
 +				if (!squashfs_get_cached_block(s, (char *)
 +						inodep, block, offset,
 +						sizeof(*inodep), &next_block,
@@ -960,13 +1074,14 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +					inodeb->inode_type);
 +			goto failed_read1;
 +	}
-+	
++
 +	return 1;
 +
 +failed_read:
 +	ERROR("Unable to read inode [%llx:%x]\n", block, offset);
 +
 +failed_read1:
++	make_bad_inode(i);
 +	return 0;
 +}
 +
@@ -984,7 +1099,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +		ERROR("Failed to allocate inode lookup table\n");
 +		return 0;
 +	}
-+   
++
 +	if (!squashfs_read_data(s, (char *) msblk->inode_lookup_table,
 +			sblk->lookup_table_start, length |
 +			SQUASHFS_COMPRESSED_BIT_BLOCK, NULL, length)) {
@@ -1021,7 +1136,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +		ERROR("Failed to allocate fragment index table\n");
 +		return 0;
 +	}
-+   
++
 +	if (!squashfs_read_data(s, (char *) msblk->fragment_index,
 +			sblk->fragment_table_start, length |
 +			SQUASHFS_COMPRESSED_BIT_BLOCK, NULL, length)) {
@@ -1102,16 +1217,16 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +		goto failure;
 +	}
 +	sblk = &msblk->sblk;
-+	
++
 +	msblk->devblksize = sb_min_blocksize(s, BLOCK_SIZE);
 +	msblk->devblksize_log2 = ffz(~msblk->devblksize);
 +
-+	init_MUTEX(&msblk->read_data_mutex);
-+	init_MUTEX(&msblk->read_page_mutex);
-+	init_MUTEX(&msblk->block_cache_mutex);
-+	init_MUTEX(&msblk->fragment_mutex);
-+	init_MUTEX(&msblk->meta_index_mutex);
-+	
++	mutex_init(&msblk->read_data_mutex);
++	mutex_init(&msblk->read_page_mutex);
++	mutex_init(&msblk->block_cache_mutex);
++	mutex_init(&msblk->fragment_mutex);
++	mutex_init(&msblk->meta_index_mutex);
++
 +	init_waitqueue_head(&msblk->waitq);
 +	init_waitqueue_head(&msblk->fragment_wait_queue);
 +
@@ -1194,16 +1309,6 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +
 +	msblk->next_cache = 0;
 +
-+	/* Allocate read_data block */
-+	msblk->read_size = (sblk->block_size < SQUASHFS_METADATA_SIZE) ?
-+					SQUASHFS_METADATA_SIZE :
-+					sblk->block_size;
-+
-+	if (!(msblk->read_data = kmalloc(msblk->read_size, GFP_KERNEL))) {
-+		ERROR("Failed to allocate read_data block\n");
-+		goto failed_mount;
-+	}
-+
 +	/* Allocate read_page block */
 +	if (!(msblk->read_page = kmalloc(sblk->block_size, GFP_KERNEL))) {
 +		ERROR("Failed to allocate read_page block\n");
@@ -1217,7 +1322,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +		goto failed_mount;
 +	}
 +	msblk->guid = msblk->uid + sblk->no_uids;
-+   
++
 +	if (msblk->swap) {
 +		unsigned int suid[sblk->no_uids + sblk->no_guids];
 +
@@ -1262,7 +1367,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	if (msblk->read_fragment_index_table(s) == 0)
 +		goto failed_mount;
 +
-+	if(sblk->lookup_table_start == SQUASHFS_INVALID_BLK)
++	if(sblk->s_major < 3 || sblk->lookup_table_start == SQUASHFS_INVALID_BLK)
 +		goto allocate_root;
 +
 +	/* Allocate and read inode lookup table */
@@ -1293,7 +1398,6 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	kfree(msblk->fragment);
 +	kfree(msblk->uid);
 +	kfree(msblk->read_page);
-+	kfree(msblk->read_data);
 +	kfree(msblk->block_cache);
 +	kfree(msblk->fragment_index_2);
 +	vfree(msblk->stream.workspace);
@@ -1364,6 +1468,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +skip_read:
 +	memset(pageaddr + bytes, 0, PAGE_CACHE_SIZE - bytes);
 +	kunmap(page);
++	flush_dcache_page(page);
 +	SetPageUptodate(page);
 +	unlock_page(page);
 +
@@ -1377,7 +1482,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	struct squashfs_sb_info *msblk = inode->i_sb->s_fs_info;
 +	int i;
 +
-+	down(&msblk->meta_index_mutex);
++	mutex_lock(&msblk->meta_index_mutex);
 +
 +	TRACE("locate_meta_index: index %d, offset %d\n", index, offset);
 +
@@ -1399,7 +1504,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +		meta->locked = 1;
 +
 +not_allocated:
-+	up(&msblk->meta_index_mutex);
++	mutex_unlock(&msblk->meta_index_mutex);
 +
 +	return meta;
 +}
@@ -1411,7 +1516,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	struct meta_index *meta = NULL;
 +	int i;
 +
-+	down(&msblk->meta_index_mutex);
++	mutex_lock(&msblk->meta_index_mutex);
 +
 +	TRACE("empty_meta_index: offset %d, skip %d\n", offset, skip);
 +
@@ -1453,7 +1558,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	meta->locked = 1;
 +
 +failed:
-+	up(&msblk->meta_index_mutex);
++	mutex_unlock(&msblk->meta_index_mutex);
 +	return meta;
 +}
 +
@@ -1461,6 +1566,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +void release_meta_index(struct inode *inode, struct meta_index *meta)
 +{
 +	meta->locked = 0;
++	smp_mb();
 +}
 +
 +
@@ -1470,7 +1576,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	struct squashfs_sb_info *msblk = s->s_fs_info;
 +	unsigned int *block_listp;
 +	int block = 0;
-+	
++
 +	if (msblk->swap) {
 +		char sblock_list[blocks << 2];
 +
@@ -1523,7 +1629,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	int cur_offset = SQUASHFS_I(inode)->offset;
 +	long long cur_data_block = SQUASHFS_I(inode)->start_block;
 +	int i;
-+ 
++
 +	index /= SQUASHFS_META_INDEXES * skip;
 +
 +	while ( offset < index ) {
@@ -1534,6 +1640,8 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +							skip)) == NULL)
 +				goto all_done;
 +		} else {
++			if(meta->entries == 0)
++				goto failed;
 +			offset = index < meta->offset + meta->entries ? index :
 +				meta->offset + meta->entries - 1;
 +			meta_entry = &meta->meta_entry[offset - meta->offset];
@@ -1646,7 +1754,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 + 	void *pageaddr;
 +	struct squashfs_fragment_cache *fragment = NULL;
 +	char *data_ptr = msblk->read_page;
-+	
++
 +	int mask = (1 << (sblk->block_log - PAGE_CACHE_SHIFT)) - 1;
 +	int start_index = page->index & ~mask;
 +	int end_index = start_index | mask;
@@ -1671,13 +1779,13 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +					block_list, NULL, &bsize)) == 0)
 +			goto skip_read;
 +
-+		down(&msblk->read_page_mutex);
-+		
++		mutex_lock(&msblk->read_page_mutex);
++
 +		if (!(bytes = squashfs_read_data(inode->i_sb, msblk->read_page,
-+					block, bsize, NULL, msblk->read_size))) {
++					block, bsize, NULL, sblk->block_size))) {
 +			ERROR("Unable to read page, block %llx, size %x\n", block,
 +					bsize);
-+			up(&msblk->read_page_mutex);
++			mutex_unlock(&msblk->read_page_mutex);
 +			goto skip_read;
 +		}
 +	} else {
@@ -1733,7 +1841,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	if (SQUASHFS_I(inode)->u.s1.fragment_start_block == SQUASHFS_INVALID_BLK
 +					|| index < (i_size_read(inode) >>
 +					sblk->block_log))
-+		up(&msblk->read_page_mutex);
++		mutex_unlock(&msblk->read_page_mutex);
 +	else
 +		release_cached_fragment(msblk, fragment);
 +
@@ -1762,22 +1870,19 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	long long block;
 +	unsigned int bsize, bytes = 0;
 + 	void *pageaddr;
-+	
++
 +	TRACE("Entered squashfs_readpage4K, page index %lx, start block %llx\n",
 +					page->index,
 +					SQUASHFS_I(inode)->start_block);
 +
 +	if (page->index >= ((i_size_read(inode) + PAGE_CACHE_SIZE - 1) >>
 +					PAGE_CACHE_SHIFT)) {
-+		pageaddr = kmap_atomic(page, KM_USER0);
 +		block_list = NULL;
 +		goto skip_read;
 +	}
 +
 +	if (!(block_list = kmalloc(SIZE, GFP_KERNEL))) {
 +		ERROR("Failed to allocate block_list\n");
-+		pageaddr = kmap_atomic(page, KM_USER0);
-+		block_list = NULL;
 +		goto skip_read;
 +	}
 +
@@ -1786,28 +1891,32 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +					sblk->block_log)) {
 +		block = (msblk->read_blocklist)(inode, page->index, 1,
 +					block_list, NULL, &bsize);
++		if(block == 0)
++			goto skip_read;
 +
-+		down(&msblk->read_page_mutex);
++		mutex_lock(&msblk->read_page_mutex);
 +		bytes = squashfs_read_data(inode->i_sb, msblk->read_page, block,
-+					bsize, NULL, msblk->read_size);
-+		pageaddr = kmap_atomic(page, KM_USER0);
-+		if (bytes)
++					bsize, NULL, sblk->block_size);
++		if (bytes) {
++			pageaddr = kmap_atomic(page, KM_USER0);
 +			memcpy(pageaddr, msblk->read_page, bytes);
-+		else
++			kunmap_atomic(pageaddr, KM_USER0);
++		} else
 +			ERROR("Unable to read page, block %llx, size %x\n",
 +					block, bsize);
-+		up(&msblk->read_page_mutex);
++		mutex_unlock(&msblk->read_page_mutex);
 +	} else {
 +		struct squashfs_fragment_cache *fragment =
 +			get_cached_fragment(inode->i_sb,
 +					SQUASHFS_I(inode)->
 +					u.s1.fragment_start_block,
 +					SQUASHFS_I(inode)-> u.s1.fragment_size);
-+		pageaddr = kmap_atomic(page, KM_USER0);
 +		if (fragment) {
 +			bytes = i_size_read(inode) & (sblk->block_size - 1);
++			pageaddr = kmap_atomic(page, KM_USER0);
 +			memcpy(pageaddr, fragment->data + SQUASHFS_I(inode)->
 +					u.s1.fragment_offset, bytes);
++			kunmap_atomic(pageaddr, KM_USER0);
 +			release_cached_fragment(msblk, fragment);
 +		} else
 +			ERROR("Unable to read page, block %llx, size %x\n",
@@ -1817,6 +1926,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	}
 +
 +skip_read:
++	pageaddr = kmap_atomic(page, KM_USER0);
 +	memset(pageaddr + bytes, 0, PAGE_CACHE_SIZE - bytes);
 +	kunmap_atomic(pageaddr, KM_USER0);
 +	flush_dcache_page(page);
@@ -1828,7 +1938,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +}
 +
 +
-+static int get_dir_index_using_offset(struct super_block *s, long long 
++static int get_dir_index_using_offset(struct super_block *s, long long
 +				*next_block, unsigned int *next_offset,
 +				long long index_start,
 +				unsigned int index_offset, int i_count,
@@ -1935,7 +2045,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	return length + 3;
 +}
 +
-+		
++
 +static int squashfs_readdir(struct file *file, void *dirent, filldir_t filldir)
 +{
 +	struct inode *i = file->f_dentry->d_inode;
@@ -1993,7 +2103,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +		/* read directory header */
 +		if (msblk->swap) {
 +			struct squashfs_dir_header sdirh;
-+			
++
 +			if (!squashfs_get_cached_block(i->i_sb, (char *) &sdirh,
 +					next_block, next_offset, sizeof(sdirh),
 +					&next_block, &next_offset))
@@ -2019,7 +2129,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +						sizeof(sdire), &next_block,
 +						&next_offset))
 +					goto failed_read;
-+				
++
 +				length += sizeof(sdire);
 +				SQUASHFS_SWAP_DIR_ENTRY(dire, &sdire);
 +			} else {
@@ -2137,7 +2247,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +						sizeof(sdire), &next_block,
 +						&next_offset))
 +					goto failed_read;
-+				
++
 +				length += sizeof(sdire);
 +				SQUASHFS_SWAP_DIR_ENTRY(dire, &sdire);
 +			} else {
@@ -2190,6 +2300,13 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +}
 +
 +
++static int squashfs_remount(struct super_block *s, int *flags, char *data)
++{
++	*flags |= MS_RDONLY;
++	return 0;
++}
++
++
 +static void squashfs_put_super(struct super_block *s)
 +{
 +	int i;
@@ -2202,11 +2319,10 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +							SQUASHFS_INVALID_BLK)
 +					kfree(sbi->block_cache[i].data);
 +		if (sbi->fragment)
-+			for (i = 0; i < SQUASHFS_CACHED_FRAGMENTS; i++) 
++			for (i = 0; i < SQUASHFS_CACHED_FRAGMENTS; i++)
 +				SQUASHFS_FREE(sbi->fragment[i].data);
 +		kfree(sbi->fragment);
 +		kfree(sbi->block_cache);
-+		kfree(sbi->read_data);
 +		kfree(sbi->read_page);
 +		kfree(sbi->uid);
 +		kfree(sbi->fragment_index);
@@ -2234,7 +2350,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +	if (err)
 +		goto out;
 +
-+	printk(KERN_INFO "squashfs: version 3.2-alpha (2006/11/06) "
++	printk(KERN_INFO "squashfs: version 3.2-r2 (2007/01/15) "
 +		"Phillip Lougher\n");
 +
 +	if ((err = register_filesystem(&squashfs_fs_type)))
@@ -2279,7 +2395,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +							SLAB_CTOR_CONSTRUCTOR)
 +		inode_init_once(&ei->vfs_inode);
 +}
-+ 
++
 +
 +static int __init init_inodecache(void)
 +{
@@ -2301,13 +2417,13 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/inode.c
 +
 +module_init(init_squashfs_fs);
 +module_exit(exit_squashfs_fs);
-+MODULE_DESCRIPTION("squashfs 3.2, a compressed read-only filesystem");
++MODULE_DESCRIPTION("squashfs 3.2-r2, a compressed read-only filesystem");
 +MODULE_AUTHOR("Phillip Lougher <phillip@lougher.org.uk>");
 +MODULE_LICENSE("GPL");
-Index: linux-2.6.20-rc1-git5/fs/squashfs/Makefile
+Index: linux-2.6.21-rc6-arm/fs/squashfs/Makefile
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1-git5/fs/squashfs/Makefile	2006-12-19 22:37:48.160152713 +0000
++++ linux-2.6.21-rc6-arm/fs/squashfs/Makefile	2007-04-11 20:40:04.000000000 +0100
 @@ -0,0 +1,7 @@
 +#
 +# Makefile for the linux squashfs routines.
@@ -2316,15 +2432,15 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/Makefile
 +obj-$(CONFIG_SQUASHFS) += squashfs.o
 +squashfs-y += inode.o
 +squashfs-y += squashfs2_0.o
-Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
+Index: linux-2.6.21-rc6-arm/fs/squashfs/squashfs2_0.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c	2006-12-19 22:37:48.164152963 +0000
-@@ -0,0 +1,757 @@
++++ linux-2.6.21-rc6-arm/fs/squashfs/squashfs2_0.c	2007-04-11 20:44:46.000000000 +0100
+@@ -0,0 +1,742 @@
 +/*
 + * Squashfs - a compressed read only filesystem for Linux
 + *
-+ * Copyright (c) 2002, 2003, 2004, 2005, 2006
++ * Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007
 + * Phillip Lougher <phillip@lougher.org.uk>
 + *
 + * This program is free software; you can redistribute it and/or
@@ -2344,27 +2460,12 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 + * squashfs2_0.c
 + */
 +
-+#include <linux/types.h>
 +#include <linux/squashfs_fs.h>
 +#include <linux/module.h>
-+#include <linux/errno.h>
-+#include <linux/slab.h>
 +#include <linux/zlib.h>
 +#include <linux/fs.h>
-+#include <linux/smp_lock.h>
-+#include <linux/slab.h>
 +#include <linux/squashfs_fs_sb.h>
 +#include <linux/squashfs_fs_i.h>
-+#include <linux/buffer_head.h>
-+#include <linux/vfs.h>
-+#include <linux/init.h>
-+#include <linux/dcache.h>
-+#include <linux/wait.h>
-+#include <linux/zlib.h>
-+#include <linux/blkdev.h>
-+#include <linux/vmalloc.h>
-+#include <asm/uaccess.h>
-+#include <asm/semaphore.h>
 +
 +#include "squashfs.h"
 +static int squashfs_readdir_2(struct file *file, void *dirent, filldir_t filldir);
@@ -2394,7 +2495,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +		ERROR("Failed to allocate uid/gid table\n");
 +		return 0;
 +	}
-+   
++
 +	if (SQUASHFS_FRAGMENT_INDEX_BYTES_2(sblk->fragments) &&
 +					!squashfs_read_data(s, (char *)
 +					msblk->fragment_index_2,
@@ -2515,8 +2616,8 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +			struct squashfs_reg_inode_header_2 *inodep = &id.reg;
 +			struct squashfs_reg_inode_header_2 *sinodep = &sid.reg;
 +			long long frag_blk;
-+			unsigned int frag_size;
-+				
++			unsigned int frag_size = 0;
++
 +			if (msblk->swap) {
 +				if (!squashfs_get_cached_block(s, (char *)
 +						sinodep, block, offset,
@@ -2536,7 +2637,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +					!get_fragment_location_2(s,
 +					inodep->fragment, &frag_blk, &frag_size))
 +				goto failed_read;
-+				
++
 +			i->i_size = inodep->file_size;
 +			i->i_fop = &generic_ro_fops;
 +			i->i_mode |= S_IFREG;
@@ -2644,7 +2745,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +								&id.symlink;
 +			struct squashfs_symlink_inode_header_2 *sinodep =
 +								&sid.symlink;
-+	
++
 +			if (msblk->swap) {
 +				if (!squashfs_get_cached_block(s, (char *)
 +						sinodep, block, offset,
@@ -2685,7 +2786,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +						&next_offset))
 +					goto failed_read;
 +				SQUASHFS_SWAP_DEV_INODE_HEADER_2(inodep, sinodep);
-+			} else	
++			} else
 +				if (!squashfs_get_cached_block(s, (char *)
 +						inodep, block, offset,
 +						sizeof(*inodep), &next_block,
@@ -2716,7 +2817,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +					inodeb->inode_type);
 +			goto failed_read1;
 +	}
-+	
++
 +	return 1;
 +
 +failed_read:
@@ -2727,7 +2828,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +}
 +
 +
-+static int get_dir_index_using_offset(struct super_block *s, long long 
++static int get_dir_index_using_offset(struct super_block *s, long long
 +				*next_block, unsigned int *next_offset,
 +				long long index_start,
 +				unsigned int index_offset, int i_count,
@@ -2833,7 +2934,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +	return length;
 +}
 +
-+		
++
 +static int squashfs_readdir_2(struct file *file, void *dirent, filldir_t filldir)
 +{
 +	struct inode *i = file->f_dentry->d_inode;
@@ -2864,7 +2965,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +		/* read directory header */
 +		if (msblk->swap) {
 +			struct squashfs_dir_header_2 sdirh;
-+			
++
 +			if (!squashfs_get_cached_block(i->i_sb, (char *) &sdirh,
 +					next_block, next_offset, sizeof(sdirh),
 +					&next_block, &next_offset))
@@ -2890,7 +2991,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +						sizeof(sdire), &next_block,
 +						&next_offset))
 +					goto failed_read;
-+				
++
 +				length += sizeof(sdire);
 +				SQUASHFS_SWAP_DIR_ENTRY_2(dire, &sdire);
 +			} else {
@@ -3008,7 +3109,7 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +						sizeof(sdire), &next_block,
 +						&next_offset))
 +					goto failed_read;
-+				
++
 +				length += sizeof(sdire);
 +				SQUASHFS_SWAP_DIR_ENTRY_2(dire, &sdire);
 +			} else {
@@ -3078,15 +3179,15 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs2_0.c
 +
 +	return 1;
 +}
-Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs.h
+Index: linux-2.6.21-rc6-arm/fs/squashfs/squashfs.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1-git5/fs/squashfs/squashfs.h	2006-12-19 22:37:48.164152963 +0000
++++ linux-2.6.21-rc6-arm/fs/squashfs/squashfs.h	2007-04-11 20:44:46.000000000 +0100
 @@ -0,0 +1,87 @@
 +/*
 + * Squashfs - a compressed read only filesystem for Linux
 + *
-+ * Copyright (c) 2002, 2003, 2004, 2005, 2006
++ * Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007
 + * Phillip Lougher <phillip@lougher.org.uk>
 + *
 + * This program is free software; you can redistribute it and/or
@@ -3145,9 +3246,9 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs.h
 +					*s, long long start_block,
 +					int length);
 +extern struct inode *squashfs_iget(struct super_block *s, squashfs_inode_t inode, unsigned int inode_number);
-+extern struct address_space_operations squashfs_symlink_aops;
-+extern struct address_space_operations squashfs_aops;
-+extern struct address_space_operations squashfs_aops_4K;
++extern const struct address_space_operations squashfs_symlink_aops;
++extern const struct address_space_operations squashfs_aops;
++extern const struct address_space_operations squashfs_aops_4K;
 +extern struct inode_operations squashfs_dir_inode_ops;
 +#else
 +#define SQSH_EXTERN static
@@ -3170,10 +3271,10 @@ Index: linux-2.6.20-rc1-git5/fs/squashfs/squashfs.h
 +	return 0;
 +}
 +#endif
-Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h
+Index: linux-2.6.21-rc6-arm/include/linux/squashfs_fs.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h	2006-12-19 22:37:48.168153213 +0000
++++ linux-2.6.21-rc6-arm/include/linux/squashfs_fs.h	2007-04-11 20:40:04.000000000 +0100
 @@ -0,0 +1,934 @@
 +#ifndef SQUASHFS_FS
 +#define SQUASHFS_FS
@@ -3181,7 +3282,7 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h
 +/*
 + * Squashfs
 + *
-+ * Copyright (c) 2002, 2003, 2004, 2005, 2006
++ * Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007
 + * Phillip Lougher <phillip@lougher.org.uk>
 + *
 + * This program is free software; you can redistribute it and/or
@@ -3212,7 +3313,7 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h
 +#define SQUASHFS_ALLOC(a)		kmalloc(a, GFP_KERNEL)
 +#define SQUASHFS_FREE(a)		kfree(a)
 +#endif
-+#define SQUASHFS_CACHED_FRAGMENTS	CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE	
++#define SQUASHFS_CACHED_FRAGMENTS	CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE
 +#define SQUASHFS_MAJOR			3
 +#define SQUASHFS_MINOR			0
 +#define SQUASHFS_MAGIC			0x73717368
@@ -3464,7 +3565,7 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h
 +	unsigned int		nlink;
 +	unsigned short		rdev;
 +} __attribute__ ((packed));
-+	
++
 +struct squashfs_symlink_inode_header {
 +	SQUASHFS_BASE_INODE_HEADER;
 +	unsigned int		nlink;
@@ -3521,7 +3622,7 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h
 +	struct squashfs_ldir_inode_header	ldir;
 +	struct squashfs_ipc_inode_header	ipc;
 +};
-+	
++
 +struct squashfs_dir_entry {
 +	unsigned int		offset:13;
 +	unsigned int		type:3;
@@ -3774,7 +3875,7 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h
 +	unsigned int		guid:4; /* index into guid table */
 +	unsigned short		rdev;
 +} __attribute__ ((packed));
-+	
++
 +struct squashfs_symlink_inode_header_1 {
 +	unsigned int		inode_type:4;
 +	unsigned int		mode:12; /* protection */
@@ -3891,7 +3992,7 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h
 +	unsigned int		guid:8; /* index into guid table */
 +	unsigned short		rdev;
 +} __attribute__ ((packed));
-+	
++
 +struct squashfs_symlink_inode_header_2 {
 +	unsigned int		inode_type:4;
 +	unsigned int		mode:12; /* protection */
@@ -3947,7 +4048,7 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h
 +	struct squashfs_ldir_inode_header_2	ldir;
 +	struct squashfs_ipc_inode_header_2	ipc;
 +};
-+	
++
 +struct squashfs_dir_header_2 {
 +	unsigned int		count:8;
 +	unsigned int		start_block:24;
@@ -4090,7 +4191,7 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h
 +#define SQUASHFS_SWAP(value, p, pos, tbits) _SQUASHFS_SWAP(value, p, pos, \
 +		tbits, b_pos)
 +#else
-+	/* convert from big endian to little endian */ 
++	/* convert from big endian to little endian */
 +#define SQUASHFS_SWAP(value, p, pos, tbits) _SQUASHFS_SWAP(value, p, pos, \
 +		tbits, 64 - tbits - b_pos)
 +#endif
@@ -4109,17 +4210,17 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs.h
 +
 +#endif
 +#endif
-Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs_i.h
+Index: linux-2.6.21-rc6-arm/include/linux/squashfs_fs_i.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1-git5/include/linux/squashfs_fs_i.h	2006-12-19 22:37:48.176153714 +0000
++++ linux-2.6.21-rc6-arm/include/linux/squashfs_fs_i.h	2007-04-11 20:40:04.000000000 +0100
 @@ -0,0 +1,45 @@
 +#ifndef SQUASHFS_FS_I
 +#define SQUASHFS_FS_I
 +/*
 + * Squashfs
 + *
-+ * Copyright (c) 2002, 2003, 2004, 2005, 2006
++ * Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007
 + * Phillip Lougher <phillip@lougher.org.uk>
 + *
 + * This program is free software; you can redistribute it and/or
@@ -4159,17 +4260,17 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs_i.h
 +	struct inode	vfs_inode;
 +};
 +#endif
-Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs_sb.h
+Index: linux-2.6.21-rc6-arm/include/linux/squashfs_fs_sb.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.20-rc1-git5/include/linux/squashfs_fs_sb.h	2006-12-19 22:37:48.176153714 +0000
-@@ -0,0 +1,76 @@
++++ linux-2.6.21-rc6-arm/include/linux/squashfs_fs_sb.h	2007-04-11 20:44:47.000000000 +0100
+@@ -0,0 +1,74 @@
 +#ifndef SQUASHFS_FS_SB
 +#define SQUASHFS_FS_SB
 +/*
 + * Squashfs
 + *
-+ * Copyright (c) 2002, 2003, 2004, 2005, 2006
++ * Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007
 + * Phillip Lougher <phillip@lougher.org.uk>
 + *
 + * This program is free software; you can redistribute it and/or
@@ -4219,14 +4320,12 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs_sb.h
 +	unsigned int		*guid;
 +	long long		*fragment_index;
 +	unsigned int		*fragment_index_2;
-+	unsigned int		read_size;
-+	char			*read_data;
 +	char			*read_page;
-+	struct semaphore	read_data_mutex;
-+	struct semaphore	read_page_mutex;
-+	struct semaphore	block_cache_mutex;
-+	struct semaphore	fragment_mutex;
-+	struct semaphore	meta_index_mutex;
++	struct mutex		read_data_mutex;
++	struct mutex		read_page_mutex;
++	struct mutex		block_cache_mutex;
++	struct mutex		fragment_mutex;
++	struct mutex		meta_index_mutex;
 +	wait_queue_head_t	waitq;
 +	wait_queue_head_t	fragment_wait_queue;
 +	struct meta_index	*meta_index;
@@ -4240,3 +4339,58 @@ Index: linux-2.6.20-rc1-git5/include/linux/squashfs_fs_sb.h
 +	int			(*read_fragment_index_table)(struct super_block *s);
 +};
 +#endif
+Index: linux-2.6.21-rc6-arm/init/do_mounts_rd.c
+===================================================================
+--- linux-2.6.21-rc6-arm.orig/init/do_mounts_rd.c	2007-04-11 20:39:59.000000000 +0100
++++ linux-2.6.21-rc6-arm/init/do_mounts_rd.c	2007-04-11 20:40:04.000000000 +0100
+@@ -5,6 +5,7 @@
+ #include <linux/ext2_fs.h>
+ #include <linux/romfs_fs.h>
+ #include <linux/cramfs_fs.h>
++#include <linux/squashfs_fs.h>
+ #include <linux/initrd.h>
+ #include <linux/string.h>
+ 
+@@ -39,6 +40,7 @@
+  * numbers could not be found.
+  *
+  * We currently check for the following magic numbers:
++ *      squashfs
+  * 	minix
+  * 	ext2
+  *	romfs
+@@ -53,6 +55,7 @@
+ 	struct ext2_super_block *ext2sb;
+ 	struct romfs_super_block *romfsb;
+ 	struct cramfs_super *cramfsb;
++	struct squashfs_super_block *squashfsb;
+ 	int nblocks = -1;
+ 	unsigned char *buf;
+ 
+@@ -64,6 +67,7 @@
+ 	ext2sb = (struct ext2_super_block *) buf;
+ 	romfsb = (struct romfs_super_block *) buf;
+ 	cramfsb = (struct cramfs_super *) buf;
++	squashfsb = (struct squashfs_super_block *) buf;
+ 	memset(buf, 0xe5, size);
+ 
+ 	/*
+@@ -101,6 +105,18 @@
+ 		goto done;
+ 	}
+ 
++	/* squashfs is at block zero too */
++	if (squashfsb->s_magic == SQUASHFS_MAGIC) {
++		printk(KERN_NOTICE
++		       "RAMDISK: squashfs filesystem found at block %d\n",
++		       start_block);
++		if (squashfsb->s_major < 3)
++			nblocks = (squashfsb->bytes_used_2+BLOCK_SIZE-1)>>BLOCK_SIZE_BITS;
++		else
++			nblocks = (squashfsb->bytes_used+BLOCK_SIZE-1)>>BLOCK_SIZE_BITS;
++		goto done;
++	}
++
+ 	/*
+ 	 * Read block 1 to test for minix and ext2 superblock
+ 	 */

@@ -3,12 +3,8 @@
 # must be all able to be applied independently in any order.
 # Patches marked with ## need reworking and are currently disabled
 
-squashfs/squashfs.patch
-squashfs/squashfs-ramdisk.patch
+squashfs/squashfs-3.2r2.patch
 squashfs/squashfs-force-O2.patch
-squashfs/squashfs-lzma.patch
-squashfs/squashfs-Kconfig.patch
-squashfs/squashfs-Makefile.patch
 05-nslu2-freq-fixup.patch
 06-dsmg600-upstream-support.patch
 07-trivial-Kconfig-cleanup.patch
