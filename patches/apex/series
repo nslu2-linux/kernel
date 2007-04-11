@@ -1,3 +1,2 @@
 debian-nas100d-armeb_config.patch
-missing-cp15.patch
 enable-commands.patch

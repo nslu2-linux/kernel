@@ -22,7 +22,7 @@ PATCHVER = 2.6.21
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
-APEX_REVISION = 1.4.17
+APEX_REVISION = 1.4.18
 APEX_CONFIG = slugos
 
 ARM_KERNEL_SHIM_REVISION = 1.3
