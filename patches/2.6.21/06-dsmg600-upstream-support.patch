@@ -13,11 +13,20 @@ Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
 Signed-off-by: Michael Westerhof <mwester@dls.net>
 [ review comments addressed by M-L Jones <mlj28@cam.ac.uk> ]
 
-Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Kconfig
-===================================================================
---- linux-2.6.21-rc6-arm.orig/arch/arm/mach-ixp4xx/Kconfig	2007-04-07 13:29:24.000000000 +0100
-+++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Kconfig	2007-04-10 19:23:59.000000000 +0100
-@@ -89,6 +89,15 @@
+---
+ arch/arm/mach-ixp4xx/Kconfig           |    9 +
+ arch/arm/mach-ixp4xx/Makefile          |    2 
+ arch/arm/mach-ixp4xx/dsmg600-pci.c     |   74 +++++++++++++
+ arch/arm/mach-ixp4xx/dsmg600-power.c   |  125 +++++++++++++++++++++++
+ arch/arm/mach-ixp4xx/dsmg600-setup.c   |  175 +++++++++++++++++++++++++++++++++
+ include/asm-arm/arch-ixp4xx/dsmg600.h  |   57 ++++++++++
+ include/asm-arm/arch-ixp4xx/hardware.h |    1 
+ include/asm-arm/arch-ixp4xx/irqs.h     |   10 +
+ 8 files changed, 453 insertions(+)
+
+--- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/Kconfig	2007-04-27 21:57:34.000000000 +0200
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/Kconfig	2007-04-27 21:58:44.000000000 +0200
+@@ -89,6 +89,15 @@ config MACH_NAS100D
  	  NAS 100d device. For more information on this platform,
  	  see http://www.nslu2-linux.org/wiki/NAS100d/HomePage
  
@@ -33,11 +42,9 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Kconfig
  #
  # Avila and IXDP share the same source for now. Will change in future
  #
-Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Makefile
-===================================================================
---- linux-2.6.21-rc6-arm.orig/arch/arm/mach-ixp4xx/Makefile	2007-04-07 13:29:23.000000000 +0100
-+++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Makefile	2007-04-10 19:23:49.000000000 +0100
-@@ -12,6 +12,7 @@
+--- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/Makefile	2007-04-27 21:57:34.000000000 +0200
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/Makefile	2007-04-27 21:58:44.000000000 +0200
+@@ -12,6 +12,7 @@ obj-pci-$(CONFIG_ARCH_ADI_COYOTE)	+= coy
  obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx5715-pci.o
  obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
  obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
@@ -45,17 +52,15 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Makefile
  
  obj-y	+= common.o
  
-@@ -22,5 +23,6 @@
+@@ -22,5 +23,6 @@ obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
  obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
  obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
 +obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
  
  obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
-Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c
-===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c	2007-04-07 13:30:00.000000000 +0100
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/dsmg600-pci.c	2007-04-27 21:57:55.000000000 +0200
 @@ -0,0 +1,74 @@
 +/*
 + * DSM-G600 board-level PCI initialization
@@ -131,11 +136,9 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c
 +}
 +
 +subsys_initcall(dsmg600_pci_init);
-Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
-===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c	2007-04-10 19:31:54.000000000 +0100
-@@ -0,0 +1,144 @@
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/dsmg600-power.c	2007-04-27 22:52:39.000000000 +0200
+@@ -0,0 +1,125 @@
 +/*
 + * arch/arm/mach-ixp4xx/dsmg600-power.c
 + *
@@ -161,6 +164,8 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 +#include <linux/reboot.h>
 +#include <linux/interrupt.h>
 +#include <linux/irq.h>
++#include <linux/jiffies.h>
++#include <linux/timer.h>
 +
 +#include <asm/mach-types.h>
 +
@@ -172,51 +177,41 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 +static volatile int power_button_countdown;
 +
 +/* Must hold the button down for at least this many counts to be processed */
-+#define PBUTTON_HOLDDOWN_COUNT 4
++#define PBUTTON_HOLDDOWN_COUNT 4 /* 2 secs */
 +
-+static irqreturn_t dsmg600_power_handler(int irq, void *dev_id)
-+	{
++static void dsmg600_power_handler(unsigned long data);
++static DEFINE_TIMER(dsmg600_power_timer, dsmg600_power_handler, 0, 0);
++
++static void dsmg600_power_handler(unsigned long data)
++{
 +	/* This routine is called twice per second to check the
 +	 * state of the power button.
 +	 */
 +
-+	/* Clear the pending interrupt */
-+	*IXP4XX_OSST = IXP4XX_OSST_TIMER_2_PEND;
-+
 +	if (*IXP4XX_GPIO_GPINR & DSMG600_PB_BM) {
 +
 +		/* IO Pin is 1 (button pushed) */
-+
 +		if (power_button_countdown == 0) {
 +			/* Signal init to do the ctrlaltdel action, this will bypass
-+			 *  init if it hasn't started and do a kernel_restart.
++			 * init if it hasn't started and do a kernel_restart.
 +			 */
 +			ctrl_alt_del();
++
 +			/* Change the state of the power LED to "blink" */
-+			gpio_line_set(DSMG600_LED_PWR, IXP4XX_GPIO_LOW);
++			gpio_line_set(DSMG600_LED_PWR_GPIO, IXP4XX_GPIO_LOW);
 +		}
 +		power_button_countdown--;
 +
 +	} else {
-+
-+		/* IO Pin is 0 - button is not pushed */
 +		power_button_countdown = PBUTTON_HOLDDOWN_COUNT;
-+
 +	}
 +
-+	return IRQ_HANDLED;
++	mod_timer(&dsmg600_power_timer, jiffies + msecs_to_jiffies(500));
 +}
-+
-+static struct irqaction dsmg600_ptimer_irq = {
-+	.name		= "DSM-G600 Power Button Timer",
-+	.flags		= IRQF_DISABLED | IRQF_TIMER,
-+	.handler	= dsmg600_power_handler,
-+};
 +
 +static irqreturn_t dsmg600_reset_handler(int irq, void *dev_id)
 +{
 +	/* This is the paper-clip reset, it shuts the machine down directly. */
-+
 +	machine_power_off();
 +
 +	return IRQ_HANDLED;
@@ -224,8 +219,6 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 +
 +static int __init dsmg600_power_init(void)
 +{
-+	u32 i;
-+
 +	if (!(machine_is_dsmg600()))
 +		return 0;
 +
@@ -241,27 +234,16 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 +
 +	/* The power button on the D-Link DSM-G600 is on GPIO 15, but
 +	 * it cannot handle interrupts on that GPIO line.  So we'll
-+	 * have to poll it instead.  Setup timer #2 to interrupt twice
-+	 * per second in order to check the power button.
++	 * have to poll it with a kernel timer.
 +	 */
 +
 +	/* Make sure that the power button GPIO is set up as an input */
 +	gpio_line_config(DSMG600_PB_GPIO, IXP4XX_GPIO_IN);
 +
 +	/* Set the initial value for the power button IRQ handler */
-+
 +	power_button_countdown = PBUTTON_HOLDDOWN_COUNT;
 +
-+	/* Clear any pending interrupts */
-+
-+	*IXP4XX_OSST = IXP4XX_OSST_TIMER_2_PEND;
-+
-+	/* Load timer for 1/2 second ticks, units in 1/66,000,000 second */
-+
-+	i = ((33000000) & ~IXP4XX_OST_RELOAD_MASK) | IXP4XX_OST_ENABLE;
-+	*IXP4XX_OSRT2 = i;
-+
-+	setup_irq(IRQ_IXP4XX_TIMER2, &dsmg600_ptimer_irq);
++	mod_timer(&dsmg600_power_timer, jiffies + msecs_to_jiffies(500));
 +
 +	return 0;
 +}
@@ -270,6 +252,8 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 +{
 +	if (!(machine_is_dsmg600()))
 +		return;
++
++	del_timer_sync(&dsmg600_power_timer);
 +
 +	free_irq(DSMG600_RB_IRQ, NULL);
 +}
@@ -280,10 +264,8 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 +MODULE_AUTHOR("Michael Westerhof <mwester@dls.net>");
 +MODULE_DESCRIPTION("DSM-G600 Power/Reset driver");
 +MODULE_LICENSE("GPL");
-Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
-===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-04-10 19:26:48.000000000 +0100
++++ linux-ixp4xx/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-04-27 22:48:07.000000000 +0200
 @@ -0,0 +1,175 @@
 +/*
 + * DSM-G600 board-setup
@@ -338,14 +320,14 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +static struct resource dsmg600_led_resources[] = {
 +	{
 +		.name           = "power",
-+		.start          = DSMG600_LED_PWR,
-+		.end            = DSMG600_LED_PWR,
++		.start          = DSMG600_LED_PWR_GPIO,
++		.end            = DSMG600_LED_PWR_GPIO,
 +		.flags          = IXP4XX_GPIO_HIGH,
 +	},
 +	{
 +		.name           = "wlan",
-+		.start		= DSMG600_LED_WLAN,
-+		.end            = DSMG600_LED_WLAN,
++		.start		= DSMG600_LED_WLAN_GPIO,
++		.end            = DSMG600_LED_WLAN_GPIO,
 +		.flags          = IXP4XX_GPIO_LOW,
 +	},
 +};
@@ -460,11 +442,9 @@ Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +	.timer          = &ixp4xx_timer,
 +	.init_machine	= dsmg600_init,
 +MACHINE_END
-Index: linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/dsmg600.h
-===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/dsmg600.h	2007-04-07 13:30:00.000000000 +0100
-@@ -0,0 +1,76 @@
++++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/dsmg600.h	2007-04-27 22:20:41.000000000 +0200
+@@ -0,0 +1,57 @@
 +/*
 + * DSM-G600 platform specific definitions
 + *
@@ -504,58 +484,35 @@ Index: linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/dsmg600.h
 +/* DSM-G600 Timer Setting */
 +#define DSMG600_FREQ 66000000
 +
-+/* GPIO */
-+
-+#define DSMG600_GPIO0           0
-+#define DSMG600_GPIO1           1
-+#define DSMG600_GPIO2           2
-+#define DSMG600_GPIO3           3
-+#define DSMG600_GPIO4           4
-+#define DSMG600_GPIO5           5
-+#define DSMG600_GPIO6           6
-+#define DSMG600_GPIO7           7
-+#define DSMG600_GPIO8           8
-+#define DSMG600_GPIO9           9
-+#define DSMG600_GPIO10          10
-+#define DSMG600_GPIO11          11
-+#define DSMG600_GPIO12          12
-+#define DSMG600_GPIO13          13
-+#define DSMG600_GPIO14          14
-+#define DSMG600_GPIO15          15
-+
 +/* Buttons */
 +
-+#define DSMG600_PB_GPIO		DSMG600_GPIO15	/* power button */
++#define DSMG600_PB_GPIO		15	/* power button */
 +#define DSMG600_PB_BM		(1L << DSMG600_PB_GPIO)
 +
-+#define DSMG600_RB_GPIO		DSMG600_GPIO3	/* reset button */
++#define DSMG600_RB_GPIO		3	/* reset button */
 +
 +#define DSMG600_RB_IRQ		IRQ_IXP4XX_GPIO3
 +
-+#define DSMG600_PO_GPIO		DSMG600_GPIO2	/* power off */
++#define DSMG600_PO_GPIO		2	/* power off */
 +
 +/* LEDs */
 +
-+#define DSMG600_LED_PWR		DSMG600_GPIO0
-+#define DSMG600_LED_PWR_BM	(1L << DSMG600_LED_PWR)
++#define DSMG600_LED_PWR_GPIO	0
++#define DSMG600_LED_PWR_BM	(1L << DSMG600_LED_PWR_GPIO)
 +
-+#define DSMG600_LED_WLAN	DSMG600_GPIO14
-+#define DSMG600_LED_WLAN_BM	(1L << DSMG600_LED_WLAN)
-Index: linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/hardware.h
-===================================================================
---- linux-2.6.21-rc6-arm.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-07 13:29:25.000000000 +0100
-+++ linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-10 19:23:49.000000000 +0100
-@@ -47,5 +47,6 @@
++#define DSMG600_LED_WLAN_GPIO	14
++#define DSMG600_LED_WLAN_BM	(1L << DSMG600_LED_WLAN_GPIO)
+--- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-27 21:57:34.000000000 +0200
++++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-27 21:58:44.000000000 +0200
+@@ -47,5 +47,6 @@ extern unsigned int processor_id;
  #include "prpmc1100.h"
  #include "nslu2.h"
  #include "nas100d.h"
 +#include "dsmg600.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
-Index: linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/irqs.h
-===================================================================
---- linux-2.6.21-rc6-arm.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-07 13:29:24.000000000 +0100
-+++ linux-2.6.21-rc6-arm/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-10 19:23:49.000000000 +0100
+--- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-27 21:57:34.000000000 +0200
++++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-27 21:58:44.000000000 +0200
 @@ -118,4 +118,14 @@
  #define        IRQ_NAS100D_PCI_INTD    IRQ_IXP4XX_GPIO8
  #define        IRQ_NAS100D_PCI_INTE    IRQ_IXP4XX_GPIO7
