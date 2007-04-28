@@ -5,6 +5,8 @@
 
 squashfs/squashfs-3.2r2.patch
 squashfs/squashfs-force-O2.patch
+00-linux-2.6.21.1.patch
+00-remove-EXTRAVERSION.patch
 05-nslu2-freq-fixup.patch
 06-dsmg600-upstream-support.patch
 07-trivial-Kconfig-cleanup.patch
