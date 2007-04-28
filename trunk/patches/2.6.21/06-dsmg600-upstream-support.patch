@@ -6,27 +6,18 @@ the Via Velocity chipset.
 
 This patch is the combined work of Michael Westerhof and
 Alessandro Zummo, with contributions from Michael-Luke
-Jones.
+Jones. This version addresses review comments from rmk
+and Deepak Saxena.
 
 Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
 Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
 Signed-off-by: Michael Westerhof <mwester@dls.net>
-[ review comments addressed by M-L Jones <mlj28@cam.ac.uk> ]
 
----
- arch/arm/mach-ixp4xx/Kconfig           |    9 +
- arch/arm/mach-ixp4xx/Makefile          |    2 
- arch/arm/mach-ixp4xx/dsmg600-pci.c     |   74 +++++++++++++
- arch/arm/mach-ixp4xx/dsmg600-power.c   |  125 +++++++++++++++++++++++
- arch/arm/mach-ixp4xx/dsmg600-setup.c   |  175 +++++++++++++++++++++++++++++++++
- include/asm-arm/arch-ixp4xx/dsmg600.h  |   57 ++++++++++
- include/asm-arm/arch-ixp4xx/hardware.h |    1 
- include/asm-arm/arch-ixp4xx/irqs.h     |   10 +
- 8 files changed, 453 insertions(+)
-
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/Kconfig	2007-04-27 21:57:34.000000000 +0200
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/Kconfig	2007-04-27 21:58:44.000000000 +0200
-@@ -89,6 +89,15 @@ config MACH_NAS100D
+Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/Kconfig
+===================================================================
+--- linux-2.6.21-arm.orig/arch/arm/mach-ixp4xx/Kconfig	2007-04-28 00:21:36.000000000 -0700
++++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/Kconfig	2007-04-28 00:21:42.000000000 -0700
+@@ -89,6 +89,15 @@
  	  NAS 100d device. For more information on this platform,
  	  see http://www.nslu2-linux.org/wiki/NAS100d/HomePage
  
@@ -42,9 +33,11 @@ Signed-off-by: Michael Westerhof <mwester@dls.net>
  #
  # Avila and IXDP share the same source for now. Will change in future
  #
---- linux-ixp4xx.orig/arch/arm/mach-ixp4xx/Makefile	2007-04-27 21:57:34.000000000 +0200
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/Makefile	2007-04-27 21:58:44.000000000 +0200
-@@ -12,6 +12,7 @@ obj-pci-$(CONFIG_ARCH_ADI_COYOTE)	+= coy
+Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/Makefile
+===================================================================
+--- linux-2.6.21-arm.orig/arch/arm/mach-ixp4xx/Makefile	2007-04-28 00:21:36.000000000 -0700
++++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/Makefile	2007-04-28 00:21:42.000000000 -0700
+@@ -12,6 +12,7 @@
  obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx5715-pci.o
  obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
  obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
@@ -52,15 +45,17 @@ Signed-off-by: Michael Westerhof <mwester@dls.net>
  
  obj-y	+= common.o
  
-@@ -22,5 +23,6 @@ obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-
+@@ -22,5 +23,6 @@
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
  obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
  obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
 +obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
  
  obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
+Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/dsmg600-pci.c	2007-04-27 21:57:55.000000000 +0200
++++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c	2007-04-28 00:21:42.000000000 -0700
 @@ -0,0 +1,74 @@
 +/*
 + * DSM-G600 board-level PCI initialization
@@ -136,8 +131,10 @@ Signed-off-by: Michael Westerhof <mwester@dls.net>
 +}
 +
 +subsys_initcall(dsmg600_pci_init);
+Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/dsmg600-power.c	2007-04-27 22:52:39.000000000 +0200
++++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-power.c	2007-04-28 00:21:42.000000000 -0700
 @@ -0,0 +1,125 @@
 +/*
 + * arch/arm/mach-ixp4xx/dsmg600-power.c
@@ -264,8 +261,10 @@ Signed-off-by: Michael Westerhof <mwester@dls.net>
 +MODULE_AUTHOR("Michael Westerhof <mwester@dls.net>");
 +MODULE_DESCRIPTION("DSM-G600 Power/Reset driver");
 +MODULE_LICENSE("GPL");
+Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-04-27 22:48:07.000000000 +0200
++++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-04-28 00:21:42.000000000 -0700
 @@ -0,0 +1,175 @@
 +/*
 + * DSM-G600 board-setup
@@ -442,8 +441,10 @@ Signed-off-by: Michael Westerhof <mwester@dls.net>
 +	.timer          = &ixp4xx_timer,
 +	.init_machine	= dsmg600_init,
 +MACHINE_END
+Index: linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/dsmg600.h
+===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/dsmg600.h	2007-04-27 22:20:41.000000000 +0200
++++ linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/dsmg600.h	2007-04-28 00:21:42.000000000 -0700
 @@ -0,0 +1,57 @@
 +/*
 + * DSM-G600 platform specific definitions
@@ -502,17 +503,21 @@ Signed-off-by: Michael Westerhof <mwester@dls.net>
 +
 +#define DSMG600_LED_WLAN_GPIO	14
 +#define DSMG600_LED_WLAN_BM	(1L << DSMG600_LED_WLAN_GPIO)
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-27 21:57:34.000000000 +0200
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-27 21:58:44.000000000 +0200
-@@ -47,5 +47,6 @@ extern unsigned int processor_id;
+Index: linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/hardware.h
+===================================================================
+--- linux-2.6.21-arm.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-28 00:21:35.000000000 -0700
++++ linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-28 00:21:42.000000000 -0700
+@@ -47,5 +47,6 @@
  #include "prpmc1100.h"
  #include "nslu2.h"
  #include "nas100d.h"
 +#include "dsmg600.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
---- linux-ixp4xx.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-27 21:57:34.000000000 +0200
-+++ linux-ixp4xx/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-27 21:58:44.000000000 +0200
+Index: linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/irqs.h
+===================================================================
+--- linux-2.6.21-arm.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-28 00:21:35.000000000 -0700
++++ linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-28 00:21:42.000000000 -0700
 @@ -118,4 +118,14 @@
  #define        IRQ_NAS100D_PCI_INTD    IRQ_IXP4XX_GPIO8
  #define        IRQ_NAS100D_PCI_INTE    IRQ_IXP4XX_GPIO7
