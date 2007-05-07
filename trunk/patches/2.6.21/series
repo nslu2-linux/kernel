@@ -7,9 +7,9 @@ squashfs/squashfs-3.2r2.patch
 squashfs/squashfs-force-O2.patch
 00-linux-2.6.21.1.patch
 00-remove-EXTRAVERSION.patch
-05-nslu2-freq-fixup.patch
 06-dsmg600-upstream-support.patch
 07-trivial-Kconfig-cleanup.patch
+08-ixp4xx-freq-fixup.patch
 30-ixp4xx-npe-driver-0.3.1.patch
 37-ixp4xx-net-driver-fix-mac-handling.patch
 39-ixp4xx-net-driver-mtd-load-fw.patch

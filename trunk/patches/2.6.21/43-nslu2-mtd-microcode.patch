@@ -1,8 +1,8 @@
-Index: linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.20-rc5-git2.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-01-23 03:04:12.000000000 -0800
-+++ linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-01-23 03:04:14.000000000 -0800
-@@ -160,6 +160,16 @@
+--- linux-2.6.21-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-07 11:32:02.000000000 -0700
++++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-07 11:32:16.000000000 -0700
+@@ -161,6 +161,16 @@
  	.resource       = &res_mac0,
  };
  
@@ -19,7 +19,7 @@ Index: linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/nslu2-setup.c
  static struct platform_device *nslu2_devices[] __initdata = {
  	&nslu2_i2c_controller,
  	&nslu2_flash,
-@@ -167,7 +177,8 @@
+@@ -168,7 +178,8 @@
  #ifdef CONFIG_LEDS_IXP4XX
  	&nslu2_leds,
  #endif
