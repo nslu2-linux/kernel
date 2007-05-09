@@ -1,7 +1,7 @@
-Index: linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/nas100d-setup.c
+Index: linux-2.6.21-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.20-rc5-git2.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-01-23 03:04:25.000000000 -0800
-+++ linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-01-23 03:04:31.000000000 -0800
+--- linux-2.6.21-armeb.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-05-09 07:35:50.000000000 -0700
++++ linux-2.6.21-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-05-09 07:36:11.000000000 -0700
 @@ -16,6 +16,7 @@
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
@@ -41,7 +41,7 @@ Index: linux-2.6.20-rc5-git2/arch/arm/mach-ixp4xx/nas100d-setup.c
  static void nas100d_power_off(void)
  {
  	/* This causes the box to drop the power and go dead. */
-@@ -197,6 +222,8 @@
+@@ -198,6 +223,8 @@
  	(void)platform_device_register(&nas100d_uart);
  
  	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));

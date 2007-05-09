@@ -1,7 +1,7 @@
-Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.21-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.21-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-07 11:32:26.000000000 -0700
-+++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-07 11:32:43.000000000 -0700
+--- linux-2.6.21-armeb.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-09 07:22:17.000000000 -0700
++++ linux-2.6.21-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-09 07:22:34.000000000 -0700
 @@ -20,6 +20,7 @@
  #include <linux/leds.h>
  #include <linux/mtd/mtd.h>
@@ -46,7 +46,7 @@ Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
  static void __init nslu2_init(void)
  {
  	ixp4xx_sys_init();
-@@ -257,6 +287,7 @@
+@@ -258,6 +288,7 @@
  	.phys_io	= IXP4XX_PERIPHERAL_BASE_PHYS,
  	.io_pg_offst	= ((IXP4XX_PERIPHERAL_BASE_VIRT) >> 18) & 0xFFFC,
  	.boot_params	= 0x00000100,
