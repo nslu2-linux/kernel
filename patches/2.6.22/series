@@ -3,13 +3,10 @@
 # must be all able to be applied independently in any order.
 # Patches marked with ## need reworking and are currently disabled
 
-# Squashfs
-squashfs/squashfs-3.2r2.patch
-squashfs/squashfs-force-O2.patch
-
 # 0?-* patches
 # Patches to be submitted upstream
 01-add-select-GENERIC_GPIO.patch
+02-remove-unused-var-pata_ixp4xx_cf.patch
 07-trivial-Kconfig-cleanup.patch
 08-ixp4xx-freq-fixup.patch
 09-trivial-nslu2-nas100d-cleanup.patch

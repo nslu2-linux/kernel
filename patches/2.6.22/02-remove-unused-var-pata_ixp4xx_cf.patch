@@ -1,0 +1,16 @@
+This variable appears to be unused. Remove it.
+
+Signed-off-by: Michael-Luke Jones
+
+Index: linux-2.6.22-rc1-armeb/drivers/ata/pata_ixp4xx_cf.c
+===================================================================
+--- linux-2.6.22-rc1-armeb.orig/drivers/ata/pata_ixp4xx_cf.c	2007-05-13 06:43:52.000000000 -0700
++++ linux-2.6.22-rc1-armeb/drivers/ata/pata_ixp4xx_cf.c	2007-05-13 07:15:02.000000000 -0700
+@@ -178,7 +178,6 @@
+ 	struct ata_host *host;
+ 	struct ata_port *ap;
+ 	struct ixp4xx_pata_data *data = pdev->dev.platform_data;
+-	int rc;
+ 
+ 	cs0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	cs1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
