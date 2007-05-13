@@ -22,11 +22,11 @@ squashfs/squashfs-force-O2.patch
 
 # 2?-* patches
 # i2c-gpio driver platform support
-#21-nslu2-i2c-gpio-driver-support.patch
-#22-nas100d-i2c-gpio-driver-support.patch
-#23-avila-i2c-gpio-driver-support.patch
-#24-fsg3-i2c-gpio-driver-support.patch
-#25-dsmg600-i2c-gpio-driver-support.patch
+21-nslu2-i2c-gpio-driver-support.patch
+22-nas100d-i2c-gpio-driver-support.patch
+23-avila-i2c-gpio-driver-support.patch
+25-dsmg600-i2c-gpio-driver-support.patch
+26-ixdp425-i2c-gpio-driver-support.patch
 
 # 3?-* patches
 # i2c rtc automatic setup

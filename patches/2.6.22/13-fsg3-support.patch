@@ -1,7 +1,7 @@
-Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/Kconfig
+Index: linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.22-rc1-arm.orig/arch/arm/mach-ixp4xx/Kconfig	2007-05-12 23:37:48.000000000 -0700
-+++ linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/Kconfig	2007-05-12 23:47:35.000000000 -0700
+--- linux-2.6.22-rc1-armeb.orig/arch/arm/mach-ixp4xx/Kconfig	2007-05-13 04:54:45.000000000 -0700
++++ linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/Kconfig	2007-05-13 04:54:46.000000000 -0700
 @@ -109,6 +109,14 @@
  	depends on ARCH_IXDP425 || MACH_IXDP465 || MACH_KIXRP435
  	default y
@@ -17,10 +17,10 @@ Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/Kconfig
  #
  # Certain registers and IRQs are only enabled if supporting IXP465 CPUs
  #
-Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/Makefile
+Index: linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.22-rc1-arm.orig/arch/arm/mach-ixp4xx/Makefile	2007-05-12 23:31:31.000000000 -0700
-+++ linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/Makefile	2007-05-12 23:47:35.000000000 -0700
+--- linux-2.6.22-rc1-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2007-05-13 04:54:33.000000000 -0700
++++ linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/Makefile	2007-05-13 04:54:46.000000000 -0700
 @@ -13,6 +13,7 @@
  obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
  obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
@@ -36,10 +36,10 @@ Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/Makefile
 +obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o
  
  obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
-Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/fsg-pci.c
+Index: linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/fsg-pci.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/fsg-pci.c	2007-05-12 23:47:35.000000000 -0700
++++ linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/fsg-pci.c	2007-05-13 04:54:46.000000000 -0700
 @@ -0,0 +1,66 @@
 +/*
 + * arch/arch/mach-ixp4xx/fsg-pci.c
@@ -107,11 +107,11 @@ Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/fsg-pci.c
 +}
 +
 +subsys_initcall(fsg_pci_init);
-Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/fsg-setup.c
+Index: linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/fsg-setup.c	2007-05-13 00:00:37.000000000 -0700
-@@ -0,0 +1,140 @@
++++ linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/fsg-setup.c	2007-05-13 05:12:57.000000000 -0700
+@@ -0,0 +1,142 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
 + *
@@ -124,6 +124,7 @@ Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/fsg-setup.c
 +#include <linux/serial.h>
 +#include <linux/serial_8250.h>       
 +#include <linux/leds.h>
++#include <linux/i2c-gpio.h>
 +
 +#include <asm/mach-types.h>
 +#include <asm/mach/arch.h>
@@ -152,16 +153,17 @@ Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/fsg-setup.c
 +	.resource	= &fsg_flash_resource,
 +};
 +
-+static struct ixp4xx_i2c_pins fsg_i2c_gpio_pins = {
++static struct i2c_gpio_platform_data fsg_i2c_gpio_data = {
 +        .sda_pin                = 12,
 +        .scl_pin                = 13,
 +};
 +
-+static struct platform_device fsg_i2c_controller = {
-+        .name                   = "IXP4XX-I2C",
++static struct platform_device fsg_i2c_gpio = {
++        .name                   = "i2c-gpio",
 +        .id                     = 0,
-+        .dev.platform_data      = &fsg_i2c_gpio_pins,
-+        .num_resources          = 0,
++	.dev	 = {
++		.platform_data	= &fsg_i2c_gpio_data,
++	},
 +};
 +
 +static struct resource fsg_uart_resource = {
@@ -194,7 +196,7 @@ Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/fsg-setup.c
 +};
 +
 +static struct platform_device *fsg_devices[] __initdata = {
-+	&fsg_i2c_controller,
++	&fsg_i2c_gpio,
 +	&fsg_flash,
 +        &fsg_uart,
 +};
@@ -252,10 +254,10 @@ Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/fsg-setup.c
 +	.init_machine	= fsg_init,
 +MACHINE_END
 +
-Index: linux-2.6.22-rc1-arm/include/asm-arm/arch-ixp4xx/fsg.h
+Index: linux-2.6.22-rc1-armeb/include/asm-arm/arch-ixp4xx/fsg.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.22-rc1-arm/include/asm-arm/arch-ixp4xx/fsg.h	2007-05-12 23:47:35.000000000 -0700
++++ linux-2.6.22-rc1-armeb/include/asm-arm/arch-ixp4xx/fsg.h	2007-05-13 04:54:46.000000000 -0700
 @@ -0,0 +1,32 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/fsg.h
@@ -289,10 +291,10 @@ Index: linux-2.6.22-rc1-arm/include/asm-arm/arch-ixp4xx/fsg.h
 +#define	FSG_IDE_DATA_PORT	0xFFFE10E0
 +#define	FSG_IDE_CTRL_PORT	0xFFFE10FC
 +#define	FSG_IDE_ERROR_PORT	0xFFFE10E2
-Index: linux-2.6.22-rc1-arm/include/asm-arm/arch-ixp4xx/hardware.h
+Index: linux-2.6.22-rc1-armeb/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.22-rc1-arm.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-05-12 23:31:50.000000000 -0700
-+++ linux-2.6.22-rc1-arm/include/asm-arm/arch-ixp4xx/hardware.h	2007-05-12 23:47:35.000000000 -0700
+--- linux-2.6.22-rc1-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-05-13 04:54:39.000000000 -0700
++++ linux-2.6.22-rc1-armeb/include/asm-arm/arch-ixp4xx/hardware.h	2007-05-13 04:54:46.000000000 -0700
 @@ -45,5 +45,6 @@
  #include "nslu2.h"
  #include "nas100d.h"
@@ -300,10 +302,10 @@ Index: linux-2.6.22-rc1-arm/include/asm-arm/arch-ixp4xx/hardware.h
 +#include "fsg.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
-Index: linux-2.6.22-rc1-arm/include/asm-arm/arch-ixp4xx/irqs.h
+Index: linux-2.6.22-rc1-armeb/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.22-rc1-arm.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-05-12 23:31:50.000000000 -0700
-+++ linux-2.6.22-rc1-arm/include/asm-arm/arch-ixp4xx/irqs.h	2007-05-12 23:47:35.000000000 -0700
+--- linux-2.6.22-rc1-armeb.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-05-13 04:54:39.000000000 -0700
++++ linux-2.6.22-rc1-armeb/include/asm-arm/arch-ixp4xx/irqs.h	2007-05-13 04:54:46.000000000 -0700
 @@ -128,4 +128,12 @@
  #define        IRQ_DSMG600_PCI_INTE    IRQ_IXP4XX_GPIO7
  #define        IRQ_DSMG600_PCI_INTF    IRQ_IXP4XX_GPIO6

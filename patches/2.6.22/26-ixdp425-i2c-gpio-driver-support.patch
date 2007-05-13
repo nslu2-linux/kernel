@@ -1,0 +1,45 @@
+Index: linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/ixdp425-setup.c
+===================================================================
+--- linux-2.6.22-rc1-armeb.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-05-13 04:54:33.000000000 -0700
++++ linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-05-13 05:17:56.000000000 -0700
+@@ -15,6 +15,7 @@
+ #include <linux/tty.h>
+ #include <linux/serial_8250.h>
+ #include <linux/slab.h>
++#include <linux/i2c-gpio.h>
+ 
+ #include <asm/types.h>
+ #include <asm/setup.h>
+@@ -44,18 +45,17 @@
+ 	.resource	= &ixdp425_flash_resource,
+ };
+ 
+-static struct ixp4xx_i2c_pins ixdp425_i2c_gpio_pins = {
++static struct i2c_gpio_platform_data ixdp425_i2c_gpio_data = {
+ 	.sda_pin	= IXDP425_SDA_PIN,
+ 	.scl_pin	= IXDP425_SCL_PIN,
+ };
+ 
+-static struct platform_device ixdp425_i2c_controller = {
+-	.name		= "IXP4XX-I2C",
++static struct platform_device ixdp425_i2c_gpio = {
++	.name		= "i2c-gpio",
+ 	.id		= 0,
+-	.dev		= {
+-		.platform_data = &ixdp425_i2c_gpio_pins,
++	.dev	 = {
++		.platform_data	= &ixdp425_i2c_gpio_data,
+ 	},
+-	.num_resources	= 0
+ };
+ 
+ static struct resource ixdp425_uart_resources[] = {
+@@ -102,7 +102,7 @@
+ };
+ 
+ static struct platform_device *ixdp425_devices[] __initdata = {
+-	&ixdp425_i2c_controller,
++	&ixdp425_i2c_gpio,
+ 	&ixdp425_flash,
+ 	&ixdp425_uart
+ };
