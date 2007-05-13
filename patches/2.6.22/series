@@ -27,9 +27,10 @@
 
 # 3?-* patches
 # i2c rtc automatic setup
-#31-nslu2-i2c-rtc-setup.patch
-#32-nas100d-i2c-rtc-setup.patch
-#35-dsmg600-i2c-rtc-setup.patch
+#31-nslu2-i2c-rtc-setup.patch # rtc-x1205.probe=0,0x6f
+#32-nas100d-i2c-rtc-setup.patch # rtc-pcf8563.probe=0,0x51
+#33-avila-i2c-rtc-setup.patch # rtc-ds1672.probe=0,0x68
+#35-dsmg600-i2c-rtc-setup.patch # rtc-pcf8563.probe=0,0x51
 
 # 4?-* patches
 # Add Krzysztof's ixp_npe driver
