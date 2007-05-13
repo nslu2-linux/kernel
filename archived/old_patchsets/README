@@ -1,0 +1,8 @@
+These patchsets are quilt trees for the respective kernel versions.
+They enable various ixp4xx-specific patches, including an open source
+ethernet driver and improved board support. Much of the functionality
+in these patches is now duplicated in Linus' upstream kernel tree, and
+thus there is no specific need to use these older kernel versions.
+
+They are maintained here for reference purposes only and should be
+considered deprecated.

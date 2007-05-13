@@ -1,0 +1,74 @@
+# Patches numbered 00 are externally maintained (large) patchsets
+# Patches numbered 01 to 10 are for immediate push upstream, and
+# must be all able to be applied independently in any order.
+# Patches marked with ## need reworking and are currently disabled
+
+# Squashfs
+squashfs/squashfs-3.2r2.patch
+squashfs/squashfs-force-O2.patch
+
+# 0?-* patches
+# Patches to be submitted upstream
+01-add-select-GENERIC_GPIO.patch
+07-trivial-Kconfig-cleanup.patch
+08-ixp4xx-freq-fixup.patch
+09-trivial-nslu2-nas100d-cleanup.patch
+
+# 1?-* patches
+# Patches for upstream next cycle
+12-velocity-BE.patch
+13-fsg3-support.patch
+
+# 2?-* patches
+# Add Krzysztof's ixp_npe driver
+# Add our patches to enable LE / MTD microcode loading
+
+# 3?-* patches
+# Add platform setup code for platform ixp_npe ethernet driver
+#31-nslu2-mac_plat_info.patch
+#32-nas100d-mac_plat_info.patch
+#33-avila-mac_plat_info.patch
+#34-fsg3-mac_plat_info.patch
+
+# 4?-* patches
+# Add platform setup code for MAC address loading
+#41-nslu2-set-hwaddr.patch
+#42-nas100d-set-hwaddr.patch
+#43-avila-set-hwaddr.patch
+#44-fsg3-set-hwaddr.patch
+
+# 5?-* patches
+# Add platform setup code for mtd microcode loading
+#51-nslu2-mtd-partition.patch
+#52-nas100d-mtd-partition.patch
+#53-avila-mtd-partition.patch
+#54-fsg3-mtd-partition.patch
+
+# 6?-* patches
+# i2c-gpio driver platform support
+#61-nslu2-i2c-gpio-driver-support.patch
+#62-nas100d-i2c-gpio-driver-support.patch
+#63-avila-i2c-gpio-driver-support.patch
+#64-fsg3-i2c-gpio-driver-support.patch
+#65-dsmg600-i2c-gpio-driver-support.patch
+
+# 7?-* patches
+# i2c rtc automatic setup
+#71-nslu2-i2c-rtc-setup.patch
+#72-nas100d-i2c-rtc-setup.patch
+#75-dsmg600-i2c-rtc-setup.patch
+
+# 8?-* patches
+# Patches for eventual upstream
+81-eeprom-new-notifier.patch
+82-leds-arm-cpu-activity.patch
+
+# 9?-* patches
+# Not for upstream
+90-increase-entropy-pools.patch
+# The following three patches should be enabled to boot our kernel
+# on hardware with unfriendly bootloaders without a kernel shim.
+#91-nslu2-dflt-cmdline.patch
+#92-nas100d-dflt-cmdline.patch
+#93-dsmg600-dflt-cmdline.patch
+
