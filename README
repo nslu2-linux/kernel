@@ -1,14 +1,8 @@
-2.6.18.8 + IXP_NPE 0.3.1 builds
-Should fully support NSLU2, NAS-100D, FSG-3
-No longer maintained
-
-2.6.19.7 + IXP_NPE 0.3.1 builds
-Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
-No longer maintained
-
-2.6.20.6 + IXP_NPE 0.3.1 builds
+=STABLE=
+2.6.20.10 + Christian's IXP_NPE 0.3.1
 Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
 
-2.6.21-rc6 + IXP_NPE 0.3.1 builds
-New upstream support for Avila/Loft
+=DEVEL=
+2.6.22-rc1 + Krzysztof's IXP_NPE
 Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
+Section mismatch warnings to be fixed (pointed out on l-a-k)

@@ -1,0 +1,68 @@
+Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/nslu2-setup.c
+===================================================================
+--- linux-2.6.21-arm.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-07 11:45:36.000000000 -0700
++++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-07 11:55:26.000000000 -0700
+@@ -21,6 +21,7 @@
+ #include <linux/mtd/mtd.h>
+ 
+ #include <asm/setup.h>
++#include <asm/memory.h>
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/flash.h>
+@@ -232,33 +233,24 @@
+     .init   = nslu2_timer_init,
+ };
+ 
+-static char nslu2_rtc_probe[] __initdata = "rtc-x1205.probe=0,0x6f ";
++static char nslu2_default_cmdline[] __initdata =
++    "init=/linuxrc root=/dev/mtdblock4 rootfstype=jffs2 rw rtc-x1205.probe=0,0x6f "
++    CONFIG_CMDLINE;
+ 
+ static void __init nslu2_fixup(struct machine_desc *desc,
+                 struct tag *tags, char **cmdline, struct meminfo *mi)
+ {
+-    struct tag *t = tags;
+-    char *p = *cmdline;
++    /* The NSLU2 has one bank of 32MByte memory.
++     * NOTE: setting nr_banks != 0 causes kernel/setup.c to remove
++     * the mem tags from the tag list.  We need do nothing here!
++     */
++    mi->nr_banks=1;
++    mi->bank[0].start = 0;
++    mi->bank[0].size = (32*1024*1024);
++    mi->bank[0].node = PHYS_TO_NID(0);
+ 
+-    /* Find the end of the tags table, taking note of any cmdline tag. */
+-    for (; t->hdr.size; t = tag_next(t)) {
+-        if (t->hdr.tag == ATAG_CMDLINE) {
+-            p = t->u.cmdline.cmdline;
+-        }
+-    }
+-
+-    /* Overwrite the end of the table with a new cmdline tag. */
+-    t->hdr.tag = ATAG_CMDLINE;
+-    t->hdr.size = (sizeof (struct tag_header) +
+-        strlen(nslu2_rtc_probe) + strlen(p) + 1 + 4) >> 2;
+-    strlcpy(t->u.cmdline.cmdline, nslu2_rtc_probe, COMMAND_LINE_SIZE);
+-    strlcpy(t->u.cmdline.cmdline + strlen(nslu2_rtc_probe), p,
+-        COMMAND_LINE_SIZE - strlen(nslu2_rtc_probe));
+-
+-    /* Terminate the table. */
+-    t = tag_next(t);
+-    t->hdr.tag = ATAG_NONE;
+-    t->hdr.size = 0;
++    /* Hard coded command line. */
++    strlcpy(*cmdline, nslu2_default_cmdline, COMMAND_LINE_SIZE);
+ }
+ 
+ static void __init nslu2_init(void)
+@@ -286,7 +278,7 @@
+ 	/* Maintainer: www.nslu2-linux.org */
+ 	.phys_io	= IXP4XX_PERIPHERAL_BASE_PHYS,
+ 	.io_pg_offst	= ((IXP4XX_PERIPHERAL_BASE_VIRT) >> 18) & 0xFFFC,
+-	.boot_params	= 0x00000100,
++	.boot_params    = 0, /* because they are garbage from Linksys RedBoot */
+ 	.fixup          = nslu2_fixup,
+ 	.map_io		= ixp4xx_map_io,
+ 	.init_irq	= ixp4xx_init_irq,
