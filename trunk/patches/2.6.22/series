@@ -18,49 +18,49 @@ squashfs/squashfs-force-O2.patch
 # Patches for upstream next cycle
 12-velocity-BE.patch
 13-fsg3-support.patch
+14-eeprom-new-notifier.patch
 
 # 2?-* patches
+# i2c-gpio driver platform support
+#21-nslu2-i2c-gpio-driver-support.patch
+#22-nas100d-i2c-gpio-driver-support.patch
+#23-avila-i2c-gpio-driver-support.patch
+#24-fsg3-i2c-gpio-driver-support.patch
+#25-dsmg600-i2c-gpio-driver-support.patch
+
+# 3?-* patches
+# i2c rtc automatic setup
+#31-nslu2-i2c-rtc-setup.patch
+#32-nas100d-i2c-rtc-setup.patch
+#35-dsmg600-i2c-rtc-setup.patch
+
+# 4?-* patches
 # Add Krzysztof's ixp_npe driver
 # Add our patches to enable LE / MTD microcode loading
 
-# 3?-* patches
-# Add platform setup code for platform ixp_npe ethernet driver
-#31-nslu2-mac_plat_info.patch
-#32-nas100d-mac_plat_info.patch
-#33-avila-mac_plat_info.patch
-#34-fsg3-mac_plat_info.patch
-
-# 4?-* patches
-# Add platform setup code for MAC address loading
-#41-nslu2-set-hwaddr.patch
-#42-nas100d-set-hwaddr.patch
-#43-avila-set-hwaddr.patch
-#44-fsg3-set-hwaddr.patch
-
 # 5?-* patches
-# Add platform setup code for mtd microcode loading
-#51-nslu2-mtd-partition.patch
-#52-nas100d-mtd-partition.patch
-#53-avila-mtd-partition.patch
-#54-fsg3-mtd-partition.patch
+# Add platform setup code for platform ixp_npe ethernet driver
+#51-nslu2-mac_plat_info.patch
+#52-nas100d-mac_plat_info.patch
+#53-avila-mac_plat_info.patch
+#54-fsg3-mac_plat_info.patch
 
 # 6?-* patches
-# i2c-gpio driver platform support
-#61-nslu2-i2c-gpio-driver-support.patch
-#62-nas100d-i2c-gpio-driver-support.patch
-#63-avila-i2c-gpio-driver-support.patch
-#64-fsg3-i2c-gpio-driver-support.patch
-#65-dsmg600-i2c-gpio-driver-support.patch
+# Add platform setup code for MAC address loading
+#61-nslu2-set-hwaddr.patch
+#62-nas100d-set-hwaddr.patch
+#63-avila-set-hwaddr.patch
+#64-fsg3-set-hwaddr.patch
 
 # 7?-* patches
-# i2c rtc automatic setup
-#71-nslu2-i2c-rtc-setup.patch
-#72-nas100d-i2c-rtc-setup.patch
-#75-dsmg600-i2c-rtc-setup.patch
+# Add platform setup code for mtd microcode loading
+#71-nslu2-mtd-partition.patch
+#72-nas100d-mtd-partition.patch
+#73-avila-mtd-partition.patch
+#74-fsg3-mtd-partition.patch
 
 # 8?-* patches
 # Patches for eventual upstream
-81-eeprom-new-notifier.patch
 82-leds-arm-cpu-activity.patch
 
 # 9?-* patches
