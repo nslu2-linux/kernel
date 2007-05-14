@@ -1,0 +1,30 @@
+Index: linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c
+===================================================================
+--- linux-2.6.19.orig/arch/arm/mach-ixp4xx/avila-setup.c	2007-01-23 03:12:21.000000000 -0800
++++ linux-2.6.19/arch/arm/mach-ixp4xx/avila-setup.c	2007-01-23 03:12:36.000000000 -0800
+@@ -151,6 +151,16 @@
+ 	.resource       = &res_mac1,
+ };
+ 
++struct npe_ucode_platform_data avila_npe_ucode_data = {
++	 .mtd_partition  = "RedBoot",
++};
++
++static struct platform_device avila_npe_ucode = {
++       .name                   = "ixp4xx_npe_ucode",
++       .id                     = 0,
++       .dev.platform_data      = &avila_npe_ucode_data,
++};
++
+ static struct resource avila_pata_resources[] = {
+ 	{
+ 		.flags	= IORESOURCE_MEM
+@@ -185,7 +195,7 @@
+ 	&avila_uart,
+ 	&mac0,
+ 	&mac1,
+-
++	&avila_npe_ucode,
+ };
+ 
+ static void __init avila_init(void)

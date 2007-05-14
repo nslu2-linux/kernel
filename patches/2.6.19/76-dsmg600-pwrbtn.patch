@@ -1,0 +1,100 @@
+Index: linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-power.c
+===================================================================
+--- linux-2.6.19.orig/arch/arm/mach-ixp4xx/dsmg600-power.c
++++ linux-2.6.19/arch/arm/mach-ixp4xx/dsmg600-power.c
+@@ -26,6 +26,55 @@
+ 
+ #include <asm/mach-types.h>
+ 
++extern void ctrl_alt_del(void);
++
++/* This is used to make sure the power-button pusher is serious.  The button
++ * must be held until the value of this counter reaches zero.
++ */
++static volatile int power_button_countdown;
++
++/* Must hold the button down for at least this many counts to be processed */
++#define PBUTTON_HOLDDOWN_COUNT 4
++
++static irqreturn_t dsmg600_power_handler(int irq, void *dev_id)
++	{
++	/* This routine is called twice per second to check the
++	 * state of the power button.
++	 */
++
++	/* Clear the pending interrupt */
++	*IXP4XX_OSST = IXP4XX_OSST_TIMER_2_PEND;
++
++	if (*IXP4XX_GPIO_GPINR & DSMG600_PB_BM) {
++
++		/* IO Pin is 1 (button pushed) */
++
++		if (power_button_countdown == 0) {
++			/* Signal init to do the ctrlaltdel action, this will bypass
++			 *  init if it hasn't started and do a kernel_restart.
++			 */
++			ctrl_alt_del();
++			/* Change the state of the power LED to "blink" */
++			gpio_line_set(DSMG600_LED_PWR, IXP4XX_GPIO_LOW);
++		}
++		power_button_countdown--;
++
++	} else {
++
++		/* IO Pin is 0 - button is not pushed */
++		power_button_countdown = PBUTTON_HOLDDOWN_COUNT;
++
++	}
++
++	return IRQ_HANDLED;
++}
++
++static struct irqaction dsmg600_ptimer_irq = {
++	.name		= "DSM-G600 Power Button Timer",
++	.flags		= IRQF_DISABLED | IRQF_TIMER,
++	.handler	= dsmg600_power_handler,
++};
++
+ static irqreturn_t dsmg600_reset_handler(int irq, void *dev_id)
+ {
+ 	/* This is the paper-clip reset, it shuts the machine down directly. */
+@@ -37,6 +86,8 @@ static irqreturn_t dsmg600_reset_handler
+ 
+ static int __init dsmg600_power_init(void)
+ {
++	u32 i;
++
+ 	if (!(machine_is_dsmg600()))
+ 		return 0;
+ 
+@@ -51,6 +102,30 @@ static int __init dsmg600_power_init(voi
+ 		return -EIO;
+ 	}
+ 
++	/* The power button on the D-Link DSM-G600 is on GPIO 15, but
++	 * it cannot handle interrupts on that GPIO line.  So we'll
++	 * have to poll it instead.  Setup timer #2 to interrupt twice
++	 * per second in order to check the power button.
++	 */
++
++	/* Make sure that the power button GPIO is set up as an input */
++	gpio_line_config(DSMG600_PB_GPIO, IXP4XX_GPIO_IN);
++
++	/* Set the initial value for the power button IRQ handler */
++
++	power_button_countdown = PBUTTON_HOLDDOWN_COUNT;
++
++	/* Clear any pending interrupts */
++
++	*IXP4XX_OSST = IXP4XX_OSST_TIMER_2_PEND;
++
++	/* Load timer for 1/2 second ticks, units in 1/66,000,000 second */
++
++	i = ((33000000) & ~IXP4XX_OST_RELOAD_MASK) | IXP4XX_OST_ENABLE;
++	*IXP4XX_OSRT2 = i;
++
++	setup_irq(IRQ_IXP4XX_TIMER2, &dsmg600_ptimer_irq);
++
+ 	return 0;
+ }
+ 

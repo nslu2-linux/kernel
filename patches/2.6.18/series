@@ -1,0 +1,33 @@
+# Patches numbered 00 are externally maintained (large) patchsets
+# Patches numbered 01 to 10 are for immediate push upstream, and
+# must be all able to be applied independently in any order.
+# Patches marked with ## need reworking and are currently disabled
+
+00-linux-2.6.18.8.patch
+00-squashfs3.1.patch
+02-mtdpart-redboot-byteswap-partition-truncate.patch
+10-bridging-fix.patch
+11-arm-generic-time.patch
+12-ixp4xx-clocksource.patch
+13-zd1211rw-arm-fix.patch
+14-zd1211rw-various-fixes.patch
+15-jffs2-endian-config.patch
+16-squashfs-force-O2.patch
+17-squashfs-lzma-support.patch
+20-nas100d-cmdline-fixup.patch
+20-nslu2-cmdline-fixup.patch
+28-nslu2-setup-mac.patch
+29-nas100d-setup-mac.patch
+30-ixp4xx-npe-driver-0.3.1.patch
+33-ixp4xx-net-driver-improve-mac-handling-0.3.1.patch
+40-scsi-idle.patch
+45-eeprom-new-notifier.patch
+50-leds-arm-cpu-activity.patch
+51-nslu2-swap-disk-leds.patch 
+55-increase-entropy-pools.patch
+65-loft-config.patch
+66-hwmon-ad7418.patch
+79-rtl8110sb-fix.patch
+96-fsg3-support.patch
+98-loft-ide-le.patch
+##99-sata_via-add-pata.patch

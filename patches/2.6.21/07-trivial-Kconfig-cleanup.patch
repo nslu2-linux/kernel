@@ -1,0 +1,19 @@
+Avila and IXDP4xx support were separated in 2.6.21 so this comment
+isn't correct any more.
+
+Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
+
+Index: linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Kconfig
+===================================================================
+--- linux-2.6.21-rc6-arm.orig/arch/arm/mach-ixp4xx/Kconfig	2007-04-07 13:35:08.000000000 +0100
++++ linux-2.6.21-rc6-arm/arch/arm/mach-ixp4xx/Kconfig	2007-04-07 13:36:52.000000000 +0100
+@@ -98,9 +98,6 @@
+ 	  DSM-G600 RevA device. For more information on this platform,
+ 	  see http://www.nslu2-linux.org/wiki/DSMG600/HomePage
+ 
+-#
+-# Avila and IXDP share the same source for now. Will change in future
+-#
+ config	ARCH_IXDP4XX
+ 	bool
+ 	depends on ARCH_IXDP425 || MACH_IXDP465

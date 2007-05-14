@@ -1,0 +1,140 @@
+support for the Giant Shoulder Inc Loft board - a very minor
+variation on a standard Avila board
+
+ arch/arm/mach-ixp4xx/Kconfig          |    8 ++++-
+ arch/arm/mach-ixp4xx/ixdp425-pci.c    |    6 ++-
+ arch/arm/mach-ixp4xx/ixdp425-setup.c  |   54 ++++++++++++++++++++++++++++++++++
+ include/asm-arm/arch-ixp4xx/ixdp425.h |    1 
+ 4 files changed, 66 insertions(+), 3 deletions(-)
+
+Index: linux-2.6.18-arm/arch/arm/mach-ixp4xx/Kconfig
+===================================================================
+--- linux-2.6.18-arm.orig/arch/arm/mach-ixp4xx/Kconfig	2006-09-20 04:42:06.000000000 +0100
++++ linux-2.6.18-arm/arch/arm/mach-ixp4xx/Kconfig	2007-02-24 10:57:55.369945213 +0000
+@@ -25,6 +25,12 @@
+ 	  Avila Network Platform. For more information on this platform,
+ 	  see <file:Documentation/arm/IXP4xx>.
+ 
++config MACH_LOFT
++	bool "Loft"
++	help
++	  Say 'Y' here if you want your kernel to support the Giant
++	  Shoulder Inc Loft board.
++
+ config ARCH_ADI_COYOTE
+ 	bool "Coyote"
+ 	select PCI
+@@ -86,7 +92,7 @@
+ #
+ config	ARCH_IXDP4XX
+ 	bool
+-	depends on ARCH_IXDP425 || ARCH_AVILA || MACH_IXDP465
++	depends on ARCH_IXDP425 || ARCH_AVILA || MACH_IXDP465 || MACH_LOFT
+ 	default y
+ 
+ #
+Index: linux-2.6.18-arm/arch/arm/mach-ixp4xx/ixdp425-pci.c
+===================================================================
+--- linux-2.6.18-arm.orig/arch/arm/mach-ixp4xx/ixdp425-pci.c	2006-09-20 04:42:06.000000000 +0100
++++ linux-2.6.18-arm/arch/arm/mach-ixp4xx/ixdp425-pci.c	2007-02-24 10:56:21.944106463 +0000
+@@ -46,7 +46,8 @@
+ 
+ 	int irq = -1;
+ 
+-	if (slot >= 1 && slot <= IXDP425_PCI_MAX_DEV && 
++	if (slot >= 1 &&
++		slot <= (machine_is_loft() ? LOFT_PCI_MAX_DEV : IXDP425_PCI_MAX_DEV) &&
+ 		pin >= 1 && pin <= IXDP425_PCI_IRQ_LINES) {
+ 		irq = pci_irq_table[(slot + pin - 2) % 4];
+ 	}
+@@ -66,7 +67,8 @@
+ int __init ixdp425_pci_init(void)
+ {
+ 	if (machine_is_ixdp425() || machine_is_ixcdp1100() ||
+-			machine_is_avila() || machine_is_ixdp465())
++			machine_is_avila() || machine_is_ixdp465() ||
++			machine_is_loft())
+ 		pci_common_init(&ixdp425_pci);
+ 	return 0;
+ }
+Index: linux-2.6.18-arm/arch/arm/mach-ixp4xx/ixdp425-setup.c
+===================================================================
+--- linux-2.6.18-arm.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-02-24 10:56:21.540081213 +0000
++++ linux-2.6.18-arm/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-02-24 10:56:21.944106463 +0000
+@@ -15,6 +15,10 @@
+ #include <linux/tty.h>
+ #include <linux/serial_8250.h>
+ #include <linux/slab.h>
++#ifdef CONFIG_SENSORS_EEPROM
++#include <linux/i2c.h>
++#include <linux/eeprom.h>
++#endif
+ 
+ #include <asm/types.h>
+ #include <asm/setup.h>
+@@ -225,3 +229,53 @@
+ MACHINE_END
+ #endif
+ 
++/*
++ * Loft is functionally equivalent to Avila except that it has a
++ * different number for the maximum PCI devices.  The MACHINE
++ * structure below is identical to Avila except for the comment.
++ */
++#ifdef CONFIG_MACH_LOFT
++#ifdef CONFIG_SENSORS_EEPROM
++static int loft_eeprom_do(struct notifier_block *self, unsigned long event, void *t)
++{
++	struct eeprom_data *data = t;
++
++	char macs[12];
++
++	/* The MACs are the first 12 bytes in the eeprom at address 0x51 */
++	if (event == EEPROM_REGISTER && data->client.addr == 0x51) {
++		data->attr->read(&data->client.dev.kobj, macs, 0, 12);
++		memcpy(&plat_mac0.hwaddr, macs, 6);
++		memcpy(&plat_mac1.hwaddr, macs + 6, 6);
++	}
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block loft_eeprom_notifier = {
++	.notifier_call = loft_eeprom_do
++};
++#endif
++
++static void __init loft_init(void)
++{
++	ixdp425_init();
++
++#ifdef CONFIG_SENSORS_EEPROM
++	register_eeprom_notifier(&loft_eeprom_notifier);
++#endif
++}
++
++
++MACHINE_START(LOFT, "Giant Shoulder Inc Loft board")
++	/* Maintainer: Tom Billman <kernel@giantshoulderinc.com> */
++	.phys_io	= IXP4XX_PERIPHERAL_BASE_PHYS,
++	.io_pg_offst	= ((IXP4XX_PERIPHERAL_BASE_VIRT) >> 18) & 0xfffc,
++	.map_io		= ixp4xx_map_io,
++	.init_irq	= ixp4xx_init_irq,
++	.timer		= &ixp4xx_timer,
++	.boot_params	= 0x0100,
++	.init_machine	= loft_init,
++MACHINE_END
++#endif
++
+Index: linux-2.6.18-arm/include/asm-arm/arch-ixp4xx/ixdp425.h
+===================================================================
+--- linux-2.6.18-arm.orig/include/asm-arm/arch-ixp4xx/ixdp425.h	2006-09-20 04:42:06.000000000 +0100
++++ linux-2.6.18-arm/include/asm-arm/arch-ixp4xx/ixdp425.h	2007-02-24 10:56:21.944106463 +0000
+@@ -23,6 +23,7 @@
+  * IXDP425 PCI IRQs
+  */
+ #define IXDP425_PCI_MAX_DEV	4
++#define LOFT_PCI_MAX_DEV	6
+ #define IXDP425_PCI_IRQ_LINES	4
+ 
+ 
