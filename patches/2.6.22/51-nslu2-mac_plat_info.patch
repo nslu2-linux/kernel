@@ -9,7 +9,7 @@ Index: linux-2.6.22-rc1-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
 +/* Built-in 10/100 Ethernet MAC interfaces */
 +static struct mac_plat_info nslu2_plat_mac[] = {
 +	{
-+		.phy		= 0,
++		.phy		= 1,
 +		.rxq		= 3,
 +	}
 +};
