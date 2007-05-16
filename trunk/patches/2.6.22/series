@@ -42,7 +42,7 @@
 
 # 5?-* patches
 # Add platform setup code for platform ixp_npe ethernet driver
-#51-nslu2-mac_plat_info.patch
+51-nslu2-mac_plat_info.patch
 #52-nas100d-mac_plat_info.patch
 #53-avila-mac_plat_info.patch
 #54-fsg3-mac_plat_info.patch
