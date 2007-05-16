@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.22-rc1
-# Sun May 13 06:45:46 2007
+# Wed May 16 06:35:24 2007
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -176,6 +176,8 @@ CONFIG_MACH_FSG=y
 #
 CONFIG_DMABOUNCE=y
 # CONFIG_IXP4XX_INDIRECT_PCI is not set
+CONFIG_IXP4XX_QMGR=m
+CONFIG_IXP4XX_NPE=m
 
 #
 # Processor Type
@@ -535,6 +537,7 @@ CONFIG_BT_RFCOMM_TTY=y
 CONFIG_BT_BNEP=m
 CONFIG_BT_BNEP_MC_FILTER=y
 CONFIG_BT_BNEP_PROTO_FILTER=y
+# CONFIG_BT_CMTP is not set
 CONFIG_BT_HIDP=m
 
 #
@@ -898,6 +901,7 @@ CONFIG_TUN=m
 #
 CONFIG_NET_ETHERNET=y
 CONFIG_MII=y
+CONFIG_IXP4XX_ETH=m
 # CONFIG_HAPPYMEAL is not set
 # CONFIG_SUNGEM is not set
 # CONFIG_CASSINI is not set
@@ -1015,7 +1019,35 @@ CONFIG_NET_POLL_CONTROLLER=y
 #
 # ISDN subsystem
 #
-# CONFIG_ISDN is not set
+CONFIG_ISDN=m
+
+#
+# Old ISDN4Linux
+#
+# CONFIG_ISDN_I4L is not set
+
+#
+# CAPI subsystem
+#
+CONFIG_ISDN_CAPI=m
+CONFIG_ISDN_DRV_AVMB1_VERBOSE_REASON=y
+CONFIG_CAPI_TRACE=y
+# CONFIG_ISDN_CAPI_MIDDLEWARE is not set
+CONFIG_ISDN_CAPI_CAPI20=m
+
+#
+# CAPI hardware drivers
+#
+
+#
+# Active AVM cards
+#
+# CONFIG_CAPI_AVM is not set
+
+#
+# Active Eicon DIVA Server cards
+#
+# CONFIG_CAPI_EICON is not set
 
 #
 # Input device support
@@ -1778,10 +1810,6 @@ CONFIG_JFFS2_ZLIB=y
 CONFIG_JFFS2_RTIME=y
 # CONFIG_JFFS2_RUBIN is not set
 # CONFIG_CRAMFS is not set
-CONFIG_SQUASHFS=m
-# CONFIG_SQUASHFS_EMBEDDED is not set
-CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE=3
-# CONFIG_SQUASHFS_VMALLOC is not set
 # CONFIG_VXFS_FS is not set
 # CONFIG_HPFS_FS is not set
 # CONFIG_QNX4FS_FS is not set
