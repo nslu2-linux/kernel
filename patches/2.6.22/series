@@ -7,6 +7,7 @@
 # Patches to be submitted upstream
 01-add-select-GENERIC_GPIO.patch
 02-remove-unused-var-pata_ixp4xx_cf.patch
+03-revert-ixp435-support.patch
 07-trivial-Kconfig-cleanup.patch
 08-ixp4xx-freq-fixup.patch
 09-trivial-nslu2-nas100d-cleanup.patch
