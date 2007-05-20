@@ -17,8 +17,19 @@
 #ENDIAN = l
 ENDIAN = b
 MAJORVER = 2.6
-BASEVER  = 2.6.20
-PATCHVER = 2.6.20
+
+# Previous Stable
+# BASEVER  = 2.6.20
+# PATCHVER = 2.6.20
+
+# Latest Stable
+BASEVER  = 2.6.21.1
+PATCHVER = 2.6.21
+
+# Latest Development
+# BASEVER  = 2.6.21
+# PATCHVER = 2.6.22
+
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
@@ -123,7 +134,7 @@ downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz :
 	  wget ${ARM_KERNEL_SHIM_SOURCE} )
 
 modules-${SNAPSHOT}-${ARCH}.tar.gz: vmlinuz-${SNAPSHOT}-${ARCH}
-	tar -C modules-${SNAPSHOT}-${ARCH} -zcf modules-${SNAPSHOT}-${ARCH}.tar.gz lib/modules/${SNAPSHOT}
+	tar -C modules-${SNAPSHOT}-${ARCH} -zcf modules-${SNAPSHOT}-${ARCH}.tar.gz lib/modules/${PATCHVER}
 
 vmlinuz-ixp4xx-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
 ifeq (${ENDIAN},b)
