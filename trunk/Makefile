@@ -134,7 +134,11 @@ downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz :
 	  wget ${ARM_KERNEL_SHIM_SOURCE} )
 
 modules-${SNAPSHOT}-${ARCH}.tar.gz: vmlinuz-${SNAPSHOT}-${ARCH}
+ifeq (${SNAPSHOT},${BASEVER})
 	tar -C modules-${SNAPSHOT}-${ARCH} -zcf modules-${SNAPSHOT}-${ARCH}.tar.gz lib/modules/${PATCHVER}
+else
+	tar -C modules-${SNAPSHOT}-${ARCH} -zcf modules-${SNAPSHOT}-${ARCH}.tar.gz lib/modules/${SNAPSHOT}
+endif
 
 vmlinuz-ixp4xx-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
 ifeq (${ENDIAN},b)
