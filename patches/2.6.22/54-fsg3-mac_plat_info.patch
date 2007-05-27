@@ -1,0 +1,40 @@
+Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
+===================================================================
+--- linux-2.6.22-rc3-armeb.orig/arch/arm/mach-ixp4xx/fsg-setup.c	2007-05-27 05:03:46.000000000 -0700
++++ linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/fsg-setup.c	2007-05-27 12:55:57.000000000 -0700
+@@ -81,10 +81,35 @@
+ 	.resource	= &fsg_uart_resource,
+ };
+ 
++/* Built-in 10/100 Ethernet MAC interfaces */
++static struct mac_plat_info fsg_plat_mac[] = {
++        {
++                .phy            = 5,
++                .rxq            = 3,
++        }, {
++                .phy            = 4,
++                .rxq            = 4,
++        }
++};
++
++static struct platform_device fsg_mac[] = {
++        {
++                .name                   = "ixp4xx_eth",
++                .id                     = IXP4XX_ETH_NPEB,
++                .dev.platform_data      = fsg_plat_mac,
++        }, {
++                .name                   = "ixp4xx_eth",
++                .id                     = IXP4XX_ETH_NPEC,
++                .dev.platform_data      = fsg_plat_mac + 1,
++        }
++};
++
+ static struct platform_device *fsg_devices[] __initdata = {
+ 	&fsg_i2c_gpio,
+ 	&fsg_flash,
+         &fsg_uart,
++	&fsg_mac[0],
++	&fsg_mac[1],
+ };
+ 
+ #ifdef CONFIG_LEDS_CLASS
