@@ -1,11 +1,11 @@
-This variable appears to be unused. Remove it.
+The 'rc' variable is unused according to GCC. Remove it.
 
 Signed-off-by: Michael-Luke Jones
 
-Index: linux-2.6.22-rc1-armeb/drivers/ata/pata_ixp4xx_cf.c
+Index: linux-2.6.22-rc2-git3-armeb/drivers/ata/pata_ixp4xx_cf.c
 ===================================================================
---- linux-2.6.22-rc1-armeb.orig/drivers/ata/pata_ixp4xx_cf.c	2007-05-13 06:43:52.000000000 -0700
-+++ linux-2.6.22-rc1-armeb/drivers/ata/pata_ixp4xx_cf.c	2007-05-13 07:15:02.000000000 -0700
+--- linux-2.6.22-rc2-git3-armeb.orig/drivers/ata/pata_ixp4xx_cf.c	2007-05-23 14:33:19.000000000 -0700
++++ linux-2.6.22-rc2-git3-armeb/drivers/ata/pata_ixp4xx_cf.c	2007-05-24 04:32:39.000000000 -0700
 @@ -178,7 +178,6 @@
  	struct ata_host *host;
  	struct ata_port *ap;

@@ -3,10 +3,10 @@ isn't correct any more.
 
 Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
 
-Index: linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/Kconfig
+Index: linux-2.6.22-rc2-git3-armeb/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.22-rc1-arm.orig/arch/arm/mach-ixp4xx/Kconfig	2007-05-12 23:36:07.000000000 -0700
-+++ linux-2.6.22-rc1-arm/arch/arm/mach-ixp4xx/Kconfig	2007-05-12 23:37:48.000000000 -0700
+--- linux-2.6.22-rc2-git3-armeb.orig/arch/arm/mach-ixp4xx/Kconfig	2007-05-23 14:33:19.000000000 -0700
++++ linux-2.6.22-rc2-git3-armeb/arch/arm/mach-ixp4xx/Kconfig	2007-05-23 14:33:22.000000000 -0700
 @@ -104,9 +104,6 @@
  	  DSM-G600 RevA device. For more information on this platform,
  	  see http://www.nslu2-linux.org/wiki/DSMG600/HomePage

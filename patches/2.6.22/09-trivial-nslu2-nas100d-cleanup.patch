@@ -5,10 +5,10 @@ are included.
 
 Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
 
-Index: linux-2.6.21-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.22-rc2-git3-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.21-armeb.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-09 07:32:43.000000000 -0700
-+++ linux-2.6.21-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-09 07:32:46.000000000 -0700
+--- linux-2.6.22-rc2-git3-armeb.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-23 14:33:28.000000000 -0700
++++ linux-2.6.22-rc2-git3-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-05-23 14:40:19.000000000 -0700
 @@ -50,26 +50,26 @@
  static struct resource nslu2_led_resources[] = {
  	{
@@ -54,10 +54,10 @@ Index: linux-2.6.21-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
  	 * to have it first in order to see debug messages, and so that
  	 * it does *not* get removed if platform_add_devices fails!
  	 */
-Index: linux-2.6.21-armeb/include/asm-arm/arch-ixp4xx/nslu2.h
+Index: linux-2.6.22-rc2-git3-armeb/include/asm-arm/arch-ixp4xx/nslu2.h
 ===================================================================
---- linux-2.6.21-armeb.orig/include/asm-arm/arch-ixp4xx/nslu2.h	2007-05-09 07:32:43.000000000 -0700
-+++ linux-2.6.21-armeb/include/asm-arm/arch-ixp4xx/nslu2.h	2007-05-09 07:32:46.000000000 -0700
+--- linux-2.6.22-rc2-git3-armeb.orig/include/asm-arm/arch-ixp4xx/nslu2.h	2007-05-23 08:23:12.000000000 -0700
++++ linux-2.6.22-rc2-git3-armeb/include/asm-arm/arch-ixp4xx/nslu2.h	2007-05-23 14:40:19.000000000 -0700
 @@ -9,7 +9,7 @@
   * based on ixdp425.h:
   *	Copyright 2004 (c) MontaVista, Software, Inc.
@@ -132,10 +132,10 @@ Index: linux-2.6.21-armeb/include/asm-arm/arch-ixp4xx/nslu2.h
 +#define NSLU2_LED_DISK2_BM	(1L << NSLU2_LED_DISK2_GPIO)
  
  
-Index: linux-2.6.21-armeb/include/asm-arm/arch-ixp4xx/nas100d.h
+Index: linux-2.6.22-rc2-git3-armeb/include/asm-arm/arch-ixp4xx/nas100d.h
 ===================================================================
---- linux-2.6.21-armeb.orig/include/asm-arm/arch-ixp4xx/nas100d.h	2007-04-25 20:08:32.000000000 -0700
-+++ linux-2.6.21-armeb/include/asm-arm/arch-ixp4xx/nas100d.h	2007-05-09 07:34:14.000000000 -0700
+--- linux-2.6.22-rc2-git3-armeb.orig/include/asm-arm/arch-ixp4xx/nas100d.h	2007-05-23 08:23:12.000000000 -0700
++++ linux-2.6.22-rc2-git3-armeb/include/asm-arm/arch-ixp4xx/nas100d.h	2007-05-23 14:40:19.000000000 -0700
 @@ -10,7 +10,7 @@
   * based on ixdp425.h:
   *	Copyright 2004 (c) MontaVista, Software, Inc.
@@ -180,10 +180,10 @@ Index: linux-2.6.21-armeb/include/asm-arm/arch-ixp4xx/nas100d.h
  
  #define NAS100D_PB_IRQ          IRQ_IXP4XX_GPIO14
  #define NAS100D_RB_IRQ          IRQ_IXP4XX_GPIO4
-Index: linux-2.6.21-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
+Index: linux-2.6.22-rc2-git3-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.21-armeb.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-05-09 07:32:43.000000000 -0700
-+++ linux-2.6.21-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-05-09 07:34:55.000000000 -0700
+--- linux-2.6.22-rc2-git3-armeb.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-05-23 08:23:12.000000000 -0700
++++ linux-2.6.22-rc2-git3-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-05-23 14:40:19.000000000 -0700
 @@ -155,7 +155,8 @@
  
  	pm_power_off = nas100d_power_off;
