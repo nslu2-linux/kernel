@@ -1,0 +1,26 @@
+If MACH_GTWX5715 is set in Kconfig, this code sets the mach id
+automatically. Howeber, this means that any IXP4xx kernel which
+is setup to support the gtwx5715 board will not successfully boot
+on any other board.
+
+If the bootloader sets the wrong mach id, it should be set correctly
+by a kernel shim.
+
+Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
+
+Index: linux-2.6.22-rc2-git7-armeb/arch/arm/boot/compressed/head-xscale.S
+===================================================================
+--- linux-2.6.22-rc2-git7-armeb.orig/arch/arm/boot/compressed/head-xscale.S	2007-04-25 20:08:32.000000000 -0700
++++ linux-2.6.22-rc2-git7-armeb/arch/arm/boot/compressed/head-xscale.S	2007-05-25 03:44:02.000000000 -0700
+@@ -41,11 +41,6 @@
+ 		mov	r7, #MACH_TYPE_COTULLA_IDP
+ #endif
+ 
+-#ifdef  CONFIG_MACH_GTWX5715
+-               mov     r7, #(MACH_TYPE_GTWX5715 & 0xff)
+-               orr     r7, r7, #(MACH_TYPE_GTWX5715 & 0xff00)
+-#endif
+-
+ #ifdef CONFIG_ARCH_IXP2000
+ 		mov	r1, #-1
+ 		mov	r0, #0xd6000000

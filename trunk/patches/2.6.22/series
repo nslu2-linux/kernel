@@ -5,9 +5,10 @@
 
 # 0?-* patches
 # Patches to be submitted upstream
-01-add-select-GENERIC_GPIO.patch
 02-remove-unused-var-pata_ixp4xx_cf.patch
-03-revert-ixp435-support.patch
+04-remove-gtwx5715-mach-id-hack.patch
+05-fixup-gtwx5715-support.patch
+06-cleanup-ixp4xx-headers.patch
 07-trivial-Kconfig-cleanup.patch
 08-ixp4xx-freq-fixup.patch
 09-trivial-nslu2-nas100d-cleanup.patch
@@ -74,3 +75,6 @@
 #92-nas100d-dflt-cmdline.patch
 #93-dsmg600-dflt-cmdline.patch
 
+# The following patch is a temporary hack to fix the ixp4xx net
+# driver compile.
+#99-revert-ixp435-support.patch
