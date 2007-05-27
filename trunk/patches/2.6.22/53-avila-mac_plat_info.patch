@@ -1,0 +1,41 @@
+Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/avila-setup.c
+===================================================================
+--- linux-2.6.22-rc3-armeb.orig/arch/arm/mach-ixp4xx/avila-setup.c	2007-05-27 05:03:46.000000000 -0700
++++ linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/avila-setup.c	2007-05-27 12:51:17.000000000 -0700
+@@ -123,10 +123,35 @@
+ 	.resource		= avila_pata_resources,
+ };
+ 
++/* Built-in 10/100 Ethernet MAC interfaces */
++static struct mac_plat_info avila_plat_mac[] = {
++        {
++                .phy            = 0,
++                .rxq            = 3,
++        }, {
++                .phy            = 1,
++                .rxq            = 4,
++	}
++};
++
++static struct platform_device avila_mac[] = {
++        {
++                .name                   = "ixp4xx_eth",
++                .id                     = IXP4XX_ETH_NPEB,
++                .dev.platform_data      = avila_plat_mac,
++        }, {
++                .name                   = "ixp4xx_eth",
++                .id                     = IXP4XX_ETH_NPEC,
++                .dev.platform_data      = avila_plat_mac + 1,
++	}
++};
++
+ static struct platform_device *avila_devices[] __initdata = {
+ 	&avila_i2c_gpio,
+ 	&avila_flash,
+-	&avila_uart
++	&avila_uart,
++	&avila_mac[0],
++	&avila_mac[1],
+ };
+ 
+ static void __init avila_init(void)
