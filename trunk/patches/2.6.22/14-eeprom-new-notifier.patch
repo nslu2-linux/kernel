@@ -1,11 +1,11 @@
-Add EEPROM notifiers
+Add EEPROM notifier
 
 These help board level code by allowing a callback when EEPROMs are
-loaded, this permits system level configuration to be loaded from the
+loaded, permitting system level configuration to be loaded from the
 EEPROM.  This is particularly useful when the ethernet MAC ids are
 stored in EEPROM and when the ethernet hardware is generic (so it
-has no board level knowledge), then the MACs can be loaded into
-the 'maclist' code and read out by the ethernet config.
+has no board level knowledge), then the MACs can be loaded via the
+board setup code into the ethernet driver. 
 
 Signed-off-by: John Bowler <jbowler@acm.org>
 
@@ -118,7 +118,7 @@ Index: linux-2.6.22-rc1-arm/include/linux/eeprom.h
 +#ifndef _LINUX_EEPROM_H
 +#define _LINUX_EEPROM_H
 +/*
-+ * $Id: 45-eeprom-new-notifier.patch,v 1.2 2006/03/27 11:10:19 azummo Exp $
++ *  EEPROM notifier header
 + *
 + *  Copyright (C) 2006 John Bowler
 + */
