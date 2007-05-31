@@ -33,10 +33,10 @@ PATCHVER = 2.6.21
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
 
-APEX_REVISION = 1.4.18
+APEX_REVISION = 1.5.4
 APEX_CONFIG = slugos
 
-ARM_KERNEL_SHIM_REVISION = 1.3
+ARM_KERNEL_SHIM_REVISION = 1.5
 
 DEFCONFIG=defconfig
 
@@ -95,7 +95,7 @@ apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config: \
 	( tar zxf downloads/apex-${APEX_REVISION}.tar.gz ; \
 	  cd apex-${APEX_REVISION} ; \
 	  ln -s ../patches/apex patches ; \
-	  quilt push -a )
+	  [ ! -e patches/series ] || quilt push -a )
 	touch apex-${APEX_REVISION}/Makefile
 
 downloads/apex-${APEX_REVISION}.tar.gz :
@@ -115,7 +115,7 @@ arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-%${ENDIAN}e.h: \
 	[ -e arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ] || \
 	( tar zxf downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz ; \
           mv arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} foo ; \
-          mv foo/${ARM_KERNEL_SHIM_REVISION} arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
+          mv foo/1.3 arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
 	  rmdir foo ; \
 	  cd arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
 	  ln -s ../patches/arm-kernel-shim patches ; \
