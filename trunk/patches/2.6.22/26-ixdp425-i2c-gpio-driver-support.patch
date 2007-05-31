@@ -1,16 +1,16 @@
-Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/ixdp425-setup.c
+Index: linux-2.6.22-rc3-git2-armeb/arch/arm/mach-ixp4xx/ixdp425-setup.c
 ===================================================================
---- linux-2.6.22-rc3-armeb.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-05-27 04:36:01.000000000 -0700
-+++ linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-05-27 04:36:44.000000000 -0700
-@@ -11,6 +11,7 @@
- #include <linux/kernel.h>
- #include <linux/serial.h>
+--- linux-2.6.22-rc3-git2-armeb.orig/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-05-31 04:13:44.000000000 -0700
++++ linux-2.6.22-rc3-git2-armeb/arch/arm/mach-ixp4xx/ixdp425-setup.c	2007-05-31 04:14:01.000000000 -0700
+@@ -15,6 +15,7 @@
+ #include <linux/tty.h>
  #include <linux/serial_8250.h>
+ #include <linux/slab.h>
 +#include <linux/i2c-gpio.h>
  
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -35,18 +36,17 @@
+ #include <asm/types.h>
+ #include <asm/setup.h>
+@@ -44,18 +45,17 @@
  	.resource	= &ixdp425_flash_resource,
  };
  
@@ -34,7 +34,7 @@ Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/ixdp425-setup.c
  };
  
  static struct resource ixdp425_uart_resources[] = {
-@@ -93,7 +93,7 @@
+@@ -102,7 +102,7 @@
  };
  
  static struct platform_device *ixdp425_devices[] __initdata = {
