@@ -1,65 +1,24 @@
-Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/gtwx5715-pci.c
+Index: linux-2.6.22-rc3-git2-armeb/arch/arm/mach-ixp4xx/gtwx5715-pci.c
 ===================================================================
---- linux-2.6.22-rc3-armeb.orig/arch/arm/mach-ixp4xx/gtwx5715-pci.c	2007-05-27 04:49:56.000000000 -0700
-+++ linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/gtwx5715-pci.c	2007-05-27 04:59:42.000000000 -0700
-@@ -24,17 +24,11 @@
- 
+--- linux-2.6.22-rc3-git2-armeb.orig/arch/arm/mach-ixp4xx/gtwx5715-pci.c	2007-05-31 04:06:05.000000000 -0700
++++ linux-2.6.22-rc3-git2-armeb/arch/arm/mach-ixp4xx/gtwx5715-pci.c	2007-05-31 04:12:02.000000000 -0700
+@@ -25,17 +25,14 @@
  #include <linux/pci.h>
  #include <linux/init.h>
--#include <linux/delay.h>
--#include <asm/mach-types.h>
+ #include <linux/delay.h>
 +#include <linux/irq.h>
 +
+ #include <asm/mach-types.h>
  #include <asm/hardware.h>
--#include <asm/irq.h>
--#include <asm/arch/gtwx5715.h>
+ #include <asm/irq.h>
+ #include <asm/arch/gtwx5715.h>
  #include <asm/mach/pci.h>
--
+ 
 -extern void ixp4xx_pci_preinit(void);
 -extern int ixp4xx_setup(int nr, struct pci_sys_data *sys);
 -extern struct pci_bus *ixp4xx_scan_bus(int nr, struct pci_sys_data *sys);
 -
-+#include <asm/mach-types.h>
- 
+-
  /*
   * The exact GPIO pins and IRQs are defined in arch-ixp4xx/gtwx5715.h
-Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/gtwx5715-setup.c
-===================================================================
---- linux-2.6.22-rc3-armeb.orig/arch/arm/mach-ixp4xx/gtwx5715-setup.c	2007-05-27 04:49:56.000000000 -0700
-+++ linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/gtwx5715-setup.c	2007-05-27 04:55:56.000000000 -0700
-@@ -22,22 +22,13 @@
-  *
-  */
- 
--#include <linux/init.h>
--#include <linux/device.h>
-+#include <linux/kernel.h>
- #include <linux/serial.h>
--#include <linux/tty.h>
- #include <linux/serial_8250.h>
--#include <linux/slab.h>
- 
--#include <asm/types.h>
--#include <asm/setup.h>
--#include <asm/memory.h>
--#include <asm/hardware.h>
--#include <asm/irq.h>
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/flash.h>
--#include <asm/arch/gtwx5715.h>
- 
- /*
-  * Xscale UART registers are 32 bits wide with only the least
-Index: linux-2.6.22-rc3-armeb/include/asm-arm/arch-ixp4xx/hardware.h
-===================================================================
---- linux-2.6.22-rc3-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-05-27 05:02:47.000000000 -0700
-+++ linux-2.6.22-rc3-armeb/include/asm-arm/arch-ixp4xx/hardware.h	2007-05-27 05:03:31.000000000 -0700
-@@ -41,6 +41,7 @@
- #include "ixdp425.h"
- #include "avila.h"
- #include "coyote.h"
-+#include "gtwx5715.h"
- #include "prpmc1100.h"
- #include "nslu2.h"
- #include "nas100d.h"
+  * Slot 0 isn't actually populated with a card connector but

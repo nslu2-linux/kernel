@@ -6,13 +6,8 @@
 # 0?-* patches
 # Patches to be submitted upstream
 02-remove-unused-var-pata_ixp4xx_cf.patch
-03-remove-extern-from-ixp4xx-c-files.patch
 04-remove-gtwx5715-mach-id-hack.patch
 05-fixup-gtwx5715-support.patch
-06-cleanup-ixp4xx-headers.patch
-07-trivial-Kconfig-cleanup.patch
-08-ixp4xx-freq-fixup.patch
-09-trivial-nslu2-nas100d-cleanup.patch
 
 # 1?-* patches
 # Patches for upstream next cycle

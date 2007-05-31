@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.22-rc3
-# Sun May 27 10:19:23 2007
+# Linux kernel version: 2.6.22-rc3-git2
+# Thu May 31 07:10:57 2007
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -176,6 +176,8 @@ CONFIG_MACH_FSG=y
 #
 CONFIG_DMABOUNCE=y
 # CONFIG_IXP4XX_INDIRECT_PCI is not set
+CONFIG_IXP4XX_QMGR=y
+CONFIG_IXP4XX_NPE=y
 
 #
 # Processor Type
@@ -759,7 +761,6 @@ CONFIG_ISCSI_TCP=m
 # CONFIG_SCSI_DC390T is not set
 # CONFIG_SCSI_NSP32 is not set
 # CONFIG_SCSI_DEBUG is not set
-# CONFIG_SCSI_ESP_CORE is not set
 # CONFIG_SCSI_SRP is not set
 CONFIG_ATA=m
 # CONFIG_ATA_NONSTANDARD is not set
@@ -875,6 +876,7 @@ CONFIG_TUN=m
 #
 CONFIG_NET_ETHERNET=y
 CONFIG_MII=y
+CONFIG_IXP4XX_ETH=y
 # CONFIG_HAPPYMEAL is not set
 # CONFIG_SUNGEM is not set
 # CONFIG_CASSINI is not set
@@ -1294,6 +1296,7 @@ CONFIG_LEDS_IXP4XX=y
 CONFIG_LEDS_TRIGGERS=y
 CONFIG_LEDS_TRIGGER_TIMER=y
 CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+CONFIG_LEDS_TRIGGER_CPU_ACTIVITY=y
 
 #
 # Multimedia devices

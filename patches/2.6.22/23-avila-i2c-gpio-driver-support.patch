@@ -1,16 +1,16 @@
-Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/avila-setup.c
+Index: linux-2.6.22-rc3-git2-armeb/arch/arm/mach-ixp4xx/avila-setup.c
 ===================================================================
---- linux-2.6.22-rc3-armeb.orig/arch/arm/mach-ixp4xx/avila-setup.c	2007-05-27 04:56:33.000000000 -0700
-+++ linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/avila-setup.c	2007-05-27 04:57:00.000000000 -0700
-@@ -14,6 +14,7 @@
- #include <linux/kernel.h>
- #include <linux/serial.h>
+--- linux-2.6.22-rc3-git2-armeb.orig/arch/arm/mach-ixp4xx/avila-setup.c	2007-05-31 04:05:33.000000000 -0700
++++ linux-2.6.22-rc3-git2-armeb/arch/arm/mach-ixp4xx/avila-setup.c	2007-05-31 04:12:50.000000000 -0700
+@@ -18,6 +18,7 @@
+ #include <linux/tty.h>
  #include <linux/serial_8250.h>
+ #include <linux/slab.h>
 +#include <linux/i2c-gpio.h>
  
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -38,18 +39,17 @@
+ #include <asm/types.h>
+ #include <asm/setup.h>
+@@ -47,18 +48,17 @@
  	.resource	= &avila_flash_resource,
  };
  
@@ -34,7 +34,7 @@ Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/avila-setup.c
  };
  
  static struct resource avila_uart_resources[] = {
-@@ -124,7 +124,7 @@
+@@ -133,7 +133,7 @@
  };
  
  static struct platform_device *avila_devices[] __initdata = {

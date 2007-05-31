@@ -1,8 +1,8 @@
-Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/avila-setup.c
+Index: linux-2.6.22-rc3-git2-armeb/arch/arm/mach-ixp4xx/avila-setup.c
 ===================================================================
---- linux-2.6.22-rc3-armeb.orig/arch/arm/mach-ixp4xx/avila-setup.c	2007-05-27 05:03:46.000000000 -0700
-+++ linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/avila-setup.c	2007-05-27 12:51:17.000000000 -0700
-@@ -123,10 +123,35 @@
+--- linux-2.6.22-rc3-git2-armeb.orig/arch/arm/mach-ixp4xx/avila-setup.c	2007-05-31 04:12:50.000000000 -0700
++++ linux-2.6.22-rc3-git2-armeb/arch/arm/mach-ixp4xx/avila-setup.c	2007-05-31 04:14:07.000000000 -0700
+@@ -132,10 +132,35 @@
  	.resource		= avila_pata_resources,
  };
  
