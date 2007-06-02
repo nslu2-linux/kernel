@@ -27,6 +27,10 @@
 
 #define MACH_TYPE		   597
 
+#define CREATE_ATAGS
+
+#define GUARANTEE_ATAG_CMDLINE
+
 /* Uncomment one of these if you need to switch the CPU into a
    specific mode. */
 //#define FORCE_LITTLEENDIAN

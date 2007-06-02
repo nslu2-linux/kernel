@@ -114,9 +114,6 @@ arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}/config-%${ENDIAN}e.h: \
 		downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz
 	[ -e arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ] || \
 	( tar zxf downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz ; \
-          mv arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} foo ; \
-          mv foo/1.3 arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
-	  rmdir foo ; \
 	  cd arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION} ; \
 	  ln -s ../patches/arm-kernel-shim patches ; \
 	  [ ! -e patches/series ] || quilt push -a )
