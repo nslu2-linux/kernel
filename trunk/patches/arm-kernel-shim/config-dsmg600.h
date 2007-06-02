@@ -27,12 +27,6 @@
 
 #define MACH_TYPE		   964
 
-/* The DSM-G600 RedBoot sets up the ATAGs correctly */
-#define PASSTHROUGH_ATAGS
-
-/* but if the command line passed in is empty, use the default above. */
-#define CMDLINE_IF_NONE
-
 /* Uncomment one of these if you need to switch the CPU into a
    specific mode. */
 //#define FORCE_LITTLEENDIAN
