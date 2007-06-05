@@ -33,9 +33,7 @@
 # 4?-* patches
 # ixp4xx-net driver patches
 41-ixp4xx-net-fuses.patch
-42-ixp4xx-net-qmgr.patch
-43-ixp4xx-net-npe.patch
-44-ixp4xx-net-eth.patch
+42-ixp4xx-net-drivers.patch
 
 # 5?-* patches
 # Add platform setup code for platform ixp_npe ethernet driver
