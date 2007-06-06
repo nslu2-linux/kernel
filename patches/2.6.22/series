@@ -44,10 +44,10 @@
 
 # 6?-* patches
 # Add platform setup code for MAC address loading
-#61-nslu2-set-hwaddr.patch
-#62-nas100d-set-hwaddr.patch
-#63-avila-set-hwaddr.patch
-#64-fsg3-set-hwaddr.patch
+61-nslu2-setup-mac.patch
+62-nas100d-setup-mac.patch
+63-avila-setup-mac.patch
+#64-fsg3-setup-mac.patch
 
 # 7?-* patches
 # Add platform setup code for mtd microcode loading
@@ -58,6 +58,7 @@
 
 # 8?-* patches
 # Patches for eventual upstream
+64-fsg3-setup-mac.patch
 82-leds-arm-cpu-activity.patch
 
 # 9?-* patches
