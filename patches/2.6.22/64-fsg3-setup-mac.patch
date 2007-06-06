@@ -3,7 +3,7 @@ Index: linux-2.6.22-rc4-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 --- linux-2.6.22-rc4-armeb.orig/arch/arm/mach-ixp4xx/fsg-setup.c
 +++ linux-2.6.22-rc4-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 @@ -11,6 +11,7 @@
- #include <linux/serial_8250.h>       
+ #include <linux/serial_8250.h>
  #include <linux/leds.h>
  #include <linux/i2c-gpio.h>
 +#include <linux/mtd/mtd.h>

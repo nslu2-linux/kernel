@@ -63,11 +63,12 @@
 # 9?-* patches
 # Not for upstream
 90-increase-entropy-pools.patch
-# The following three patches should be enabled to boot our kernel
-# on hardware with unfriendly bootloaders without a kernel shim.
-#91-nslu2-dflt-cmdline.patch
-#92-nas100d-dflt-cmdline.patch
-#93-dsmg600-dflt-cmdline.patch
+# These should eventually be replaced by 3?-* patches,
+# but the respective RTC drivers need to be updated first.
+91-nslu2-rtc-fixup.patch
+92-nas100d-rtc-fixup.patch
+93-avila-rtc-fixup.patch
+95-dsmg600-rtc-fixup.patch
 
 # The following patch is a temporary hack to fix the ixp4xx net
 # driver compile.
