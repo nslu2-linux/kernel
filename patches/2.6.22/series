@@ -16,6 +16,7 @@
 14-eeprom-new-notifier.patch
 15-nas100d-pata-artop-single-port.patch
 16-dsmg600-auto-power-on.patch
+17-nas100d-auto-power-on.patch
 
 # 2?-* patches
 # i2c-gpio driver platform support
@@ -75,4 +76,3 @@
 # The following patch is a temporary hack to fix the ixp4xx net
 # driver compile.
 #99-revert-ixp435-support.patch
-17-nas100d-auto-power-on.patch
