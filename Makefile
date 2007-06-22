@@ -23,12 +23,12 @@ MAJORVER = 2.6
 # PATCHVER = 2.6.20
 
 # Latest Stable
-BASEVER  = 2.6.21.1
-PATCHVER = 2.6.21
+# BASEVER  = 2.6.21.1
+# PATCHVER = 2.6.21
 
 # Latest Development
-# BASEVER  = 2.6.21
-# PATCHVER = 2.6.22
+BASEVER  = 2.6.21
+PATCHVER = 2.6.22
 
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
@@ -69,7 +69,8 @@ kernel: vmlinuz-nslu2-${SNAPSHOT}-${ARCH} vmlinuz-nas100d-${SNAPSHOT}-${ARCH} vm
 modules: modules-${SNAPSHOT}-${ARCH}.tar.gz
 patched: linux-${SNAPSHOT}-${ARCH}/.config 
 apex:   apex-${APEX_CONFIG}-nslu2-${ARCH}-${APEX_REVISION}.bin \
-	apex-${APEX_CONFIG}-nas100d-${ARCH}-${APEX_REVISION}.bin
+	apex-${APEX_CONFIG}-nas100d-${ARCH}-${APEX_REVISION}.bin \
+	apex-${APEX_CONFIG}-dsmg600-${ARCH}-${APEX_REVISION}.bin
 arm-kernel-shim: \
 	arm-kernel-shim-nslu2${ENDIAN}e.bin \
 	arm-kernel-shim-nas100d${ENDIAN}e.bin \
