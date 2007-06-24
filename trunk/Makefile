@@ -74,7 +74,8 @@ apex:   apex-${APEX_CONFIG}-nslu2-${ARCH}-${APEX_REVISION}.bin \
 arm-kernel-shim: \
 	arm-kernel-shim-nslu2${ENDIAN}e.bin \
 	arm-kernel-shim-nas100d${ENDIAN}e.bin \
-	arm-kernel-shim-dsmg600${ENDIAN}e.bin
+	arm-kernel-shim-dsmg600${ENDIAN}e.bin \
+	arm-kernel-shim-fsg3${ENDIAN}e.bin
 
 apex-${APEX_CONFIG}-%-${ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config
 	( cd apex-${APEX_REVISION} ; \
@@ -150,25 +151,11 @@ else
 		'xp $$,4'
 endif
 
-vmlinuz-fsg3-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH}
-ifeq (${ENDIAN},b)
-	devio '<<'$< >$@ \
-		'wb 0xe3a01c04,4' 'wb 0xe3811043,4' \
-		'cp$$'
-else
-		devio '<<'$< >$@ \
-		'wb 0xe3a01c04,4' 'wb 0xe3811043,4' \
-		'wb 0xee110f10,4' \
-		'wb 0xe3c00080,4' \
-		'wb 0xee010f10,4' \
-		'xp $$,4'
-endif
-
 vmlinuz-%-${SNAPSHOT}-${ARCH}: vmlinuz-${SNAPSHOT}-${ARCH} arm-kernel-shim-%${ENDIAN}e.bin
 ifeq (${ENDIAN},b)
-	cat arm-kernel-shim-$*${ENDIAN}e.bin vmlinuz-${SNAPSHOT}-${ARCH}>$@
+	cat arm-kernel-shim-$*${ENDIAN}e.bin vmlinuz-${SNAPSHOT}-${ARCH} > $@
 else
-	( cat arm-kernel-shim-$*${ENDIAN}e.bin vmlinuz-${SNAPSHOT}-${ARCH} >$$$$ ; \
+	( cat arm-kernel-shim-$*${ENDIAN}e.bin vmlinuz-${SNAPSHOT}-${ARCH} > $$$$ ; \
 	  devio '<<'$$$$ >$@ 'xp $$,4' ; \
 	  rm -f $$$$ )
 endif
