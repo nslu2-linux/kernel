@@ -1,8 +1,12 @@
-Index: linux-2.6.22-rc4-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
+---
+ arch/arm/mach-ixp4xx/fsg-setup.c |   31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+Index: linux-2.6.22-rc5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 ===================================================================
---- linux-2.6.22-rc4-armeb.orig/arch/arm/mach-ixp4xx/fsg-setup.c
-+++ linux-2.6.22-rc4-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
-@@ -11,6 +11,7 @@
+--- linux-2.6.22-rc5-armeb.orig/arch/arm/mach-ixp4xx/fsg-setup.c
++++ linux-2.6.22-rc5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
+@@ -16,6 +16,7 @@
  #include <linux/serial_8250.h>
  #include <linux/leds.h>
  #include <linux/i2c-gpio.h>
@@ -10,9 +14,9 @@ Index: linux-2.6.22-rc4-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
  
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
-@@ -130,6 +131,34 @@ static struct platform_device fsg_leds =
+@@ -175,6 +176,34 @@
+ 	&fsg_mac[1],
  };
- #endif
  
 +static void fsg_flash_add(struct mtd_info *mtd)
 +{
@@ -45,8 +49,8 @@ Index: linux-2.6.22-rc4-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
  static void __init fsg_init(void)
  {
  	ixp4xx_sys_init();
-@@ -153,6 +182,8 @@ static void __init fsg_init(void)
- 	}
+@@ -190,6 +219,8 @@
+ 	(void)platform_device_register(&fsg_uart);
  
  	platform_add_devices(fsg_devices, ARRAY_SIZE(fsg_devices));
 +
