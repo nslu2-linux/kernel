@@ -13,10 +13,21 @@ Signed-off-by: Michael-Luke Jones <mlj28@cam.ac.uk>
 Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
 Signed-off-by: Michael Westerhof <mwester@dls.net>
 
-Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/Kconfig
+---
+ arch/arm/mach-ixp4xx/Kconfig           |    9 +
+ arch/arm/mach-ixp4xx/Makefile          |    2 
+ arch/arm/mach-ixp4xx/dsmg600-pci.c     |   74 +++++++++++++
+ arch/arm/mach-ixp4xx/dsmg600-power.c   |  130 ++++++++++++++++++++++++
+ arch/arm/mach-ixp4xx/dsmg600-setup.c   |  175 +++++++++++++++++++++++++++++++++
+ include/asm-arm/arch-ixp4xx/dsmg600.h  |   57 ++++++++++
+ include/asm-arm/arch-ixp4xx/hardware.h |    1 
+ include/asm-arm/arch-ixp4xx/irqs.h     |   10 +
+ 8 files changed, 458 insertions(+)
+
+Index: linux-2.6.21.1-armeb/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.21-arm.orig/arch/arm/mach-ixp4xx/Kconfig	2007-04-28 00:21:36.000000000 -0700
-+++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/Kconfig	2007-04-28 00:21:42.000000000 -0700
+--- linux-2.6.21.1-armeb.orig/arch/arm/mach-ixp4xx/Kconfig
++++ linux-2.6.21.1-armeb/arch/arm/mach-ixp4xx/Kconfig
 @@ -89,6 +89,15 @@
  	  NAS 100d device. For more information on this platform,
  	  see http://www.nslu2-linux.org/wiki/NAS100d/HomePage
@@ -33,10 +44,10 @@ Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/Kconfig
  #
  # Avila and IXDP share the same source for now. Will change in future
  #
-Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/Makefile
+Index: linux-2.6.21.1-armeb/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.21-arm.orig/arch/arm/mach-ixp4xx/Makefile	2007-04-28 00:21:36.000000000 -0700
-+++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/Makefile	2007-04-28 00:21:42.000000000 -0700
+--- linux-2.6.21.1-armeb.orig/arch/arm/mach-ixp4xx/Makefile
++++ linux-2.6.21.1-armeb/arch/arm/mach-ixp4xx/Makefile
 @@ -12,6 +12,7 @@
  obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx5715-pci.o
  obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
@@ -52,10 +63,10 @@ Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/Makefile
 +obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
  
  obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
-Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c
+Index: linux-2.6.21.1-armeb/arch/arm/mach-ixp4xx/dsmg600-pci.c
 ===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c	2007-04-28 00:21:42.000000000 -0700
+--- /dev/null
++++ linux-2.6.21.1-armeb/arch/arm/mach-ixp4xx/dsmg600-pci.c
 @@ -0,0 +1,74 @@
 +/*
 + * DSM-G600 board-level PCI initialization
@@ -131,11 +142,11 @@ Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-pci.c
 +}
 +
 +subsys_initcall(dsmg600_pci_init);
-Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
+Index: linux-2.6.21.1-armeb/arch/arm/mach-ixp4xx/dsmg600-power.c
 ===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-power.c	2007-04-28 00:21:42.000000000 -0700
-@@ -0,0 +1,125 @@
+--- /dev/null
++++ linux-2.6.21.1-armeb/arch/arm/mach-ixp4xx/dsmg600-power.c
+@@ -0,0 +1,130 @@
 +/*
 + * arch/arm/mach-ixp4xx/dsmg600-power.c
 + *
@@ -188,6 +199,13 @@ Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 +	if (*IXP4XX_GPIO_GPINR & DSMG600_PB_BM) {
 +
 +		/* IO Pin is 1 (button pushed) */
++		if (power_button_countdown > 0) {
++			power_button_countdown--;
++		}
++
++	} else {
++
++		/* Done on button release, to allow for auto-power-on mods. */
 +		if (power_button_countdown == 0) {
 +			/* Signal init to do the ctrlaltdel action, this will bypass
 +			 * init if it hasn't started and do a kernel_restart.
@@ -196,11 +214,9 @@ Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 +
 +			/* Change the state of the power LED to "blink" */
 +			gpio_line_set(DSMG600_LED_PWR_GPIO, IXP4XX_GPIO_LOW);
++		} else {
++			power_button_countdown = PBUTTON_HOLDDOWN_COUNT;
 +		}
-+		power_button_countdown--;
-+
-+	} else {
-+		power_button_countdown = PBUTTON_HOLDDOWN_COUNT;
 +	}
 +
 +	mod_timer(&dsmg600_power_timer, jiffies + msecs_to_jiffies(500));
@@ -261,10 +277,10 @@ Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-power.c
 +MODULE_AUTHOR("Michael Westerhof <mwester@dls.net>");
 +MODULE_DESCRIPTION("DSM-G600 Power/Reset driver");
 +MODULE_LICENSE("GPL");
-Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
+Index: linux-2.6.21.1-armeb/arch/arm/mach-ixp4xx/dsmg600-setup.c
 ===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c	2007-04-28 00:21:42.000000000 -0700
+--- /dev/null
++++ linux-2.6.21.1-armeb/arch/arm/mach-ixp4xx/dsmg600-setup.c
 @@ -0,0 +1,175 @@
 +/*
 + * DSM-G600 board-setup
@@ -441,10 +457,10 @@ Index: linux-2.6.21-arm/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +	.timer          = &ixp4xx_timer,
 +	.init_machine	= dsmg600_init,
 +MACHINE_END
-Index: linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/dsmg600.h
+Index: linux-2.6.21.1-armeb/include/asm-arm/arch-ixp4xx/dsmg600.h
 ===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/dsmg600.h	2007-04-28 00:21:42.000000000 -0700
+--- /dev/null
++++ linux-2.6.21.1-armeb/include/asm-arm/arch-ixp4xx/dsmg600.h
 @@ -0,0 +1,57 @@
 +/*
 + * DSM-G600 platform specific definitions
@@ -503,10 +519,10 @@ Index: linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/dsmg600.h
 +
 +#define DSMG600_LED_WLAN_GPIO	14
 +#define DSMG600_LED_WLAN_BM	(1L << DSMG600_LED_WLAN_GPIO)
-Index: linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/hardware.h
+Index: linux-2.6.21.1-armeb/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.21-arm.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-28 00:21:35.000000000 -0700
-+++ linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/hardware.h	2007-04-28 00:21:42.000000000 -0700
+--- linux-2.6.21.1-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h
++++ linux-2.6.21.1-armeb/include/asm-arm/arch-ixp4xx/hardware.h
 @@ -47,5 +47,6 @@
  #include "prpmc1100.h"
  #include "nslu2.h"
@@ -514,10 +530,10 @@ Index: linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/hardware.h
 +#include "dsmg600.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
-Index: linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/irqs.h
+Index: linux-2.6.21.1-armeb/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.21-arm.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-28 00:21:35.000000000 -0700
-+++ linux-2.6.21-arm/include/asm-arm/arch-ixp4xx/irqs.h	2007-04-28 00:21:42.000000000 -0700
+--- linux-2.6.21.1-armeb.orig/include/asm-arm/arch-ixp4xx/irqs.h
++++ linux-2.6.21.1-armeb/include/asm-arm/arch-ixp4xx/irqs.h
 @@ -118,4 +118,14 @@
  #define        IRQ_NAS100D_PCI_INTD    IRQ_IXP4XX_GPIO8
  #define        IRQ_NAS100D_PCI_INTE    IRQ_IXP4XX_GPIO7
