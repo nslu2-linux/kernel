@@ -19,8 +19,8 @@ ENDIAN = b
 MAJORVER = 2.6
 
 # Previous Stable
-# BASEVER  = 2.6.20
-# PATCHVER = 2.6.20
+# BASEVER  = 2.6.18
+# PATCHVER = 2.6.18
 
 # Latest Stable
 BASEVER  = 2.6.21.5
@@ -133,6 +133,9 @@ downloads/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz :
 	  wget ${ARM_KERNEL_SHIM_SOURCE} )
 
 modules-${SNAPSHOT}-${ARCH}.tar.gz: vmlinuz-${SNAPSHOT}-${ARCH}
+	( cd linux-${SNAPSHOT}-${ARCH} ; \
+	  INSTALL_MOD_PATH="../modules-${SNAPSHOT}-${ARCH}" ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm modules modules_install ) || true
+	rm -f modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/build modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/source
 ifeq (${SNAPSHOT},${BASEVER})
 	tar -C modules-${SNAPSHOT}-${ARCH} -zcf modules-${SNAPSHOT}-${ARCH}.tar.gz lib/modules/${PATCHVER}
 else
@@ -163,9 +166,6 @@ endif
 vmlinuz-${SNAPSHOT}-${ARCH}: linux-${SNAPSHOT}-${ARCH}/.config
 	( cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm bzImage )
-	( cd linux-${SNAPSHOT}-${ARCH} ; \
-	  INSTALL_MOD_PATH="../modules-${SNAPSHOT}-${ARCH}" ${MAKE} ${CROSS_COMPILE_FLAGS} ARCH=arm modules modules_install ) || true
-	rm -f modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/build modules-${SNAPSHOT}-${ARCH}/lib/modules/${SNAPSHOT}/source
 	cp linux-${SNAPSHOT}-${ARCH}/arch/arm/boot/zImage vmlinuz-${SNAPSHOT}-${ARCH}
 
 menuconfig: linux-${SNAPSHOT}-${ARCH}/.config
