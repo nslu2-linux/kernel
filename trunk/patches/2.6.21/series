@@ -27,6 +27,8 @@ squashfs/squashfs-force-O2.patch
 60-nas100d-artop-temp-fix.patch
 66-hwmon-ad7418.patch
 78-velocity-BE.patch
+80-kexec-atags.patch
+81-kexec-cmdline.patch
 85-nslu2-rtc-fixup.patch
 86-nas100d-rtc-fixup.patch
 87-dsmg600-rtc-fixup.patch
@@ -40,4 +42,3 @@ squashfs/squashfs-force-O2.patch
 96-fsg3-support.patch
 99-avila-mtd-microcode.patch
 99-avila-loft-mac-platform.patch
-
