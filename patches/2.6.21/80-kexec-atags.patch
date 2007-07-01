@@ -1,51 +1,14 @@
---- linux-2.6.21.orig/arch/arm/kernel/relocate_kernel.S		2007-04-27 16:49:26.000000000 -0500
-+++ linux-2.6.21/arch/arm/kernel/relocate_kernel.S	2007-06-30 01:31:16.000000000 -0500
-@@ -3,10 +3,25 @@
-  */
+--- linux-2.6.21.5/arch/arm/kernel/setup.c.orig	2007-06-30 16:39:38.000000000 -0500
++++ linux-2.6.21.5/arch/arm/kernel/setup.c	2007-06-30 19:02:51.000000000 -0500
+@@ -23,6 +23,7 @@
+ #include <linux/cpu.h>
+ #include <linux/interrupt.h>
+ #include <linux/smp.h>
++#include <linux/kexec.h>
  
- #include <asm/kexec.h>
-+#define KEXEC_BOOT_PARAMS_SIZE 2048
- 
- 	.globl relocate_new_kernel
- relocate_new_kernel:
- 
-+	/* Begin by moving the boot params from inside the existing */
-+	/* kernel back to the location the boot loader would put them */
-+
-+	ldr	r0,kexec_boot_params_copy
-+	ldr	r1,kexec_boot_params_address
-+	mov	r6,#KEXEC_BOOT_PARAMS_SIZE/4
-+8:
-+	ldr	r5,[r0],#4
-+	str	r5,[r1],#4
-+	subs	r6,r6,#1
-+	bne	8b
-+	
-+	/* Boot params moved, now go on with the kernel */
-+	
- 	ldr	r0,kexec_indirection_page
- 	ldr	r1,kexec_start_address
- 
-@@ -65,6 +80,16 @@
- kexec_mach_type:
- 	.long	0x0
- 
-+	/* ptr to addr where new kernel will look for boot params */
-+	.globl kexec_boot_params_address
-+kexec_boot_params_address:
-+	.long	0x0
-+
-+	/* ptr to where old kernel kept a copy of the boot params */
-+	.globl kexec_boot_params_copy
-+kexec_boot_params_copy:
-+	.long	0x0
-+	
- relocate_new_kernel_end:
- 
- 	.globl relocate_new_kernel_size
---- linux-2.6.21.orig/arch/arm/kernel/setup.c	2007-06-29 17:13:32.000000000 -0500
-+++ linux-2.6.21/arch/arm/kernel/setup.c	2007-06-30 01:56:50.000000000 -0500
-@@ -767,6 +767,24 @@
+ #include <asm/cpu.h>
+ #include <asm/elf.h>
+@@ -767,6 +768,23 @@
  }
  arch_initcall(customize_machine);
  
@@ -61,9 +24,8 @@
 +unsigned long kexec_boot_params;
 +EXPORT_SYMBOL(kexec_boot_params);
 +
-+/* The buffer itself - this needs to be properly aligned and sized */
-+#define KEXEC_BOOT_PARAMS_SIZE 2048
-+static unsigned long kexec_boot_params_buf[(KEXEC_BOOT_PARAMS_SIZE+3)/4];
++/* The buffer itself - make sure it is sized correctly */
++static unsigned long kexec_boot_params_buf[(KEXEC_BOOT_PARAMS_SIZE + 3) / 4];
 +
 +#endif
 +
@@ -84,3 +46,66 @@
  	/*
  	 * If we have the old style parameters, convert them to
  	 * a tag list.
+--- linux-2.6.21.5/arch/arm/kernel/relocate_kernel.S.orig	2007-06-30 16:39:28.000000000 -0500
++++ linux-2.6.21.5/arch/arm/kernel/relocate_kernel.S	2007-06-30 19:10:32.000000000 -0500
+@@ -7,6 +7,23 @@
+ 	.globl relocate_new_kernel
+ relocate_new_kernel:
+ 
++	/* Move boot params back to where the kernel expects them */
++
++	ldr	r0,kexec_boot_params_address
++	teq	r0,#0
++	beq	8f
++	
++	ldr	r1,kexec_boot_params_copy
++	mov	r6,#KEXEC_BOOT_PARAMS_SIZE/4
++7:
++	ldr	r5,[r1],#4
++	str	r5,[r0],#4
++	subs	r6,r6,#1
++	bne	7b
++	
++8:	
++	/* Boot params moved, now go on with the kernel */
++	
+ 	ldr	r0,kexec_indirection_page
+ 	ldr	r1,kexec_start_address
+ 
+@@ -50,7 +67,7 @@
+ 	mov lr,r1
+ 	mov r0,#0
+ 	ldr r1,kexec_mach_type
+-	mov r2,#0
++	ldr r2,kexec_boot_params_address
+ 	mov pc,lr
+ 
+ 	.globl kexec_start_address
+@@ -65,6 +82,16 @@
+ kexec_mach_type:
+ 	.long	0x0
+ 
++	/* phy addr where new kernel will expect to find boot params */
++	.globl kexec_boot_params_address
++kexec_boot_params_address:
++	.long	0x0
++
++	/* phy addr where old kernel put a copy of orig boot params */
++	.globl kexec_boot_params_copy
++kexec_boot_params_copy:
++	.long	0x0
++
+ relocate_new_kernel_end:
+ 
+ 	.globl relocate_new_kernel_size
+--- linux-2.6.21.5/include/asm/kexec.h.orig	2007-06-30 16:41:17.000000000 -0500
++++ linux-2.6.21.5/include/asm/kexec.h	2007-06-30 19:11:22.000000000 -0500
+@@ -14,6 +14,8 @@
+ 
+ #define KEXEC_ARCH KEXEC_ARCH_ARM
+ 
++#define KEXEC_BOOT_PARAMS_SIZE 1536
++
+ #ifndef __ASSEMBLY__
+ 
+ #define MAX_NOTE_BYTES 1024
