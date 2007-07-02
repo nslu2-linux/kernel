@@ -22,6 +22,11 @@ MAJORVER = 2.6
 # BASEVER  = 2.6.18
 # PATCHVER = 2.6.18
 
+# Freecom FSG-3 support
+# BASEVER  = 2.6.18-fsg3
+# PATCHVER = 2.6.18-fsg3
+# CROSS_COMPILE = /home/slug/fsg3angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
+
 # Latest Stable
 BASEVER  = 2.6.21.5
 PATCHVER = 2.6.21
