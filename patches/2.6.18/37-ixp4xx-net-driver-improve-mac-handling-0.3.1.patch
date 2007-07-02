@@ -1,6 +1,7 @@
---- a/drivers/net/ixp4xx/mac_driver.c~	2007-01-09 10:42:37.000000000 +0000
-+++ b/drivers/net/ixp4xx/mac_driver.c	2007-01-09 10:43:10.000000000 +0000
-@@ -350,6 +350,16 @@
+diff -Naupr a/drivers/net/ixp4xx/mac_driver.c b/drivers/net/ixp4xx/mac_driver.c
+--- a/drivers/net/ixp4xx/mac_driver.c	2007-01-12 21:54:40.000000000 -0700
++++ b/drivers/net/ixp4xx/mac_driver.c	2007-01-12 22:27:18.000000000 -0700
+@@ -350,6 +350,16 @@ static int ixmac_open (struct net_device
  	mac->npe_stat_num = i<NPE_STAT_NUM ? NPE_STAT_NUM_BASE : NPE_STAT_NUM;
  	mac->npe_stat_num += NPE_Q_STAT_NUM;
  
@@ -17,7 +18,7 @@
  	mac_set_uniaddr(dev);
  	media_check(dev, 1);
  	ixmac_set_rx_mode(dev);
-@@ -691,20 +701,6 @@
+@@ -691,20 +701,6 @@ static int mac_probe(struct platform_dev
  
  	INIT_WORK(&mac->mdio_thread, mac_mdio_thread, dev);
  
