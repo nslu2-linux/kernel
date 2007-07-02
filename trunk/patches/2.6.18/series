@@ -19,7 +19,8 @@
 28-nslu2-setup-mac.patch
 29-nas100d-setup-mac.patch
 30-ixp4xx-npe-driver-0.3.1.patch
-33-ixp4xx-net-driver-improve-mac-handling-0.3.1.patch
+37-ixp4xx-net-driver-improve-mac-handling-0.3.1.patch
+39-ixp4xx-net-driver-mtd-load-fw-0.3.1.patch
 40-scsi-idle.patch
 45-eeprom-new-notifier.patch
 50-leds-arm-cpu-activity.patch
@@ -30,4 +31,3 @@
 79-rtl8110sb-fix.patch
 96-fsg3-support.patch
 98-loft-ide-le.patch
-99-sata_via-add-pata.patch
