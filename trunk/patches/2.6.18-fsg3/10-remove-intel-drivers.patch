@@ -1,0 +1,11 @@
+--- linux-ixp425/drivers/Makefile~	2006-09-22 06:30:53.000000000 +0930
++++ linux-ixp425/drivers/Makefile	2007-07-02 15:26:33.000000000 +0930
+@@ -47,7 +47,7 @@
+ obj-$(CONFIG_ATA_OVER_ETH)	+= block/aoe/
+ obj-$(CONFIG_PARIDE) 		+= block/paride/
+ obj-$(CONFIG_TC)		+= tc/
+-obj-$(CONFIG_ARCH_IXP4XX)	+= ixp4xx/
++#obj-$(CONFIG_ARCH_IXP4XX)	+= ixp4xx/
+ obj-$(CONFIG_USB)		+= usb/
+ obj-$(CONFIG_PCI)		+= usb/
+ obj-$(CONFIG_USB_GADGET)	+= usb/gadget/
