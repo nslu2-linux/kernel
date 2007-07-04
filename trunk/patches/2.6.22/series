@@ -62,6 +62,7 @@
 
 # 8?-* patches
 # Patches for eventual upstream
+80-kexec-atags.patch
 82-leds-arm-cpu-activity.patch
 
 # 9?-* patches
@@ -73,6 +74,8 @@
 92-nas100d-rtc-fixup.patch
 93-avila-rtc-fixup.patch
 95-dsmg600-rtc-fixup.patch
+# The kexec-cmdline patch depends on the 80-kexec-atags.patch
+96-kexec-cmdline.patch
 
 # The following patch is a temporary hack to fix the ixp4xx net
 # driver compile.
