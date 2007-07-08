@@ -1,0 +1,2776 @@
+Index: linux-2.6.18-armeb/arch/arm/kernel/process.c
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/kernel/process.c
++++ linux-2.6.18-armeb/arch/arm/kernel/process.c
+@@ -173,8 +173,16 @@ int __init reboot_setup(char *str)
+ 
+ __setup("reboot=", reboot_setup);
+ 
++
++// by Freecom Technologies GmbH, Berlin
++extern void ixp4xxgpioled_all_off(void);
++
+ void machine_halt(void)
+ {
++	leds_event(led_halted);
++	/* actually halted */
++
++	ixp4xxgpioled_all_off();   // LEDS and EL ring off
+ }
+ 
+ 
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/Kconfig
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/mach-ixp4xx/Kconfig
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/Kconfig
+@@ -97,6 +97,15 @@ config CPU_IXP46X
+ 	depends on MACH_IXDP465
+ 	default y
+ 
++config ARCH_FSG3
++	bool "FSG3"
++	select PCI
++	select MACLIST
++	help
++	  Say 'Y' here if you want your kernel to support
++	  Freecom Storage Gateway Device (Also known as FSG3).
++	  For more information on this device, see <http://www.openfsg.org>.
++
+ config MACH_GTWX5715
+ 	bool "Gemtek WX5715 (Linksys WRV54G)"
+ 	depends on ARCH_IXP4XX
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/Makefile
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/mach-ixp4xx/Makefile
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/Makefile
+@@ -11,6 +11,7 @@ obj-pci-$(CONFIG_ARCH_ADI_COYOTE)	+= coy
+ obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx5715-pci.o
+ obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
+ obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
++obj-pci-$(CONFIG_ARCH_FSG3)		+= fsg3-pci.o
+ 
+ obj-y	+= common.o
+ 
+@@ -20,5 +21,6 @@ obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-
+ obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
+ obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
+ obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
++obj-$(CONFIG_ARCH_FSG3) 	+= fsg3-setup.o #fsg3-power.o
+ 
+ obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/common-pci.c
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/mach-ixp4xx/common-pci.c
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/common-pci.c
+@@ -532,6 +532,7 @@ pci_set_consistent_dma_mask(struct pci_d
+ 	return -EIO;
+ }
+ 
++EXPORT_SYMBOL(pci_set_dma_mask);
+ EXPORT_SYMBOL(ixp4xx_pci_read);
+ EXPORT_SYMBOL(ixp4xx_pci_write);
+ 
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-pci.c
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-pci.c
+@@ -0,0 +1,77 @@
++/*
++ * arch/arch/mach-ixp4xx/fhd3lan-pci.c
++ *
++ * PCI setup routines for Freecom-Storage-Gateway FSG3 Platform
++ *
++ * Copyright (C) 2004 MontaVista Software, Inc.
++ * Copyright (C) 2006 Freecom Technologies GmbH.
++ *
++ * Maintainer: Freecom Technologies <support@freecom.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/pci.h>
++#include <linux/init.h>
++#include <linux/irq.h>
++
++#include <asm/mach-types.h>
++#include <asm/hardware.h>
++#include <asm/irq.h>
++
++#include <asm/mach/pci.h>
++
++extern void ixp4xx_pci_preinit(void);
++extern int ixp4xx_setup(int nr, struct pci_sys_data *sys);
++extern struct pci_bus *ixp4xx_scan_bus(int nr, struct pci_sys_data *sys);
++
++void __init fsg3_pci_preinit(void)
++{
++        set_irq_type(FSG3_PCI_INTA_IRQ, IRQT_LOW);
++        set_irq_type(FSG3_PCI_INTB_IRQ, IRQT_LOW);
++        set_irq_type(FSG3_PCI_INTC_IRQ, IRQT_LOW);
++
++	ixp4xx_pci_preinit();
++}
++
++static int __init fsg3_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
++{
++        static int pci_irq_table[FSG3_PCI_IRQ_LINES] = {
++                FSG3_PCI_INTC_IRQ,
++                FSG3_PCI_INTB_IRQ,
++                FSG3_PCI_INTA_IRQ,
++        };
++
++        int irq = -1;
++	slot = slot-11;
++
++        if (slot >= 1 && slot <= FSG3_PCI_MAX_DEV &&
++                pin >= 1 && pin <= FSG3_PCI_IRQ_LINES) {
++                irq = pci_irq_table[(slot-1)];
++        }
++        printk("%s: Mapped slot %d pin %d to IRQ %d\n", __FUNCTION__,slot, pin, irq);
++
++        return irq;
++}
++
++struct hw_pci fsg3_pci __initdata = {
++	.nr_controllers = 1,
++	.preinit =        fsg3_pci_preinit,
++	.swizzle =        pci_std_swizzle,
++	.setup =          ixp4xx_setup,
++	.scan =           ixp4xx_scan_bus,
++	.map_irq =        fsg3_map_irq,
++};
++
++int __init fsg3_pci_init(void)
++{
++	if (machine_is_freecom_fsg3())
++		pci_common_init(&fsg3_pci);
++	return 0;
++}
++
++subsys_initcall(fsg3_pci_init);
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-power.c
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-power.c
+@@ -0,0 +1,92 @@
++/*
++ * arch/arm/mach-ixp4xx/nslu2-power.c
++ *
++ * NSLU2 Power/Reset driver
++ *
++ * Copyright (C) 2005 Tower Technologies
++ *
++ * based on nslu2-io.c
++ *  Copyright (C) 2004 Karen Spearel
++ *
++ * Author: Alessandro Zummo <a.zummo@towertech.it>
++ * Maintainers: http://www.nslu2-linux.org/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/reboot.h>
++#include <linux/interrupt.h>
++
++#include <asm/mach-types.h>
++
++extern void ctrl_alt_del(void);
++
++static irqreturn_t nslu2_power_handler(int irq, void *dev_id, struct pt_regs *regs)
++{
++	/* Signal init to do the ctrlaltdel action, this will bypass init if
++	 * it hasn't started and do a kernel_restart.
++	 */
++	ctrl_alt_del();
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t nslu2_reset_handler(int irq, void *dev_id, struct pt_regs *regs)
++{
++	/* This is the paper-clip reset, it shuts the machine down directly.
++	 */
++	machine_power_off();
++
++	return IRQ_HANDLED;
++}
++
++static int __init nslu2_power_init(void)
++{
++	if (!(machine_is_nslu2()))
++		return 0;
++
++	*IXP4XX_GPIO_GPISR = 0x20400000;	/* read the 2 irqs to clr */
++
++	set_irq_type(NSLU2_RB_IRQ, IRQT_LOW);
++	set_irq_type(NSLU2_PB_IRQ, IRQT_HIGH);
++
++	if (request_irq(NSLU2_RB_IRQ, &nslu2_reset_handler,
++		SA_INTERRUPT, "NSLU2 reset button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
++			NSLU2_RB_IRQ);
++
++		return -EIO;
++	}
++
++	if (request_irq(NSLU2_PB_IRQ, &nslu2_power_handler,
++		SA_INTERRUPT, "NSLU2 power button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Power Button IRQ %d not available\n",
++			NSLU2_PB_IRQ);
++
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static void __exit nslu2_power_exit(void)
++{
++	if (!(machine_is_nslu2()))
++		return;
++
++	free_irq(NSLU2_RB_IRQ, NULL);
++	free_irq(NSLU2_PB_IRQ, NULL);
++}
++
++module_init(nslu2_power_init);
++module_exit(nslu2_power_exit);
++
++MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
++MODULE_DESCRIPTION("NSLU2 Power/Reset driver");
++MODULE_LICENSE("GPL");
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
+@@ -0,0 +1,270 @@
++/*
++ * arch/arm/mach-ixp4xx/fsg3-setup.c
++ *
++ * FSG3/FHD3WLAN board-setup 
++ *
++ * Copyright (C) 2003-2004 MontaVista Software, Inc.
++ * Copyright (C) 2004-2006 Freecom Technologies GmbH.
++ *
++ * Author: Freecom - CR
++ */
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/device.h>
++#include <linux/serial.h>
++#include <linux/tty.h>
++#include <linux/serial_8250.h>
++#include <linux/slab.h>
++#include <linux/mtd/mtd.h>
++#include <linux/leds.h>
++
++#include <asm/types.h>
++#include <asm/setup.h>
++#include <asm/memory.h>
++#include <asm/hardware.h>
++#include <asm/irq.h>
++#include <asm/mach-types.h>
++#include <asm/mach/arch.h>
++#include <asm/mach/flash.h>
++
++#include <net/maclist.h>
++
++
++/*
++ * Xscale UART registers are 32 bits wide with only the least
++ * significant 8 bits having any meaning.  From a configuration
++ * perspective, this means 2 things...
++ *
++ *   Setting .regshift = 2 so that the standard 16550 registers
++ *   line up on every 4th byte.
++ *
++ *   Shifting the register start virtual address +3 bytes when
++ *   compiled big-endian.  Since register writes are done on a
++ *   single byte basis, if the shift isn't done the driver will
++ *   write the value into the most significant byte of the register,
++ *   which is ignored, instead of the least significant.
++ */
++
++#ifdef  __ARMEB__
++#define REG_OFFSET      3
++#else
++#define REG_OFFSET      0
++#endif
++
++/*
++ * FSG3 offers both chipset serial ports
++ */
++static struct flash_platform_data fsg3_flash_data = {
++	.map_name	= "cfi_probe",
++	.width		= 2,
++};
++
++static struct resource fsg3_flash_resource = {
++	.flags		= IORESOURCE_MEM,
++};
++
++static struct platform_device fsg3_flash = {
++	.name		= "IXP4XX-Flash",
++	.id		= 0,
++	.dev.platform_data = &fsg3_flash_data,
++	.num_resources	= 1,
++	.resource	= &fsg3_flash_resource,
++};
++
++static struct ixp4xx_i2c_pins fsg3_i2c_gpio_pins = {
++	.sda_pin	= FSG3_SDA_PIN,
++	.scl_pin	= FSG3_SCL_PIN,
++};
++
++#ifdef CONFIG_LEDS_IXP4XX
++static struct resource fsg3_led_resources[] = {
++	{
++		.name		= "sync",
++		.start		= FSG3_LED_STARTUP,
++		.end		= FSG3_LED_STARTUP,
++		.flags		= 0x80,   // bit 7
++	},
++	{
++		.name		= "ring",
++		.start		= FSG3_LED_RING,
++		.end		= FSG3_LED_RING,
++		.flags		= 0x20,   // bit 5
++	},
++	{
++		.name		= "USB",
++		.start		= FSG3_LED_USB,
++		.end		= FSG3_LED_USB,
++		.flags		= 0x10,   // bit 4
++	},
++	{
++		.name		= "SATA",
++		.start		= FSG3_LED_SATA,
++		.end		= FSG3_LED_SATA,
++		.flags		= 0x04,   // bit 2
++	},
++	{
++		.name		= "WAN",
++		.start		= FSG3_LED_WAN,
++		.end		= FSG3_LED_WAN,
++		.flags		= 0x02,   // bit 1
++	},
++	{
++		.name		= "WLAN",
++		.start		= FSG3_LED_WLAN,
++		.end		= FSG3_LED_WLAN,
++		.flags		= 0x01,   // bit 0
++	},
++};
++
++static struct platform_device fsg3_leds = {
++	.name			= "IXP4XX-GPIO-LED",
++	.id			= -1,
++	.num_resources		= ARRAY_SIZE(fsg3_led_resources),
++	.resource		= fsg3_led_resources,
++};
++#endif
++
++static struct platform_device fsg3_i2c_controller = {
++	.name		= "IXP4XX-I2C",
++	.id		= 0,
++	.dev.platform_data = &fsg3_i2c_gpio_pins,
++	.num_resources	= 0,
++};
++
++static struct resource fsg3_uart_resources[] = {
++        {
++                .start          = IXP4XX_UART1_BASE_PHYS,
++                .end            = IXP4XX_UART1_BASE_PHYS + 0x0fff,
++                .flags          = IORESOURCE_MEM,
++        },
++        {
++                .start          = IXP4XX_UART2_BASE_PHYS,
++                .end            = IXP4XX_UART2_BASE_PHYS + 0x0fff,
++                .flags          = IORESOURCE_MEM,
++        }
++};
++
++static struct plat_serial8250_port fsg3_uart_data[] = {
++        {
++                .mapbase        = IXP4XX_UART1_BASE_PHYS,
++                .membase        = (char *)IXP4XX_UART1_BASE_VIRT + REG_OFFSET,
++                .irq            = IRQ_IXP4XX_UART1,
++                .flags          = UPF_BOOT_AUTOCONF | UPF_SKIP_TEST,
++                .iotype         = UPIO_MEM,
++                .regshift       = 2,
++                .uartclk        = IXP4XX_UART_XTAL,
++/*		.line		= 0,
++		.type		= PORT_XSCALE,
++		.fifosize	= 32
++*/
++        },
++        {
++                .mapbase        = IXP4XX_UART2_BASE_PHYS,
++                .membase        = (char *)IXP4XX_UART2_BASE_VIRT + REG_OFFSET,
++                .irq            = IRQ_IXP4XX_UART2,
++                .flags          = UPF_BOOT_AUTOCONF | UPF_SKIP_TEST,
++                .iotype         = UPIO_MEM,
++                .regshift       = 2,
++                .uartclk        = IXP4XX_UART_XTAL,
++/*		.line		= 1,
++		.type		= PORT_XSCALE,
++		.fifosize	= 32
++*/
++        },
++        { }
++};
++
++static struct platform_device fsg3_uart = {
++        .name                   = "serial8250",
++        .id                     = PLAT8250_DEV_PLATFORM,
++        .dev.platform_data      = fsg3_uart_data,
++        .num_resources          = 2,
++        .resource               = fsg3_uart_resources,
++};
++
++static struct platform_device *fsg3_devices[] __initdata = {
++	&fsg3_i2c_controller,
++	&fsg3_flash,
++	&fsg3_uart,
++#ifdef CONFIG_LEDS_IXP4XX
++	&fsg3_leds,
++#endif
++};
++
++#ifdef CONFIG_MACLIST
++static void fsg3_flash_add(struct mtd_info *mtd)
++{
++	/* When the RedBoot partition is added the MAC address is read from it. */
++	if (strcmp(mtd->name, "RedBoot config") == 0) {
++		size_t retlen;
++		u_char mac[6];
++
++		/* The MAC is at a known offset... */
++		/* TODO --> find npe_eth0 and ..1 instead of hardcoded offset and inc) */
++		if (mtd->read(mtd, 0x0422, 6, &retlen, mac) == 0 && retlen == 6) {
++			printk(KERN_INFO "FSG3-MAC for eth0: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
++				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
++			maclist_add(mac);
++			mac[5]++;
++			printk(KERN_INFO "FSG3-MAC for eth1: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
++				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
++			maclist_add(mac);
++		} else {
++			printk(KERN_ERR "FGS3-MAC: read failed\n");
++		}
++	}
++}
++
++static void fsg3_flash_remove(struct mtd_info *mtd)
++{
++	/* Nothing to do on remove at present. */
++}
++
++static struct mtd_notifier fsg3_flash_notifier = {
++	.add = fsg3_flash_add,
++	.remove = fsg3_flash_remove,
++};
++#endif
++
++static void fsg3_power_off(void)
++{
++	/* EL-Ring and LED's can be switched off here. */
++        printk(KERN_INFO "EL-Ring and LED's can be switched off here.\n");
++}
++
++static void __init fsg3_init(void)
++{
++	/* The flash has an ethernet MAC embedded in it which we need,
++	 * that is all this notifier does. */
++
++	ixp4xx_sys_init();
++
++	fsg3_flash_resource.start = FSG3_FLASH_BASE;
++	fsg3_flash_resource.end = FSG3_FLASH_BASE + FSG3_FLASH_SIZE;
++
++        *IXP4XX_EXP_CS0 |= IXP4XX_FLASH_WRITABLE;
++        *IXP4XX_EXP_CS1 = *IXP4XX_EXP_CS0;
++
++	/* Configure CS2 for operation, 8bit and writable will do */
++	*IXP4XX_EXP_CS2 = 0xbfff0002;
++
++	pm_power_off = fsg3_power_off;
++
++	platform_add_devices(fsg3_devices, ARRAY_SIZE(fsg3_devices));
++
++#ifdef CONFIG_MACLIST
++	register_mtd_user(&fsg3_flash_notifier);
++#endif
++}
++
++MACHINE_START(FREECOM_FSG3, "FSG3 - Freecom Storage Gateway")
++        /* Maintainer: Freecom Technologies GmbH */
++        .phys_io        = IXP4XX_PERIPHERAL_BASE_PHYS,
++        .io_pg_offst    = ((IXP4XX_PERIPHERAL_BASE_VIRT) >> 18) & 0xFFFC,
++        .boot_params    = 0x00000100,
++        .map_io         = ixp4xx_map_io,
++        .init_irq       = ixp4xx_init_irq,
++        .timer          = &ixp4xx_timer,
++        .init_machine   = fsg3_init,
++MACHINE_END
+Index: linux-2.6.18-armeb/arch/arm/mm/alignment.c
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/mm/alignment.c
++++ linux-2.6.18-armeb/arch/arm/mm/alignment.c
+@@ -726,6 +726,14 @@ do_alignment(unsigned long addr, unsigne
+ 	if (type == TYPE_LDST)
+ 		do_alignment_finish_ldst(addr, instr, regs, offset);
+ 
++	// show system alignment traps, by Freecom Technologies GmbH, Berlin
++	printk("Alignment trap: %s (%d) PC=0x%08lx Instr=0x%0*lx "
++	       "Address=0x%08lx FSR 0x%03x TYPE:%d\n", current->comm,
++		current->pid, instrptr,
++	        thumb_mode(regs) ? 4 : 8,
++	        thumb_mode(regs) ? tinstr : instr,
++	        addr, fsr, type);
++
+ 	return 0;
+ 
+  bad_or_fault:
+Index: linux-2.6.18-armeb/drivers/i2c/algos/i2c-algo-bit.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/i2c/algos/i2c-algo-bit.c
++++ linux-2.6.18-armeb/drivers/i2c/algos/i2c-algo-bit.c
+@@ -157,7 +157,7 @@ static int i2c_outb(struct i2c_adapter *
+ 	for ( i=7 ; i>=0 ; i-- ) {
+ 		sb = c & ( 1 << i );
+ 		setsda(adap,sb);
+-		udelay(adap->udelay);
++		udelay((adap->udelay+1)>>1);  // half time, by Freecom
+ 		DEBPROTO(printk(KERN_DEBUG "%d",sb!=0));
+ 		if (sclhi(adap)<0) { /* timed out */
+ 			sdahi(adap); /* we don't want to block the net */
+@@ -168,7 +168,7 @@ static int i2c_outb(struct i2c_adapter *
+ 		 * if ( sb && ! getsda(adap) ) -> ouch! Get out of here.
+ 		 */
+ 		setscl(adap, 0 );
+-		udelay(adap->udelay);
++		udelay((adap->udelay+1)>>1);  // half time, by Freecom
+ 	}
+ 	sdahi(adap);
+ 	if (sclhi(adap)<0){ /* timeout */
+Index: linux-2.6.18-armeb/drivers/i2c/busses/i2c-ixp4xx.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/i2c/busses/i2c-ixp4xx.c
++++ linux-2.6.18-armeb/drivers/i2c/busses/i2c-ixp4xx.c
+@@ -121,7 +121,7 @@ static int ixp4xx_i2c_probe(struct platf
+ 	drv_data->algo_data.setscl = ixp4xx_bit_setscl;
+ 	drv_data->algo_data.getsda = ixp4xx_bit_getsda;
+ 	drv_data->algo_data.getscl = ixp4xx_bit_getscl;
+-	drv_data->algo_data.udelay = 10;
++	drv_data->algo_data.udelay = 5,  // set from 10 to 5, by Freecom
+ 	drv_data->algo_data.mdelay = 10;
+ 	drv_data->algo_data.timeout = 100;
+ 
+Index: linux-2.6.18-armeb/drivers/ide/pci/via82cxxx.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/ide/pci/via82cxxx.c
++++ linux-2.6.18-armeb/drivers/ide/pci/via82cxxx.c
+@@ -79,6 +79,7 @@ static struct via_isa_bridge {
+ 	u16 flags;
+ } via_isa_bridges[] = {
+ 	{ "vt6410",	PCI_DEVICE_ID_VIA_6410,     0x00, 0x2f, VIA_UDMA_133 | VIA_BAD_AST },
++	{ "vt6421",	PCI_DEVICE_ID_VIA_6421,     0x00, 0x2f, VIA_UDMA_133 | VIA_BAD_AST },
+ 	{ "vt8251",	PCI_DEVICE_ID_VIA_8251,     0x00, 0x2f, VIA_UDMA_133 | VIA_BAD_AST },
+ 	{ "vt8237",	PCI_DEVICE_ID_VIA_8237,     0x00, 0x2f, VIA_UDMA_133 | VIA_BAD_AST },
+ 	{ "vt8237a",	PCI_DEVICE_ID_VIA_8237A,    0x00, 0x2f, VIA_UDMA_133 | VIA_BAD_AST },
+@@ -498,6 +499,7 @@ static struct pci_device_id via_pci_tbl[
+ 	{ PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_82C576_1, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
+ 	{ PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_82C586_1, PCI_ANY_ID, PCI_ANY_ID, 0, 0, 0},
+ 	{ PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_6410,     PCI_ANY_ID, PCI_ANY_ID, 0, 0, 1},
++	{ PCI_VENDOR_ID_VIA, PCI_DEVICE_ID_VIA_6421,     PCI_ANY_ID, PCI_ANY_ID, 0, 0, 1},
+ 	{ 0, },
+ };
+ MODULE_DEVICE_TABLE(pci, via_pci_tbl);
+Index: linux-2.6.18-armeb/drivers/leds/leds-ixp4xx-gpio.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/leds/leds-ixp4xx-gpio.c
++++ linux-2.6.18-armeb/drivers/leds/leds-ixp4xx-gpio.c
+@@ -31,12 +31,23 @@
+  *
+  */
+ 
++/*
++ * reworked for FSG3 LEDS and buttons
++ * by Freecom Technologies GmbH, Berlin
++ */
++ 
++ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+ #include <linux/leds.h>
+ #include <asm/arch/hardware.h>
++#include <asm/io.h>
++#include <linux/timer.h>
++#include <linux/delay.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
+ 
+ extern spinlock_t gpio_lock;
+ 
+@@ -47,26 +58,198 @@ static struct ixp4xxgpioled_device {
+ 	int               flags;
+ } ixp4xxgpioled_devices[GPIO_MAX];
+ 
++static int key;
++static int pressSyncJiffies, pressResetJiffies, pressUnplugJiffies;
++static volatile unsigned short *ledmem_cs2, led_latch, led_blink_latch;
++
++struct work_struct  hotplug_work;
++static struct timer_list  leds_timerlist, keys_timerlist;
++
++
++#ifdef CONFIG_HOTPLUG
++
++/* Notify userspace when a key-event occurs,
++ * by running '/sbin/hotplug key' with certain
++ * environment variables set.
++ */
++
++static void key_run_sbin_hotplug(char *Action)
++{
++	char *argv[3], *envp[5], action_str[32];
++	int i;
++
++	sprintf(action_str, "ACTION=%s", Action);
++
++        i = 0;
++        argv[i++] = "/sbin/hotplug";
++        argv[i++] = "key";
++        argv[i] = 0;
++
++	i = 0;
++	/* minimal command environment */
++	envp [i++] = "HOME=/";
++	envp [i++] = "PATH=/sbin:/bin:/usr/sbin:/usr/bin";
++	envp [i++] = "INTERFACE=";
++	envp [i++] = action_str;
++	envp [i] = 0;
++
++        if (in_interrupt ()) {
++                printk ("LEDMAN-hotplug: -- In_interrupt\n");
++                return;
++        }
++        if (!current->fs->root) {
++                printk ("LEDMAN-hotplug: -- no FS yet\n");
++                return;
++        }
++
++	call_usermodehelper (argv[0], argv, envp, 0);
++}
++
++static void leds_poll(unsigned long arg)
++{
++	if(led_blink_latch == 0)
++		return;
++	  
++	*ledmem_cs2 = led_latch = led_latch ^ led_blink_latch;
++
++	/* Re-arm timer */
++	leds_timerlist.expires = jiffies + HZ/2;
++	add_timer(&leds_timerlist);
++}
++
++static void keys_poll(unsigned long arg)
++{
++	if(pressSyncJiffies == 0)
++		if(pressResetJiffies == 0)
++			return;
++
++	if(pressSyncJiffies != 0) if(abs(jiffies - pressSyncJiffies) >= 4*HZ) {
++		INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "SHUTDOWN");
++		schedule_work(&hotplug_work);
++		pressSyncJiffies = 0;
++		return;
++	}
++
++	if(pressResetJiffies != 0) if(abs(jiffies - pressResetJiffies) >= 4*HZ) {
++		INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "DEFAULTS");
++		schedule_work(&hotplug_work);
++		pressResetJiffies = 0;
++		return;
++	}
++
++	/* Re-arm timer */
++	keys_timerlist.expires = jiffies + HZ/10;
++	add_timer(&keys_timerlist);
++}
++
++static irqreturn_t leds_sync_key_interrupt(int irq, void *dev_id, struct pt_regs *regs)
++{
++	int holdkey;
++
++	gpio_line_get(FSG3_SYNC_KEY_PIN, &holdkey);
++	if(holdkey == 0) {  // key pressed ?
++
++		if(key == 0) {  // no other key still pressed ?
++			keys_timerlist.expires = jiffies + HZ/10;
++			add_timer(&keys_timerlist);
++		}
++
++		key = 1;
++		pressSyncJiffies = jiffies;
++	}
++	else {              // key released
++		key = 0;
++		if(pressSyncJiffies == 0)
++			return IRQ_HANDLED;
++
++		if(abs(jiffies - pressSyncJiffies) < 4*HZ) {
++			INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "SYNC");
++			schedule_work(&hotplug_work);
++		}
++
++		pressSyncJiffies = 0;
++	}
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t leds_reset_key_interrupt(int irq, void *dev_id, struct pt_regs *regs)
++{
++	int holdkey;
++
++	gpio_line_get(FSG3_RESET_KEY_PIN, &holdkey);
++	if(holdkey == 0) {  // key pressed ?
++
++		if(key == 0) {  // no other key still pressed ?
++			keys_timerlist.expires = jiffies + HZ/10;
++			add_timer(&keys_timerlist);
++		}
++
++		key = 1;
++		pressResetJiffies = jiffies;
++	}
++	else {              // key released
++		key = 0;
++		if(pressResetJiffies == 0)
++			return IRQ_HANDLED;
++
++		if(abs(jiffies - pressResetJiffies) < 4*HZ) {
++			INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "REBOOT");
++			schedule_work(&hotplug_work);
++		}
++
++		pressResetJiffies = 0;
++	}
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t leds_unplug_key_interrupt(int irq, void *dev_id, struct pt_regs *regs)
++{
++	// Mechanical key are nasty, so do some pre-cautions.
++	if(abs(jiffies - pressUnplugJiffies) < HZ/2) {
++		pressUnplugJiffies = jiffies;
++		return IRQ_HANDLED;
++	}
++	pressResetJiffies = jiffies;
++
++	if(led_latch & 0x10)   // test USB LED
++		INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "UNPLUG");
++	else
++		INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "COLDPLUG");
++	schedule_work(&hotplug_work);
++	return IRQ_HANDLED;
++}
++#endif   /* CONFIG_HOTPLUG */
++
++void ixp4xxgpioled_all_off(void)
++{
++	// all LEDs off and EL ring always off
++	*ledmem_cs2 = led_latch = 0xff9f;
++}
++
+ void ixp4xxgpioled_brightness_set(struct led_classdev *pled,
+ 				enum led_brightness value)
+ {
+ 	const struct ixp4xxgpioled_device *const ixp4xx_dev =
+ 		container_of(pled, struct ixp4xxgpioled_device, ancestor);
+-	const u32 gpio_pin = ixp4xx_dev - ixp4xxgpioled_devices;
++	const u32 led_no = ixp4xx_dev - ixp4xxgpioled_devices;
+ 
+-	if (gpio_pin < GPIO_MAX && ixp4xx_dev->ancestor.name != 0) {
+-		/* Set or clear the 'gpio_pin' bit according to the style
+-		 * and the required setting (value > 0 == on)
+-		 */
+-		const int gpio_value =
+-			(value > 0) == (ixp4xx_dev->flags != IXP4XX_GPIO_LOW) ?
+-				IXP4XX_GPIO_HIGH : IXP4XX_GPIO_LOW;
+-
+-		{
+-			unsigned long flags;
+-			spin_lock_irqsave(&gpio_lock, flags);
+-			gpio_line_set(gpio_pin, gpio_value);
+-			spin_unlock_irqrestore(&gpio_lock, flags);
++	if (led_no < GPIO_MAX && ixp4xx_dev->ancestor.name != 0) {
++		if(value == 2) {
++			if(led_blink_latch == 0) {
++				leds_timerlist.expires = jiffies + HZ/2;
++				add_timer(&leds_timerlist);
++			}
++			led_blink_latch |= ixp4xx_dev->flags;
++			*ledmem_cs2 = led_latch = led_latch & (~ixp4xx_dev->flags);
++		}
++		else {
++			led_blink_latch &= (~ixp4xx_dev->flags);
++			if(value == 0)
++				*ledmem_cs2 = led_latch = led_latch | ixp4xx_dev->flags;
++			else
++				*ledmem_cs2 = led_latch = led_latch & (~ixp4xx_dev->flags);
+ 		}
+ 	}
+ }
+@@ -130,24 +313,59 @@ static int ixp4xxgpioled_probe(struct pl
+ 	 */
+ 	int i;
+ 
++	/* Map the LED chip select address space */
++	ledmem_cs2 = (volatile unsigned short *) ioremap(IXP425_EXP_BUS_CS2_BASE_PHYS, 512);
++	*ledmem_cs2 = led_latch = 0xffff;
++	led_blink_latch = 0x80;    // sync LED blinking
++
++#ifdef CONFIG_HOTPLUG
++	/* Configure interrupt input for SYNC switch */
++	set_irq_type(IRQ_IXP4XX_GPIO4, IRQT_BOTHEDGE);
++	if (request_irq(IRQ_IXP4XX_GPIO4, leds_sync_key_interrupt, IRQF_DISABLED, "Sync", NULL) < 0)
++		printk("LEDs: failed to register IRQ%d for SYNC switch\n", IRQ_IXP4XX_GPIO4);
++	else
++		printk("LEDs: registered SYNC switch on IRQ%d\n", IRQ_IXP4XX_GPIO4);
++
++	/* Configure interrupt input for RESET switch */
++	set_irq_type(IRQ_IXP4XX_GPIO9, IRQT_BOTHEDGE);
++	if (request_irq(IRQ_IXP4XX_GPIO9, leds_reset_key_interrupt, IRQF_DISABLED, "Reset", NULL) < 0)
++		printk("LEDs: failed to register IRQ%d for RESET switch\n", IRQ_IXP4XX_GPIO9);
++	else
++		printk("LEDs: registered RESET switch on IRQ%d\n", IRQ_IXP4XX_GPIO9);
++
++	/* Configure interrupt input for UNPLUG switch */
++	set_irq_type(IRQ_IXP4XX_GPIO10, IRQT_FALLING);
++	if (request_irq(IRQ_IXP4XX_GPIO10, leds_unplug_key_interrupt, IRQF_DISABLED, "Unplug", NULL) < 0)
++		printk("LEDs: failed to register IRQ%d for UNPLUG switch\n", IRQ_IXP4XX_GPIO10);
++	else
++		printk("LEDs: registered UNPLUG switch on IRQ%d\n", IRQ_IXP4XX_GPIO10);
++#endif
++
++
++	init_timer(&leds_timerlist);
++	leds_timerlist.expires = jiffies + HZ/2;
++	leds_timerlist.function = leds_poll;
++	leds_timerlist.data = 0;
++	add_timer(&leds_timerlist);
++
++#ifdef CONFIG_HOTPLUG
++	init_timer(&keys_timerlist);
++	keys_timerlist.expires = jiffies + HZ/2;
++	keys_timerlist.function = keys_poll;
++	keys_timerlist.data = 0;
++	add_timer(&keys_timerlist);
++
++	// at start-up one IRQ is released !?! So reset everything.
++	key = 0;
++	pressSyncJiffies = pressResetJiffies = pressUnplugJiffies = 0;
++#endif
++
++
+ 	for_all_leds(i, pdev) {
+ 		const u8 gpio_pin = pdev->resource[i].start;
+ 		int      rc;
+ 
+ 		if (ixp4xxgpioled_devices[gpio_pin].ancestor.name == 0) {
+-			unsigned long flags;
+-
+-			spin_lock_irqsave(&gpio_lock, flags);
+-			gpio_line_config(gpio_pin, IXP4XX_GPIO_OUT);
+-			/* The config can, apparently, reset the state,
+-			 * I suspect the gpio line may be an input and
+-			 * the config may cause the line to be latched,
+-			 * so the setting depends on how the LED is
+-			 * connected to the line (which affects how it
+-			 * floats if not driven).
+-			 */
+-			gpio_line_set(gpio_pin, IXP4XX_GPIO_HIGH);
+-			spin_unlock_irqrestore(&gpio_lock, flags);
+ 
+ 			ixp4xxgpioled_devices[gpio_pin].flags =
+ 				pdev->resource[i].flags & IORESOURCE_BITS;
+@@ -203,6 +421,10 @@ static int __init ixp4xxgpioled_init(voi
+ 
+ static void __exit ixp4xxgpioled_exit(void)
+ {
++	free_irq(FSG3_SYNC_KEY_PIN, NULL);
++	free_irq(FSG3_RESET_KEY_PIN, NULL);
++	free_irq(FSG3_UNPLUG_KEY_PIN, NULL);
++
+ 	platform_driver_unregister(&ixp4xxgpioled_driver);
+ }
+ 
+Index: linux-2.6.18-armeb/drivers/mtd/redboot.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/mtd/redboot.c
++++ linux-2.6.18-armeb/drivers/mtd/redboot.c
+@@ -87,14 +87,41 @@ static int parse_redboot_partitions(stru
+ 	for (i = 0; i < numslots; i++) {
+ 		if (!memcmp(buf[i].name, "FIS directory", 14)) {
+ 			/* This is apparently the FIS directory entry for the
+-			 * FIS directory itself.  The FIS directory size is
+-			 * one erase block; if the buf[i].size field is
+-			 * swab32(erasesize) then we know we are looking at
+-			 * a byte swapped FIS directory - swap all the entries!
+-			 * (NOTE: this is 'size' not 'data_length'; size is
+-			 * the full size of the entry.)
++			 * FIS directory itself.  To discover whether the entries
++			 * in this are native byte sex or byte swapped look at
++			 * the flash_base field - we know the FIS directory is
++			 * at 'offset' within the flash.
+ 			 */
+-			if (swab32(buf[i].size) == master->erasesize) {
++			int maybe_native, maybe_swapped;
++			if (fis_origin != 0) {
++				maybe_native =
++					buf[i].flash_base == fis_origin + offset;
++				maybe_swapped =
++					swab32(buf[i].flash_base) == fis_origin + offset;
++			} else if (offset != 0 || buf[i].flash_base != 0) {
++				maybe_native =
++					(buf[i].flash_base & (master->size-1)) == offset;
++				maybe_swapped =
++					(swab32(buf[i].flash_base) & (master->size-1)) == offset;
++			} else {
++				/* The FIS directory is at the start of the flash and
++				 * the 'flash_base' field is 0.  The critical case is when
++				 * we are booting off this flash, but then we don't expect
++				 * this because the boot loader is pretty much always at
++				 * the start!  Since the FIS directory is always less than
++				 * or equal to one erase block do the following:
++				 */
++				maybe_native = buf[i].size <= master->erasesize;
++				maybe_swapped = swab32(buf[i].size) <= master->erasesize;
++			}
++
++			if (maybe_native && maybe_swapped)
++				printk(KERN_WARNING "RedBoot directory 0x%lx(0x%lx) assumed native\n",
++					buf[i].flash_base, buf[i].size);
++			else if (!maybe_native && !maybe_swapped)
++				printk(KERN_ERR "RedBoot directory 0x%lx(0x%lx) forced native\n",
++					buf[i].flash_base, buf[i].size);
++			else if (maybe_swapped) {
+ 				int j;
+ 				for (j = 0; j < numslots && buf[j].name[0] != 0xff; ++j) {
+ 					/* The unsigned long fields were written with the
+@@ -108,7 +135,11 @@ static int parse_redboot_partitions(stru
+ 					swab32s(&buf[j].desc_cksum);
+ 					swab32s(&buf[j].file_cksum);
+ 				}
+-			}
++				printk(KERN_NOTICE "RedBoot directory 0x%lx(0x%lx) swapped\n",
++					buf[i].flash_base, buf[i].size);
++			} else
++				printk(KERN_NOTICE "RedBoot directory 0x%lx(0x%lx) native\n",
++					buf[i].flash_base, buf[i].size);
+ 			break;
+ 		}
+ 	}
+Index: linux-2.6.18-armeb/drivers/net/Kconfig
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/net/Kconfig
++++ linux-2.6.18-armeb/drivers/net/Kconfig
+@@ -177,6 +177,21 @@ config NET_ETHERNET
+ 	  kernel: saying N will just cause the configurator to skip all
+ 	  the questions about Ethernet network cards. If unsure, say N.
+ 
++config MACLIST
++	tristate "Ethernet MAC repository"
++	depends on NET_ETHERNET
++	help
++	  Some ethernet controllers have no built-in way of obtaining an
++	  appropriate Ethernet MAC address.  Such controllers have to be
++	  initialised in a board-specific way, depending on how the allocated
++	  MAC is stored.  The MAC repository provides a set of APIs and a
++	  proc entry (/proc/net/maclist) to store MAC values from the board
++	  so that such drivers can obtain a MAC address without board-specific
++	  code.  You do not need to enable this device - it will be selected
++	  automatically by any device which requires it.  It is only useful
++	  to enable it manually when building a device driver independently
++	  of the kernel build.
++
+ config MII
+ 	tristate "Generic Media Independent Interface device support"
+ 	depends on NET_ETHERNET
+Index: linux-2.6.18-armeb/drivers/net/Makefile
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/net/Makefile
++++ linux-2.6.18-armeb/drivers/net/Makefile
+@@ -77,6 +77,7 @@ obj-$(CONFIG_RIONET) += rionet.o
+ # end link order section
+ #
+ 
++obj-$(CONFIG_MACLIST) += maclist.o
+ obj-$(CONFIG_MII) += mii.o
+ obj-$(CONFIG_PHYLIB) += phy/
+ 
+Index: linux-2.6.18-armeb/drivers/net/maclist.c
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/drivers/net/maclist.c
+@@ -0,0 +1,465 @@
++/*
++ * drivers/net/maclist.c
++ *
++ * a simple driver to remember ethernet MAC values
++ *
++ * Some Ethernet hardware implementations have no built-in
++ * storage for allocated MAC values - an example is the Intel
++ * IXP420 chip which has support for Ethernet but no defined
++ * way of storing allocated MAC values.  With such hardware
++ * different board level implementations store the allocated
++ * MAC (or MACs) in different ways.  Rather than put board
++ * level code into a specific Ethernet driver this driver
++ * provides a generally accessible repository for the MACs
++ * which can be written by board level code and read by the
++ * driver.
++ *
++ * The implementation also allows user level programs to
++ * access the MAC information in /proc/net/maclist.  This is
++ * useful as it allows user space code to use the MAC if it
++ * is not used by a built-in driver.
++ *
++ * Copyright (C) 2005 John Bowler
++ * Author: John Bowler <jbowler@acm.org>
++ * Maintainers: http://www.nslu2-linux.org/
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ */
++
++/*
++ * External interfaces:
++ *  Interfaces to linux kernel (and modules)
++ *   maclist_add:   add a single MAC, sequenced with a single
++ *                  writer lock (reads may happen simultaneously
++ *                  because of the way the list is built)
++ *   maclist_count: total number of MACs stored
++ *   maclist_read:  read a MAC 0..(maclist_count-1).  Call this
++ *                  to get a specific MAC.  If the argument is
++ *                  a new key and all the allocaed MACs have been
++ *                  assigned a random but valid MAC will be return
++ *                  (and this will be stored for later retrieval
++ *                  under the given key.)
++ *
++ * Sequencing:
++ *  The MAC ids must be added before any driver tries to use them
++ *  (this is obvious isn't it?)  This can be made to happen by
++ *  sequencing the initcalls correctly.  The module or kernel
++ *  parameters have been handled before any init call happens.
++ *  The important trick here is to ensure that the platform
++ *  initialises any devices with MAC ids *before* any devices
++ *  which might use them.
++ *
++ *  When this code is a module any other module which adds a
++ *  MAC should be modprobed before modules for ethernet
++ *  devices.
++ *
++ *  The failure case is 'soft' - the device will get a valid, but
++ *  random, MAC and the real allocated MACs will never get used.
++ *  This can be seen by looking at the list of ids in sysfs (there
++ *  will be extra, random, ones after the allocated ones).
++ *
++ * Recommendations:
++ *  For ethernet drivers which are known to be the sole driver on
++ *  the board (without a built in MAC) and where the number of
++ *  devices driven is known simply use an index 0..(n-1) as a
++ *  key for each of the n devices.
++ *
++ *  This is the common case, it works where one driver handles
++ *  multiple devices so long as the total number of devices can
++ *  be determined reliably.  It is sufficient merely to maintain
++ *  a global count of the number of devices initialised so far,
++ *  just so long as the initialisation order is consistent.
++ *
++ *  When the driver is generic and the board may be populated with
++ *  other devices which allocate MACs from the maclist pool and
++ *  use different drivers create a random key and compile this into
++ *  the code.  Use this as the base for all devices from the driver
++ *  (using a global device count for this driver if necessary).
++ *
++ *  With the second strategy the assignment of MACs will depend on
++ *  the order of initialisation of the different drivers.  To avoid
++ *  this provide a kernel (or module) command line parameter to
++ *  specify a base index and (optional) count for each driver or
++ *  pass in a (struct resource) with the start and end of the keys
++ *  to pass to maclist_read.  Either method allows the higher levels
++ *  (boot loader or machine description) to specify which MACs in
++ *  the list to assign to each device.
++ */
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/spinlock.h>
++#include <linux/etherdevice.h>
++#include <linux/proc_fs.h>
++#include <linux/errno.h>
++
++#include <net/maclist.h>
++
++#define MACLIST_NAME "maclist"
++
++MODULE_AUTHOR("John Bowler <jbowler@acm.org>");
++MODULE_DESCRIPTION("MAC list repository");
++MODULE_LICENSE("GPL");
++
++typedef struct maclist_entry {
++	struct maclist_entry *next;  /* Linked list, first first */
++	u32                   key;   /* count or key for this entry */
++	u16                   flags;
++	u8                    id[6]; /* 6 byte Ethernet MAC */
++} maclist_entry_t;
++
++/*
++ * flag definitions
++ */
++#define MACLIST_ALLOCATED 1
++#define MACLIST_RANDOM    2
++
++/* Access to this list is protected by a standard rwlock_t. */
++static maclist_entry_t *maclist_list = 0;
++
++static DEFINE_RWLOCK(maclist_lock);
++
++/*
++ * External interfaces.
++ *
++ * Add a single entry, returns 0 on success else an error
++ * code.  Checks for invalid addresses.
++ */
++int maclist_add(const u8 new_id[6]) {
++	maclist_entry_t *new_entry, **tail;
++
++	if (new_id == 0 || !is_valid_ether_addr(new_id)) {
++		printk(KERN_ERR MACLIST_NAME ": invalid ethernet address\n");
++		return -EINVAL;
++	}
++	new_entry = kmalloc(sizeof *new_entry, GFP_KERNEL);
++	if (new_entry == 0)
++		return -ENOMEM;
++	new_entry->next  = 0;
++	new_entry->key   = 0;
++	new_entry->flags = 0;
++	memcpy(new_entry->id, new_id, sizeof new_entry->id);
++
++	tail = &maclist_list;
++
++	write_lock(&maclist_lock);
++	while (*tail != 0)
++		tail = &(*tail)->next;
++	*tail = new_entry;
++	write_unlock(&maclist_lock);
++
++	return 0;
++}
++EXPORT_SYMBOL(maclist_add);
++
++/*
++ * Return the current entry count.
++ */
++static int maclist_count_unlocked(void) {
++	maclist_entry_t *tail = maclist_list;
++	int count = 0;
++
++	while (tail != 0) {
++		tail = tail->next;
++		++count;
++	}
++
++	return count;
++}
++
++int maclist_count(void) {
++	int count;
++
++	read_lock(&maclist_lock);
++		count = maclist_count_unlocked();
++	read_unlock(&maclist_lock);
++
++	return count;
++}
++EXPORT_SYMBOL(maclist_count);
++
++/*
++ * Return the ID with the given key (the key is allocated
++ * to an entry if not found).
++ */
++void maclist_read(u8 (*id)[6], u32 key) {
++	int              count, index;
++	maclist_entry_t *entry, *entry_to_allocate;
++	
++	/* Do this under a write lock to avoid the SMP race
++	 * where we find the key isn't assigned, drop the lock,
++	 * have another CPU assign it, then assign it on this
++	 * CPU too - very bad...
++	 */
++	write_lock(&maclist_lock);
++		count             = maclist_count_unlocked();
++		index             = key % count; /* index of entry to allocate */
++		entry_to_allocate = 0;
++
++		entry = maclist_list;
++		while (entry != 0) {
++			if ((entry->flags & MACLIST_ALLOCATED) != 0) {
++				if (entry->key == key) {
++					/* Found it, use this entry. */
++					entry_to_allocate = entry;
++					break;
++				}
++			} else if (entry_to_allocate == 0 || count <= index) {
++				/* The algorithm is to try for entry
++				 * (key % count), but if this isn't possible
++				 * return the prior unallocated entry.
++				 */
++				entry_to_allocate = entry;
++			}
++
++			++count;
++			entry = entry->next;
++		}
++
++		/* Use entry_to_allocate, allocating it if necessary. */
++		if (entry_to_allocate != 0) {
++			if ((entry_to_allocate->flags & MACLIST_ALLOCATED) == 0) {
++				entry_to_allocate->key = key;
++				entry_to_allocate->flags |= MACLIST_ALLOCATED;
++			}
++			memcpy(id, entry_to_allocate->id, sizeof *id);
++		}
++	write_unlock(&maclist_lock);
++
++	if (entry_to_allocate == 0) {
++		/* No unallocated entries.  Make a new one and return it. */
++		printk(KERN_INFO MACLIST_NAME ": adding random MAC for key 0x%x\n", key);
++		random_ether_addr(*id);
++		if (maclist_add(*id) == 0)
++			maclist_read(id, key);
++	}
++}
++EXPORT_SYMBOL(maclist_read);
++
++/*
++ * Parameter parsing.  The option string is a list of MAC
++ * addresses, comma separated.  (The parsing really should
++ * be somewhere central...)
++ */
++static int __init maclist_setup(const char *param) {
++	int bytes = 0, seen_a_digit = 0;
++	u8 id[6];
++
++	memset(id, 0, sizeof id);
++
++	if (param) do {
++		int digit = -1;
++		switch (*param) {
++		case '0': digit = 0; break;
++		case '1': digit = 1; break;
++		case '2': digit = 2; break;
++		case '3': digit = 3; break;
++		case '4': digit = 4; break;
++		case '5': digit = 5; break;
++		case '6': digit = 6; break;
++		case '7': digit = 7; break;
++		case '8': digit = 8; break;
++		case '9': digit = 9; break;
++		case 'a': case 'A': digit = 10; break;
++		case 'b': case 'B': digit = 11; break;
++		case 'c': case 'C': digit = 12; break;
++		case 'd': case 'D': digit = 13; break;
++		case 'e': case 'E': digit = 14; break;
++		case 'f': case 'F': digit = 15; break;
++		case ':':
++			if (seen_a_digit)
++				bytes = (bytes+1) & ~1;
++			else
++				bytes += 2; /* i.e. ff::ff is ff:00:ff */
++			seen_a_digit = 0;
++			break;
++		case 0:
++			if (bytes == 0) /* nothing new seen so far */
++				return 0;
++			/*fall through*/
++		case ',': case ';':
++			if (bytes > 0)
++				bytes = 12; /* i.e. all trailing bytes 0 */
++			break;
++		default:
++			printk(KERN_ERR MACLIST_NAME ": invalid character <%c[%d]>\n",
++					*param, *param);
++			return -EINVAL;
++		}
++
++		if (digit >= 0) {
++			id[bytes>>1] = (id[bytes>>1] << 4) + digit; break;
++			++bytes;
++			seen_a_digit = 1;
++		}
++
++		if (bytes >= 12) {
++			int rc = maclist_add(id);
++			if (unlikely(rc))
++				return rc;
++			bytes = 0;
++			seen_a_digit = 0;
++			memset(id, 0, sizeof id);
++			if (*param == 0)
++				return 0;
++		}
++		++param;
++	} while (1);
++
++	return 0;
++}
++
++#if (defined CONFIG_PROC_FS) || (defined MODULE)
++/*
++ * Character device read
++ */
++static int maclist_getchar(off_t n) {
++	static char xdigit[16] = "0123456789abcdef";
++	maclist_entry_t *head = maclist_list;
++	int b;
++
++	do {
++		if (head == 0)
++			return -1;
++		if (n < 18)
++			break;
++		head = head->next;
++		n -= 18;
++	} while (1);
++
++	if (n == 17)
++		return '\n';
++
++	b = n/3;
++	switch (n - b*3) {
++	case 0: return xdigit[head->id[b] >> 4];
++	case 1: return xdigit[head->id[b] & 0xf];
++	default: return ':';
++	}
++}
++#endif
++
++/*
++ * procfs support, if compiled in.
++ */
++#ifdef CONFIG_PROC_FS
++/*
++ * The extensively undocumented proc_read_t callback is implemented here.
++ * Go look in fs/proc/generic.c:
++ *
++ * Prototype:
++ *    int f(char *buffer, char **start, off_t offset,
++ *          int count, int *peof, void *dat)
++ *
++ * Assume that the buffer is "count" bytes in size.
++ *
++ * 2) Set *start = an address within the buffer.
++ *    Put the data of the requested offset at *start.
++ *    Return the number of bytes of data placed there.
++ *    If this number is greater than zero and you
++ *    didn't signal eof and the reader is prepared to
++ *    take more data you will be called again with the
++ *    requested offset advanced by the number of bytes
++ *    absorbed.
++ */
++static int maclist_proc_read(char *buffer, char **start, off_t offset,
++		int count, int *peof, void *dat) {
++	int total;
++
++	*start = buffer;
++	total = 0;
++
++	while (total < count) {
++		int ch = maclist_getchar(offset++);
++		if (ch == -1) {
++			*peof = 1;
++			break;
++		}
++		*buffer++ = ch;
++		++total;
++	}
++
++	return total;
++}
++#endif
++
++/*
++ * set works once, at init time (the param is set to 0444 below),
++ * get works any time.
++ */
++static int param_set_maclist(const char *val, struct kernel_param *kp)
++{
++	if (maclist_list == 0)
++		return maclist_setup(val);
++
++	printk(KERN_ERR MACLIST_NAME ": call to set parameters too late\n");
++	return -EINVAL;
++}
++
++static int param_get_maclist(char *buffer, struct kernel_param *kp)
++{
++#ifdef MODULE
++	off_t offset = 0;
++
++	/* buffer is only 4k! */
++	while (offset < 4096) {
++		int ch = maclist_getchar(offset++);
++		if (ch < 0) {
++			*buffer = 0;
++			return 0;
++		}
++		*buffer++ = ch;
++	}
++
++	*--buffer = 0;
++	return -ENOMEM;
++#else
++	return -EINVAL;
++#endif
++}
++
++/*
++ * module: the argument is ids=mac,mac,mac
++ * kernel command line: maclist.ids=mac,mac,mac
++ */
++#define param_check_maclist(name, p) __param_check(name, p, maclist_entry_t*)
++module_param_named(ids, maclist_list, maclist, 0444);
++MODULE_PARM_DESC(ids, "comma separated list of MAC ids\n");
++
++/*
++ * Finally, the init/exit functions.
++ */
++static void __exit maclist_exit(void)
++{
++	maclist_entry_t *list;
++
++	remove_proc_entry(MACLIST_NAME, proc_net);
++
++	write_lock(&maclist_lock);
++		list = maclist_list;
++		maclist_list = 0;
++	write_unlock(&maclist_lock);
++
++	while (list != 0) {
++		maclist_entry_t *head = list;
++		list = head->next;
++		kfree(head);
++	}
++}
++
++static int __init maclist_init(void)
++{
++#	ifdef MODULE
++		if (ids[0])
++			maclist_setup(ids);
++#	endif
++
++	/* Ignore failure, the module will still work. */
++	(void)create_proc_read_entry(MACLIST_NAME, S_IRUGO, proc_net, maclist_proc_read, NULL);
++
++	return 0;
++}
++
++module_init(maclist_init);
++module_exit(maclist_exit);
+Index: linux-2.6.18-armeb/drivers/pci/pci.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/pci/pci.c
++++ linux-2.6.18-armeb/drivers/pci/pci.c
+@@ -925,6 +925,8 @@ pci_set_consistent_dma_mask(struct pci_d
+ 
+ 	return 0;
+ }
++EXPORT_SYMBOL(pci_set_dma_mask);
++EXPORT_SYMBOL(pci_set_consistent_dma_mask);
+ #endif
+      
+ static int __devinit pci_init(void)
+@@ -980,8 +982,6 @@ EXPORT_SYMBOL(pci_set_master);
+ EXPORT_SYMBOL(pci_set_mwi);
+ EXPORT_SYMBOL(pci_clear_mwi);
+ EXPORT_SYMBOL_GPL(pci_intx);
+-EXPORT_SYMBOL(pci_set_dma_mask);
+-EXPORT_SYMBOL(pci_set_consistent_dma_mask);
+ EXPORT_SYMBOL(pci_assign_resource);
+ EXPORT_SYMBOL(pci_find_parent_resource);
+ 
+Index: linux-2.6.18-armeb/drivers/scsi/libata-core.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/scsi/libata-core.c
++++ linux-2.6.18-armeb/drivers/scsi/libata-core.c
+@@ -3627,9 +3627,9 @@ void ata_pio_data_xfer(struct ata_device
+ 
+ 	/* Transfer multiple of 2 bytes */
+ 	if (write_data)
+-		outsw(ap->ioaddr.data_addr, buf, words);
++		outsw(ap->ioaddr.data_addr, (const u16*)buf, words);
+ 	else
+-		insw(ap->ioaddr.data_addr, buf, words);
++		insw(ap->ioaddr.data_addr, (u16*)buf, words);
+ 
+ 	/* Transfer trailing 1 byte, if any. */
+ 	if (unlikely(buflen & 0x01)) {
+Index: linux-2.6.18-armeb/drivers/scsi/sata_via.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/scsi/sata_via.c
++++ linux-2.6.18-armeb/drivers/scsi/sata_via.c
+@@ -63,7 +63,7 @@ enum {
+ 	PORT0			= (1 << 1),
+ 	PORT1			= (1 << 0),
+ 	ALL_PORTS		= PORT0 | PORT1,
+-	N_PORTS			= 2,
++	N_PORTS			= 3,
+ 
+ 	NATIVE_MODE_ALL		= (1 << 7) | (1 << 6) | (1 << 5) | (1 << 4),
+ 
+@@ -75,9 +75,11 @@ static int svia_init_one (struct pci_dev
+ static u32 svia_scr_read (struct ata_port *ap, unsigned int sc_reg);
+ static void svia_scr_write (struct ata_port *ap, unsigned int sc_reg, u32 val);
+ static void vt6420_error_handler(struct ata_port *ap);
++static void via_pata_phy_reset(struct ata_port *ap);
++static void via_pata_set_piomode (struct ata_port *ap, struct ata_device *adev);
++static void via_pata_set_dmamode (struct ata_port *ap, struct ata_device *adev);
+ 
+ static const struct pci_device_id svia_pci_tbl[] = {
+-	{ 0x1106, 0x0591, PCI_ANY_ID, PCI_ANY_ID, 0, 0, vt6420 },
+ 	{ 0x1106, 0x3149, PCI_ANY_ID, PCI_ANY_ID, 0, 0, vt6420 },
+ 	{ 0x1106, 0x3249, PCI_ANY_ID, PCI_ANY_ID, 0, 0, vt6421 },
+ 
+@@ -143,12 +145,17 @@ static const struct ata_port_operations 
+ static const struct ata_port_operations vt6421_sata_ops = {
+ 	.port_disable		= ata_port_disable,
+ 
++ 	.set_piomode 		= via_pata_set_piomode,
++	.set_dmamode 		= via_pata_set_dmamode,
++
+ 	.tf_load		= ata_tf_load,
+ 	.tf_read		= ata_tf_read,
+ 	.check_status		= ata_check_status,
+ 	.exec_command		= ata_exec_command,
+ 	.dev_select		= ata_std_dev_select,
+ 
++	.phy_reset 		= via_pata_phy_reset, //new LAWI
++
+ 	.bmdma_setup            = ata_bmdma_setup,
+ 	.bmdma_start            = ata_bmdma_start,
+ 	.bmdma_stop		= ata_bmdma_stop,
+@@ -166,8 +173,8 @@ static const struct ata_port_operations 
+ 	.irq_handler		= ata_interrupt,
+ 	.irq_clear		= ata_bmdma_irq_clear,
+ 
+-	.scr_read		= svia_scr_read,
+-	.scr_write		= svia_scr_write,
++//	.scr_read		= svia_scr_read,
++//	.scr_write		= svia_scr_write,
+ 
+ 	.port_start		= ata_port_start,
+ 	.port_stop		= ata_port_stop,
+@@ -290,27 +297,33 @@ static unsigned long svia_scr_addr(unsig
+ {
+ 	return addr + (port * 128);
+ }
+-
++/*
+ static unsigned long vt6421_scr_addr(unsigned long addr, unsigned int port)
+ {
+ 	return addr + (port * 64);
+ }
+-
++*/
+ static void vt6421_init_addrs(struct ata_probe_ent *probe_ent,
+ 			      struct pci_dev *pdev,
+ 			      unsigned int port)
+ {
+-	unsigned long reg_addr = pci_resource_start(pdev, port);
+-	unsigned long bmdma_addr = pci_resource_start(pdev, 4) + (port * 8);
+-	unsigned long scr_addr;
++	// by Freecom Technologies GmbH, Berlin
++	// Change port priority:  highest -> SATA0 (internal SATA)
++	//                        middle  -> ATA
++	//                        lowest  -> SATA1 (external SATA)
++	unsigned int hPort = (port ? port ^ 3 : 0);
++
++	unsigned long reg_addr = pci_resource_start(pdev, hPort);
++	unsigned long bmdma_addr = pci_resource_start(pdev, 4) + (hPort * 8);
++//	unsigned long scr_addr;
+ 
+ 	probe_ent->port[port].cmd_addr = reg_addr;
+ 	probe_ent->port[port].altstatus_addr =
+ 	probe_ent->port[port].ctl_addr = (reg_addr + 8) | ATA_PCI_CTL_OFS;
+ 	probe_ent->port[port].bmdma_addr = bmdma_addr;
+ 
+-	scr_addr = vt6421_scr_addr(pci_resource_start(pdev, 5), port);
+-	probe_ent->port[port].scr_addr = scr_addr;
++//	scr_addr = vt6421_scr_addr(pci_resource_start(pdev, 5), port);
++//	probe_ent->port[port].scr_addr = scr_addr;
+ 
+ 	ata_std_ports(&probe_ent->port[port]);
+ }
+@@ -346,7 +359,8 @@ static struct ata_probe_ent *vt6421_init
+ 	INIT_LIST_HEAD(&probe_ent->node);
+ 
+ 	probe_ent->sht		= &svia_sht;
+-	probe_ent->host_flags	= ATA_FLAG_SATA | ATA_FLAG_NO_LEGACY;
++	//probe_ent->host_flags	= ATA_FLAG_SATA | ATA_FLAG_NO_LEGACY;
++	probe_ent->host_flags = ATA_FLAG_SLAVE_POSS | ATA_FLAG_SRST | ATA_FLAG_NO_LEGACY;
+ 	probe_ent->port_ops	= &vt6421_sata_ops;
+ 	probe_ent->n_ports	= N_PORTS;
+ 	probe_ent->irq		= pdev->irq;
+@@ -361,6 +375,175 @@ static struct ata_probe_ent *vt6421_init
+ 	return probe_ent;
+ }
+ 
++//PATA CHANGES
++/* add functions for pata */
++
++
++/**
++ * via_pata_cbl_detect - Probe host controller cable detect info
++ * @ap: Port for which cable detect info is desired
++ *
++ * Read 80c cable indicator from ATA PCI device's PCI config
++ * register. This register is normally set by firmware (BIOS).
++ *
++ * LOCKING:
++ * None (inherited from caller).
++ */
++static void via_pata_cbl_detect(struct ata_port *ap)
++{
++  struct pci_dev *pdev = to_pci_dev(ap->host_set->dev);
++  int cfg_addr;
++  u8 tmp;
++
++
++  if (ap->port_no == 2) { /* PATA channel in VT6421 */
++    ap->cbl = ATA_CBL_PATA80;
++    cfg_addr = 0xB3;
++    pci_read_config_byte(pdev, cfg_addr, &tmp);
++    if (tmp & 0x10) { /* 40pin cable */
++      ap->cbl = ATA_CBL_PATA40;
++    }
++    else { /* 80pin cable */
++      ap->cbl = ATA_CBL_PATA80;
++    }
++  }
++  else { /* channel 0 and 1 are SATA channels */
++    ap->cbl = ATA_CBL_SATA;
++  }
++
++  return;
++}
++
++/**
++ * via_pata_phy_reset - Probe specified port on PATA host controller
++ * @ap: Port to probe
++ *
++ * Probe PATA phy.
++ *
++ * LOCKING:
++ * None (inherited from caller).
++ */
++
++static void via_pata_phy_reset(struct ata_port *ap)
++{
++// struct pci_dev *pdev = to_pci_dev(ap->host_set->dev);
++
++ via_pata_cbl_detect(ap);
++
++ ata_port_probe(ap);
++
++ ata_bus_reset(ap);
++}
++
++
++/**
++ * via_pata_set_piomode - Initialize host controller PATA PIO timings
++ * @ap: Port whose timings we are configuring
++ * @adev: um
++ * @pio: PIO mode, 0 - 4
++ *
++ * Set PIO mode for device, in host controller PCI config space.
++ *
++ * LOCKING:
++ * None (inherited from caller).
++ */
++
++static void via_pata_set_piomode (struct ata_port *ap, struct ata_device *adev)
++{
++ struct pci_dev *dev = to_pci_dev(ap->host_set->dev);
++
++ u8 cfg_byte;
++ int cfg_addr;
++
++ if (ap->port_no != 2) { /* SATA channel in VT6421 */
++ /* no need to set */
++ return;
++ }
++
++
++ cfg_addr = 0xAB;
++ switch (adev->pio_mode & 0x07) {
++ case 0:
++ cfg_byte = 0xa8;
++ break;
++ case 1:
++ cfg_byte = 0x65;
++ break;
++ case 2:
++ cfg_byte = 0x65;
++ break;
++ case 3:
++ cfg_byte = 0x31;
++ break;
++ case 4:
++ cfg_byte = 0x20;
++ break;
++ default:
++ cfg_byte = 0x20;
++ }
++
++ pci_write_config_byte (dev, cfg_addr, cfg_byte);
++}
++
++/**
++ * via_pata_set_dmamode - Initialize host controller PATA PIO timings
++ * @ap: Port whose timings we are configuring
++ * @adev: um
++ * @udma: udma mode, 0 - 6
++ *
++ * Set UDMA mode for device, in host controller PCI config space.
++ *
++ * LOCKING:
++ * None (inherited from caller).
++ */
++
++static void via_pata_set_dmamode (struct ata_port *ap, struct ata_device *adev)
++{
++ struct pci_dev *dev = to_pci_dev(ap->host_set->dev);
++
++ u8 cfg_byte;
++ int cfg_addr;
++
++ if (ap->port_no != 2) { /* SATA channel in VT6421 */
++ /* no need to set */
++ return;
++ }
++
++ cfg_addr = 0xB3;
++ switch (adev->dma_mode & 0x07) {
++ case 0:
++ cfg_byte = 0xee;
++ break;
++ case 1:
++ cfg_byte = 0xe8;
++ break;
++ case 2:
++ cfg_byte = 0xe6;
++ break;
++ case 3:
++ cfg_byte = 0xe4;
++ break;
++ case 4:
++ cfg_byte = 0xe2;
++ break;
++ case 5:
++ cfg_byte = 0xe1;
++ break;
++ case 6:
++ cfg_byte = 0xe0;
++ break;
++ default:
++ cfg_byte = 0xe0;
++ }
++
++ pci_write_config_byte (dev, cfg_addr, cfg_byte);
++}
++
++
++
++
++
++
+ static void svia_configure(struct pci_dev *pdev)
+ {
+ 	u8 tmp8;
+Index: linux-2.6.18-armeb/fs/Kconfig
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/Kconfig
++++ linux-2.6.18-armeb/fs/Kconfig
+@@ -1230,6 +1230,31 @@ config JFFS2_CMODE_SIZE
+ 
+ endchoice
+ 
++choice
++        prompt "JFFS2 endianness"
++        default JFFS2_NATIVE_ENDIAN
++        depends on JFFS2_FS
++        help
++          You can set here the default endianness of JFFS2 from
++          the available options. Don't touch if unsure.
++
++config JFFS2_NATIVE_ENDIAN
++        bool "native endian"
++        help
++          Uses a native endian bytestream.
++
++config JFFS2_BIG_ENDIAN
++        bool "big endian"
++        help
++          Uses a big endian bytestream.
++
++config JFFS2_LITTLE_ENDIAN
++        bool "little endian"
++        help
++          Uses a little endian bytestream.
++
++endchoice
++
+ config CRAMFS
+ 	tristate "Compressed ROM file system support (cramfs)"
+ 	select ZLIB_INFLATE
+Index: linux-2.6.18-armeb/fs/cifs/cifs_unicode.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/cifs_unicode.c
++++ linux-2.6.18-armeb/fs/cifs/cifs_unicode.c
+@@ -38,11 +38,13 @@ cifs_strfromUCS_le(char *to, const __le1
+ 	int i;
+ 	int outlen = 0;
+ 
+-	for (i = 0; (i < len) && from[i]; i++) {
++	// read "from" align safe, by Freecom
++	for (i = 0; (i < len) && le16_to_cpu_align(from + i); i++) {
+ 		int charlen;
+ 		/* 2.4.0 kernel or greater */
++		// read "from" align safe, by Freecom
+ 		charlen =
+-		    codepage->uni2char(le16_to_cpu(from[i]), &to[outlen],
++		    codepage->uni2char(le16_to_cpu_align(from+i), &to[outlen],
+ 				       NLS_MAX_CHARSET_SIZE);
+ 		if (charlen > 0) {
+ 			outlen += charlen;
+@@ -77,14 +79,14 @@ cifs_strtoUCS(__le16 * to, const char *f
+ 			       ("cifs_strtoUCS: char2uni returned %d",
+ 				charlen));
+ 			/* A question mark */
+-			to[i] = cpu_to_le16(0x003f);
++			le16_to_cpu_write_align(to+i, 0x003f);   // align safe, by Freecom
+ 			charlen = 1;
+ 		} else 
+-			to[i] = cpu_to_le16(wchar_to[i]);
++			cpu_swap_align(to+i);   // align safe, by Freecom
+ 
+ 	}
+ 
+-	to[i] = 0;
++	le16_to_cpu_write_align(to+i, 0);   // align safe, by Freecom
+ 	return i;
+ }
+ 
+Index: linux-2.6.18-armeb/fs/cifs/cifs_unicode.h
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/cifs_unicode.h
++++ linux-2.6.18-armeb/fs/cifs/cifs_unicode.h
+@@ -5,7 +5,7 @@
+  *     Convert a unicode character to upper or lower case using
+  *     compressed tables.
+  *
+- *   Copyright (c) International Business Machines  Corp., 2000,2005555555555555555555555555555555555555555555555555555555
++ *   Copyright (c) International Business Machines  Corp., 2000,2005
+  *
+  *   This program is free software;  you can redistribute it and/or modify
+  *   it under the terms of the GNU General Public License as published by
+@@ -149,7 +149,9 @@ UniStrnlen(const wchar_t * ucs1, int max
+ {
+ 	int i = 0;
+ 
+-	while (*ucs1++) {
++	// alignment safe, by Freecom Technologies GmbH, Berlin
++	while (*((char*)ucs1) && *((char*)ucs1 + 1)) {
++		ucs1++;
+ 		i++;
+ 		if (i >= maxlen)
+ 			break;
+Index: linux-2.6.18-armeb/fs/cifs/cifspdu.h
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/cifspdu.h
++++ linux-2.6.18-armeb/fs/cifs/cifspdu.h
+@@ -354,8 +354,34 @@ struct smb_hdr {
+ 	__u8 WordCount;
+ } __attribute__((packed));
+ /* given a pointer to an smb_hdr retrieve the value of byte count */
+-#define BCC(smb_var) ( *(__u16 *)((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ) )
+-#define BCC_LE(smb_var) ( *(__le16 *)((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ) )
++//#define BCC(smb_var) ( *(__u16 *)((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ) )
++//#define BCC_LE(smb_var) ( *(__le16 *)((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ) )
++
++// replace with alignment safe versions, by Freecom Technologies GmbH, berlin
++#define BCC_READ(smb_var)  \
++  ( ((__u16)(*((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) + 1))) + \
++   (((__u16)(*((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ))) << 8) )
++#define BCC_WRITE(smb_var, value)  \
++  { *((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) + 1) = (char)value; \
++    *((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount)) = (char)(value >> 8); }
++#define BCC_READ_LE(smb_var)  \
++  ( ((__u16)(*((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ))) + \
++   (((__u16)(*((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) + 1 ))) << 8) )
++#define BCC_WRITE_LE(smb_var, value)  \
++  { *((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount)) = (char)value; \
++    *((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) + 1) = (char)(value >> 8); }
++#define le16_to_cpu_align(wordptr)  \
++  ( ((__u16)(*((char *)(wordptr)))) + (((__u16)(*((char *)(wordptr) + 1))) << 8) )
++#define cpu_align(wordptr)  \
++  ( ((__u16)(*((char *)(wordptr) + 1))) + (((__u16)(*((char *)(wordptr)))) << 8) )
++#define le16_to_cpu_write_align(wordptr, value)  \
++  { *((char *)(wordptr)) = (char)(value); \
++    *((char *)(wordptr) + 1) = (char)((value) >> 8); }
++#define cpu_swap_align(wordptr)  \
++  { char c = *((char *)(wordptr)); \
++    *((char *)(wordptr)) = *((char *)(wordptr) + 1); \
++    *((char *)(wordptr) + 1) = c; }
++
+ /* given a pointer to an smb_hdr retrieve the pointer to the byte area */
+ #define pByteArea(smb_var) ((unsigned char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) + 2 )
+ 
+Index: linux-2.6.18-armeb/fs/cifs/cifssmb.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/cifssmb.c
++++ linux-2.6.18-armeb/fs/cifs/cifssmb.c
+@@ -373,7 +373,8 @@ static int validate_t2(struct smb_t2_rsp
+ 				pBCC = (pSMB->hdr.WordCount * 2) + 
+ 					sizeof(struct smb_hdr) +
+ 					(char *)pSMB;
+-				if((total_size <= (*(u16 *)pBCC)) && 
++				// align safe, by Freecom
++				if((total_size <= cpu_align(pBCC)) && 
+ 				   (total_size < 
+ 					CIFSMaxBufSize+MAX_CIFS_HDR_SIZE)) {
+ 					return 0;
+Index: linux-2.6.18-armeb/fs/cifs/connect.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/connect.c
++++ linux-2.6.18-armeb/fs/cifs/connect.c
+@@ -304,9 +304,9 @@ static int coalesce_t2(struct smb_hdr * 
+ 	memcpy(data_area_of_target,data_area_of_buf2,total_in_buf2);
+ 	total_in_buf += total_in_buf2;
+ 	pSMBt->t2_rsp.DataCount = cpu_to_le16(total_in_buf);
+-	byte_count = le16_to_cpu(BCC_LE(pTargetSMB));
++	byte_count = BCC_READ_LE(pTargetSMB);
+ 	byte_count += total_in_buf2;
+-	BCC_LE(pTargetSMB) = cpu_to_le16(byte_count);
++	BCC_WRITE_LE(pTargetSMB, byte_count);
+ 
+ 	byte_count = pTargetSMB->smb_buf_length;
+ 	byte_count += total_in_buf2;
+@@ -2170,11 +2170,11 @@ CIFSSessSetup(unsigned int xid, struct c
+ 			if (smb_buffer->Flags2 & SMBFLG2_UNICODE) {
+ 				if ((long) (bcc_ptr) % 2) {
+ 					remaining_words =
+-					    (BCC(smb_buffer_response) - 1) /2;
++					    (BCC_READ(smb_buffer_response) - 1) /2;
+ 					bcc_ptr++;	/* Unicode strings must be word aligned */
+ 				} else {
+ 					remaining_words =
+-						BCC(smb_buffer_response) / 2;
++						BCC_READ(smb_buffer_response) / 2;
+ 				}
+ 				len =
+ 				    UniStrnlen((wchar_t *) bcc_ptr,
+@@ -2247,7 +2247,7 @@ CIFSSessSetup(unsigned int xid, struct c
+ 				len = strnlen(bcc_ptr, 1024);
+ 				if (((long) bcc_ptr + len) - (long)
+ 				    pByteArea(smb_buffer_response)
+-					    <= BCC(smb_buffer_response)) {
++					    <= BCC_READ(smb_buffer_response)) {
+ 					kfree(ses->serverOS);
+ 					ses->serverOS = kzalloc(len + 1,GFP_KERNEL);
+ 					if(ses->serverOS == NULL)
+@@ -2495,12 +2495,12 @@ CIFSNTLMSSPNegotiateSessSetup(unsigned i
+ 				if (smb_buffer->Flags2 & SMBFLG2_UNICODE) {
+ 					if ((long) (bcc_ptr) % 2) {
+ 						remaining_words =
+-						    (BCC(smb_buffer_response)
++						    (BCC_READ(smb_buffer_response)
+ 						     - 1) / 2;
+ 						bcc_ptr++;	/* Unicode strings must be word aligned */
+ 					} else {
+ 						remaining_words =
+-						    BCC
++						    BCC_READ
+ 						    (smb_buffer_response) / 2;
+ 					}
+ 					len =
+@@ -2580,7 +2580,7 @@ CIFSNTLMSSPNegotiateSessSetup(unsigned i
+ 					len = strnlen(bcc_ptr, 1024);
+ 					if (((long) bcc_ptr + len) - (long)
+ 					    pByteArea(smb_buffer_response)
+-					    <= BCC(smb_buffer_response)) {
++					    <= BCC_READ(smb_buffer_response)) {
+ 						if(ses->serverOS)
+ 							kfree(ses->serverOS);
+ 						ses->serverOS =
+@@ -2898,11 +2898,11 @@ CIFSNTLMSSPAuthSessSetup(unsigned int xi
+ 				if (smb_buffer->Flags2 & SMBFLG2_UNICODE) {
+ 					if ((long) (bcc_ptr) % 2) {
+ 						remaining_words =
+-						    (BCC(smb_buffer_response)
++						    (BCC_READ(smb_buffer_response)
+ 						     - 1) / 2;
+ 						bcc_ptr++;	/* Unicode strings must be word aligned */
+ 					} else {
+-						remaining_words = BCC(smb_buffer_response) / 2;
++						remaining_words = BCC_READ(smb_buffer_response) / 2;
+ 					}
+ 					len =
+ 					    UniStrnlen((wchar_t *) bcc_ptr,remaining_words - 1);
+@@ -2986,7 +2986,7 @@ CIFSNTLMSSPAuthSessSetup(unsigned int xi
+ 					len = strnlen(bcc_ptr, 1024);
+ 					if (((long) bcc_ptr + len) - 
+                         (long) pByteArea(smb_buffer_response) 
+-                            <= BCC(smb_buffer_response)) {
++                            <= BCC_READ(smb_buffer_response)) {
+ 						if(ses->serverOS)
+ 							kfree(ses->serverOS);
+ 						ses->serverOS = kzalloc(len + 1,GFP_KERNEL);
+@@ -3139,7 +3139,7 @@ CIFSTCon(unsigned int xid, struct cifsSe
+ 		tcon->tidStatus = CifsGood;
+ 		tcon->tid = smb_buffer_response->Tid;
+ 		bcc_ptr = pByteArea(smb_buffer_response);
+-		length = strnlen(bcc_ptr, BCC(smb_buffer_response) - 2);
++		length = strnlen(bcc_ptr, BCC_READ(smb_buffer_response) - 2);
+         /* skip service field (NB: this field is always ASCII) */
+ 		bcc_ptr += length + 1;	
+ 		strncpy(tcon->treeName, tree, MAX_TREE_SIZE);
+@@ -3147,7 +3147,7 @@ CIFSTCon(unsigned int xid, struct cifsSe
+ 			length = UniStrnlen((wchar_t *) bcc_ptr, 512);
+ 			if ((bcc_ptr + (2 * length)) -
+ 			     pByteArea(smb_buffer_response) <=
+-			    BCC(smb_buffer_response)) {
++			    BCC_READ(smb_buffer_response)) {
+ 				kfree(tcon->nativeFileSystem);
+ 				tcon->nativeFileSystem =
+ 				    kzalloc(length + 2, GFP_KERNEL);
+@@ -3164,7 +3164,7 @@ CIFSTCon(unsigned int xid, struct cifsSe
+ 			length = strnlen(bcc_ptr, 1024);
+ 			if ((bcc_ptr + length) -
+ 			    pByteArea(smb_buffer_response) <=
+-			    BCC(smb_buffer_response)) {
++			    BCC_READ(smb_buffer_response)) {
+ 				kfree(tcon->nativeFileSystem);
+ 				tcon->nativeFileSystem =
+ 				    kzalloc(length + 1, GFP_KERNEL);
+Index: linux-2.6.18-armeb/fs/cifs/netmisc.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/netmisc.c
++++ linux-2.6.18-armeb/fs/cifs/netmisc.c
+@@ -869,14 +869,14 @@ unsigned int
+ smbCalcSize(struct smb_hdr *ptr)
+ {
+ 	return (sizeof (struct smb_hdr) + (2 * ptr->WordCount) +
+-		2 /* size of the bcc field */ + BCC(ptr));
++		2 /* size of the bcc field */ + BCC_READ(ptr));
+ }
+ 
+ unsigned int
+ smbCalcSize_LE(struct smb_hdr *ptr)
+ {
+ 	return (sizeof (struct smb_hdr) + (2 * ptr->WordCount) +
+-		2 /* size of the bcc field */ + le16_to_cpu(BCC_LE(ptr)));
++		2 /* size of the bcc field */ + BCC_READ_LE(ptr));
+ }
+ 
+ /* The following are taken from fs/ntfs/util.c */
+Index: linux-2.6.18-armeb/fs/cifs/sess.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/sess.c
++++ linux-2.6.18-armeb/fs/cifs/sess.c
+@@ -478,7 +478,7 @@ CIFS_SessSetup(unsigned int xid, struct 
+ 	count = (long) bcc_ptr - (long) str_area;
+ 	smb_buf->smb_buf_length += count;
+ 
+-	BCC_LE(smb_buf) = cpu_to_le16(count);
++	BCC_WRITE_LE(smb_buf, count);
+ 
+ 	iov[1].iov_base = str_area;
+ 	iov[1].iov_len = count; 
+@@ -504,7 +504,7 @@ CIFS_SessSetup(unsigned int xid, struct 
+ 	cFYI(1, ("UID = %d ", ses->Suid));
+ 	/* response can have either 3 or 4 word count - Samba sends 3 */
+ 	/* and lanman response is 3 */
+-	bytes_remaining = BCC(smb_buf);
++	bytes_remaining = BCC_READ(smb_buf);
+ 	bcc_ptr = pByteArea(smb_buf);
+ 
+ 	if(smb_buf->WordCount == 4) {
+Index: linux-2.6.18-armeb/fs/cifs/transport.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/transport.c
++++ linux-2.6.18-armeb/fs/cifs/transport.c
+@@ -576,8 +576,7 @@ SendReceive2(const unsigned int xid, str
+ 			    sizeof (struct smb_hdr) -
+ 			    4 /* do not count RFC1001 header */  +
+ 			    (2 * midQ->resp_buf->WordCount) + 2 /* bcc */ )
+-				BCC(midQ->resp_buf) = 
+-					le16_to_cpu(BCC_LE(midQ->resp_buf));
++				BCC_WRITE(midQ->resp_buf, BCC_READ_LE(midQ->resp_buf));
+ 			midQ->resp_buf = NULL;  /* mark it so will not be freed
+ 						by DeleteMidQEntry */
+ 		} else {
+@@ -757,7 +756,7 @@ SendReceive(const unsigned int xid, stru
+ 			    sizeof (struct smb_hdr) -
+ 			    4 /* do not count RFC1001 header */  +
+ 			    (2 * out_buf->WordCount) + 2 /* bcc */ )
+-				BCC(out_buf) = le16_to_cpu(BCC_LE(out_buf));
++				BCC_WRITE(out_buf, BCC_READ_LE(out_buf));
+ 		} else {
+ 			rc = -EIO;
+ 			cERROR(1,("Bad MID state?"));
+@@ -1002,7 +1001,7 @@ SendReceiveBlockingLock(const unsigned i
+ 			    sizeof (struct smb_hdr) -
+ 			    4 /* do not count RFC1001 header */  +
+ 			    (2 * out_buf->WordCount) + 2 /* bcc */ )
+-				BCC(out_buf) = le16_to_cpu(BCC_LE(out_buf));
++				BCC_WRITE(out_buf, BCC_READ_LE(out_buf));
+ 		} else {
+ 			rc = -EIO;
+ 			cERROR(1,("Bad MID state?"));
+Index: linux-2.6.18-armeb/fs/nls/nls_base.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/nls/nls_base.c
++++ linux-2.6.18-armeb/fs/nls/nls_base.c
+@@ -61,7 +61,7 @@ utf8_mbtowc(wchar_t *p, const __u8 *s, i
+ 			l &= t->lmask;
+ 			if (l < t->lval)
+ 				return -1;
+-			*p = l;
++			WRITE_ALIGN(p, l);   // alignment safe, by Freecom
+ 			return nc;
+ 		}
+ 		if (n <= nc)
+Index: linux-2.6.18-armeb/fs/nls/nls_utf8.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/nls/nls_utf8.c
++++ linux-2.6.18-armeb/fs/nls/nls_utf8.c
+@@ -27,7 +27,7 @@ static int char2uni(const unsigned char 
+ 	int n;
+ 
+ 	if ( (n = utf8_mbtowc(uni, rawstring, boundlen)) == -1) {
+-		*uni = 0x003f;	/* ? */
++		WRITE_ALIGN(uni, 0x003f);	/* ? */
+ 		n = -EINVAL;
+ 	}
+ 	return n;
+Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/fsg3.h
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/fsg3.h
+@@ -0,0 +1,51 @@
++/*
++ * include/asm-arm/arch-ixp4xx/fsg3.h
++ *
++ * FSG3 platform specific definitions
++ *
++ * Author: Deepak Saxena <dsaxena@plexity.net>
++ *
++ * Copyright 2004 (c) MontaVista, Software, Inc. 
++ * 
++ * This file is licensed under  the terms of the GNU General Public 
++ * License version 2. This program is licensed "as is" without any 
++ * warranty of any kind, whether express or implied.
++ */
++
++#ifndef __ASM_ARCH_HARDWARE_H__
++#error "Do not include this directly, instead #include <asm/hardware.h>"
++#endif
++
++#define	FSG3_FLASH_BASE 	IXP4XX_EXP_BUS_BASE(0)
++#define	FSG3_FLASH_SIZE 	SZ_4M - 1
++
++
++#define FSG3_SYNC_KEY_PIN	4
++#define FSG3_RESET_KEY_PIN	9
++#define FSG3_UNPLUG_KEY_PIN	10
++#define	FSG3_SDA_PIN		12
++#define	FSG3_SCL_PIN		13
++
++
++/*
++ * FSG3 PCI IRQs
++ */
++#define FSG3_PCI_MAX_DEV	3
++#define FSG3_PCI_IRQ_LINES	3
++
++
++/* PCI controller GPIO to IRQ pin mappings */
++#define FSG3_PCI_INTA_PIN	6
++#define FSG3_PCI_INTB_PIN	7
++#define	FSG3_PCI_INTC_PIN	5
++
++#define FSG3_PCI_INTA_IRQ	IRQ_IXP4XX_GPIO6
++#define FSG3_PCI_INTB_IRQ	IRQ_IXP4XX_GPIO7
++#define FSG3_PCI_INTC_IRQ	IRQ_IXP4XX_GPIO5
++
++#define FSG3_LED_RING     0
++#define FSG3_LED_STARTUP  1
++#define FSG3_LED_USB      2
++#define FSG3_LED_SATA     3
++#define FSG3_LED_WAN      4
++#define FSG3_LED_WLAN     5
+Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/hardware.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h
++++ linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/hardware.h
+@@ -41,6 +41,7 @@ extern unsigned int processor_id;
+ #include "platform.h"
+ 
+ /* Platform specific details */
++#include "fsg3.h"
+ #include "ixdp425.h"
+ #include "coyote.h"
+ #include "prpmc1100.h"
+Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
++++ linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
+@@ -47,6 +47,7 @@
+  * Queue Manager
+  */
+ #define IXP4XX_QMGR_BASE_PHYS		(0x60000000)
++#define IXP4XX_QMGR_BASE_VIRT           (0xFF00F000)
+ #define IXP4XX_QMGR_REGION_SIZE		(0x00004000)
+ 
+ /*
+@@ -94,6 +95,43 @@
+ #define IXP4XX_EXP_CFG3_OFFSET	0x2C
+ 
+ /*
++ * Expansion BUS
++ *
++ * Expansion Bus 'lives' at either base1 or base 2 depending on the value of
++ * Exp Bus config registers:
++ *
++ * Setting bit 31 of IXP425_EXP_CFG0 puts SDRAM at zero,
++ * and The expansion bus to IXP425_EXP_BUS_BASE2
++ */
++#define IXP425_EXP_BUS_BASE1_PHYS	(0x00000000)
++#define IXP425_EXP_BUS_BASE2_PHYS	(0x50000000)
++#define IXP425_EXP_BUS_BASE2_VIRT	(0xF0000000)
++
++#define IXP425_EXP_BUS_BASE_PHYS	IXP425_EXP_BUS_BASE2_PHYS
++#define IXP425_EXP_BUS_BASE_VIRT	IXP425_EXP_BUS_BASE2_VIRT
++
++#define IXP425_EXP_BUS_REGION_SIZE	(0x08000000)
++#define IXP425_EXP_BUS_CSX_REGION_SIZE	(0x01000000)
++
++#define IXP425_EXP_BUS_CS0_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x00000000)
++#define IXP425_EXP_BUS_CS1_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x01000000)
++#define IXP425_EXP_BUS_CS2_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x02000000)
++#define IXP425_EXP_BUS_CS3_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x03000000)
++#define IXP425_EXP_BUS_CS4_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x04000000)
++#define IXP425_EXP_BUS_CS5_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x05000000)
++#define IXP425_EXP_BUS_CS6_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x06000000)
++#define IXP425_EXP_BUS_CS7_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x07000000)
++
++#define IXP425_EXP_BUS_CS0_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x00000000)
++#define IXP425_EXP_BUS_CS1_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x01000000)
++#define IXP425_EXP_BUS_CS2_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x02000000)
++#define IXP425_EXP_BUS_CS3_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x03000000)
++#define IXP425_EXP_BUS_CS4_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x04000000)
++#define IXP425_EXP_BUS_CS5_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x05000000)
++#define IXP425_EXP_BUS_CS6_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x06000000)
++#define IXP425_EXP_BUS_CS7_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x07000000)
++
++/*
+  * Expansion Bus Controller registers.
+  */
+ #define IXP4XX_EXP_REG(x) ((volatile u32 *)(IXP4XX_EXP_CFG_BASE_VIRT+(x)))
+@@ -415,6 +453,8 @@
+  * IXP4XX_ naming convetions.
+  *
+  */
++#ifndef NO_LINUX_IXP4XX_USB
++
+ # define IXP4XX_USB_REG(x)       (*((volatile u32 *)(x)))
+ 
+ /* UDC Undocumented - Reserved1 */
+@@ -424,7 +464,7 @@
+ /* UDC Undocumented - Reserved3 */
+ #define UDC_RES3	IXP4XX_USB_REG(IXP4XX_USB_BASE_VIRT+0x000C)  
+ /* UDC Control Register */
+-#define UDCCR		IXP4XX_USB_REG(IXP4XX_USB_BASE_VIRT+0x0000)  
++#define UDCCR		(IXP4XX_USB_REG(IXP4XX_USB_BASE_VIRT+0x0000));
+ /* UDC Endpoint 0 Control/Status Register */
+ #define UDCCS0		IXP4XX_USB_REG(IXP4XX_USB_BASE_VIRT+0x0010)  
+ /* UDC Endpoint 1 (IN) Control/Status Register */
+@@ -607,6 +647,8 @@
+ 
+ #define DCMD_LENGTH	0x01fff		/* length mask (max = 8K - 1) */
+ 
++#endif  /* NO_LINUX_IXP4XX_USB */
++
+ #ifndef __ASSEMBLY__
+ static inline int cpu_is_ixp46x(void)
+ {
+Index: linux-2.6.18-armeb/include/asm-arm/unistd.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/asm-arm/unistd.h
++++ linux-2.6.18-armeb/include/asm-arm/unistd.h
+@@ -376,7 +376,8 @@
+ #undef __NR_ipc
+ #endif
+ 
+-#ifdef __KERNEL__
++// commented out by Freecom Technologies GmbH, Berlin
++//#ifdef __KERNEL__
+ #include <linux/linkage.h>
+ 
+ #define __sys2(x) #x
+@@ -580,5 +581,6 @@ asmlinkage long sys_rt_sigaction(int sig
+  */
+ #define cond_syscall(x) asm(".weak\t" #x "\n\t.set\t" #x ",sys_ni_syscall")
+ 
+-#endif /* __KERNEL__ */
++// commented out by Freecom Technologies GmbH, Berlin
++//#endif /* __KERNEL__ */
+ #endif /* __ASM_ARM_UNISTD_H */
+Index: linux-2.6.18-armeb/include/linux/input.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/linux/input.h
++++ linux-2.6.18-armeb/include/linux/input.h
+@@ -17,6 +17,10 @@
+ #include <sys/ioctl.h>
+ #include <sys/types.h>
+ #include <asm/types.h>
++#ifdef _LIBC_REENTRANT
++typedef unsigned long kernel_ulong_t;
++#define BITS_PER_LONG 32
++#endif
+ #endif
+ 
+ /*
+Index: linux-2.6.18-armeb/include/linux/nls.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/linux/nls.h
++++ linux-2.6.18-armeb/include/linux/nls.h
+@@ -6,6 +6,11 @@
+ /* unicode character */
+ typedef __u16 wchar_t;
+ 
++// alignment safe, by Freecom Technologies GmbH, Berlin
++#define WRITE_ALIGN(wordptr, value)  \
++  { *((char *)(wordptr) + 1) = (char)(value); \
++    *((char *)(wordptr)) = (char)((value) >> 8); }
++
+ struct nls_table {
+ 	char *charset;
+ 	char *alias;
+Index: linux-2.6.18-armeb/include/linux/pci_ids.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/linux/pci_ids.h
++++ linux-2.6.18-armeb/include/linux/pci_ids.h
+@@ -1313,6 +1313,7 @@
+ #define PCI_DEVICE_ID_VIA_8378_0	0x3205
+ #define PCI_DEVICE_ID_VIA_8783_0	0x3208
+ #define PCI_DEVICE_ID_VIA_8237		0x3227
++#define PCI_DEVICE_ID_VIA_6421		0x3249
+ #define PCI_DEVICE_ID_VIA_8251		0x3287
+ #define PCI_DEVICE_ID_VIA_8237A		0x3337
+ #define PCI_DEVICE_ID_VIA_8231		0x8231
+Index: linux-2.6.18-armeb/include/linux/ppp-comp.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/linux/ppp-comp.h
++++ linux-2.6.18-armeb/include/linux/ppp-comp.h
+@@ -199,6 +199,121 @@ struct compressor {
+ #define CI_MPPE                18      /* config option for MPPE */
+ #define CILEN_MPPE              6      /* length of config option */
+ 
++
++#define MPPE_PAD		4	/* MPPE growth per frame */
++#define MPPE_MAX_KEY_LEN	16	/* largest key length (128-bit) */
++
++/* option bits for ccp_options.mppe */
++#define MPPE_OPT_40		0x01	/* 40 bit */
++#define MPPE_OPT_128		0x02	/* 128 bit */
++#define MPPE_OPT_STATEFUL	0x04	/* stateful mode */
++/* unsupported opts */
++#define MPPE_OPT_56		0x08	/* 56 bit */
++#define MPPE_OPT_MPPC		0x10	/* MPPC compression */
++#define MPPE_OPT_D		0x20	/* Unknown */
++#define MPPE_OPT_UNSUPPORTED (MPPE_OPT_56|MPPE_OPT_MPPC|MPPE_OPT_D)
++#define MPPE_OPT_UNKNOWN	0x40	/* Bits !defined in RFC 3078 were set */
++
++/*
++ * This is not nice ... the alternative is a bitfield struct though.
++ * And unfortunately, we cannot share the same bits for the option
++ * names above since C and H are the same bit.  We could do a u_int32
++ * but then we have to do a htonl() all the time and/or we still need
++ * to know which octet is which.
++ */
++#define MPPE_C_BIT		0x01	/* MPPC */
++#define MPPE_D_BIT		0x10	/* Obsolete, usage unknown */
++#define MPPE_L_BIT		0x20	/* 40-bit */
++#define MPPE_S_BIT		0x40	/* 128-bit */
++#define MPPE_M_BIT		0x80	/* 56-bit, not supported */
++#define MPPE_H_BIT		0x01	/* Stateless (in a different byte) */
++
++/* Does not include H bit; used for least significant octet only. */
++#define MPPE_ALL_BITS (MPPE_D_BIT|MPPE_L_BIT|MPPE_S_BIT|MPPE_M_BIT|MPPE_H_BIT)
++
++/* Build a CI from mppe opts (see RFC 3078) */
++#define MPPE_OPTS_TO_CI(opts, ci)		\
++    do {					\
++	u_char *ptr = ci; /* u_char[4] */	\
++						\
++	/* H bit */				\
++	if (opts & MPPE_OPT_STATEFUL)		\
++	    *ptr++ = 0x0;			\
++	else					\
++	    *ptr++ = MPPE_H_BIT;		\
++	*ptr++ = 0;				\
++	*ptr++ = 0;				\
++						\
++	/* S,L bits */				\
++	*ptr = 0;				\
++	if (opts & MPPE_OPT_128)		\
++	    *ptr |= MPPE_S_BIT;			\
++	if (opts & MPPE_OPT_40)			\
++	    *ptr |= MPPE_L_BIT;			\
++	/* M,D,C bits not supported */		\
++    } while (/* CONSTCOND */ 0)
++
++/* The reverse of the above */
++#define MPPE_CI_TO_OPTS(ci, opts)		\
++    do {					\
++	u_char *ptr = ci; /* u_char[4] */	\
++						\
++	opts = 0;				\
++						\
++	/* H bit */				\
++	if (!(ptr[0] & MPPE_H_BIT))		\
++	    opts |= MPPE_OPT_STATEFUL;		\
++						\
++	/* S,L bits */				\
++	if (ptr[3] & MPPE_S_BIT)		\
++	    opts |= MPPE_OPT_128;		\
++	if (ptr[3] & MPPE_L_BIT)		\
++	    opts |= MPPE_OPT_40;		\
++						\
++	/* M,D,C bits */			\
++	if (ptr[3] & MPPE_M_BIT)		\
++	    opts |= MPPE_OPT_56;		\
++	if (ptr[3] & MPPE_D_BIT)		\
++	    opts |= MPPE_OPT_D;			\
++	if (ptr[3] & MPPE_C_BIT)		\
++	    opts |= MPPE_OPT_MPPC;		\
++						\
++	/* Other bits */			\
++	if (ptr[0] & ~MPPE_H_BIT)		\
++	    opts |= MPPE_OPT_UNKNOWN;		\
++	if (ptr[1] || ptr[2])			\
++	    opts |= MPPE_OPT_UNKNOWN;		\
++	if (ptr[3] & ~MPPE_ALL_BITS)		\
++	    opts |= MPPE_OPT_UNKNOWN;		\
++    } while (/* CONSTCOND */ 0)
++
++/* MPPE/MPPC definitions by J.D.*/
++#define MPPE_STATELESS          MPPE_H_BIT	/* configuration bit H */
++#define MPPE_40BIT              MPPE_L_BIT	/* configuration bit L */
++#define MPPE_56BIT              MPPE_M_BIT	/* configuration bit M */
++#define MPPE_128BIT             MPPE_S_BIT	/* configuration bit S */
++#define MPPE_MPPC               MPPE_C_BIT	/* configuration bit C */
++
++/*
++ * Definitions for Stac LZS.
++*/
++
++#define CI_LZS			17	/* config option for Stac LZS */
++#define CILEN_LZS		5	/* length of config option */
++
++#define LZS_OVHD		4	/* max. LZS overhead */
++#define LZS_HIST_LEN		2048	/* LZS history size */
++#define LZS_MAX_CCOUNT		0x0FFF	/* max. coherency counter value */
++
++#define LZS_MODE_NONE		0
++#define LZS_MODE_LCB		1
++#define LZS_MODE_CRC		2
++#define LZS_MODE_SEQ		3
++#define LZS_MODE_EXT		4
++
++#define LZS_EXT_BIT_FLUSHED	0x80	/* bit A */
++#define LZS_EXT_BIT_COMP	0x20	/* bit C */
++
+ /*
+  * Definitions for other, as yet unsupported, compression methods.
+  */
+Index: linux-2.6.18-armeb/include/linux/ppp_defs.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/linux/ppp_defs.h
++++ linux-2.6.18-armeb/include/linux/ppp_defs.h
+@@ -83,11 +83,13 @@
+ #define PPP_CCPFRAG	0x80fb	/* CCP at link level (below MP bundle) */
+ #define PPP_CCP		0x80fd	/* Compression Control Protocol */
+ #define PPP_MPLSCP	0x80fd	/* MPLS Control Protocol */
++#define PPP_ECP		0x8053	/* Encryption Control Protocol */
+ #define PPP_LCP		0xc021	/* Link Control Protocol */
+ #define PPP_PAP		0xc023	/* Password Authentication Protocol */
+ #define PPP_LQR		0xc025	/* Link Quality Report protocol */
+ #define PPP_CHAP	0xc223	/* Cryptographic Handshake Auth. Protocol */
+ #define PPP_CBCP	0xc029	/* Callback Control Protocol */
++#define PPP_EAP		0xc227	/* Extensible Authentication Protocol */
+ 
+ /*
+  * Values for FCS calculations.
+@@ -99,6 +101,8 @@
+ #ifdef __KERNEL__
+ #include <linux/crc-ccitt.h>
+ #define PPP_FCS(fcs, c) crc_ccitt_byte(fcs, c)
++#else
++#define PPP_FCS(fcs, c)	(((fcs) >> 8) ^ fcstab[((fcs) ^ (c)) & 0xff])
+ #endif
+ 
+ /*
+Index: linux-2.6.18-armeb/include/linux/reiserfs_fs.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/linux/reiserfs_fs.h
++++ linux-2.6.18-armeb/include/linux/reiserfs_fs.h
+@@ -969,6 +969,9 @@ struct reiserfs_de_head {
+ #   define ADDR_UNALIGNED_BITS  (3)
+ #endif
+ 
++// avoid alignment exceptions, by Freecom Technologies GmbH, Berlin
++#define ADDR_UNALIGNED_BITS  (2)
++
+ /* These are only used to manipulate deh_state.
+  * Because of this, we'll use the ext2_ bit routines,
+  * since they are little endian */
+Index: linux-2.6.18-armeb/include/linux/utsrelease.h
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/include/linux/utsrelease.h
+@@ -0,0 +1 @@
++#define UTS_RELEASE "2.6.18"
+Index: linux-2.6.18-armeb/include/net/maclist.h
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/include/net/maclist.h
+@@ -0,0 +1,49 @@
++#ifndef _MACLIST_H
++#define _MACLIST_H 1
++/*
++ * Interfaces to the MAC repository
++ *
++ * Copyright (C) 2005 John Bowler
++ * Author: John Bowler <jbowler@acm.org>
++ * Maintainers: http://www.nslu2-linux.org/
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * version 2 as published by the Free Software Foundation.
++ */
++
++/*
++ * Add a single entry, returns 0 on success else an error
++ * code.  Allocates memory, claims and releases a write
++ * lock.
++ */
++extern int maclist_add(const u8 id_to_add[6]);
++
++/*
++ * Return the current entry count, claims and releases a
++ * read lock.
++ */
++extern int maclist_count(void);
++
++/*
++ * Return the ID from the given entry.  Always succeeds.
++ * Claims and releases a write lock.
++ *
++ * If any entry has not been allocated for this key one
++ * is allocated.  If there are no remaining unallocated
++ * entries a new one is created.
++ *
++ * If the value of the key is less than maclist_count()
++ * the entry indexed by the key (i.e. for key 'n' the
++ * n'th entry starting at 0) will be returned if available.
++ * Otherwise the entry to be returned will be unpredictable
++ * but consistent for a given value of maclist_count().
++ */
++extern void maclist_read(u8 (*buffer_for_id)[6],
++		u32 key_of_entry_to_return);
++
++/*
++ * See the implementation in drivers/net/maclist.c for
++ * more information.
++ */
++#endif /*_MACLIST_H*/
+Index: linux-2.6.18-armeb/include/scsi/scsi_host.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/scsi/scsi_host.h
++++ linux-2.6.18-armeb/include/scsi/scsi_host.h
+@@ -596,7 +596,9 @@ struct Scsi_Host {
+ 	 * alignment to a long boundary.
+ 	 */
+ 	unsigned long hostdata[0]  /* Used for storage of host specific stuff */
+-		__attribute__ ((aligned (sizeof(unsigned long))));
++		__attribute__ ((aligned (8)));
++	// avoid 64bit alignment trap, by Freecom Technologies GmbH, Berlin
++//		__attribute__ ((aligned (sizeof(unsigned long))));
+ };
+ 
+ #define		class_to_shost(d)	\
+Index: linux-2.6.18-armeb/kernel/sys.c
+===================================================================
+--- linux-2.6.18-armeb.orig/kernel/sys.c
++++ linux-2.6.18-armeb/kernel/sys.c
+@@ -680,6 +680,7 @@ EXPORT_SYMBOL_GPL(kernel_power_off);
+  */
+ asmlinkage long sys_reboot(int magic1, int magic2, unsigned int cmd, void __user * arg)
+ {
++	volatile int holdkey;  // Freecom
+ 	char buffer[256];
+ 
+ 	/* We only trust the superuser with rebooting the system. */
+@@ -717,7 +718,16 @@ asmlinkage long sys_reboot(int magic1, i
+ 	case LINUX_REBOOT_CMD_HALT:
+ 		kernel_halt();
+ 		unlock_kernel();
+-		do_exit(0);
++
++		// make a restart instead, by Freecom Technologies GmbH, Berlin
++//		do_exit(0);
++
++		// wait until key pressed -> restart
++		do { gpio_line_get(FSG3_SYNC_KEY_PIN, &holdkey); } while (!holdkey);
++		while (holdkey)  gpio_line_get(FSG3_SYNC_KEY_PIN, &holdkey);
++
++		printk("Restarting system.\n");
++		machine_restart(NULL);
+ 		break;
+ 
+ 	case LINUX_REBOOT_CMD_POWER_OFF:
+Index: linux-2.6.18-armeb/net/ipv4/ip_input.c
+===================================================================
+--- linux-2.6.18-armeb.orig/net/ipv4/ip_input.c
++++ linux-2.6.18-armeb/net/ipv4/ip_input.c
+@@ -272,6 +272,10 @@ int ip_local_deliver(struct sk_buff *skb
+ 			return 0;
+ 	}
+ 
++	// speed up for locals, by Freecom
++	if(strcmp(skb->dev->name, "eth0") == 0)
++		return ip_local_deliver_finish(skb);
++
+ 	return NF_HOOK(PF_INET, NF_IP_LOCAL_IN, skb, skb->dev, NULL,
+ 		       ip_local_deliver_finish);
+ }
+@@ -373,6 +377,7 @@ drop:
+ int ip_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt, struct net_device *orig_dev)
+ {
+ 	struct iphdr *iph;
++	struct in_device *in_dev;
+ 	u32 len;
+ 
+ 	/* When the interface is in promisc. mode, drop all the crap
+@@ -431,6 +436,14 @@ int ip_rcv(struct sk_buff *skb, struct n
+ 	/* Remove any debris in the socket control block */
+ 	memset(IPCB(skb), 0, sizeof(struct inet_skb_parm));
+ 
++	// speed up for locals, by Freecom
++	if(strcmp(dev->name, "eth0") == 0) {
++		in_dev = in_dev_get(dev);
++		if(in_dev) if(in_dev->ifa_list)
++			if(skb->nh.iph->daddr == in_dev->ifa_list->ifa_address)
++				return ip_rcv_finish(skb);
++	}
++
+ 	return NF_HOOK(PF_INET, NF_IP_PRE_ROUTING, skb, dev, NULL,
+ 		       ip_rcv_finish);
+ 
+Index: linux-2.6.18-armeb/net/ipv4/ip_output.c
+===================================================================
+--- linux-2.6.18-armeb.orig/net/ipv4/ip_output.c
++++ linux-2.6.18-armeb/net/ipv4/ip_output.c
+@@ -153,6 +153,10 @@ int ip_build_and_send_pkt(struct sk_buff
+ 
+ 	skb->priority = sk->sk_priority;
+ 
++	// speed up for locals, by Freecom
++	if(strcmp(rt->u.dst.dev->name, "eth0") == 0)
++		return dst_output(skb);
++
+ 	/* Send it out. */
+ 	return NF_HOOK(PF_INET, NF_IP_LOCAL_OUT, skb, NULL, rt->u.dst.dev,
+ 		       dst_output);
+@@ -283,6 +287,11 @@ int ip_output(struct sk_buff *skb)
+ 	skb->dev = dev;
+ 	skb->protocol = htons(ETH_P_IP);
+ 
++	// speed up for locals, by Freecom
++	if(skb->input_dev == 0)
++		if(strcmp(dev->name, "eth0") == 0)
++			return ip_finish_output(skb);
++
+ 	return NF_HOOK_COND(PF_INET, NF_IP_POST_ROUTING, skb, NULL, dev,
+ 		            ip_finish_output,
+ 			    !(IPCB(skb)->flags & IPSKB_REROUTED));
+@@ -367,6 +376,10 @@ packet_routed:
+ 
+ 	skb->priority = sk->sk_priority;
+ 
++	// speed up for locals, by Freecom
++	if(strcmp(rt->u.dst.dev->name, "eth0") == 0)
++		return dst_output(skb);
++
+ 	return NF_HOOK(PF_INET, NF_IP_LOCAL_OUT, skb, NULL, rt->u.dst.dev,
+ 		       dst_output);
+ 
+@@ -1263,9 +1276,13 @@ int ip_push_pending_frames(struct sock *
+ 	skb->priority = sk->sk_priority;
+ 	skb->dst = dst_clone(&rt->u.dst);
+ 
+-	/* Netfilter gets whole the not fragmented skb. */
+-	err = NF_HOOK(PF_INET, NF_IP_LOCAL_OUT, skb, NULL, 
+-		      skb->dst->dev, dst_output);
++	// speed up for locals, by Freecom
++	if(strcmp(skb->dst->dev->name, "eth0") == 0)
++		err = dst_output(skb);
++	else
++		/* Netfilter gets whole the not fragmented skb. */
++		err = NF_HOOK(PF_INET, NF_IP_LOCAL_OUT, skb, NULL, 
++			      skb->dst->dev, dst_output);
+ 	if (err) {
+ 		if (err > 0)
+ 			err = inet->recverr ? net_xmit_errno(err) : 0;
+Index: linux-2.6.18-armeb/arch/arm/tools/mach-types
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/tools/mach-types
++++ linux-2.6.18-armeb/arch/arm/tools/mach-types
+@@ -1093,3 +1093,4 @@ msm6100			MACH_MSM6100		MSM6100			1079
+ eti_b1			MACH_ETI_B1		ETI_B1			1080
+ za9l_series		MACH_ZILOG_ZA9L		ZILOG_ZA9L		1081
+ bit2440			MACH_BIT2440		BIT2440			1082
++freecom_fsg3		MACH_FREECOM_FSG3	FREECOM_FSG3		1091
