@@ -3,3 +3,4 @@ slugos-dsmg600-armeb.patch
 dsmg600.h.patch
 slugos-nslu2-16mb.patch
 debian-nslu2-16mb.patch
+eabi.patch
