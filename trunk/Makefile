@@ -76,7 +76,8 @@ patched: linux-${SNAPSHOT}-${ARCH}/.config
 apex:   apex-${APEX_CONFIG}-nslu2-${ARCH}-${APEX_REVISION}.bin \
 	apex-${APEX_CONFIG}-nslu2-16mb-${ARCH}-${APEX_REVISION}.bin \
 	apex-${APEX_CONFIG}-nas100d-${ARCH}-${APEX_REVISION}.bin \
-	apex-${APEX_CONFIG}-dsmg600-${ARCH}-${APEX_REVISION}.bin
+	apex-${APEX_CONFIG}-dsmg600-${ARCH}-${APEX_REVISION}.bin \
+	apex-${APEX_CONFIG}-fsg3-${ARCH}-${APEX_REVISION}.bin
 arm-kernel-shim: \
 	arm-kernel-shim-nslu2${ENDIAN}e.bin \
 	arm-kernel-shim-nas100d${ENDIAN}e.bin \
