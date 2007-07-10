@@ -22,10 +22,10 @@ MAJORVER = 2.6
 # BASEVER  = 2.6.18
 # PATCHVER = 2.6.18
 
-# Freecom FSG-3 support
-# BASEVER  = 2.6.18-fsg3
+# Freecom FSG-3 support 
+# BASEVER  = 2.6.18
 # PATCHVER = 2.6.18-fsg3
-# CROSS_COMPILE = /home/slug/fsg3angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
+# CROSS_COMPILE = /home/slug/fsg3-toolchain/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
 
 # Latest Stable
 # BASEVER  = 2.6.21.5
@@ -74,6 +74,7 @@ kernel: vmlinuz-nslu2-${SNAPSHOT}-${ARCH} vmlinuz-nas100d-${SNAPSHOT}-${ARCH} vm
 modules: modules-${SNAPSHOT}-${ARCH}.tar.gz
 patched: linux-${SNAPSHOT}-${ARCH}/.config 
 apex:   apex-${APEX_CONFIG}-nslu2-${ARCH}-${APEX_REVISION}.bin \
+	apex-${APEX_CONFIG}-nslu2-16mb-${ARCH}-${APEX_REVISION}.bin \
 	apex-${APEX_CONFIG}-nas100d-${ARCH}-${APEX_REVISION}.bin \
 	apex-${APEX_CONFIG}-dsmg600-${ARCH}-${APEX_REVISION}.bin
 arm-kernel-shim: \
