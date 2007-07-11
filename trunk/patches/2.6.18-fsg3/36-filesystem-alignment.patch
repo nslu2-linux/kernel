@@ -1,0 +1,376 @@
+Index: linux-2.6.18-armeb/fs/cifs/cifs_unicode.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/cifs_unicode.c
++++ linux-2.6.18-armeb/fs/cifs/cifs_unicode.c
+@@ -38,11 +38,13 @@ cifs_strfromUCS_le(char *to, const __le1
+ 	int i;
+ 	int outlen = 0;
+ 
+-	for (i = 0; (i < len) && from[i]; i++) {
++	// read "from" align safe, by Freecom
++	for (i = 0; (i < len) && le16_to_cpu_align(from + i); i++) {
+ 		int charlen;
+ 		/* 2.4.0 kernel or greater */
++		// read "from" align safe, by Freecom
+ 		charlen =
+-		    codepage->uni2char(le16_to_cpu(from[i]), &to[outlen],
++		    codepage->uni2char(le16_to_cpu_align(from+i), &to[outlen],
+ 				       NLS_MAX_CHARSET_SIZE);
+ 		if (charlen > 0) {
+ 			outlen += charlen;
+@@ -77,14 +79,14 @@ cifs_strtoUCS(__le16 * to, const char *f
+ 			       ("cifs_strtoUCS: char2uni returned %d",
+ 				charlen));
+ 			/* A question mark */
+-			to[i] = cpu_to_le16(0x003f);
++			le16_to_cpu_write_align(to+i, 0x003f);   // align safe, by Freecom
+ 			charlen = 1;
+ 		} else 
+-			to[i] = cpu_to_le16(wchar_to[i]);
++			cpu_swap_align(to+i);   // align safe, by Freecom
+ 
+ 	}
+ 
+-	to[i] = 0;
++	le16_to_cpu_write_align(to+i, 0);   // align safe, by Freecom
+ 	return i;
+ }
+ 
+Index: linux-2.6.18-armeb/fs/cifs/cifs_unicode.h
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/cifs_unicode.h
++++ linux-2.6.18-armeb/fs/cifs/cifs_unicode.h
+@@ -5,7 +5,7 @@
+  *     Convert a unicode character to upper or lower case using
+  *     compressed tables.
+  *
+- *   Copyright (c) International Business Machines  Corp., 2000,2005555555555555555555555555555555555555555555555555555555
++ *   Copyright (c) International Business Machines  Corp., 2000,2005
+  *
+  *   This program is free software;  you can redistribute it and/or modify
+  *   it under the terms of the GNU General Public License as published by
+@@ -149,7 +149,9 @@ UniStrnlen(const wchar_t * ucs1, int max
+ {
+ 	int i = 0;
+ 
+-	while (*ucs1++) {
++	// alignment safe, by Freecom Technologies GmbH, Berlin
++	while (*((char*)ucs1) && *((char*)ucs1 + 1)) {
++		ucs1++;
+ 		i++;
+ 		if (i >= maxlen)
+ 			break;
+Index: linux-2.6.18-armeb/fs/cifs/cifspdu.h
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/cifspdu.h
++++ linux-2.6.18-armeb/fs/cifs/cifspdu.h
+@@ -354,8 +354,34 @@ struct smb_hdr {
+ 	__u8 WordCount;
+ } __attribute__((packed));
+ /* given a pointer to an smb_hdr retrieve the value of byte count */
+-#define BCC(smb_var) ( *(__u16 *)((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ) )
+-#define BCC_LE(smb_var) ( *(__le16 *)((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ) )
++//#define BCC(smb_var) ( *(__u16 *)((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ) )
++//#define BCC_LE(smb_var) ( *(__le16 *)((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ) )
++
++// replace with alignment safe versions, by Freecom Technologies GmbH, berlin
++#define BCC_READ(smb_var)  \
++  ( ((__u16)(*((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) + 1))) + \
++   (((__u16)(*((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ))) << 8) )
++#define BCC_WRITE(smb_var, value)  \
++  { *((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) + 1) = (char)value; \
++    *((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount)) = (char)(value >> 8); }
++#define BCC_READ_LE(smb_var)  \
++  ( ((__u16)(*((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) ))) + \
++   (((__u16)(*((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) + 1 ))) << 8) )
++#define BCC_WRITE_LE(smb_var, value)  \
++  { *((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount)) = (char)value; \
++    *((char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) + 1) = (char)(value >> 8); }
++#define le16_to_cpu_align(wordptr)  \
++  ( ((__u16)(*((char *)(wordptr)))) + (((__u16)(*((char *)(wordptr) + 1))) << 8) )
++#define cpu_align(wordptr)  \
++  ( ((__u16)(*((char *)(wordptr) + 1))) + (((__u16)(*((char *)(wordptr)))) << 8) )
++#define le16_to_cpu_write_align(wordptr, value)  \
++  { *((char *)(wordptr)) = (char)(value); \
++    *((char *)(wordptr) + 1) = (char)((value) >> 8); }
++#define cpu_swap_align(wordptr)  \
++  { char c = *((char *)(wordptr)); \
++    *((char *)(wordptr)) = *((char *)(wordptr) + 1); \
++    *((char *)(wordptr) + 1) = c; }
++
+ /* given a pointer to an smb_hdr retrieve the pointer to the byte area */
+ #define pByteArea(smb_var) ((unsigned char *)smb_var + sizeof(struct smb_hdr) + (2* smb_var->WordCount) + 2 )
+ 
+Index: linux-2.6.18-armeb/fs/cifs/cifssmb.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/cifssmb.c
++++ linux-2.6.18-armeb/fs/cifs/cifssmb.c
+@@ -373,7 +373,8 @@ static int validate_t2(struct smb_t2_rsp
+ 				pBCC = (pSMB->hdr.WordCount * 2) + 
+ 					sizeof(struct smb_hdr) +
+ 					(char *)pSMB;
+-				if((total_size <= (*(u16 *)pBCC)) && 
++				// align safe, by Freecom
++				if((total_size <= cpu_align(pBCC)) && 
+ 				   (total_size < 
+ 					CIFSMaxBufSize+MAX_CIFS_HDR_SIZE)) {
+ 					return 0;
+Index: linux-2.6.18-armeb/fs/cifs/connect.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/connect.c
++++ linux-2.6.18-armeb/fs/cifs/connect.c
+@@ -304,9 +304,9 @@ static int coalesce_t2(struct smb_hdr * 
+ 	memcpy(data_area_of_target,data_area_of_buf2,total_in_buf2);
+ 	total_in_buf += total_in_buf2;
+ 	pSMBt->t2_rsp.DataCount = cpu_to_le16(total_in_buf);
+-	byte_count = le16_to_cpu(BCC_LE(pTargetSMB));
++	byte_count = BCC_READ_LE(pTargetSMB);
+ 	byte_count += total_in_buf2;
+-	BCC_LE(pTargetSMB) = cpu_to_le16(byte_count);
++	BCC_WRITE_LE(pTargetSMB, byte_count);
+ 
+ 	byte_count = pTargetSMB->smb_buf_length;
+ 	byte_count += total_in_buf2;
+@@ -2170,11 +2170,11 @@ CIFSSessSetup(unsigned int xid, struct c
+ 			if (smb_buffer->Flags2 & SMBFLG2_UNICODE) {
+ 				if ((long) (bcc_ptr) % 2) {
+ 					remaining_words =
+-					    (BCC(smb_buffer_response) - 1) /2;
++					    (BCC_READ(smb_buffer_response) - 1) /2;
+ 					bcc_ptr++;	/* Unicode strings must be word aligned */
+ 				} else {
+ 					remaining_words =
+-						BCC(smb_buffer_response) / 2;
++						BCC_READ(smb_buffer_response) / 2;
+ 				}
+ 				len =
+ 				    UniStrnlen((wchar_t *) bcc_ptr,
+@@ -2247,7 +2247,7 @@ CIFSSessSetup(unsigned int xid, struct c
+ 				len = strnlen(bcc_ptr, 1024);
+ 				if (((long) bcc_ptr + len) - (long)
+ 				    pByteArea(smb_buffer_response)
+-					    <= BCC(smb_buffer_response)) {
++					    <= BCC_READ(smb_buffer_response)) {
+ 					kfree(ses->serverOS);
+ 					ses->serverOS = kzalloc(len + 1,GFP_KERNEL);
+ 					if(ses->serverOS == NULL)
+@@ -2495,12 +2495,12 @@ CIFSNTLMSSPNegotiateSessSetup(unsigned i
+ 				if (smb_buffer->Flags2 & SMBFLG2_UNICODE) {
+ 					if ((long) (bcc_ptr) % 2) {
+ 						remaining_words =
+-						    (BCC(smb_buffer_response)
++						    (BCC_READ(smb_buffer_response)
+ 						     - 1) / 2;
+ 						bcc_ptr++;	/* Unicode strings must be word aligned */
+ 					} else {
+ 						remaining_words =
+-						    BCC
++						    BCC_READ
+ 						    (smb_buffer_response) / 2;
+ 					}
+ 					len =
+@@ -2580,7 +2580,7 @@ CIFSNTLMSSPNegotiateSessSetup(unsigned i
+ 					len = strnlen(bcc_ptr, 1024);
+ 					if (((long) bcc_ptr + len) - (long)
+ 					    pByteArea(smb_buffer_response)
+-					    <= BCC(smb_buffer_response)) {
++					    <= BCC_READ(smb_buffer_response)) {
+ 						if(ses->serverOS)
+ 							kfree(ses->serverOS);
+ 						ses->serverOS =
+@@ -2898,11 +2898,11 @@ CIFSNTLMSSPAuthSessSetup(unsigned int xi
+ 				if (smb_buffer->Flags2 & SMBFLG2_UNICODE) {
+ 					if ((long) (bcc_ptr) % 2) {
+ 						remaining_words =
+-						    (BCC(smb_buffer_response)
++						    (BCC_READ(smb_buffer_response)
+ 						     - 1) / 2;
+ 						bcc_ptr++;	/* Unicode strings must be word aligned */
+ 					} else {
+-						remaining_words = BCC(smb_buffer_response) / 2;
++						remaining_words = BCC_READ(smb_buffer_response) / 2;
+ 					}
+ 					len =
+ 					    UniStrnlen((wchar_t *) bcc_ptr,remaining_words - 1);
+@@ -2986,7 +2986,7 @@ CIFSNTLMSSPAuthSessSetup(unsigned int xi
+ 					len = strnlen(bcc_ptr, 1024);
+ 					if (((long) bcc_ptr + len) - 
+                         (long) pByteArea(smb_buffer_response) 
+-                            <= BCC(smb_buffer_response)) {
++                            <= BCC_READ(smb_buffer_response)) {
+ 						if(ses->serverOS)
+ 							kfree(ses->serverOS);
+ 						ses->serverOS = kzalloc(len + 1,GFP_KERNEL);
+@@ -3139,7 +3139,7 @@ CIFSTCon(unsigned int xid, struct cifsSe
+ 		tcon->tidStatus = CifsGood;
+ 		tcon->tid = smb_buffer_response->Tid;
+ 		bcc_ptr = pByteArea(smb_buffer_response);
+-		length = strnlen(bcc_ptr, BCC(smb_buffer_response) - 2);
++		length = strnlen(bcc_ptr, BCC_READ(smb_buffer_response) - 2);
+         /* skip service field (NB: this field is always ASCII) */
+ 		bcc_ptr += length + 1;	
+ 		strncpy(tcon->treeName, tree, MAX_TREE_SIZE);
+@@ -3147,7 +3147,7 @@ CIFSTCon(unsigned int xid, struct cifsSe
+ 			length = UniStrnlen((wchar_t *) bcc_ptr, 512);
+ 			if ((bcc_ptr + (2 * length)) -
+ 			     pByteArea(smb_buffer_response) <=
+-			    BCC(smb_buffer_response)) {
++			    BCC_READ(smb_buffer_response)) {
+ 				kfree(tcon->nativeFileSystem);
+ 				tcon->nativeFileSystem =
+ 				    kzalloc(length + 2, GFP_KERNEL);
+@@ -3164,7 +3164,7 @@ CIFSTCon(unsigned int xid, struct cifsSe
+ 			length = strnlen(bcc_ptr, 1024);
+ 			if ((bcc_ptr + length) -
+ 			    pByteArea(smb_buffer_response) <=
+-			    BCC(smb_buffer_response)) {
++			    BCC_READ(smb_buffer_response)) {
+ 				kfree(tcon->nativeFileSystem);
+ 				tcon->nativeFileSystem =
+ 				    kzalloc(length + 1, GFP_KERNEL);
+Index: linux-2.6.18-armeb/fs/cifs/netmisc.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/netmisc.c
++++ linux-2.6.18-armeb/fs/cifs/netmisc.c
+@@ -869,14 +869,14 @@ unsigned int
+ smbCalcSize(struct smb_hdr *ptr)
+ {
+ 	return (sizeof (struct smb_hdr) + (2 * ptr->WordCount) +
+-		2 /* size of the bcc field */ + BCC(ptr));
++		2 /* size of the bcc field */ + BCC_READ(ptr));
+ }
+ 
+ unsigned int
+ smbCalcSize_LE(struct smb_hdr *ptr)
+ {
+ 	return (sizeof (struct smb_hdr) + (2 * ptr->WordCount) +
+-		2 /* size of the bcc field */ + le16_to_cpu(BCC_LE(ptr)));
++		2 /* size of the bcc field */ + BCC_READ_LE(ptr));
+ }
+ 
+ /* The following are taken from fs/ntfs/util.c */
+Index: linux-2.6.18-armeb/fs/cifs/sess.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/sess.c
++++ linux-2.6.18-armeb/fs/cifs/sess.c
+@@ -478,7 +478,7 @@ CIFS_SessSetup(unsigned int xid, struct 
+ 	count = (long) bcc_ptr - (long) str_area;
+ 	smb_buf->smb_buf_length += count;
+ 
+-	BCC_LE(smb_buf) = cpu_to_le16(count);
++	BCC_WRITE_LE(smb_buf, count);
+ 
+ 	iov[1].iov_base = str_area;
+ 	iov[1].iov_len = count; 
+@@ -504,7 +504,7 @@ CIFS_SessSetup(unsigned int xid, struct 
+ 	cFYI(1, ("UID = %d ", ses->Suid));
+ 	/* response can have either 3 or 4 word count - Samba sends 3 */
+ 	/* and lanman response is 3 */
+-	bytes_remaining = BCC(smb_buf);
++	bytes_remaining = BCC_READ(smb_buf);
+ 	bcc_ptr = pByteArea(smb_buf);
+ 
+ 	if(smb_buf->WordCount == 4) {
+Index: linux-2.6.18-armeb/fs/cifs/transport.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/cifs/transport.c
++++ linux-2.6.18-armeb/fs/cifs/transport.c
+@@ -576,8 +576,7 @@ SendReceive2(const unsigned int xid, str
+ 			    sizeof (struct smb_hdr) -
+ 			    4 /* do not count RFC1001 header */  +
+ 			    (2 * midQ->resp_buf->WordCount) + 2 /* bcc */ )
+-				BCC(midQ->resp_buf) = 
+-					le16_to_cpu(BCC_LE(midQ->resp_buf));
++				BCC_WRITE(midQ->resp_buf, BCC_READ_LE(midQ->resp_buf));
+ 			midQ->resp_buf = NULL;  /* mark it so will not be freed
+ 						by DeleteMidQEntry */
+ 		} else {
+@@ -757,7 +756,7 @@ SendReceive(const unsigned int xid, stru
+ 			    sizeof (struct smb_hdr) -
+ 			    4 /* do not count RFC1001 header */  +
+ 			    (2 * out_buf->WordCount) + 2 /* bcc */ )
+-				BCC(out_buf) = le16_to_cpu(BCC_LE(out_buf));
++				BCC_WRITE(out_buf, BCC_READ_LE(out_buf));
+ 		} else {
+ 			rc = -EIO;
+ 			cERROR(1,("Bad MID state?"));
+@@ -1002,7 +1001,7 @@ SendReceiveBlockingLock(const unsigned i
+ 			    sizeof (struct smb_hdr) -
+ 			    4 /* do not count RFC1001 header */  +
+ 			    (2 * out_buf->WordCount) + 2 /* bcc */ )
+-				BCC(out_buf) = le16_to_cpu(BCC_LE(out_buf));
++				BCC_WRITE(out_buf, BCC_READ_LE(out_buf));
+ 		} else {
+ 			rc = -EIO;
+ 			cERROR(1,("Bad MID state?"));
+Index: linux-2.6.18-armeb/fs/nls/nls_base.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/nls/nls_base.c
++++ linux-2.6.18-armeb/fs/nls/nls_base.c
+@@ -61,7 +61,7 @@ utf8_mbtowc(wchar_t *p, const __u8 *s, i
+ 			l &= t->lmask;
+ 			if (l < t->lval)
+ 				return -1;
+-			*p = l;
++			WRITE_ALIGN(p, l);   // alignment safe, by Freecom
+ 			return nc;
+ 		}
+ 		if (n <= nc)
+Index: linux-2.6.18-armeb/fs/nls/nls_utf8.c
+===================================================================
+--- linux-2.6.18-armeb.orig/fs/nls/nls_utf8.c
++++ linux-2.6.18-armeb/fs/nls/nls_utf8.c
+@@ -27,7 +27,7 @@ static int char2uni(const unsigned char 
+ 	int n;
+ 
+ 	if ( (n = utf8_mbtowc(uni, rawstring, boundlen)) == -1) {
+-		*uni = 0x003f;	/* ? */
++		WRITE_ALIGN(uni, 0x003f);	/* ? */
+ 		n = -EINVAL;
+ 	}
+ 	return n;
+Index: linux-2.6.18-armeb/include/linux/nls.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/linux/nls.h
++++ linux-2.6.18-armeb/include/linux/nls.h
+@@ -6,6 +6,11 @@
+ /* unicode character */
+ typedef __u16 wchar_t;
+ 
++// alignment safe, by Freecom Technologies GmbH, Berlin
++#define WRITE_ALIGN(wordptr, value)  \
++  { *((char *)(wordptr) + 1) = (char)(value); \
++    *((char *)(wordptr)) = (char)((value) >> 8); }
++
+ struct nls_table {
+ 	char *charset;
+ 	char *alias;
+Index: linux-2.6.18-armeb/include/linux/reiserfs_fs.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/linux/reiserfs_fs.h
++++ linux-2.6.18-armeb/include/linux/reiserfs_fs.h
+@@ -969,6 +969,9 @@ struct reiserfs_de_head {
+ #   define ADDR_UNALIGNED_BITS  (3)
+ #endif
+ 
++// avoid alignment exceptions, by Freecom Technologies GmbH, Berlin
++#define ADDR_UNALIGNED_BITS  (2)
++
+ /* These are only used to manipulate deh_state.
+  * Because of this, we'll use the ext2_ bit routines,
+  * since they are little endian */
+Index: linux-2.6.18-armeb/include/scsi/scsi_host.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/scsi/scsi_host.h
++++ linux-2.6.18-armeb/include/scsi/scsi_host.h
+@@ -596,7 +596,9 @@ struct Scsi_Host {
+ 	 * alignment to a long boundary.
+ 	 */
+ 	unsigned long hostdata[0]  /* Used for storage of host specific stuff */
+-		__attribute__ ((aligned (sizeof(unsigned long))));
++		__attribute__ ((aligned (8)));
++	// avoid 64bit alignment trap, by Freecom Technologies GmbH, Berlin
++//		__attribute__ ((aligned (sizeof(unsigned long))));
+ };
+ 
+ #define		class_to_shost(d)	\

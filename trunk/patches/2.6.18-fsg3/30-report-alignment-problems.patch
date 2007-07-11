@@ -1,0 +1,19 @@
+Index: linux-2.6.18-armeb/arch/arm/mm/alignment.c
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/mm/alignment.c
++++ linux-2.6.18-armeb/arch/arm/mm/alignment.c
+@@ -726,6 +726,14 @@ do_alignment(unsigned long addr, unsigne
+ 	if (type == TYPE_LDST)
+ 		do_alignment_finish_ldst(addr, instr, regs, offset);
+ 
++	// show system alignment traps, by Freecom Technologies GmbH, Berlin
++	printk("Alignment trap: %s (%d) PC=0x%08lx Instr=0x%0*lx "
++	       "Address=0x%08lx FSR 0x%03x TYPE:%d\n", current->comm,
++		current->pid, instrptr,
++	        thumb_mode(regs) ? 4 : 8,
++	        thumb_mode(regs) ? tinstr : instr,
++	        addr, fsr, type);
++
+ 	return 0;
+ 
+  bad_or_fault:

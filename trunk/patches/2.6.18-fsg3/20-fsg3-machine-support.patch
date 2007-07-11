@@ -1,0 +1,653 @@
+Index: linux-2.6.18-armeb/arch/arm/tools/mach-types
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/tools/mach-types
++++ linux-2.6.18-armeb/arch/arm/tools/mach-types
+@@ -1093,3 +1093,4 @@ msm6100			MACH_MSM6100		MSM6100			1079
+ eti_b1			MACH_ETI_B1		ETI_B1			1080
+ za9l_series		MACH_ZILOG_ZA9L		ZILOG_ZA9L		1081
+ bit2440			MACH_BIT2440		BIT2440			1082
++freecom_fsg3		MACH_FREECOM_FSG3	FREECOM_FSG3		1091
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/Kconfig
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/mach-ixp4xx/Kconfig
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/Kconfig
+@@ -97,6 +97,15 @@ config CPU_IXP46X
+ 	depends on MACH_IXDP465
+ 	default y
+ 
++config MACH_FREECOM_FSG3
++	bool "FSG3"
++	select PCI
++	select MACLIST
++	help
++	  Say 'Y' here if you want your kernel to support
++	  Freecom Storage Gateway Device (Also known as FSG3).
++	  For more information on this device, see <http://www.openfsg.org>.
++
+ config MACH_GTWX5715
+ 	bool "Gemtek WX5715 (Linksys WRV54G)"
+ 	depends on ARCH_IXP4XX
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/Makefile
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/mach-ixp4xx/Makefile
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/Makefile
+@@ -11,6 +11,7 @@ obj-pci-$(CONFIG_ARCH_ADI_COYOTE)	+= coy
+ obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx5715-pci.o
+ obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
+ obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
++obj-pci-$(CONFIG_MACH_FREECOM_FSG3)	+= fsg3-pci.o
+ 
+ obj-y	+= common.o
+ 
+@@ -20,5 +21,6 @@ obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-
+ obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
+ obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
+ obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
++obj-$(CONFIG_MACH_FREECOM_FSG3)	+= fsg3-setup.o #fsg3-power.o
+ 
+ obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-pci.c
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-pci.c
+@@ -0,0 +1,77 @@
++/*
++ * arch/arch/mach-ixp4xx/fhd3lan-pci.c
++ *
++ * PCI setup routines for Freecom-Storage-Gateway FSG3 Platform
++ *
++ * Copyright (C) 2004 MontaVista Software, Inc.
++ * Copyright (C) 2006 Freecom Technologies GmbH.
++ *
++ * Maintainer: Freecom Technologies <support@freecom.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/pci.h>
++#include <linux/init.h>
++#include <linux/irq.h>
++
++#include <asm/mach-types.h>
++#include <asm/hardware.h>
++#include <asm/irq.h>
++
++#include <asm/mach/pci.h>
++
++extern void ixp4xx_pci_preinit(void);
++extern int ixp4xx_setup(int nr, struct pci_sys_data *sys);
++extern struct pci_bus *ixp4xx_scan_bus(int nr, struct pci_sys_data *sys);
++
++void __init fsg3_pci_preinit(void)
++{
++        set_irq_type(FSG3_PCI_INTA_IRQ, IRQT_LOW);
++        set_irq_type(FSG3_PCI_INTB_IRQ, IRQT_LOW);
++        set_irq_type(FSG3_PCI_INTC_IRQ, IRQT_LOW);
++
++	ixp4xx_pci_preinit();
++}
++
++static int __init fsg3_map_irq(struct pci_dev *dev, u8 slot, u8 pin)
++{
++        static int pci_irq_table[FSG3_PCI_IRQ_LINES] = {
++                FSG3_PCI_INTC_IRQ,
++                FSG3_PCI_INTB_IRQ,
++                FSG3_PCI_INTA_IRQ,
++        };
++
++        int irq = -1;
++	slot = slot-11;
++
++        if (slot >= 1 && slot <= FSG3_PCI_MAX_DEV &&
++                pin >= 1 && pin <= FSG3_PCI_IRQ_LINES) {
++                irq = pci_irq_table[(slot-1)];
++        }
++        printk("%s: Mapped slot %d pin %d to IRQ %d\n", __FUNCTION__,slot, pin, irq);
++
++        return irq;
++}
++
++struct hw_pci fsg3_pci __initdata = {
++	.nr_controllers = 1,
++	.preinit =        fsg3_pci_preinit,
++	.swizzle =        pci_std_swizzle,
++	.setup =          ixp4xx_setup,
++	.scan =           ixp4xx_scan_bus,
++	.map_irq =        fsg3_map_irq,
++};
++
++int __init fsg3_pci_init(void)
++{
++	if (machine_is_freecom_fsg3())
++		pci_common_init(&fsg3_pci);
++	return 0;
++}
++
++subsys_initcall(fsg3_pci_init);
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-power.c
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-power.c
+@@ -0,0 +1,92 @@
++/*
++ * arch/arm/mach-ixp4xx/nslu2-power.c
++ *
++ * NSLU2 Power/Reset driver
++ *
++ * Copyright (C) 2005 Tower Technologies
++ *
++ * based on nslu2-io.c
++ *  Copyright (C) 2004 Karen Spearel
++ *
++ * Author: Alessandro Zummo <a.zummo@towertech.it>
++ * Maintainers: http://www.nslu2-linux.org/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/reboot.h>
++#include <linux/interrupt.h>
++
++#include <asm/mach-types.h>
++
++extern void ctrl_alt_del(void);
++
++static irqreturn_t nslu2_power_handler(int irq, void *dev_id, struct pt_regs *regs)
++{
++	/* Signal init to do the ctrlaltdel action, this will bypass init if
++	 * it hasn't started and do a kernel_restart.
++	 */
++	ctrl_alt_del();
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t nslu2_reset_handler(int irq, void *dev_id, struct pt_regs *regs)
++{
++	/* This is the paper-clip reset, it shuts the machine down directly.
++	 */
++	machine_power_off();
++
++	return IRQ_HANDLED;
++}
++
++static int __init nslu2_power_init(void)
++{
++	if (!(machine_is_nslu2()))
++		return 0;
++
++	*IXP4XX_GPIO_GPISR = 0x20400000;	/* read the 2 irqs to clr */
++
++	set_irq_type(NSLU2_RB_IRQ, IRQT_LOW);
++	set_irq_type(NSLU2_PB_IRQ, IRQT_HIGH);
++
++	if (request_irq(NSLU2_RB_IRQ, &nslu2_reset_handler,
++		SA_INTERRUPT, "NSLU2 reset button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
++			NSLU2_RB_IRQ);
++
++		return -EIO;
++	}
++
++	if (request_irq(NSLU2_PB_IRQ, &nslu2_power_handler,
++		SA_INTERRUPT, "NSLU2 power button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Power Button IRQ %d not available\n",
++			NSLU2_PB_IRQ);
++
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static void __exit nslu2_power_exit(void)
++{
++	if (!(machine_is_nslu2()))
++		return;
++
++	free_irq(NSLU2_RB_IRQ, NULL);
++	free_irq(NSLU2_PB_IRQ, NULL);
++}
++
++module_init(nslu2_power_init);
++module_exit(nslu2_power_exit);
++
++MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
++MODULE_DESCRIPTION("NSLU2 Power/Reset driver");
++MODULE_LICENSE("GPL");
+Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
+@@ -0,0 +1,270 @@
++/*
++ * arch/arm/mach-ixp4xx/fsg3-setup.c
++ *
++ * FSG3/FHD3WLAN board-setup 
++ *
++ * Copyright (C) 2003-2004 MontaVista Software, Inc.
++ * Copyright (C) 2004-2006 Freecom Technologies GmbH.
++ *
++ * Author: Freecom - CR
++ */
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/device.h>
++#include <linux/serial.h>
++#include <linux/tty.h>
++#include <linux/serial_8250.h>
++#include <linux/slab.h>
++#include <linux/mtd/mtd.h>
++#include <linux/leds.h>
++
++#include <asm/types.h>
++#include <asm/setup.h>
++#include <asm/memory.h>
++#include <asm/hardware.h>
++#include <asm/irq.h>
++#include <asm/mach-types.h>
++#include <asm/mach/arch.h>
++#include <asm/mach/flash.h>
++
++#include <net/maclist.h>
++
++
++/*
++ * Xscale UART registers are 32 bits wide with only the least
++ * significant 8 bits having any meaning.  From a configuration
++ * perspective, this means 2 things...
++ *
++ *   Setting .regshift = 2 so that the standard 16550 registers
++ *   line up on every 4th byte.
++ *
++ *   Shifting the register start virtual address +3 bytes when
++ *   compiled big-endian.  Since register writes are done on a
++ *   single byte basis, if the shift isn't done the driver will
++ *   write the value into the most significant byte of the register,
++ *   which is ignored, instead of the least significant.
++ */
++
++#ifdef  __ARMEB__
++#define REG_OFFSET      3
++#else
++#define REG_OFFSET      0
++#endif
++
++/*
++ * FSG3 offers both chipset serial ports
++ */
++static struct flash_platform_data fsg3_flash_data = {
++	.map_name	= "cfi_probe",
++	.width		= 2,
++};
++
++static struct resource fsg3_flash_resource = {
++	.flags		= IORESOURCE_MEM,
++};
++
++static struct platform_device fsg3_flash = {
++	.name		= "IXP4XX-Flash",
++	.id		= 0,
++	.dev.platform_data = &fsg3_flash_data,
++	.num_resources	= 1,
++	.resource	= &fsg3_flash_resource,
++};
++
++static struct ixp4xx_i2c_pins fsg3_i2c_gpio_pins = {
++	.sda_pin	= FSG3_SDA_PIN,
++	.scl_pin	= FSG3_SCL_PIN,
++};
++
++#ifdef CONFIG_LEDS_IXP4XX
++static struct resource fsg3_led_resources[] = {
++	{
++		.name		= "sync",
++		.start		= FSG3_LED_STARTUP,
++		.end		= FSG3_LED_STARTUP,
++		.flags		= 0x80,   // bit 7
++	},
++	{
++		.name		= "ring",
++		.start		= FSG3_LED_RING,
++		.end		= FSG3_LED_RING,
++		.flags		= 0x20,   // bit 5
++	},
++	{
++		.name		= "USB",
++		.start		= FSG3_LED_USB,
++		.end		= FSG3_LED_USB,
++		.flags		= 0x10,   // bit 4
++	},
++	{
++		.name		= "SATA",
++		.start		= FSG3_LED_SATA,
++		.end		= FSG3_LED_SATA,
++		.flags		= 0x04,   // bit 2
++	},
++	{
++		.name		= "WAN",
++		.start		= FSG3_LED_WAN,
++		.end		= FSG3_LED_WAN,
++		.flags		= 0x02,   // bit 1
++	},
++	{
++		.name		= "WLAN",
++		.start		= FSG3_LED_WLAN,
++		.end		= FSG3_LED_WLAN,
++		.flags		= 0x01,   // bit 0
++	},
++};
++
++static struct platform_device fsg3_leds = {
++	.name			= "IXP4XX-GPIO-LED",
++	.id			= -1,
++	.num_resources		= ARRAY_SIZE(fsg3_led_resources),
++	.resource		= fsg3_led_resources,
++};
++#endif
++
++static struct platform_device fsg3_i2c_controller = {
++	.name		= "IXP4XX-I2C",
++	.id		= 0,
++	.dev.platform_data = &fsg3_i2c_gpio_pins,
++	.num_resources	= 0,
++};
++
++static struct resource fsg3_uart_resources[] = {
++        {
++                .start          = IXP4XX_UART1_BASE_PHYS,
++                .end            = IXP4XX_UART1_BASE_PHYS + 0x0fff,
++                .flags          = IORESOURCE_MEM,
++        },
++        {
++                .start          = IXP4XX_UART2_BASE_PHYS,
++                .end            = IXP4XX_UART2_BASE_PHYS + 0x0fff,
++                .flags          = IORESOURCE_MEM,
++        }
++};
++
++static struct plat_serial8250_port fsg3_uart_data[] = {
++        {
++                .mapbase        = IXP4XX_UART1_BASE_PHYS,
++                .membase        = (char *)IXP4XX_UART1_BASE_VIRT + REG_OFFSET,
++                .irq            = IRQ_IXP4XX_UART1,
++                .flags          = UPF_BOOT_AUTOCONF | UPF_SKIP_TEST,
++                .iotype         = UPIO_MEM,
++                .regshift       = 2,
++                .uartclk        = IXP4XX_UART_XTAL,
++/*		.line		= 0,
++		.type		= PORT_XSCALE,
++		.fifosize	= 32
++*/
++        },
++        {
++                .mapbase        = IXP4XX_UART2_BASE_PHYS,
++                .membase        = (char *)IXP4XX_UART2_BASE_VIRT + REG_OFFSET,
++                .irq            = IRQ_IXP4XX_UART2,
++                .flags          = UPF_BOOT_AUTOCONF | UPF_SKIP_TEST,
++                .iotype         = UPIO_MEM,
++                .regshift       = 2,
++                .uartclk        = IXP4XX_UART_XTAL,
++/*		.line		= 1,
++		.type		= PORT_XSCALE,
++		.fifosize	= 32
++*/
++        },
++        { }
++};
++
++static struct platform_device fsg3_uart = {
++        .name                   = "serial8250",
++        .id                     = PLAT8250_DEV_PLATFORM,
++        .dev.platform_data      = fsg3_uart_data,
++        .num_resources          = 2,
++        .resource               = fsg3_uart_resources,
++};
++
++static struct platform_device *fsg3_devices[] __initdata = {
++	&fsg3_i2c_controller,
++	&fsg3_flash,
++	&fsg3_uart,
++#ifdef CONFIG_LEDS_IXP4XX
++	&fsg3_leds,
++#endif
++};
++
++#ifdef CONFIG_MACLIST
++static void fsg3_flash_add(struct mtd_info *mtd)
++{
++	/* When the RedBoot partition is added the MAC address is read from it. */
++	if (strcmp(mtd->name, "RedBoot config") == 0) {
++		size_t retlen;
++		u_char mac[6];
++
++		/* The MAC is at a known offset... */
++		/* TODO --> find npe_eth0 and ..1 instead of hardcoded offset and inc) */
++		if (mtd->read(mtd, 0x0422, 6, &retlen, mac) == 0 && retlen == 6) {
++			printk(KERN_INFO "FSG3-MAC for eth0: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
++				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
++			maclist_add(mac);
++			mac[5]++;
++			printk(KERN_INFO "FSG3-MAC for eth1: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
++				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
++			maclist_add(mac);
++		} else {
++			printk(KERN_ERR "FGS3-MAC: read failed\n");
++		}
++	}
++}
++
++static void fsg3_flash_remove(struct mtd_info *mtd)
++{
++	/* Nothing to do on remove at present. */
++}
++
++static struct mtd_notifier fsg3_flash_notifier = {
++	.add = fsg3_flash_add,
++	.remove = fsg3_flash_remove,
++};
++#endif
++
++static void fsg3_power_off(void)
++{
++	/* EL-Ring and LED's can be switched off here. */
++        printk(KERN_INFO "EL-Ring and LED's can be switched off here.\n");
++}
++
++static void __init fsg3_init(void)
++{
++	/* The flash has an ethernet MAC embedded in it which we need,
++	 * that is all this notifier does. */
++
++	ixp4xx_sys_init();
++
++	fsg3_flash_resource.start = FSG3_FLASH_BASE;
++	fsg3_flash_resource.end = FSG3_FLASH_BASE + FSG3_FLASH_SIZE;
++
++        *IXP4XX_EXP_CS0 |= IXP4XX_FLASH_WRITABLE;
++        *IXP4XX_EXP_CS1 = *IXP4XX_EXP_CS0;
++
++	/* Configure CS2 for operation, 8bit and writable will do */
++	*IXP4XX_EXP_CS2 = 0xbfff0002;
++
++	pm_power_off = fsg3_power_off;
++
++	platform_add_devices(fsg3_devices, ARRAY_SIZE(fsg3_devices));
++
++#ifdef CONFIG_MACLIST
++	register_mtd_user(&fsg3_flash_notifier);
++#endif
++}
++
++MACHINE_START(FREECOM_FSG3, "FSG3 - Freecom Storage Gateway")
++        /* Maintainer: Freecom Technologies GmbH */
++        .phys_io        = IXP4XX_PERIPHERAL_BASE_PHYS,
++        .io_pg_offst    = ((IXP4XX_PERIPHERAL_BASE_VIRT) >> 18) & 0xFFFC,
++        .boot_params    = 0x00000100,
++        .map_io         = ixp4xx_map_io,
++        .init_irq       = ixp4xx_init_irq,
++        .timer          = &ixp4xx_timer,
++        .init_machine   = fsg3_init,
++MACHINE_END
+Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/fsg3.h
+===================================================================
+--- /dev/null
++++ linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/fsg3.h
+@@ -0,0 +1,51 @@
++/*
++ * include/asm-arm/arch-ixp4xx/fsg3.h
++ *
++ * FSG3 platform specific definitions
++ *
++ * Author: Deepak Saxena <dsaxena@plexity.net>
++ *
++ * Copyright 2004 (c) MontaVista, Software, Inc. 
++ * 
++ * This file is licensed under  the terms of the GNU General Public 
++ * License version 2. This program is licensed "as is" without any 
++ * warranty of any kind, whether express or implied.
++ */
++
++#ifndef __ASM_ARCH_HARDWARE_H__
++#error "Do not include this directly, instead #include <asm/hardware.h>"
++#endif
++
++#define	FSG3_FLASH_BASE 	IXP4XX_EXP_BUS_BASE(0)
++#define	FSG3_FLASH_SIZE 	SZ_4M - 1
++
++
++#define FSG3_SYNC_KEY_PIN	4
++#define FSG3_RESET_KEY_PIN	9
++#define FSG3_UNPLUG_KEY_PIN	10
++#define	FSG3_SDA_PIN		12
++#define	FSG3_SCL_PIN		13
++
++
++/*
++ * FSG3 PCI IRQs
++ */
++#define FSG3_PCI_MAX_DEV	3
++#define FSG3_PCI_IRQ_LINES	3
++
++
++/* PCI controller GPIO to IRQ pin mappings */
++#define FSG3_PCI_INTA_PIN	6
++#define FSG3_PCI_INTB_PIN	7
++#define	FSG3_PCI_INTC_PIN	5
++
++#define FSG3_PCI_INTA_IRQ	IRQ_IXP4XX_GPIO6
++#define FSG3_PCI_INTB_IRQ	IRQ_IXP4XX_GPIO7
++#define FSG3_PCI_INTC_IRQ	IRQ_IXP4XX_GPIO5
++
++#define FSG3_LED_RING     0
++#define FSG3_LED_STARTUP  1
++#define FSG3_LED_USB      2
++#define FSG3_LED_SATA     3
++#define FSG3_LED_WAN      4
++#define FSG3_LED_WLAN     5
+Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/hardware.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h
++++ linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/hardware.h
+@@ -41,6 +41,7 @@ extern unsigned int processor_id;
+ #include "platform.h"
+ 
+ /* Platform specific details */
++#include "fsg3.h"
+ #include "ixdp425.h"
+ #include "coyote.h"
+ #include "prpmc1100.h"
+Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
+===================================================================
+--- linux-2.6.18-armeb.orig/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
++++ linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
+@@ -47,6 +47,7 @@
+  * Queue Manager
+  */
+ #define IXP4XX_QMGR_BASE_PHYS		(0x60000000)
++#define IXP4XX_QMGR_BASE_VIRT           (0xFF00F000)
+ #define IXP4XX_QMGR_REGION_SIZE		(0x00004000)
+ 
+ /*
+@@ -94,6 +95,43 @@
+ #define IXP4XX_EXP_CFG3_OFFSET	0x2C
+ 
+ /*
++ * Expansion BUS
++ *
++ * Expansion Bus 'lives' at either base1 or base 2 depending on the value of
++ * Exp Bus config registers:
++ *
++ * Setting bit 31 of IXP425_EXP_CFG0 puts SDRAM at zero,
++ * and The expansion bus to IXP425_EXP_BUS_BASE2
++ */
++#define IXP425_EXP_BUS_BASE1_PHYS	(0x00000000)
++#define IXP425_EXP_BUS_BASE2_PHYS	(0x50000000)
++#define IXP425_EXP_BUS_BASE2_VIRT	(0xF0000000)
++
++#define IXP425_EXP_BUS_BASE_PHYS	IXP425_EXP_BUS_BASE2_PHYS
++#define IXP425_EXP_BUS_BASE_VIRT	IXP425_EXP_BUS_BASE2_VIRT
++
++#define IXP425_EXP_BUS_REGION_SIZE	(0x08000000)
++#define IXP425_EXP_BUS_CSX_REGION_SIZE	(0x01000000)
++
++#define IXP425_EXP_BUS_CS0_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x00000000)
++#define IXP425_EXP_BUS_CS1_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x01000000)
++#define IXP425_EXP_BUS_CS2_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x02000000)
++#define IXP425_EXP_BUS_CS3_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x03000000)
++#define IXP425_EXP_BUS_CS4_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x04000000)
++#define IXP425_EXP_BUS_CS5_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x05000000)
++#define IXP425_EXP_BUS_CS6_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x06000000)
++#define IXP425_EXP_BUS_CS7_BASE_PHYS	(IXP425_EXP_BUS_BASE2_PHYS + 0x07000000)
++
++#define IXP425_EXP_BUS_CS0_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x00000000)
++#define IXP425_EXP_BUS_CS1_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x01000000)
++#define IXP425_EXP_BUS_CS2_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x02000000)
++#define IXP425_EXP_BUS_CS3_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x03000000)
++#define IXP425_EXP_BUS_CS4_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x04000000)
++#define IXP425_EXP_BUS_CS5_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x05000000)
++#define IXP425_EXP_BUS_CS6_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x06000000)
++#define IXP425_EXP_BUS_CS7_BASE_VIRT	(IXP425_EXP_BUS_BASE2_VIRT + 0x07000000)
++
++/*
+  * Expansion Bus Controller registers.
+  */
+ #define IXP4XX_EXP_REG(x) ((volatile u32 *)(IXP4XX_EXP_CFG_BASE_VIRT+(x)))
+@@ -415,6 +453,8 @@
+  * IXP4XX_ naming convetions.
+  *
+  */
++#ifndef NO_LINUX_IXP4XX_USB
++
+ # define IXP4XX_USB_REG(x)       (*((volatile u32 *)(x)))
+ 
+ /* UDC Undocumented - Reserved1 */
+@@ -424,7 +464,7 @@
+ /* UDC Undocumented - Reserved3 */
+ #define UDC_RES3	IXP4XX_USB_REG(IXP4XX_USB_BASE_VIRT+0x000C)  
+ /* UDC Control Register */
+-#define UDCCR		IXP4XX_USB_REG(IXP4XX_USB_BASE_VIRT+0x0000)  
++#define UDCCR		(IXP4XX_USB_REG(IXP4XX_USB_BASE_VIRT+0x0000));
+ /* UDC Endpoint 0 Control/Status Register */
+ #define UDCCS0		IXP4XX_USB_REG(IXP4XX_USB_BASE_VIRT+0x0010)  
+ /* UDC Endpoint 1 (IN) Control/Status Register */
+@@ -607,6 +647,8 @@
+ 
+ #define DCMD_LENGTH	0x01fff		/* length mask (max = 8K - 1) */
+ 
++#endif  /* NO_LINUX_IXP4XX_USB */
++
+ #ifndef __ASSEMBLY__
+ static inline int cpu_is_ixp46x(void)
+ {

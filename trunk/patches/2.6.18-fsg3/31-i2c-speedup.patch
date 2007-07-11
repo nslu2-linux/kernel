@@ -1,0 +1,35 @@
+Index: linux-2.6.18-armeb/drivers/i2c/algos/i2c-algo-bit.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/i2c/algos/i2c-algo-bit.c
++++ linux-2.6.18-armeb/drivers/i2c/algos/i2c-algo-bit.c
+@@ -157,7 +157,7 @@ static int i2c_outb(struct i2c_adapter *
+ 	for ( i=7 ; i>=0 ; i-- ) {
+ 		sb = c & ( 1 << i );
+ 		setsda(adap,sb);
+-		udelay(adap->udelay);
++		udelay((adap->udelay+1)>>1);  // half time, by Freecom
+ 		DEBPROTO(printk(KERN_DEBUG "%d",sb!=0));
+ 		if (sclhi(adap)<0) { /* timed out */
+ 			sdahi(adap); /* we don't want to block the net */
+@@ -168,7 +168,7 @@ static int i2c_outb(struct i2c_adapter *
+ 		 * if ( sb && ! getsda(adap) ) -> ouch! Get out of here.
+ 		 */
+ 		setscl(adap, 0 );
+-		udelay(adap->udelay);
++		udelay((adap->udelay+1)>>1);  // half time, by Freecom
+ 	}
+ 	sdahi(adap);
+ 	if (sclhi(adap)<0){ /* timeout */
+Index: linux-2.6.18-armeb/drivers/i2c/busses/i2c-ixp4xx.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/i2c/busses/i2c-ixp4xx.c
++++ linux-2.6.18-armeb/drivers/i2c/busses/i2c-ixp4xx.c
+@@ -121,7 +121,7 @@ static int ixp4xx_i2c_probe(struct platf
+ 	drv_data->algo_data.setscl = ixp4xx_bit_setscl;
+ 	drv_data->algo_data.getsda = ixp4xx_bit_getsda;
+ 	drv_data->algo_data.getscl = ixp4xx_bit_getscl;
+-	drv_data->algo_data.udelay = 10;
++	drv_data->algo_data.udelay = 5,  // set from 10 to 5, by Freecom
+ 	drv_data->algo_data.mdelay = 10;
+ 	drv_data->algo_data.timeout = 100;
+ 

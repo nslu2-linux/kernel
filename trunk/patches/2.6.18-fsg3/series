@@ -1,3 +1,12 @@
-10-linux-2.6.18-fsg3.patch
+02-mtdpart-redboot-byteswap-partition-truncate.patch
+20-fsg3-machine-support.patch
+21-fsg3-buttons-and-leds.patch
+22-fsg3-via-support.patch
+30-report-alignment-problems.patch
+31-i2c-speedup.patch
+33-maclist.patch
+34-netfilter-speedup.patch
+36-filesystem-alignment.patch
+37-mppe-support.patch
 
 
