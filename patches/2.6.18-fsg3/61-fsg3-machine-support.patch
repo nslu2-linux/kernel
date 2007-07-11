@@ -229,7 +229,7 @@ Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
 ===================================================================
 --- /dev/null
 +++ linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
-@@ -0,0 +1,270 @@
+@@ -0,0 +1,221 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg3-setup.c
 + *
@@ -259,8 +259,6 @@ Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
 +#include <asm/mach-types.h>
 +#include <asm/mach/arch.h>
 +#include <asm/mach/flash.h>
-+
-+#include <net/maclist.h>
 +
 +
 +/*
@@ -386,10 +384,6 @@ Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
 +                .iotype         = UPIO_MEM,
 +                .regshift       = 2,
 +                .uartclk        = IXP4XX_UART_XTAL,
-+/*		.line		= 0,
-+		.type		= PORT_XSCALE,
-+		.fifosize	= 32
-+*/
 +        },
 +        {
 +                .mapbase        = IXP4XX_UART2_BASE_PHYS,
@@ -399,10 +393,6 @@ Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
 +                .iotype         = UPIO_MEM,
 +                .regshift       = 2,
 +                .uartclk        = IXP4XX_UART_XTAL,
-+/*		.line		= 1,
-+		.type		= PORT_XSCALE,
-+		.fifosize	= 32
-+*/
 +        },
 +        { }
 +};
@@ -423,41 +413,6 @@ Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
 +	&fsg3_leds,
 +#endif
 +};
-+
-+#ifdef CONFIG_MACLIST
-+static void fsg3_flash_add(struct mtd_info *mtd)
-+{
-+	/* When the RedBoot partition is added the MAC address is read from it. */
-+	if (strcmp(mtd->name, "RedBoot config") == 0) {
-+		size_t retlen;
-+		u_char mac[6];
-+
-+		/* The MAC is at a known offset... */
-+		/* TODO --> find npe_eth0 and ..1 instead of hardcoded offset and inc) */
-+		if (mtd->read(mtd, 0x0422, 6, &retlen, mac) == 0 && retlen == 6) {
-+			printk(KERN_INFO "FSG3-MAC for eth0: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
-+				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-+			maclist_add(mac);
-+			mac[5]++;
-+			printk(KERN_INFO "FSG3-MAC for eth1: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
-+				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-+			maclist_add(mac);
-+		} else {
-+			printk(KERN_ERR "FGS3-MAC: read failed\n");
-+		}
-+	}
-+}
-+
-+static void fsg3_flash_remove(struct mtd_info *mtd)
-+{
-+	/* Nothing to do on remove at present. */
-+}
-+
-+static struct mtd_notifier fsg3_flash_notifier = {
-+	.add = fsg3_flash_add,
-+	.remove = fsg3_flash_remove,
-+};
-+#endif
 +
 +static void fsg3_power_off(void)
 +{
@@ -484,10 +439,6 @@ Index: linux-2.6.18-armeb/arch/arm/mach-ixp4xx/fsg3-setup.c
 +	pm_power_off = fsg3_power_off;
 +
 +	platform_add_devices(fsg3_devices, ARRAY_SIZE(fsg3_devices));
-+
-+#ifdef CONFIG_MACLIST
-+	register_mtd_user(&fsg3_flash_notifier);
-+#endif
 +}
 +
 +MACHINE_START(FREECOM_FSG3, "FSG3 - Freecom Storage Gateway")
@@ -572,7 +523,7 @@ Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
 ===================================================================
 --- linux-2.6.18-armeb.orig/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
 +++ linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
-@@ -47,6 +47,7 @@
+@@ -55,6 +55,7 @@
   * Queue Manager
   */
  #define IXP4XX_QMGR_BASE_PHYS		(0x60000000)
@@ -580,7 +531,7 @@ Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
  #define IXP4XX_QMGR_REGION_SIZE		(0x00004000)
  
  /*
-@@ -94,6 +95,43 @@
+@@ -102,6 +103,43 @@
  #define IXP4XX_EXP_CFG3_OFFSET	0x2C
  
  /*
@@ -624,7 +575,7 @@ Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
   * Expansion Bus Controller registers.
   */
  #define IXP4XX_EXP_REG(x) ((volatile u32 *)(IXP4XX_EXP_CFG_BASE_VIRT+(x)))
-@@ -415,6 +453,8 @@
+@@ -435,6 +473,8 @@
   * IXP4XX_ naming convetions.
   *
   */
@@ -633,7 +584,7 @@ Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
  # define IXP4XX_USB_REG(x)       (*((volatile u32 *)(x)))
  
  /* UDC Undocumented - Reserved1 */
-@@ -424,7 +464,7 @@
+@@ -444,7 +484,7 @@
  /* UDC Undocumented - Reserved3 */
  #define UDC_RES3	IXP4XX_USB_REG(IXP4XX_USB_BASE_VIRT+0x000C)  
  /* UDC Control Register */
@@ -642,9 +593,9 @@ Index: linux-2.6.18-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
  /* UDC Endpoint 0 Control/Status Register */
  #define UDCCS0		IXP4XX_USB_REG(IXP4XX_USB_BASE_VIRT+0x0010)  
  /* UDC Endpoint 1 (IN) Control/Status Register */
-@@ -607,6 +647,8 @@
- 
- #define DCMD_LENGTH	0x01fff		/* length mask (max = 8K - 1) */
+@@ -655,6 +695,8 @@
+ #define IX_FUSE_IXP46X_ONLY IX_FUSE_XSCALE_MAX_FREQ | IX_FUSE_RSA | \
+ 	IX_FUSE_NPEB_ETH | IX_FUSE_NPEA_ETH | IX_FUSE_USB_HOST | IX_FUSE_ECC
  
 +#endif  /* NO_LINUX_IXP4XX_USB */
 +
