@@ -1,0 +1,93 @@
+Index: linux-2.6.18-armeb/net/ipv4/ip_input.c
+===================================================================
+--- linux-2.6.18-armeb.orig/net/ipv4/ip_input.c
++++ linux-2.6.18-armeb/net/ipv4/ip_input.c
+@@ -272,6 +272,10 @@ int ip_local_deliver(struct sk_buff *skb
+ 			return 0;
+ 	}
+ 
++	// speed up for locals, by Freecom
++	if(strcmp(skb->dev->name, "eth0") == 0)
++		return ip_local_deliver_finish(skb);
++
+ 	return NF_HOOK(PF_INET, NF_IP_LOCAL_IN, skb, skb->dev, NULL,
+ 		       ip_local_deliver_finish);
+ }
+@@ -373,6 +377,7 @@ drop:
+ int ip_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt, struct net_device *orig_dev)
+ {
+ 	struct iphdr *iph;
++	struct in_device *in_dev;
+ 	u32 len;
+ 
+ 	/* When the interface is in promisc. mode, drop all the crap
+@@ -431,6 +436,14 @@ int ip_rcv(struct sk_buff *skb, struct n
+ 	/* Remove any debris in the socket control block */
+ 	memset(IPCB(skb), 0, sizeof(struct inet_skb_parm));
+ 
++	// speed up for locals, by Freecom
++	if(strcmp(dev->name, "eth0") == 0) {
++		in_dev = in_dev_get(dev);
++		if(in_dev) if(in_dev->ifa_list)
++			if(skb->nh.iph->daddr == in_dev->ifa_list->ifa_address)
++				return ip_rcv_finish(skb);
++	}
++
+ 	return NF_HOOK(PF_INET, NF_IP_PRE_ROUTING, skb, dev, NULL,
+ 		       ip_rcv_finish);
+ 
+Index: linux-2.6.18-armeb/net/ipv4/ip_output.c
+===================================================================
+--- linux-2.6.18-armeb.orig/net/ipv4/ip_output.c
++++ linux-2.6.18-armeb/net/ipv4/ip_output.c
+@@ -153,6 +153,10 @@ int ip_build_and_send_pkt(struct sk_buff
+ 
+ 	skb->priority = sk->sk_priority;
+ 
++	// speed up for locals, by Freecom
++	if(strcmp(rt->u.dst.dev->name, "eth0") == 0)
++		return dst_output(skb);
++
+ 	/* Send it out. */
+ 	return NF_HOOK(PF_INET, NF_IP_LOCAL_OUT, skb, NULL, rt->u.dst.dev,
+ 		       dst_output);
+@@ -283,6 +287,11 @@ int ip_output(struct sk_buff *skb)
+ 	skb->dev = dev;
+ 	skb->protocol = htons(ETH_P_IP);
+ 
++	// speed up for locals, by Freecom
++	if(skb->input_dev == 0)
++		if(strcmp(dev->name, "eth0") == 0)
++			return ip_finish_output(skb);
++
+ 	return NF_HOOK_COND(PF_INET, NF_IP_POST_ROUTING, skb, NULL, dev,
+ 		            ip_finish_output,
+ 			    !(IPCB(skb)->flags & IPSKB_REROUTED));
+@@ -367,6 +376,10 @@ packet_routed:
+ 
+ 	skb->priority = sk->sk_priority;
+ 
++	// speed up for locals, by Freecom
++	if(strcmp(rt->u.dst.dev->name, "eth0") == 0)
++		return dst_output(skb);
++
+ 	return NF_HOOK(PF_INET, NF_IP_LOCAL_OUT, skb, NULL, rt->u.dst.dev,
+ 		       dst_output);
+ 
+@@ -1263,9 +1276,13 @@ int ip_push_pending_frames(struct sock *
+ 	skb->priority = sk->sk_priority;
+ 	skb->dst = dst_clone(&rt->u.dst);
+ 
+-	/* Netfilter gets whole the not fragmented skb. */
+-	err = NF_HOOK(PF_INET, NF_IP_LOCAL_OUT, skb, NULL, 
+-		      skb->dst->dev, dst_output);
++	// speed up for locals, by Freecom
++	if(strcmp(skb->dst->dev->name, "eth0") == 0)
++		err = dst_output(skb);
++	else
++		/* Netfilter gets whole the not fragmented skb. */
++		err = NF_HOOK(PF_INET, NF_IP_LOCAL_OUT, skb, NULL, 
++			      skb->dst->dev, dst_output);
+ 	if (err) {
+ 		if (err > 0)
+ 			err = inet->recverr ? net_xmit_errno(err) : 0;

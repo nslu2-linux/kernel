@@ -1,0 +1,376 @@
+Index: linux-2.6.18-armeb/arch/arm/kernel/process.c
+===================================================================
+--- linux-2.6.18-armeb.orig/arch/arm/kernel/process.c
++++ linux-2.6.18-armeb/arch/arm/kernel/process.c
+@@ -173,8 +173,16 @@ int __init reboot_setup(char *str)
+ 
+ __setup("reboot=", reboot_setup);
+ 
++
++// by Freecom Technologies GmbH, Berlin
++extern void ixp4xxgpioled_all_off(void);
++
+ void machine_halt(void)
+ {
++	leds_event(led_halted);
++	/* actually halted */
++
++	ixp4xxgpioled_all_off();   // LEDS and EL ring off
+ }
+ 
+ 
+Index: linux-2.6.18-armeb/drivers/leds/leds-ixp4xx-gpio.c
+===================================================================
+--- linux-2.6.18-armeb.orig/drivers/leds/leds-ixp4xx-gpio.c
++++ linux-2.6.18-armeb/drivers/leds/leds-ixp4xx-gpio.c
+@@ -31,12 +31,23 @@
+  *
+  */
+ 
++/*
++ * reworked for FSG3 LEDS and buttons
++ * by Freecom Technologies GmbH, Berlin
++ */
++ 
++ 
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <linux/spinlock.h>
+ #include <linux/leds.h>
+ #include <asm/arch/hardware.h>
++#include <asm/io.h>
++#include <linux/timer.h>
++#include <linux/delay.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
+ 
+ extern spinlock_t gpio_lock;
+ 
+@@ -47,26 +58,198 @@ static struct ixp4xxgpioled_device {
+ 	int               flags;
+ } ixp4xxgpioled_devices[GPIO_MAX];
+ 
++static int key;
++static int pressSyncJiffies, pressResetJiffies, pressUnplugJiffies;
++static volatile unsigned short *ledmem_cs2, led_latch, led_blink_latch;
++
++struct work_struct  hotplug_work;
++static struct timer_list  leds_timerlist, keys_timerlist;
++
++
++#ifdef CONFIG_HOTPLUG
++
++/* Notify userspace when a key-event occurs,
++ * by running '/sbin/hotplug key' with certain
++ * environment variables set.
++ */
++
++static void key_run_sbin_hotplug(char *Action)
++{
++	char *argv[3], *envp[5], action_str[32];
++	int i;
++
++	sprintf(action_str, "ACTION=%s", Action);
++
++        i = 0;
++        argv[i++] = "/sbin/hotplug";
++        argv[i++] = "key";
++        argv[i] = 0;
++
++	i = 0;
++	/* minimal command environment */
++	envp [i++] = "HOME=/";
++	envp [i++] = "PATH=/sbin:/bin:/usr/sbin:/usr/bin";
++	envp [i++] = "INTERFACE=";
++	envp [i++] = action_str;
++	envp [i] = 0;
++
++        if (in_interrupt ()) {
++                printk ("LEDMAN-hotplug: -- In_interrupt\n");
++                return;
++        }
++        if (!current->fs->root) {
++                printk ("LEDMAN-hotplug: -- no FS yet\n");
++                return;
++        }
++
++	call_usermodehelper (argv[0], argv, envp, 0);
++}
++
++static void leds_poll(unsigned long arg)
++{
++	if(led_blink_latch == 0)
++		return;
++	  
++	*ledmem_cs2 = led_latch = led_latch ^ led_blink_latch;
++
++	/* Re-arm timer */
++	leds_timerlist.expires = jiffies + HZ/2;
++	add_timer(&leds_timerlist);
++}
++
++static void keys_poll(unsigned long arg)
++{
++	if(pressSyncJiffies == 0)
++		if(pressResetJiffies == 0)
++			return;
++
++	if(pressSyncJiffies != 0) if(abs(jiffies - pressSyncJiffies) >= 4*HZ) {
++		INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "SHUTDOWN");
++		schedule_work(&hotplug_work);
++		pressSyncJiffies = 0;
++		return;
++	}
++
++	if(pressResetJiffies != 0) if(abs(jiffies - pressResetJiffies) >= 4*HZ) {
++		INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "DEFAULTS");
++		schedule_work(&hotplug_work);
++		pressResetJiffies = 0;
++		return;
++	}
++
++	/* Re-arm timer */
++	keys_timerlist.expires = jiffies + HZ/10;
++	add_timer(&keys_timerlist);
++}
++
++static irqreturn_t leds_sync_key_interrupt(int irq, void *dev_id, struct pt_regs *regs)
++{
++	int holdkey;
++
++	gpio_line_get(FSG3_SYNC_KEY_PIN, &holdkey);
++	if(holdkey == 0) {  // key pressed ?
++
++		if(key == 0) {  // no other key still pressed ?
++			keys_timerlist.expires = jiffies + HZ/10;
++			add_timer(&keys_timerlist);
++		}
++
++		key = 1;
++		pressSyncJiffies = jiffies;
++	}
++	else {              // key released
++		key = 0;
++		if(pressSyncJiffies == 0)
++			return IRQ_HANDLED;
++
++		if(abs(jiffies - pressSyncJiffies) < 4*HZ) {
++			INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "SYNC");
++			schedule_work(&hotplug_work);
++		}
++
++		pressSyncJiffies = 0;
++	}
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t leds_reset_key_interrupt(int irq, void *dev_id, struct pt_regs *regs)
++{
++	int holdkey;
++
++	gpio_line_get(FSG3_RESET_KEY_PIN, &holdkey);
++	if(holdkey == 0) {  // key pressed ?
++
++		if(key == 0) {  // no other key still pressed ?
++			keys_timerlist.expires = jiffies + HZ/10;
++			add_timer(&keys_timerlist);
++		}
++
++		key = 1;
++		pressResetJiffies = jiffies;
++	}
++	else {              // key released
++		key = 0;
++		if(pressResetJiffies == 0)
++			return IRQ_HANDLED;
++
++		if(abs(jiffies - pressResetJiffies) < 4*HZ) {
++			INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "REBOOT");
++			schedule_work(&hotplug_work);
++		}
++
++		pressResetJiffies = 0;
++	}
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t leds_unplug_key_interrupt(int irq, void *dev_id, struct pt_regs *regs)
++{
++	// Mechanical key are nasty, so do some pre-cautions.
++	if(abs(jiffies - pressUnplugJiffies) < HZ/2) {
++		pressUnplugJiffies = jiffies;
++		return IRQ_HANDLED;
++	}
++	pressResetJiffies = jiffies;
++
++	if(led_latch & 0x10)   // test USB LED
++		INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "UNPLUG");
++	else
++		INIT_WORK(&hotplug_work, key_run_sbin_hotplug, "COLDPLUG");
++	schedule_work(&hotplug_work);
++	return IRQ_HANDLED;
++}
++#endif   /* CONFIG_HOTPLUG */
++
++void ixp4xxgpioled_all_off(void)
++{
++	// all LEDs off and EL ring always off
++	*ledmem_cs2 = led_latch = 0xff9f;
++}
++
+ void ixp4xxgpioled_brightness_set(struct led_classdev *pled,
+ 				enum led_brightness value)
+ {
+ 	const struct ixp4xxgpioled_device *const ixp4xx_dev =
+ 		container_of(pled, struct ixp4xxgpioled_device, ancestor);
+-	const u32 gpio_pin = ixp4xx_dev - ixp4xxgpioled_devices;
++	const u32 led_no = ixp4xx_dev - ixp4xxgpioled_devices;
+ 
+-	if (gpio_pin < GPIO_MAX && ixp4xx_dev->ancestor.name != 0) {
+-		/* Set or clear the 'gpio_pin' bit according to the style
+-		 * and the required setting (value > 0 == on)
+-		 */
+-		const int gpio_value =
+-			(value > 0) == (ixp4xx_dev->flags != IXP4XX_GPIO_LOW) ?
+-				IXP4XX_GPIO_HIGH : IXP4XX_GPIO_LOW;
+-
+-		{
+-			unsigned long flags;
+-			spin_lock_irqsave(&gpio_lock, flags);
+-			gpio_line_set(gpio_pin, gpio_value);
+-			spin_unlock_irqrestore(&gpio_lock, flags);
++	if (led_no < GPIO_MAX && ixp4xx_dev->ancestor.name != 0) {
++		if(value == 2) {
++			if(led_blink_latch == 0) {
++				leds_timerlist.expires = jiffies + HZ/2;
++				add_timer(&leds_timerlist);
++			}
++			led_blink_latch |= ixp4xx_dev->flags;
++			*ledmem_cs2 = led_latch = led_latch & (~ixp4xx_dev->flags);
++		}
++		else {
++			led_blink_latch &= (~ixp4xx_dev->flags);
++			if(value == 0)
++				*ledmem_cs2 = led_latch = led_latch | ixp4xx_dev->flags;
++			else
++				*ledmem_cs2 = led_latch = led_latch & (~ixp4xx_dev->flags);
+ 		}
+ 	}
+ }
+@@ -130,24 +313,59 @@ static int ixp4xxgpioled_probe(struct pl
+ 	 */
+ 	int i;
+ 
++	/* Map the LED chip select address space */
++	ledmem_cs2 = (volatile unsigned short *) ioremap(IXP425_EXP_BUS_CS2_BASE_PHYS, 512);
++	*ledmem_cs2 = led_latch = 0xffff;
++	led_blink_latch = 0x80;    // sync LED blinking
++
++#ifdef CONFIG_HOTPLUG
++	/* Configure interrupt input for SYNC switch */
++	set_irq_type(IRQ_IXP4XX_GPIO4, IRQT_BOTHEDGE);
++	if (request_irq(IRQ_IXP4XX_GPIO4, leds_sync_key_interrupt, IRQF_DISABLED, "Sync", NULL) < 0)
++		printk("LEDs: failed to register IRQ%d for SYNC switch\n", IRQ_IXP4XX_GPIO4);
++	else
++		printk("LEDs: registered SYNC switch on IRQ%d\n", IRQ_IXP4XX_GPIO4);
++
++	/* Configure interrupt input for RESET switch */
++	set_irq_type(IRQ_IXP4XX_GPIO9, IRQT_BOTHEDGE);
++	if (request_irq(IRQ_IXP4XX_GPIO9, leds_reset_key_interrupt, IRQF_DISABLED, "Reset", NULL) < 0)
++		printk("LEDs: failed to register IRQ%d for RESET switch\n", IRQ_IXP4XX_GPIO9);
++	else
++		printk("LEDs: registered RESET switch on IRQ%d\n", IRQ_IXP4XX_GPIO9);
++
++	/* Configure interrupt input for UNPLUG switch */
++	set_irq_type(IRQ_IXP4XX_GPIO10, IRQT_FALLING);
++	if (request_irq(IRQ_IXP4XX_GPIO10, leds_unplug_key_interrupt, IRQF_DISABLED, "Unplug", NULL) < 0)
++		printk("LEDs: failed to register IRQ%d for UNPLUG switch\n", IRQ_IXP4XX_GPIO10);
++	else
++		printk("LEDs: registered UNPLUG switch on IRQ%d\n", IRQ_IXP4XX_GPIO10);
++#endif
++
++
++	init_timer(&leds_timerlist);
++	leds_timerlist.expires = jiffies + HZ/2;
++	leds_timerlist.function = leds_poll;
++	leds_timerlist.data = 0;
++	add_timer(&leds_timerlist);
++
++#ifdef CONFIG_HOTPLUG
++	init_timer(&keys_timerlist);
++	keys_timerlist.expires = jiffies + HZ/2;
++	keys_timerlist.function = keys_poll;
++	keys_timerlist.data = 0;
++	add_timer(&keys_timerlist);
++
++	// at start-up one IRQ is released !?! So reset everything.
++	key = 0;
++	pressSyncJiffies = pressResetJiffies = pressUnplugJiffies = 0;
++#endif
++
++
+ 	for_all_leds(i, pdev) {
+ 		const u8 gpio_pin = pdev->resource[i].start;
+ 		int      rc;
+ 
+ 		if (ixp4xxgpioled_devices[gpio_pin].ancestor.name == 0) {
+-			unsigned long flags;
+-
+-			spin_lock_irqsave(&gpio_lock, flags);
+-			gpio_line_config(gpio_pin, IXP4XX_GPIO_OUT);
+-			/* The config can, apparently, reset the state,
+-			 * I suspect the gpio line may be an input and
+-			 * the config may cause the line to be latched,
+-			 * so the setting depends on how the LED is
+-			 * connected to the line (which affects how it
+-			 * floats if not driven).
+-			 */
+-			gpio_line_set(gpio_pin, IXP4XX_GPIO_HIGH);
+-			spin_unlock_irqrestore(&gpio_lock, flags);
+ 
+ 			ixp4xxgpioled_devices[gpio_pin].flags =
+ 				pdev->resource[i].flags & IORESOURCE_BITS;
+@@ -203,6 +421,10 @@ static int __init ixp4xxgpioled_init(voi
+ 
+ static void __exit ixp4xxgpioled_exit(void)
+ {
++	free_irq(FSG3_SYNC_KEY_PIN, NULL);
++	free_irq(FSG3_RESET_KEY_PIN, NULL);
++	free_irq(FSG3_UNPLUG_KEY_PIN, NULL);
++
+ 	platform_driver_unregister(&ixp4xxgpioled_driver);
+ }
+ 
+Index: linux-2.6.18-armeb/kernel/sys.c
+===================================================================
+--- linux-2.6.18-armeb.orig/kernel/sys.c
++++ linux-2.6.18-armeb/kernel/sys.c
+@@ -680,6 +680,7 @@ EXPORT_SYMBOL_GPL(kernel_power_off);
+  */
+ asmlinkage long sys_reboot(int magic1, int magic2, unsigned int cmd, void __user * arg)
+ {
++	volatile int holdkey;  // Freecom
+ 	char buffer[256];
+ 
+ 	/* We only trust the superuser with rebooting the system. */
+@@ -717,7 +718,16 @@ asmlinkage long sys_reboot(int magic1, i
+ 	case LINUX_REBOOT_CMD_HALT:
+ 		kernel_halt();
+ 		unlock_kernel();
+-		do_exit(0);
++
++		// make a restart instead, by Freecom Technologies GmbH, Berlin
++//		do_exit(0);
++
++		// wait until key pressed -> restart
++		do { gpio_line_get(FSG3_SYNC_KEY_PIN, &holdkey); } while (!holdkey);
++		while (holdkey)  gpio_line_get(FSG3_SYNC_KEY_PIN, &holdkey);
++
++		printk("Restarting system.\n");
++		machine_restart(NULL);
+ 		break;
+ 
+ 	case LINUX_REBOOT_CMD_POWER_OFF:
