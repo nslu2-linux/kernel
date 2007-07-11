@@ -28,7 +28,7 @@ MAJORVER = 2.6
 # CROSS_COMPILE = /home/slug/fsg3-toolchain/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
 
 # Latest Stable
-BASEVER  = 2.6.21.5
+BASEVER  = 2.6.21.6
 PATCHVER = 2.6.21
 
 # Latest Development

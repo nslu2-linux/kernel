@@ -6,7 +6,7 @@ Index: linux-2.6.20-arm/Makefile
  VERSION = 2
  PATCHLEVEL = 6
  SUBLEVEL = 21
--EXTRAVERSION = .5
+-EXTRAVERSION = .6
 +EXTRAVERSION =
  NAME = Nocturnal Monster Puppy
  
