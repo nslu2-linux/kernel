@@ -20,7 +20,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
  CONFIG_TARGET_DESCRIPTION="NAS100D"
  CONFIG_CROSS_COMPILE=""
 -# CONFIG_AEABI is not set
-+CONFIG_AEABIk=y
++CONFIG_AEABI=y
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
@@ -33,7 +33,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-arm_config
  CONFIG_TARGET_DESCRIPTION="Debian NSLU2 (16MiB Flash)"
  CONFIG_CROSS_COMPILE=""
 -# CONFIG_AEABI is not set
-+CONFIG_AEABIk=y
++CONFIG_AEABI=y
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
