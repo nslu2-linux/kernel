@@ -1,8 +1,8 @@
-Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-arm_config
+Index: apex-1.5.8/src/mach-ixp42x/debian-fsg3-arm_config
 ===================================================================
 --- /dev/null
-+++ apex-1.5.8/src/mach-ixp42x/debian-dsmg600-arm_config
-@@ -0,0 +1,169 @@
++++ apex-1.5.8/src/mach-ixp42x/debian-fsg3-arm_config
+@@ -0,0 +1,170 @@
 +#
 +# Automatically generated make config: don't edit
 +# Linux kernel version: 
@@ -22,7 +22,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-arm_config
 +#
 +# General Setup
 +#
-+CONFIG_TARGET_DESCRIPTION="Debian DSMG600/LE"
++CONFIG_TARGET_DESCRIPTION="Debian FSG3/LE"
 +CONFIG_CROSS_COMPILE=""
 +CONFIG_AEABI=y
 +CONFIG_CC_OPTIMIZE_FOR_SIZE=y
@@ -41,23 +41,23 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-arm_config
 +CONFIG_STACKLIMIT=y
 +# CONFIG_BOOTSTRAP_MEMTEST is not set
 +CONFIG_ATAG_PHYS=0x00000100
-+CONFIG_ARCH_NUMBER=964
++CONFIG_ARCH_NUMBER=1091
 +CONFIG_APEX_VMA=0x00200000
-+CONFIG_KERNEL_LMA=0x00600000
++CONFIG_KERNEL_LMA=0x00700000
 +CONFIG_USE_RAMDISK=y
-+CONFIG_RAMDISK_LMA=0x00B00000
++CONFIG_RAMDISK_LMA=0x01000000
 +CONFIG_SDRAM_BANK0=y
 +# CONFIG_SDRAM_BANK1 is not set
 +CONFIG_NOR_BUSWIDTH=16
 +CONFIG_NOR_BANK0=y
 +CONFIG_NOR_BANK0_START=0x50000000
-+CONFIG_NOR_BANK0_LENGTH=0x01000000
++CONFIG_NOR_BANK0_LENGTH=0x00400000
 +CONFIG_MACH="ixp42x"
 +CONFIG_RAMDISK_SIZE=0x00400000
 +# CONFIG_MACH_NSLU2 is not set
 +# CONFIG_MACH_NAS100D is not set
-+CONFIG_MACH_DSMG600=y
-+# CONFIG_MACH_FSG3 is not set
++# CONFIG_MACH_DSMG600 is not set
++CONFIG_MACH_FSG3=y
 +# CONFIG_MACH_AVILA2347 is not set
 +# CONFIG_USER_DEFAULTENDIAN is not set
 +# CONFIG_USER_BIGENDIAN is not set
@@ -123,7 +123,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-arm_config
 +CONFIG_ENV=y
 +CONFIG_ENV_LINK=y
 +CONFIG_ENV_MUTABLE=y
-+CONFIG_ENV_REGION="nor:0xfbc000+15k"
++CONFIG_ENV_REGION="nor:0x3bc000+15k"
 +# CONFIG_ENV_SAVEATONCE is not set
 +CONFIG_ENV_CHECK_LEN=1024
 +CONFIG_VARIATIONS=y
@@ -141,10 +141,11 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-arm_config
 +CONFIG_AUTOBOOT=y
 +CONFIG_AUTOBOOT_DELAY=10
 +CONFIG_ENV_STARTUP_KERNEL_COPY=y
-+# CONFIG_ENV_REGION_KERNEL_SWAP is not set
++CONFIG_ENV_REGION_KERNEL_SWAP=y
 +CONFIG_ENV_STARTUP_RAMDISK_COPY=y
-+# CONFIG_ENV_REGION_RAMDISK_SWAP is not set
-+# CONFIG_ENV_STARTUP_PREFIX_P is not set
++CONFIG_ENV_REGION_RAMDISK_SWAP=y
++CONFIG_ENV_STARTUP_PREFIX_P=y
++CONFIG_ENV_STARTUP_PREFIX="sdram-init; memscan -u 0+256m"
 +
 +#
 +#    Regions
@@ -152,7 +153,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-arm_config
 +CONFIG_ENV_REGION_KERNEL="fis://kernel"
 +CONFIG_ENV_REGION_KERNEL_ALT_P=y
 +CONFIG_ENV_REGION_KERNEL_ALT="fis://kernel"
-+CONFIG_ENV_REGION_RAMDISK="fis://ramdisk"
++CONFIG_ENV_REGION_RAMDISK="fis://rootfs"
 +CONFIG_ENV_REGION_RAMDISK_ALT_P=y
 +CONFIG_ENV_REGION_RAMDISK_ALT="fis://rootfs"
 +
@@ -160,9 +161,9 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-arm_config
 +#    Overrides
 +#
 +CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
-+CONFIG_ENV_DEFAULT_CMDLINE="console=ttyS0,115200 rtc-pcf8563.probe=0,0x51 noirqdebug"
++CONFIG_ENV_DEFAULT_CMDLINE="console=ttyS0,115200 noirqdebug"
 +CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
-+CONFIG_ENV_DEFAULT_CMDLINE_ALT="console=ttyS0,115200 rtc-pcf8563.probe=0,0x51 noirqdebug root=/dev/mtdblock2 rootfstype=jffs2 noinitrd"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="console=ttyS0,115200 noirqdebug"
 +# CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
 +# CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
 +CONFIG_USES_NOR_BOOTFLASH=y
@@ -172,11 +173,11 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-arm_config
 +CONFIG_LITTLEENDIAN=y
 +CONFIG_CLEAR_STACKS=y
 +CONFIG_ALIASES=y
-Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-armeb_config
+Index: apex-1.5.8/src/mach-ixp42x/debian-fsg3-armeb_config
 ===================================================================
 --- /dev/null
-+++ apex-1.5.8/src/mach-ixp42x/debian-dsmg600-armeb_config
-@@ -0,0 +1,169 @@
++++ apex-1.5.8/src/mach-ixp42x/debian-fsg3-armeb_config
+@@ -0,0 +1,170 @@
 +#
 +# Automatically generated make config: don't edit
 +# Linux kernel version: 
@@ -196,7 +197,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-armeb_config
 +#
 +# General Setup
 +#
-+CONFIG_TARGET_DESCRIPTION="Debian DSMG600/BE"
++CONFIG_TARGET_DESCRIPTION="Debian FSG3/BE"
 +CONFIG_CROSS_COMPILE=""
 +CONFIG_AEABI=y
 +CONFIG_CC_OPTIMIZE_FOR_SIZE=y
@@ -215,23 +216,23 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-armeb_config
 +CONFIG_STACKLIMIT=y
 +# CONFIG_BOOTSTRAP_MEMTEST is not set
 +CONFIG_ATAG_PHYS=0x00000100
-+CONFIG_ARCH_NUMBER=964
++CONFIG_ARCH_NUMBER=1091
 +CONFIG_APEX_VMA=0x00200000
-+CONFIG_KERNEL_LMA=0x00600000
++CONFIG_KERNEL_LMA=0x00700000
 +CONFIG_USE_RAMDISK=y
-+CONFIG_RAMDISK_LMA=0x00B00000
++CONFIG_RAMDISK_LMA=0x01000000
 +CONFIG_SDRAM_BANK0=y
 +# CONFIG_SDRAM_BANK1 is not set
 +CONFIG_NOR_BUSWIDTH=16
 +CONFIG_NOR_BANK0=y
 +CONFIG_NOR_BANK0_START=0x50000000
-+CONFIG_NOR_BANK0_LENGTH=0x01000000
++CONFIG_NOR_BANK0_LENGTH=0x00400000
 +CONFIG_MACH="ixp42x"
 +CONFIG_RAMDISK_SIZE=0x00400000
 +# CONFIG_MACH_NSLU2 is not set
 +# CONFIG_MACH_NAS100D is not set
-+CONFIG_MACH_DSMG600=y
-+# CONFIG_MACH_FSG3 is not set
++# CONFIG_MACH_DSMG600 is not set
++CONFIG_MACH_FSG3=y
 +# CONFIG_MACH_AVILA2347 is not set
 +# CONFIG_USER_DEFAULTENDIAN is not set
 +CONFIG_USER_BIGENDIAN=y
@@ -318,7 +319,8 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-armeb_config
 +# CONFIG_ENV_REGION_KERNEL_SWAP is not set
 +CONFIG_ENV_STARTUP_RAMDISK_COPY=y
 +# CONFIG_ENV_REGION_RAMDISK_SWAP is not set
-+# CONFIG_ENV_STARTUP_PREFIX_P is not set
++CONFIG_ENV_STARTUP_PREFIX_P=y
++CONFIG_ENV_STARTUP_PREFIX="sdram-init; memscan -u 0+256m"
 +
 +#
 +#    Regions
@@ -326,7 +328,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-armeb_config
 +CONFIG_ENV_REGION_KERNEL="fis://kernel"
 +CONFIG_ENV_REGION_KERNEL_ALT_P=y
 +CONFIG_ENV_REGION_KERNEL_ALT="fis://kernel"
-+CONFIG_ENV_REGION_RAMDISK="fis://ramdisk"
++CONFIG_ENV_REGION_RAMDISK="fis://rootfs"
 +CONFIG_ENV_REGION_RAMDISK_ALT_P=y
 +CONFIG_ENV_REGION_RAMDISK_ALT="fis://rootfs"
 +
@@ -334,9 +336,9 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-dsmg600-armeb_config
 +#    Overrides
 +#
 +CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
-+CONFIG_ENV_DEFAULT_CMDLINE="console=ttyS0,115200 rtc-pcf8563.probe=0,0x51 noirqdebug"
++CONFIG_ENV_DEFAULT_CMDLINE="console=ttyS0,115200 noirqdebug"
 +CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
-+CONFIG_ENV_DEFAULT_CMDLINE_ALT="console=ttyS0,115200 rtc-pcf8563.probe=0,0x51 noirqdebug root=/dev/mtdblock2 rootfstype=jffs2 noinitrd"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="console=ttyS0,115200 noirqdebug"
 +# CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
 +# CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
 +CONFIG_USES_NOR_BOOTFLASH=y

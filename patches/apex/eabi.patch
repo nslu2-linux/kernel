@@ -30,7 +30,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-arm_config
 +++ apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-arm_config
 @@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
  #
- CONFIG_TARGET_DESCRIPTION="Debian NSLU2 (16MiB Flash)"
+ CONFIG_TARGET_DESCRIPTION="Debian NSLU2/LE (16MiB Flash)"
  CONFIG_CROSS_COMPILE=""
 -# CONFIG_AEABI is not set
 +CONFIG_AEABI=y
@@ -43,7 +43,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
 +++ apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
 @@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
  #
- CONFIG_TARGET_DESCRIPTION="Debian NSLU2 (bigendian, 16MiB Flash)"
+ CONFIG_TARGET_DESCRIPTION="Debian NSLU2/BE (16MiB Flash)"
  CONFIG_CROSS_COMPILE=""
 -# CONFIG_AEABI is not set
 +CONFIG_AEABI=y
@@ -95,7 +95,7 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-arm_config
 +++ apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-arm_config
 @@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
  #
- CONFIG_TARGET_DESCRIPTION="DMSG600"
+ CONFIG_TARGET_DESCRIPTION="SlugOS DMSG600/LE"
  CONFIG_CROSS_COMPILE=""
 -# CONFIG_AEABI is not set
 +CONFIG_AEABI=y
@@ -108,7 +108,7 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-armeb_config
 +++ apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-armeb_config
 @@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
  #
- CONFIG_TARGET_DESCRIPTION="SlugOS DMSG600 (bigendian)"
+ CONFIG_TARGET_DESCRIPTION="SlugOS DMSG600/BE"
  CONFIG_CROSS_COMPILE=""
 -# CONFIG_AEABI is not set
 +CONFIG_AEABI=y
@@ -147,7 +147,7 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
 +++ apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
 @@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
  #
- CONFIG_TARGET_DESCRIPTION="SlugOS NSLU2 (16MiB Flash)"
+ CONFIG_TARGET_DESCRIPTION="SlugOS NSLU2/LE (16MiB Flash)"
  CONFIG_CROSS_COMPILE=""
 -# CONFIG_AEABI is not set
 +CONFIG_AEABI=y
@@ -160,7 +160,7 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
 +++ apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
 @@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
  #
- CONFIG_TARGET_DESCRIPTION="SlugOS NSLU2 (bigendian, 16MiB Flash)"
+ CONFIG_TARGET_DESCRIPTION="SlugOS NSLU2/BE (16MiB Flash)"
  CONFIG_CROSS_COMPILE=""
 -# CONFIG_AEABI is not set
 +CONFIG_AEABI=y

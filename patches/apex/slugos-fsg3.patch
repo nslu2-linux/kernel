@@ -122,7 +122,7 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-fsg3-arm_config
 +#
 +# General Setup
 +#
-+CONFIG_TARGET_DESCRIPTION="SlugOS FSG3 (bigendian)"
++CONFIG_TARGET_DESCRIPTION="SlugOS FSG3/LE"
 +CONFIG_CROSS_COMPILE=""
 +CONFIG_AEABI=y
 +CONFIG_CC_OPTIMIZE_FOR_SIZE=y
@@ -219,7 +219,7 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-fsg3-arm_config
 +CONFIG_ENV=y
 +CONFIG_ENV_LINK=y
 +CONFIG_ENV_MUTABLE=y
-+CONFIG_ENV_REGION="nor:0x3b0000+15k"
++CONFIG_ENV_REGION="nor:0x3bc000+15k"
 +# CONFIG_ENV_SAVEATONCE is not set
 +CONFIG_ENV_CHECK_LEN=1024
 +# CONFIG_VARIATIONS is not set
@@ -281,7 +281,7 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-fsg3-armeb_config
 +#
 +# General Setup
 +#
-+CONFIG_TARGET_DESCRIPTION="SlugOS DMSG600 (bigendian)"
++CONFIG_TARGET_DESCRIPTION="SlugOS FSG3/BE"
 +CONFIG_CROSS_COMPILE=""
 +CONFIG_AEABI=y
 +CONFIG_CC_OPTIMIZE_FOR_SIZE=y
@@ -378,7 +378,7 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-fsg3-armeb_config
 +CONFIG_ENV=y
 +CONFIG_ENV_LINK=y
 +CONFIG_ENV_MUTABLE=y
-+CONFIG_ENV_REGION="nor:0x3b0000+15k"
++CONFIG_ENV_REGION="nor:0x3bc000+15k"
 +# CONFIG_ENV_SAVEATONCE is not set
 +CONFIG_ENV_CHECK_LEN=1024
 +# CONFIG_VARIATIONS is not set
@@ -450,3 +450,183 @@ Index: apex-1.5.8/src/mach-ixp42x/hardware.h
  /* ----- Types */
  
  /* ----- Globals */
+Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/debian-nas100d-arm_config
++++ apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
+@@ -52,6 +52,7 @@ CONFIG_RAMDISK_SIZE=0x00400000
+ # CONFIG_MACH_NSLU2 is not set
+ CONFIG_MACH_NAS100D=y
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ # CONFIG_USER_BIGENDIAN is not set
+Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/debian-nas100d-armeb_config
++++ apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
+@@ -52,6 +52,7 @@ CONFIG_RAMDISK_SIZE=0x00400000
+ # CONFIG_MACH_NSLU2 is not set
+ CONFIG_MACH_NAS100D=y
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ CONFIG_USER_BIGENDIAN=y
+Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-arm_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/debian-nslu2-16mb-arm_config
++++ apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-arm_config
+@@ -52,6 +52,7 @@ CONFIG_RAMDISK_SIZE=0x00400000
+ CONFIG_MACH_NSLU2=y
+ # CONFIG_MACH_NAS100D is not set
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ # CONFIG_USER_BIGENDIAN is not set
+Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
++++ apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
+@@ -52,6 +52,7 @@ CONFIG_RAMDISK_SIZE=0x00400000
+ CONFIG_MACH_NSLU2=y
+ # CONFIG_MACH_NAS100D is not set
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ CONFIG_USER_BIGENDIAN=y
+Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-arm_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/debian-nslu2-arm_config
++++ apex-1.5.8/src/mach-ixp42x/debian-nslu2-arm_config
+@@ -52,6 +52,7 @@ CONFIG_RAMDISK_SIZE=0x00400000
+ CONFIG_MACH_NSLU2=y
+ # CONFIG_MACH_NAS100D is not set
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ # CONFIG_USER_BIGENDIAN is not set
+Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-armeb_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/debian-nslu2-armeb_config
++++ apex-1.5.8/src/mach-ixp42x/debian-nslu2-armeb_config
+@@ -52,6 +52,7 @@ CONFIG_RAMDISK_SIZE=0x00400000
+ CONFIG_MACH_NSLU2=y
+ # CONFIG_MACH_NAS100D is not set
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ CONFIG_USER_BIGENDIAN=y
+Index: apex-1.5.8/src/mach-ixp42x/nslu2_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/nslu2_config
++++ apex-1.5.8/src/mach-ixp42x/nslu2_config
+@@ -50,6 +50,7 @@ CONFIG_RAMDISK_SIZE=0x00400000
+ CONFIG_MACH_NSLU2=y
+ # CONFIG_MACH_NAS100D is not set
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ CONFIG_USER_BIGENDIAN=y
+Index: apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-arm_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/slugos-dsmg600-arm_config
++++ apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-arm_config
+@@ -50,6 +50,7 @@ CONFIG_MACH="ixp42x"
+ # CONFIG_MACH_NSLU2 is not set
+ # CONFIG_MACH_NAS100D is not set
+ CONFIG_MACH_DSMG600=y
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ # CONFIG_USER_BIGENDIAN is not set
+Index: apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-armeb_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/slugos-dsmg600-armeb_config
++++ apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-armeb_config
+@@ -50,6 +50,7 @@ CONFIG_MACH="ixp42x"
+ # CONFIG_MACH_NSLU2 is not set
+ # CONFIG_MACH_NAS100D is not set
+ CONFIG_MACH_DSMG600=y
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ CONFIG_USER_BIGENDIAN=y
+Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/slugos-nas100d-arm_config
++++ apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
+@@ -50,6 +50,7 @@ CONFIG_MACH="ixp42x"
+ # CONFIG_MACH_NSLU2 is not set
+ CONFIG_MACH_NAS100D=y
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ # CONFIG_USER_BIGENDIAN is not set
+Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-armeb_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/slugos-nas100d-armeb_config
++++ apex-1.5.8/src/mach-ixp42x/slugos-nas100d-armeb_config
+@@ -50,6 +50,7 @@ CONFIG_MACH="ixp42x"
+ # CONFIG_MACH_NSLU2 is not set
+ CONFIG_MACH_NAS100D=y
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ CONFIG_USER_BIGENDIAN=y
+Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
++++ apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
+@@ -50,6 +50,7 @@ CONFIG_MACH="ixp42x"
+ CONFIG_MACH_NSLU2=y
+ # CONFIG_MACH_NAS100D is not set
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ # CONFIG_USER_BIGENDIAN is not set
+Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
++++ apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
+@@ -50,6 +50,7 @@ CONFIG_MACH="ixp42x"
+ CONFIG_MACH_NSLU2=y
+ # CONFIG_MACH_NAS100D is not set
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ CONFIG_USER_BIGENDIAN=y
+Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-arm_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/slugos-nslu2-arm_config
++++ apex-1.5.8/src/mach-ixp42x/slugos-nslu2-arm_config
+@@ -50,6 +50,7 @@ CONFIG_MACH="ixp42x"
+ CONFIG_MACH_NSLU2=y
+ # CONFIG_MACH_NAS100D is not set
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ # CONFIG_USER_BIGENDIAN is not set
+Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-armeb_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/slugos-nslu2-armeb_config
++++ apex-1.5.8/src/mach-ixp42x/slugos-nslu2-armeb_config
+@@ -50,6 +50,7 @@ CONFIG_MACH="ixp42x"
+ CONFIG_MACH_NSLU2=y
+ # CONFIG_MACH_NAS100D is not set
+ # CONFIG_MACH_DSMG600 is not set
++# CONFIG_MACH_FSG3 is not set
+ # CONFIG_MACH_AVILA2347 is not set
+ # CONFIG_USER_DEFAULTENDIAN is not set
+ CONFIG_USER_BIGENDIAN=y

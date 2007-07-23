@@ -6,3 +6,5 @@ debian-nslu2-16mb.patch
 eabi.patch
 slugos-fsg3.patch
 debian-dsmg600.patch
+debian-fsg3.patch
+nas100d-apex-env.patch
