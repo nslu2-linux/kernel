@@ -1,0 +1,117 @@
+Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/debian-nas100d-arm_config
++++ apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
+@@ -17,7 +17,7 @@ CONFIG_EXPERIMENTAL=y
+ #
+ # General Setup
+ #
+-CONFIG_TARGET_DESCRIPTION="NAS100D"
++CONFIG_TARGET_DESCRIPTION="Debian NAS100D/LE"
+ CONFIG_CROSS_COMPILE=""
+ CONFIG_AEABI=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+@@ -116,7 +116,7 @@ CONFIG_USES_PATHNAME_PARSER=y
+ CONFIG_ENV=y
+ CONFIG_ENV_LINK=y
+ CONFIG_ENV_MUTABLE=y
+-CONFIG_ENV_REGION="nor:0xee0000+15k"
++CONFIG_ENV_REGION="nor:0xfbc000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+ # CONFIG_VARIATIONS is not set
+@@ -142,7 +142,7 @@ CONFIG_ENV_STARTUP_RAMDISK_COPY=y
+ #    Regions
+ #
+ CONFIG_ENV_REGION_KERNEL="fis://kernel"
+-CONFIG_ENV_REGION_RAMDISK="fis://filesystem"
++CONFIG_ENV_REGION_RAMDISK="fis://ramdisk"
+ 
+ #
+ #    Overrides
+Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/debian-nas100d-armeb_config
++++ apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
+@@ -17,7 +17,7 @@ CONFIG_EXPERIMENTAL=y
+ #
+ # General Setup
+ #
+-CONFIG_TARGET_DESCRIPTION="NAS100D"
++CONFIG_TARGET_DESCRIPTION="Debian NAS100D/BE"
+ CONFIG_CROSS_COMPILE=""
+ CONFIG_AEABI=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+@@ -116,7 +116,7 @@ CONFIG_USES_PATHNAME_PARSER=y
+ CONFIG_ENV=y
+ CONFIG_ENV_LINK=y
+ CONFIG_ENV_MUTABLE=y
+-CONFIG_ENV_REGION="nor:0xee0000+15k"
++CONFIG_ENV_REGION="nor:0xfbc000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+ # CONFIG_VARIATIONS is not set
+@@ -133,16 +133,16 @@ CONFIG_NOR_BOOT=y
+ CONFIG_AUTOBOOT=y
+ CONFIG_AUTOBOOT_DELAY=10
+ CONFIG_ENV_STARTUP_KERNEL_COPY=y
+-CONFIG_ENV_REGION_KERNEL_SWAP=y
++# CONFIG_ENV_REGION_KERNEL_SWAP is not set
+ CONFIG_ENV_STARTUP_RAMDISK_COPY=y
+-CONFIG_ENV_REGION_RAMDISK_SWAP=y
++# CONFIG_ENV_REGION_RAMDISK_SWAP is not set
+ # CONFIG_ENV_STARTUP_PREFIX_P is not set
+ 
+ #
+ #    Regions
+ #
+ CONFIG_ENV_REGION_KERNEL="fis://kernel"
+-CONFIG_ENV_REGION_RAMDISK="fis://filesystem"
++CONFIG_ENV_REGION_RAMDISK="fis://ramdisk"
+ 
+ #
+ #    Overrides
+Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/slugos-nas100d-arm_config
++++ apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
+@@ -17,7 +17,7 @@ CONFIG_EXPERIMENTAL=y
+ #
+ # General Setup
+ #
+-CONFIG_TARGET_DESCRIPTION="SlugOS NAS100D"
++CONFIG_TARGET_DESCRIPTION="SlugOS NAS100D/LE"
+ CONFIG_CROSS_COMPILE=""
+ CONFIG_AEABI=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+@@ -114,7 +114,7 @@ CONFIG_USES_PATHNAME_PARSER=y
+ CONFIG_ENV=y
+ CONFIG_ENV_LINK=y
+ CONFIG_ENV_MUTABLE=y
+-CONFIG_ENV_REGION="nor:0xee0000+15k"
++CONFIG_ENV_REGION="nor:0xfbc000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+ # CONFIG_VARIATIONS is not set
+Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-armeb_config
+===================================================================
+--- apex-1.5.8.orig/src/mach-ixp42x/slugos-nas100d-armeb_config
++++ apex-1.5.8/src/mach-ixp42x/slugos-nas100d-armeb_config
+@@ -17,7 +17,7 @@ CONFIG_EXPERIMENTAL=y
+ #
+ # General Setup
+ #
+-CONFIG_TARGET_DESCRIPTION="SlugOS NAS100D (bigendian)"
++CONFIG_TARGET_DESCRIPTION="SlugOS NAS100D/BE"
+ CONFIG_CROSS_COMPILE=""
+ CONFIG_AEABI=y
+ CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+@@ -114,7 +114,7 @@ CONFIG_USES_PATHNAME_PARSER=y
+ CONFIG_ENV=y
+ CONFIG_ENV_LINK=y
+ CONFIG_ENV_MUTABLE=y
+-CONFIG_ENV_REGION="nor:0xee0000+15k"
++CONFIG_ENV_REGION="nor:0xfbc000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+ # CONFIG_VARIATIONS is not set
