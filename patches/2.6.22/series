@@ -12,6 +12,7 @@
 # 1?-* patches
 # Patches for upstream next cycle
 12-velocity-BE.patch
+13-fsg3-support.patch
 14-eeprom-new-notifier.patch
 15-nas100d-pata-artop-single-port.patch
 16-dsmg600-auto-power-on.patch
@@ -34,10 +35,8 @@
 
 # 4?-* patches
 # ixp4xx-net driver patches
-41-ixp4xx-net-fuses.patch
-42-ixp4xx-net-drivers.patch
-
-13-fsg3-support.patch
+41-ixp4xx-net-drivers.patch
+42-ixp4xx-fix-cpu-detection.patch
 
 # 5?-* patches
 # Add platform setup code for platform ixp_npe ethernet driver
@@ -76,7 +75,3 @@
 95-dsmg600-rtc-fixup.patch
 # The kexec-cmdline patch depends on the 80-kexec-atags.patch
 96-kexec-cmdline.patch
-
-# The following patch is a temporary hack to fix the ixp4xx net
-# driver compile.
-#99-revert-ixp435-support.patch
