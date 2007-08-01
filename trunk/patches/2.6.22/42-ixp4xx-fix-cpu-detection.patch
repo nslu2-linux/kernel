@@ -1,0 +1,106 @@
+From: Krzysztof HaÅasa <khc@pm.waw.pl>
+Date: Thu, 26 Jul 2007 19:13:58 +0000 (+0200)
+Subject: IXP4xx: fix cpu_is_ixp4*() and move ixp4xx_*_fuses() into ixp4xx/cpu.h header
+X-Git-Url: http://git.kernel.org/?p=linux%2Fkernel%2Fgit%2Fchris%2Flinux-2.6.git;a=commitdiff_plain;h=443a2d3186b2ea4129f2d0a178c8ac99e3048385
+
+IXP4xx: fix cpu_is_ixp4*() and move ixp4xx_*_fuses() into ixp4xx/cpu.h header
+---
+
+Index: linux-2.6.22-armeb/arch/arm/kernel/setup.c
+===================================================================
+--- linux-2.6.22-armeb.orig/arch/arm/kernel/setup.c	2007-07-09 00:32:17.000000000 +0100
++++ linux-2.6.22-armeb/arch/arm/kernel/setup.c	2007-08-01 21:47:22.000000000 +0100
+@@ -60,6 +60,7 @@
+ extern void _stext, _text, _etext, __data_start, _edata, _end;
+ 
+ unsigned int processor_id;
++EXPORT_SYMBOL(processor_id);
+ unsigned int __machine_arch_type;
+ EXPORT_SYMBOL(__machine_arch_type);
+ 
+Index: linux-2.6.22-armeb/include/asm-arm/arch-ixp4xx/cpu.h
+===================================================================
+--- linux-2.6.22-armeb.orig/include/asm-arm/arch-ixp4xx/cpu.h	2007-07-09 00:32:17.000000000 +0100
++++ linux-2.6.22-armeb/include/asm-arm/arch-ixp4xx/cpu.h	2007-08-01 21:47:22.000000000 +0100
+@@ -28,4 +28,19 @@
+ #define cpu_is_ixp46x()	((processor_id & IXP4XX_PROCESSOR_ID_MASK) == \
+ 			  IXP465_PROCESSOR_ID_VALUE)
+ 
++static inline u32 ixp4xx_read_fuses(void)
++{
++	unsigned int fuses = ~*IXP4XX_EXP_CFG2;
++	fuses &= ~IXP4XX_FUSE_RESERVED;
++	if (!cpu_is_ixp46x())
++		fuses &= ~IXP4XX_FUSE_IXP46X_ONLY;
++
++	return fuses;
++}
++
++static inline void ixp4xx_write_fuses(u32 value)
++{
++	*IXP4XX_EXP_CFG2 = ~value;
++}
++
+ #endif  /* _ASM_ARCH_CPU_H */
+Index: linux-2.6.22-armeb/include/asm-arm/arch-ixp4xx/hardware.h
+===================================================================
+--- linux-2.6.22-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-08-01 21:33:33.000000000 +0100
++++ linux-2.6.22-armeb/include/asm-arm/arch-ixp4xx/hardware.h	2007-08-01 21:47:22.000000000 +0100
+@@ -27,13 +27,13 @@
+ 
+ #define pcibios_assign_all_busses()	1
+ 
++/* Register locations and bits */
++#include "ixp4xx-regs.h"
++
+ #ifndef __ASSEMBLER__
+ #include <asm/arch/cpu.h>
+ #endif
+ 
+-/* Register locations and bits */
+-#include "ixp4xx-regs.h"
+-
+ /* Platform helper functions and definitions */
+ #include "platform.h"
+ 
+Index: linux-2.6.22-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
+===================================================================
+--- linux-2.6.22-armeb.orig/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h	2007-08-01 21:45:43.000000000 +0100
++++ linux-2.6.22-armeb/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h	2007-08-01 21:47:44.000000000 +0100
+@@ -639,22 +639,4 @@
+                                 IXP4XX_FUSE_RSA |                      \
+                                 IXP4XX_FUSE_XSCALE_MAX_FREQ)
+ 
+-#ifndef __ASSEMBLY__
+-
+-static inline u32 ixp4xx_read_fuses(void)
+-{
+-      unsigned int fuses = ~*IXP4XX_EXP_CFG2;
+-      fuses &= ~IXP4XX_FUSE_RESERVED;
+-      if (!cpu_is_ixp46x())
+-              fuses &= ~IXP4XX_FUSE_IXP46X_ONLY;
+-
+-      return fuses;
+-}
+-
+-static inline void ixp4xx_write_fuses(u32 value)
+-{
+-      *IXP4XX_EXP_CFG2 = ~value;
+-}
+-#endif
+-
+ #endif
+Index: linux-2.6.22-armeb/include/asm-arm/arch-ixp4xx/uncompress.h
+===================================================================
+--- linux-2.6.22-armeb.orig/include/asm-arm/arch-ixp4xx/uncompress.h	2007-07-09 00:32:17.000000000 +0100
++++ linux-2.6.22-armeb/include/asm-arm/arch-ixp4xx/uncompress.h	2007-08-01 21:47:22.000000000 +0100
+@@ -13,7 +13,8 @@
+ #ifndef _ARCH_UNCOMPRESS_H_
+ #define _ARCH_UNCOMPRESS_H_
+ 
+-#include <asm/hardware.h>
++#define __ASM_ARCH_HARDWARE_H__
++#include "ixp4xx-regs.h"
+ #include <asm/mach-types.h>
+ #include <linux/serial_reg.h>
+ 
