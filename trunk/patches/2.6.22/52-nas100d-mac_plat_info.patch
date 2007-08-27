@@ -1,24 +1,25 @@
-Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
-===================================================================
---- linux-2.6.22-rc3-armeb.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-05-27 05:03:46.000000000 -0700
-+++ linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-05-27 12:52:12.000000000 -0700
-@@ -125,12 +125,29 @@
+diff --git a/arch/arm/mach-ixp4xx/nas100d-setup.c b/arch/arm/mach-ixp4xx/nas100d-setup.c
+index 54d884f..d4d8540 100644
+--- a/arch/arm/mach-ixp4xx/nas100d-setup.c
++++ b/arch/arm/mach-ixp4xx/nas100d-setup.c
+@@ -125,12 +125,30 @@ static struct platform_device nas100d_uart = {
  	.resource		= nas100d_uart_resources,
  };
  
 +/* Built-in 10/100 Ethernet MAC interfaces */
-+static struct mac_plat_info nas100d_plat_mac[] = {
++static struct eth_plat_info nas100d_plat_eth[] = {
 +        {
 +                .phy            = 0,
 +                .rxq            = 3,
++		.txreadyq	= 20,
 +        }
 +};
 +
-+static struct platform_device nas100d_mac[] = {
++static struct platform_device nas100d_eth[] = {
 +        {
 +                .name                   = "ixp4xx_eth",
 +                .id                     = IXP4XX_ETH_NPEB,
-+                .dev.platform_data      = nas100d_plat_mac,
++                .dev.platform_data      = nas100d_plat_eth,
 +        }
 +};
 +
@@ -28,7 +29,7 @@ Index: linux-2.6.22-rc3-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
  #ifdef CONFIG_LEDS_IXP4XX
  	&nas100d_leds,
  #endif
-+	&nas100d_mac[0],
++	&nas100d_eth[0],
  };
  
  static void nas100d_power_off(void)

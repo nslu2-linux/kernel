@@ -1,7 +1,7 @@
-Index: linux-2.6.22-rc4-armeb/arch/arm/mach-ixp4xx/avila-setup.c
-===================================================================
---- linux-2.6.22-rc4-armeb.orig/arch/arm/mach-ixp4xx/avila-setup.c
-+++ linux-2.6.22-rc4-armeb/arch/arm/mach-ixp4xx/avila-setup.c
+diff --git a/arch/arm/mach-ixp4xx/avila-setup.c b/arch/arm/mach-ixp4xx/avila-setup.c
+index 10ed5d6..c24db55 100644
+--- a/arch/arm/mach-ixp4xx/avila-setup.c
++++ b/arch/arm/mach-ixp4xx/avila-setup.c
 @@ -19,6 +19,10 @@
  #include <linux/serial_8250.h>
  #include <linux/slab.h>
@@ -13,41 +13,41 @@ Index: linux-2.6.22-rc4-armeb/arch/arm/mach-ixp4xx/avila-setup.c
  
  #include <asm/types.h>
  #include <asm/setup.h>
-@@ -163,6 +167,28 @@ static struct platform_device *avila_dev
- 	&avila_mac[1],
+@@ -165,6 +169,28 @@ static struct platform_device *avila_devices[] __initdata = {
+ 	&avila_eth[1],
  };
  
 +#ifdef CONFIG_SENSORS_EEPROM
 +static int avila_eeprom_do(struct notifier_block *self, unsigned long event, void *t)
 +{
-+       struct eeprom_data *data = t;
++	struct eeprom_data *data = t;
 +
-+       char macs[12];
++	char macs[12];
 +
-+       /* The MACs are the first 12 bytes in the eeprom at address 0x51 */
-+       if (event == EEPROM_REGISTER && data->client.addr == 0x51) {
-+               data->attr->read(&data->client.dev.kobj, macs, 0, 12);
-+               memcpy(avila_plat_mac[0].hwaddr, macs, 6);
-+               memcpy(avila_plat_mac[1].hwaddr, macs + 6, 6);
-+       }
++	/* The MACs are the first 12 bytes in the eeprom at address 0x51 */
++	if (event == EEPROM_REGISTER && data->client.addr == 0x51) {
++		data->attr->read(&data->client.dev.kobj, macs, 0, 12);
++		memcpy(avila_plat_eth[0].hwaddr, macs, 6);
++		memcpy(avila_plat_eth[1].hwaddr, macs + 6, 6);
++	}
 +
-+       return NOTIFY_DONE;
++	return NOTIFY_DONE;
 +}
 +
 +static struct notifier_block avila_eeprom_notifier = {
-+       .notifier_call = avila_eeprom_do
++	.notifier_call = avila_eeprom_do
 +};
 +#endif
 +
  static void __init avila_init(void)
  {
  	ixp4xx_sys_init();
-@@ -184,6 +210,9 @@ static void __init avila_init(void)
+@@ -186,6 +212,9 @@ static void __init avila_init(void)
  
  	platform_device_register(&avila_pata);
  
 +#ifdef CONFIG_SENSORS_EEPROM
-+       register_eeprom_notifier(&avila_eeprom_notifier);
++	register_eeprom_notifier(&avila_eeprom_notifier);
 +#endif
  }
  

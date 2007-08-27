@@ -1,11 +1,7 @@
----
- arch/arm/mach-ixp4xx/fsg-setup.c |   31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-Index: linux-2.6.22-rc5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
-===================================================================
---- linux-2.6.22-rc5-armeb.orig/arch/arm/mach-ixp4xx/fsg-setup.c
-+++ linux-2.6.22-rc5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
+diff --git a/arch/arm/mach-ixp4xx/fsg-setup.c b/arch/arm/mach-ixp4xx/fsg-setup.c
+index ec3d517..7cc7201 100644
+--- a/arch/arm/mach-ixp4xx/fsg-setup.c
++++ b/arch/arm/mach-ixp4xx/fsg-setup.c
 @@ -16,6 +16,7 @@
  #include <linux/serial_8250.h>
  #include <linux/leds.h>
@@ -14,8 +10,8 @@ Index: linux-2.6.22-rc5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
  
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
-@@ -175,6 +176,34 @@
- 	&fsg_mac[1],
+@@ -177,6 +178,34 @@ static struct platform_device *fsg_devices[] __initdata = {
+ 	&fsg_eth[1],
  };
  
 +static void fsg_flash_add(struct mtd_info *mtd)
@@ -27,11 +23,11 @@ Index: linux-2.6.22-rc5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 +		if (mtd->read(mtd, 0x0422, 6, &retlen, mac) == 0 && retlen == 6) {
 +			printk(KERN_INFO "eth0 mac: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
 +				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-+			memcpy(fsg_plat_mac[0].hwaddr, mac, 6);
++			memcpy(fsg_plat_eth[0].hwaddr, mac, 6);
 +			mac[5]++;
 +			printk(KERN_INFO "eth1 mac: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
 +				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-+			memcpy(fsg_plat_mac[1].hwaddr, mac, 6);
++			memcpy(fsg_plat_eth[1].hwaddr, mac, 6);
 +		} else {
 +			printk(KERN_ERR "fsg mac: read failed\n");
 +		}
@@ -49,7 +45,7 @@ Index: linux-2.6.22-rc5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
  static void __init fsg_init(void)
  {
  	ixp4xx_sys_init();
-@@ -190,6 +219,8 @@
+@@ -198,6 +227,8 @@ static void __init fsg_init(void)
  	(void)platform_device_register(&fsg_uart);
  
  	platform_add_devices(fsg_devices, ARRAY_SIZE(fsg_devices));
