@@ -1,35 +1,33 @@
----
- arch/arm/mach-ixp4xx/fsg-setup.c |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
-
-Index: linux-2.6.22-rc5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
-===================================================================
---- linux-2.6.22-rc5-armeb.orig/arch/arm/mach-ixp4xx/fsg-setup.c
-+++ linux-2.6.22-rc5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
-@@ -142,12 +142,37 @@
+diff --git a/arch/arm/mach-ixp4xx/fsg-setup.c b/arch/arm/mach-ixp4xx/fsg-setup.c
+index 11336e6..ec3d517 100644
+--- a/arch/arm/mach-ixp4xx/fsg-setup.c
++++ b/arch/arm/mach-ixp4xx/fsg-setup.c
+@@ -142,12 +142,39 @@ static struct platform_device fsg_uart = {
  	.resource		= fsg_uart_resources,
  };
  
 +/* Built-in 10/100 Ethernet MAC interfaces */
-+static struct mac_plat_info fsg_plat_mac[] = {
++static struct eth_plat_info fsg_plat_eth[] = {
 +        {
 +                .phy            = 5,
 +                .rxq            = 3,
++		.txreadyq	= 20,
 +        }, {
 +                .phy            = 4,
 +                .rxq            = 4,
++		.txreadyq	= 21,
 +        }
 +};
 +
-+static struct platform_device fsg_mac[] = {
++static struct platform_device fsg_eth[] = {
 +        {
 +                .name                   = "ixp4xx_eth",
 +                .id                     = IXP4XX_ETH_NPEB,
-+                .dev.platform_data      = fsg_plat_mac,
++                .dev.platform_data      = fsg_plat_eth,
 +        }, {
 +                .name                   = "ixp4xx_eth",
 +                .id                     = IXP4XX_ETH_NPEC,
-+                .dev.platform_data      = fsg_plat_mac + 1,
++                .dev.platform_data      = fsg_plat_eth + 1,
 +        }
 +};
 +
@@ -39,8 +37,8 @@ Index: linux-2.6.22-rc5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
  #ifdef CONFIG_LEDS_IXP4XX
  	&fsg_leds,
  #endif
-+	&fsg_mac[0],
-+	&fsg_mac[1],
++	&fsg_eth[0],
++	&fsg_eth[1],
  };
  
  static void __init fsg_init(void)
