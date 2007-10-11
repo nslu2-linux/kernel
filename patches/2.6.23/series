@@ -34,6 +34,7 @@
 # 4?-* patches
 # ixp4xx-net driver patches
 41-ixp4xx-net-drivers.patch
+42-ixp4xx-reread-mac.patch
 
 # 5?-* patches
 # Add platform setup code for platform ixp_npe ethernet driver
