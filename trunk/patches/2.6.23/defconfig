@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.23
-# Wed Oct 10 22:33:55 2007
+# Thu Oct 11 17:25:52 2007
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -167,6 +167,8 @@ CONFIG_MACH_FSG=y
 #
 CONFIG_DMABOUNCE=y
 # CONFIG_IXP4XX_INDIRECT_PCI is not set
+CONFIG_IXP4XX_QMGR=y
+CONFIG_IXP4XX_NPE=y
 
 #
 # Boot options
@@ -820,6 +822,7 @@ CONFIG_TUN=m
 # CONFIG_PHYLIB is not set
 CONFIG_NET_ETHERNET=y
 CONFIG_MII=y
+CONFIG_IXP4XX_ETH=y
 # CONFIG_AX88796 is not set
 # CONFIG_HAPPYMEAL is not set
 # CONFIG_SUNGEM is not set
