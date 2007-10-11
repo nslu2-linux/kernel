@@ -1,0 +1,73 @@
+# Patches numbered 00 are externally maintained (large) patchsets
+# Patches numbered 01 to 10 are for immediate push upstream, and
+# must be all able to be applied independently in any order.
+# Patches marked with ## need reworking and are currently disabled
+
+# 0?-* patches
+# Patches to be submitted upstream
+01-kexec-atags.patch
+
+# 1?-* patches
+# Patches for upstream next cycle
+12-velocity-BE.patch
+13-fsg3-support.patch
+14-eeprom-new-notifier.patch
+15-nas100d-pata-artop-single-port.patch
+16-dsmg600-auto-power-on.patch
+17-nas100d-auto-power-on.patch
+
+# 2?-* patches
+# i2c-gpio driver platform support
+21-nslu2-i2c-gpio-driver-support.patch
+22-nas100d-i2c-gpio-driver-support.patch
+23-avila-i2c-gpio-driver-support.patch
+25-dsmg600-i2c-gpio-driver-support.patch
+26-ixdp425-i2c-gpio-driver-support.patch
+
+# 3?-* patches
+# i2c rtc automatic setup
+#31-nslu2-i2c-rtc-setup.patch # rtc-x1205.probe=0,0x6f
+#32-nas100d-i2c-rtc-setup.patch # rtc-pcf8563.probe=0,0x51
+#33-avila-i2c-rtc-setup.patch # rtc-ds1672.probe=0,0x68
+#35-dsmg600-i2c-rtc-setup.patch # rtc-pcf8563.probe=0,0x51
+
+# 4?-* patches
+# ixp4xx-net driver patches
+41-ixp4xx-net-drivers.patch
+
+# 5?-* patches
+# Add platform setup code for platform ixp_npe ethernet driver
+51-nslu2-mac_plat_info.patch
+52-nas100d-mac_plat_info.patch
+53-avila-mac_plat_info.patch
+54-fsg3-mac_plat_info.patch
+
+# 6?-* patches
+# Add platform setup code for MAC address loading
+61-nslu2-setup-mac.patch
+62-nas100d-setup-mac.patch
+####63-avila-setup-mac.patch
+64-fsg3-setup-mac.patch
+
+# 7?-* patches
+# Add platform setup code for mtd microcode loading
+#71-nslu2-mtd-partition.patch
+#72-nas100d-mtd-partition.patch
+#73-avila-mtd-partition.patch
+#74-fsg3-mtd-partition.patch
+
+# 8?-* patches
+# Patches for eventual upstream
+82-leds-arm-cpu-activity.patch
+
+# 9?-* patches
+# Not for upstream
+90-increase-entropy-pools.patch
+# These should eventually be replaced by 3?-* patches,
+# but the respective RTC drivers need to be updated first.
+91-nslu2-rtc-fixup.patch
+92-nas100d-rtc-fixup.patch
+93-avila-rtc-fixup.patch
+95-dsmg600-rtc-fixup.patch
+# The kexec-cmdline patch depends on the 80-kexec-atags.patch
+96-kexec-cmdline.patch
