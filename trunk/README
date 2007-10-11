@@ -8,6 +8,7 @@ Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
 
 =DEVEL=
 2.6.22 + Krzysztof's IXP_NPE (to be integrated)
+2.6.23 + Krzysztof's IXP_NPE (to be integrated)
 Should eventually support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
 The new IXP driver will not be integrated until it can load
 microcode from an MTD partition.
