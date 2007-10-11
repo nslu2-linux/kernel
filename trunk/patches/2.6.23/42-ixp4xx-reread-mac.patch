@@ -1,0 +1,30 @@
+--- linux-2.6.23/drivers/net/arm/ixp4xx_eth.c	2007-10-11 11:55:50.000000000 -0500
++++ linux-2.6.23-armeb/drivers/net/arm/ixp4xx_eth.c	2007-10-11 17:08:02.000000000 -0500
+@@ -956,6 +956,27 @@
+ 			return -EIO;
+ 	}
+ 
++	/*
++	 * If the device mac address is all zeros, then re-read.
++	 * (it is likely that the mechanism to fetch the mac from
++	 * the hardware executed after our original initialization.)
++	 */
++	if ((dev->dev_addr[0]==0) && (dev->dev_addr[1]==0) &&
++	    (dev->dev_addr[2]==0) && (dev->dev_addr[3]==0) &&
++	    (dev->dev_addr[4]==0) && (dev->dev_addr[5]==0)) {
++		printk(KERN_INFO "%s: No mac address, forcing re-read.\n",
++		       dev->name);
++		memcpy(dev->dev_addr, port->plat->hwaddr, ETH_ALEN);
++		printk(KERN_INFO "%s: set mac %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
++		       dev->name,
++		       (u_char)(dev->dev_addr[0]),
++		       (u_char)(dev->dev_addr[1]),
++		       (u_char)(dev->dev_addr[2]),
++		       (u_char)(dev->dev_addr[3]),
++		       (u_char)(dev->dev_addr[4]),
++		       (u_char)(dev->dev_addr[5]));
++	}
++
+ 	msg.cmd = NPE_EDB_SETPORTADDRESS;
+ 	msg.eth_id = PHYSICAL_ID(port->id);
+ 	msg.byte2 = dev->dev_addr[0];
