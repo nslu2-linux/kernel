@@ -20,7 +20,6 @@
 # i2c-gpio driver platform support
 21-nslu2-i2c-gpio-driver-support.patch
 22-nas100d-i2c-gpio-driver-support.patch
-23-avila-i2c-gpio-driver-support.patch
 25-dsmg600-i2c-gpio-driver-support.patch
 26-ixdp425-i2c-gpio-driver-support.patch
 
@@ -28,7 +27,6 @@
 # i2c rtc automatic setup
 #31-nslu2-i2c-rtc-setup.patch # rtc-x1205.probe=0,0x6f
 #32-nas100d-i2c-rtc-setup.patch # rtc-pcf8563.probe=0,0x51
-#33-avila-i2c-rtc-setup.patch # rtc-ds1672.probe=0,0x68
 #35-dsmg600-i2c-rtc-setup.patch # rtc-pcf8563.probe=0,0x51
 
 # 4?-* patches
@@ -40,21 +38,18 @@
 # Add platform setup code for platform ixp_npe ethernet driver
 51-nslu2-mac_plat_info.patch
 52-nas100d-mac_plat_info.patch
-53-avila-mac_plat_info.patch
 54-fsg3-mac_plat_info.patch
 
 # 6?-* patches
 # Add platform setup code for MAC address loading
 61-nslu2-setup-mac.patch
 62-nas100d-setup-mac.patch
-####63-avila-setup-mac.patch
 64-fsg3-setup-mac.patch
 
 # 7?-* patches
 # Add platform setup code for mtd microcode loading
 #71-nslu2-mtd-partition.patch
 #72-nas100d-mtd-partition.patch
-#73-avila-mtd-partition.patch
 #74-fsg3-mtd-partition.patch
 
 # 8?-* patches
@@ -68,7 +63,6 @@
 # but the respective RTC drivers need to be updated first.
 91-nslu2-rtc-fixup.patch
 92-nas100d-rtc-fixup.patch
-93-avila-rtc-fixup.patch
 95-dsmg600-rtc-fixup.patch
 # The kexec-cmdline patch depends on the 80-kexec-atags.patch
 96-kexec-cmdline.patch
