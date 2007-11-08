@@ -40,5 +40,6 @@ squashfs/squashfs-force-O2.patch
 #88-nslu2-dflt-cmdline.patch
 
 96-fsg3-support.patch
+97-fsg3-buttons.patch
 99-avila-mtd-microcode.patch
 99-avila-loft-mac-platform.patch
