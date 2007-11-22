@@ -32,8 +32,8 @@ BASEVER  = 2.6.21.6
 PATCHVER = 2.6.21
 
 # Latest Development
-# BASEVER  = 2.6.22.6
-# PATCHVER = 2.6.22
+# BASEVER  = 2.6.23.8
+# PATCHVER = 2.6.23
 
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
