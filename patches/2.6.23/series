@@ -5,6 +5,7 @@
 
 # 0?-* patches
 # Patches to be submitted upstream
+00-binutils-buildid-arm.patch
 01-kexec-atags.patch
 
 # 1?-* patches
