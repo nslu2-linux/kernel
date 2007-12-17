@@ -1,0 +1,13 @@
+Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-armeb_config	2007-12-17 22:56:03.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config	2007-12-17 22:56:32.000000000 +1030
+@@ -119,7 +119,7 @@
+ CONFIG_ENV=y
+ CONFIG_ENV_LINK=y
+ CONFIG_ENV_MUTABLE=y
+-CONFIG_ENV_REGION="nor:0x7fc000+15k"
++CONFIG_ENV_REGION="nor:0x7c000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+ CONFIG_VARIATIONS=y

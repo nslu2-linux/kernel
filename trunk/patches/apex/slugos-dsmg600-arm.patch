@@ -1,8 +1,8 @@
-Index: apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-arm_config
+Index: apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-arm_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-dsmg600-arm_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-arm_config
-@@ -17,7 +17,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-dsmg600-arm_config	2007-12-17 22:06:51.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-arm_config	2007-12-17 22:07:21.000000000 +1030
+@@ -17,7 +17,7 @@
  #
  # General Setup
  #
@@ -11,7 +11,7 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-arm_config
  CONFIG_CROSS_COMPILE=""
  # CONFIG_AEABI is not set
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-@@ -38,7 +38,7 @@ CONFIG_STACKLIMIT=y
+@@ -38,7 +38,7 @@
  CONFIG_ATAG_PHYS=0x00000100
  CONFIG_ARCH_NUMBER=964
  CONFIG_APEX_VMA=0x00200000
@@ -20,7 +20,16 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-arm_config
  # CONFIG_USE_RAMDISK is not set
  CONFIG_SDRAM_BANK0=y
  # CONFIG_SDRAM_BANK1 is not set
-@@ -113,7 +113,7 @@ CONFIG_USES_PATHNAME_PARSER=y
+@@ -89,7 +89,7 @@
+ CONFIG_CMD_XRECEIVE=y
+ CONFIG_CMD_MEMLIMIT=y
+ CONFIG_CMD_MEMSCAN=y
+-# CONFIG_CMD_MEMTEST is not set
++CONFIG_CMD_MEMTEST=y
+ 
+ #
+ # Generic Drivers
+@@ -114,7 +114,7 @@
  CONFIG_ENV=y
  CONFIG_ENV_LINK=y
  CONFIG_ENV_MUTABLE=y

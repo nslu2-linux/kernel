@@ -1,0 +1,52 @@
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2007-12-17 22:57:50.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2007-12-17 22:58:13.000000000 +1030
+@@ -117,7 +117,7 @@
+ CONFIG_ENV=y
+ CONFIG_ENV_LINK=y
+ CONFIG_ENV_MUTABLE=y
+-CONFIG_ENV_REGION="nor:0x7c000+16k"
++CONFIG_ENV_REGION="nor:0x7c000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+ # CONFIG_VARIATIONS is not set
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2007-12-17 22:57:50.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2007-12-17 22:58:20.000000000 +1030
+@@ -117,7 +117,7 @@
+ CONFIG_ENV=y
+ CONFIG_ENV_LINK=y
+ CONFIG_ENV_MUTABLE=y
+-CONFIG_ENV_REGION="nor:0x7c000+16k"
++CONFIG_ENV_REGION="nor:0x7c000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+ # CONFIG_VARIATIONS is not set
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-17 22:57:13.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-17 22:57:29.000000000 +1030
+@@ -117,7 +117,7 @@
+ CONFIG_ENV=y
+ CONFIG_ENV_LINK=y
+ CONFIG_ENV_MUTABLE=y
+-CONFIG_ENV_REGION="nor:0x7f8000+16k"
++CONFIG_ENV_REGION="nor:0x7c000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+ # CONFIG_VARIATIONS is not set
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-17 22:57:16.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-17 22:58:03.000000000 +1030
+@@ -117,7 +117,7 @@
+ CONFIG_ENV=y
+ CONFIG_ENV_LINK=y
+ CONFIG_ENV_MUTABLE=y
+-CONFIG_ENV_REGION="nor:0x7f8000+16k"
++CONFIG_ENV_REGION="nor:0x7c000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+ # CONFIG_VARIATIONS is not set
