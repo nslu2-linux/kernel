@@ -1,8 +1,8 @@
-Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
+Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/debian-nas100d-arm_config
-+++ apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
-@@ -17,7 +17,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex-1.5.13.orig/src/mach-ixp42x/debian-nas100d-arm_config	2007-12-17 22:09:37.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config	2007-12-17 22:11:34.000000000 +1030
+@@ -17,7 +17,7 @@
  #
  # General Setup
  #
@@ -11,7 +11,16 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
  CONFIG_CROSS_COMPILE=""
  CONFIG_AEABI=y
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-@@ -116,7 +116,7 @@ CONFIG_USES_PATHNAME_PARSER=y
+@@ -92,7 +92,7 @@
+ CONFIG_CMD_XRECEIVE=y
+ CONFIG_CMD_MEMLIMIT=y
+ CONFIG_CMD_MEMSCAN=y
+-# CONFIG_CMD_MEMTEST is not set
++CONFIG_CMD_MEMTEST=y
+ 
+ #
+ # Generic Drivers
+@@ -117,7 +117,7 @@
  CONFIG_ENV=y
  CONFIG_ENV_LINK=y
  CONFIG_ENV_MUTABLE=y
@@ -20,7 +29,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
  # CONFIG_ENV_SAVEATONCE is not set
  CONFIG_ENV_CHECK_LEN=1024
  # CONFIG_VARIATIONS is not set
-@@ -142,7 +142,7 @@ CONFIG_ENV_STARTUP_RAMDISK_COPY=y
+@@ -143,7 +143,7 @@
  #    Regions
  #
  CONFIG_ENV_REGION_KERNEL="fis://kernel"
@@ -29,11 +38,11 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
  
  #
  #    Overrides
-Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
+Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/debian-nas100d-armeb_config
-+++ apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
-@@ -17,7 +17,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex-1.5.13.orig/src/mach-ixp42x/debian-nas100d-armeb_config	2007-12-17 22:09:37.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config	2007-12-17 22:11:42.000000000 +1030
+@@ -17,7 +17,7 @@
  #
  # General Setup
  #
@@ -42,7 +51,16 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
  CONFIG_CROSS_COMPILE=""
  CONFIG_AEABI=y
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-@@ -116,7 +116,7 @@ CONFIG_USES_PATHNAME_PARSER=y
+@@ -92,7 +92,7 @@
+ CONFIG_CMD_XRECEIVE=y
+ CONFIG_CMD_MEMLIMIT=y
+ CONFIG_CMD_MEMSCAN=y
+-# CONFIG_CMD_MEMTEST is not set
++CONFIG_CMD_MEMTEST=y
+ 
+ #
+ # Generic Drivers
+@@ -117,7 +117,7 @@
  CONFIG_ENV=y
  CONFIG_ENV_LINK=y
  CONFIG_ENV_MUTABLE=y
@@ -51,7 +69,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
  # CONFIG_ENV_SAVEATONCE is not set
  CONFIG_ENV_CHECK_LEN=1024
  # CONFIG_VARIATIONS is not set
-@@ -133,16 +133,16 @@ CONFIG_NOR_BOOT=y
+@@ -134,16 +134,16 @@
  CONFIG_AUTOBOOT=y
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y
@@ -71,11 +89,11 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
  
  #
  #    Overrides
-Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-nas100d-arm_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
-@@ -17,7 +17,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nas100d-arm_config	2007-12-17 22:09:37.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config	2007-12-17 22:11:55.000000000 +1030
+@@ -17,7 +17,7 @@
  #
  # General Setup
  #
@@ -84,7 +102,16 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
  CONFIG_CROSS_COMPILE=""
  CONFIG_AEABI=y
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-@@ -114,7 +114,7 @@ CONFIG_USES_PATHNAME_PARSER=y
+@@ -90,7 +90,7 @@
+ CONFIG_CMD_XRECEIVE=y
+ CONFIG_CMD_MEMLIMIT=y
+ CONFIG_CMD_MEMSCAN=y
+-# CONFIG_CMD_MEMTEST is not set
++CONFIG_CMD_MEMTEST=y
+ 
+ #
+ # Generic Drivers
+@@ -115,7 +115,7 @@
  CONFIG_ENV=y
  CONFIG_ENV_LINK=y
  CONFIG_ENV_MUTABLE=y
@@ -93,11 +120,11 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
  # CONFIG_ENV_SAVEATONCE is not set
  CONFIG_ENV_CHECK_LEN=1024
  # CONFIG_VARIATIONS is not set
-Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-armeb_config
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-armeb_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-nas100d-armeb_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-nas100d-armeb_config
-@@ -17,7 +17,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nas100d-armeb_config	2007-12-17 22:09:37.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nas100d-armeb_config	2007-12-17 22:12:08.000000000 +1030
+@@ -17,7 +17,7 @@
  #
  # General Setup
  #
@@ -106,7 +133,16 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-armeb_config
  CONFIG_CROSS_COMPILE=""
  CONFIG_AEABI=y
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-@@ -114,7 +114,7 @@ CONFIG_USES_PATHNAME_PARSER=y
+@@ -90,7 +90,7 @@
+ CONFIG_CMD_XRECEIVE=y
+ CONFIG_CMD_MEMLIMIT=y
+ CONFIG_CMD_MEMSCAN=y
+-# CONFIG_CMD_MEMTEST is not set
++CONFIG_CMD_MEMTEST=y
+ 
+ #
+ # Generic Drivers
+@@ -115,7 +115,7 @@
  CONFIG_ENV=y
  CONFIG_ENV_LINK=y
  CONFIG_ENV_MUTABLE=y

@@ -1,0 +1,65 @@
+Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-arm_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-arm_config	2007-12-17 22:14:31.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-arm_config	2007-12-17 22:15:02.000000000 +1030
+@@ -92,7 +92,7 @@
+ CONFIG_CMD_XRECEIVE=y
+ CONFIG_CMD_MEMLIMIT=y
+ CONFIG_CMD_MEMSCAN=y
+-# CONFIG_CMD_MEMTEST is not set
++CONFIG_CMD_MEMTEST=y
+ 
+ #
+ # Generic Drivers
+Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-armeb_config	2007-12-17 22:14:31.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config	2007-12-17 22:15:14.000000000 +1030
+@@ -92,7 +92,7 @@
+ CONFIG_CMD_XRECEIVE=y
+ CONFIG_CMD_MEMLIMIT=y
+ CONFIG_CMD_MEMSCAN=y
+-# CONFIG_CMD_MEMTEST is not set
++CONFIG_CMD_MEMTEST=y
+ 
+ #
+ # Generic Drivers
+Index: apex-1.5.13/src/mach-ixp42x/nslu2_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/nslu2_config	2007-12-17 22:14:31.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/nslu2_config	2007-12-17 22:15:22.000000000 +1030
+@@ -90,7 +90,7 @@
+ CONFIG_CMD_XRECEIVE=y
+ CONFIG_CMD_MEMLIMIT=y
+ CONFIG_CMD_MEMSCAN=y
+-# CONFIG_CMD_MEMTEST is not set
++CONFIG_CMD_MEMTEST=y
+ 
+ #
+ # Generic Drivers
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-17 22:14:31.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-17 22:15:34.000000000 +1030
+@@ -90,7 +90,7 @@
+ CONFIG_CMD_XRECEIVE=y
+ CONFIG_CMD_MEMLIMIT=y
+ CONFIG_CMD_MEMSCAN=y
+-# CONFIG_CMD_MEMTEST is not set
++CONFIG_CMD_MEMTEST=y
+ 
+ #
+ # Generic Drivers
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-17 22:14:31.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-17 22:15:41.000000000 +1030
+@@ -90,7 +90,7 @@
+ CONFIG_CMD_XRECEIVE=y
+ CONFIG_CMD_MEMLIMIT=y
+ CONFIG_CMD_MEMSCAN=y
+-# CONFIG_CMD_MEMTEST is not set
++CONFIG_CMD_MEMTEST=y
+ 
+ #
+ # Generic Drivers

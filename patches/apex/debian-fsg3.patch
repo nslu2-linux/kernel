@@ -1,8 +1,8 @@
-Index: apex-1.5.8/src/mach-ixp42x/debian-fsg3-arm_config
+Index: apex-1.5.13/src/mach-ixp42x/debian-fsg3-arm_config
 ===================================================================
---- /dev/null
-+++ apex-1.5.8/src/mach-ixp42x/debian-fsg3-arm_config
-@@ -0,0 +1,170 @@
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ apex-1.5.13/src/mach-ixp42x/debian-fsg3-arm_config	2007-12-17 22:52:24.000000000 +1030
+@@ -0,0 +1,171 @@
 +#
 +# Automatically generated make config: don't edit
 +# Linux kernel version: 
@@ -97,6 +97,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-fsg3-arm_config
 +CONFIG_CMD_XRECEIVE=y
 +CONFIG_CMD_MEMLIMIT=y
 +CONFIG_CMD_MEMSCAN=y
++CONFIG_CMD_MEMTEST=y
 +
 +#
 +# Generic Drivers
@@ -173,11 +174,11 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-fsg3-arm_config
 +CONFIG_LITTLEENDIAN=y
 +CONFIG_CLEAR_STACKS=y
 +CONFIG_ALIASES=y
-Index: apex-1.5.8/src/mach-ixp42x/debian-fsg3-armeb_config
+Index: apex-1.5.13/src/mach-ixp42x/debian-fsg3-armeb_config
 ===================================================================
---- /dev/null
-+++ apex-1.5.8/src/mach-ixp42x/debian-fsg3-armeb_config
-@@ -0,0 +1,170 @@
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ apex-1.5.13/src/mach-ixp42x/debian-fsg3-armeb_config	2007-12-17 22:52:51.000000000 +1030
+@@ -0,0 +1,171 @@
 +#
 +# Automatically generated make config: don't edit
 +# Linux kernel version: 
@@ -272,6 +273,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-fsg3-armeb_config
 +CONFIG_CMD_XRECEIVE=y
 +CONFIG_CMD_MEMLIMIT=y
 +CONFIG_CMD_MEMSCAN=y
++CONFIG_CMD_MEMTEST=y
 +
 +#
 +# Generic Drivers
@@ -298,7 +300,7 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-fsg3-armeb_config
 +CONFIG_ENV=y
 +CONFIG_ENV_LINK=y
 +CONFIG_ENV_MUTABLE=y
-+CONFIG_ENV_REGION="nor:0xfbc000+15k"
++CONFIG_ENV_REGION="nor:0x3bc000+15k"
 +# CONFIG_ENV_SAVEATONCE is not set
 +CONFIG_ENV_CHECK_LEN=1024
 +CONFIG_VARIATIONS=y

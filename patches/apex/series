@@ -8,3 +8,7 @@ slugos-fsg3.patch
 debian-dsmg600.patch
 debian-fsg3.patch
 nas100d-apex-env.patch
+native-little-endian-kernel.patch
+add-memtest-command.patch
+debian-nslu2-apex-env.patch
+slugos-nslu2-apex-env.patch
