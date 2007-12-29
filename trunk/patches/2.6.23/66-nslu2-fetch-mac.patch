@@ -37,12 +37,12 @@ Index: linux-2.6.23.11-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
 +			nslu2_plat_eth[0].hwaddr[i] = readb(f + 0x3FFB0 + i);
 +		}
 +#else
-+                nslu2_plat_eth[0].hwaddr[0] = readb(f + 0x3FFB0 + 3);
-+                nslu2_plat_eth[0].hwaddr[1] = readb(f + 0x3FFB0 + 2);
-+                nslu2_plat_eth[0].hwaddr[2] = readb(f + 0x3FFB0 + 1);
-+                nslu2_plat_eth[0].hwaddr[3] = readb(f + 0x3FFB0 + 0);
-+                nslu2_plat_eth[0].hwaddr[4] = readb(f + 0x3FFB0 + 7);
-+                nslu2_plat_eth[0].hwaddr[5] = readb(f + 0x3FFB0 + 6);
++		nslu2_plat_eth[0].hwaddr[0] = readb(f + 0x3FFB0 + 3);
++		nslu2_plat_eth[0].hwaddr[1] = readb(f + 0x3FFB0 + 2);
++		nslu2_plat_eth[0].hwaddr[2] = readb(f + 0x3FFB0 + 1);
++		nslu2_plat_eth[0].hwaddr[3] = readb(f + 0x3FFB0 + 0);
++		nslu2_plat_eth[0].hwaddr[4] = readb(f + 0x3FFB0 + 7);
++		nslu2_plat_eth[0].hwaddr[5] = readb(f + 0x3FFB0 + 6);
 +#endif
 +		iounmap(f);
 +	}
