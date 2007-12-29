@@ -1,6 +1,8 @@
---- linux-2.6.23-orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-12-29 01:46:05.000000000 -0600
-+++ linux-2.6.23/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-12-29 02:12:04.000000000 -0600
-@@ -25,6 +25,7 @@
+Index: linux-2.6.23.11-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
+===================================================================
+--- linux-2.6.23.11-armeb.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-12-29 20:35:29.000000000 +1030
++++ linux-2.6.23.11-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c	2007-12-29 20:35:33.000000000 +1030
+@@ -24,6 +24,7 @@
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
  #include <asm/mach/time.h>
@@ -8,7 +10,7 @@
  
  static struct flash_platform_data nslu2_flash_data = {
  	.map_name		= "cfi_probe",
-@@ -223,6 +224,9 @@
+@@ -193,6 +194,9 @@
  
  static void __init nslu2_init(void)
  {
@@ -18,7 +20,7 @@
  	ixp4xx_sys_init();
  
  	nslu2_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
-@@ -239,6 +243,20 @@
+@@ -209,6 +213,20 @@
  	(void)platform_device_register(&nslu2_uart);
  
  	platform_add_devices(nslu2_devices, ARRAY_SIZE(nslu2_devices));
@@ -31,7 +33,7 @@
 +		}
 +		iounmap(f);
 +	}
-+	printk(KERN_INFO "nslu2 mac: %.2x:%.2x:%.2x:%.2x:%.2x:%.2x\n",
++	printk(KERN_INFO "NSLU2: Using MAC address %.2x:%.2x:%.2x:%.2x:%.2x:%.2x for port 0\n",
 +	       nslu2_plat_eth[0].hwaddr[0], nslu2_plat_eth[0].hwaddr[1],
 +	       nslu2_plat_eth[0].hwaddr[2], nslu2_plat_eth[0].hwaddr[3],
 +	       nslu2_plat_eth[0].hwaddr[4], nslu2_plat_eth[0].hwaddr[5]);
