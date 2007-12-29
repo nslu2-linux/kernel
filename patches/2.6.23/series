@@ -33,7 +33,6 @@
 # 4?-* patches
 # ixp4xx-net driver patches
 41-ixp4xx-net-drivers.patch
-42-ixp4xx-reread-mac.patch
 
 # 5?-* patches
 # Add platform setup code for platform ixp_npe ethernet driver
@@ -43,13 +42,9 @@
 
 # 6?-* patches
 # Add platform setup code for MAC address loading
-#61-nslu2-setup-mac.patch
-62-nas100d-setup-mac.patch
-64-fsg3-setup-mac.patch
-# NB: patches 66-69 replace 61-64, respectively.  Once all the
-#     61-64 patches are replaced, 42-ixp4xx-reread-mac.patch
-#     can be removed entirely.
 66-nslu2-fetch-mac.patch
+67-nas100d-fetch-mac.patch
+68-fsg3-fetch-mac.patch
 
 # 7?-* patches
 # Add platform setup code for mtd microcode loading

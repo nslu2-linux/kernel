@@ -1,16 +1,16 @@
 Index: linux-2.6.23.11-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.23.11-armeb.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-12-29 20:35:23.000000000 +1030
-+++ linux-2.6.23.11-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-12-29 20:35:50.000000000 +1030
-@@ -19,6 +19,7 @@
+--- linux-2.6.23.11-armeb.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-12-29 23:24:06.000000000 +1030
++++ linux-2.6.23.11-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c	2007-12-29 23:25:51.000000000 +1030
+@@ -18,6 +18,7 @@
+ #include <linux/leds.h>
  #include <linux/i2c-gpio.h>
- #include <linux/mtd/mtd.h>
  
 +#include <asm/setup.h>
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
-@@ -187,6 +188,35 @@
+@@ -163,6 +164,35 @@
  	gpio_line_set(NAS100D_PO_GPIO, IXP4XX_GPIO_HIGH);
  }
  
@@ -45,8 +45,8 @@ Index: linux-2.6.23.11-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
 +
  static void __init nas100d_init(void)
  {
- 	ixp4xx_sys_init();
-@@ -217,6 +247,7 @@
+ 	uint8_t __iomem *f;
+@@ -208,6 +238,7 @@
  	.phys_io	= IXP4XX_PERIPHERAL_BASE_PHYS,
  	.io_pg_offst	= ((IXP4XX_PERIPHERAL_BASE_VIRT) >> 18) & 0xFFFC,
  	.boot_params	= 0x00000100,
