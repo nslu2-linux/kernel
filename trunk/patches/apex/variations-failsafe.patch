@@ -1,0 +1,168 @@
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2007-12-24 14:52:15.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2007-12-24 15:02:31.000000000 +1030
+@@ -1,7 +1,7 @@
+ #
+ # Automatically generated make config: don't edit
+ # Linux kernel version: 
+-# Mon Jun 25 16:41:57 2007
++# Mon Dec 24 15:01:08 2007
+ #
+ CONFIG_ARM=y
+ CONFIG_CPU_ARMV5=y
+@@ -120,7 +120,8 @@
+ CONFIG_ENV_REGION="nor:0x7c000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+-# CONFIG_VARIATIONS is not set
++CONFIG_VARIATIONS=y
++CONFIG_VARIATION_SUFFIX="-alt"
+ # CONFIG_NO_BOOTSTRAP is not set
+ CONFIG_NOR_BOOT=y
+ # CONFIG_NAND_BOOT is not set
+@@ -141,13 +142,18 @@
+ #    Regions
+ #
+ CONFIG_ENV_REGION_KERNEL="fis://kernel"
++CONFIG_ENV_REGION_KERNEL_ALT_P=y
++CONFIG_ENV_REGION_KERNEL_ALT="fis://kernel"
+ 
+ #
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+ CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
++# CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+ CONFIG_RELOCATE_SIMPLE=y
+ CONFIG_INLINE_PLATFORM_INITIALIZATION=y
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2007-12-24 14:52:15.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2007-12-24 15:00:15.000000000 +1030
+@@ -1,7 +1,7 @@
+ #
+ # Automatically generated make config: don't edit
+ # Linux kernel version: 
+-# Mon Jun 25 16:41:57 2007
++# Mon Dec 24 15:00:01 2007
+ #
+ CONFIG_ARM=y
+ CONFIG_CPU_ARMV5=y
+@@ -120,7 +120,8 @@
+ CONFIG_ENV_REGION="nor:0x7c000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+-# CONFIG_VARIATIONS is not set
++CONFIG_VARIATIONS=y
++CONFIG_VARIATION_SUFFIX="-alt"
+ # CONFIG_NO_BOOTSTRAP is not set
+ CONFIG_NOR_BOOT=y
+ # CONFIG_NAND_BOOT is not set
+@@ -141,13 +142,18 @@
+ #    Regions
+ #
+ CONFIG_ENV_REGION_KERNEL="fis://kernel"
++CONFIG_ENV_REGION_KERNEL_ALT_P=y
++CONFIG_ENV_REGION_KERNEL_ALT="fis://kernel"
+ 
+ #
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+ CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
++# CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+ CONFIG_RELOCATE_SIMPLE=y
+ CONFIG_INLINE_PLATFORM_INITIALIZATION=y
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-24 14:52:15.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-24 14:58:34.000000000 +1030
+@@ -1,7 +1,7 @@
+ #
+ # Automatically generated make config: don't edit
+ # Linux kernel version: 
+-# Mon Oct 15 10:35:10 2007
++# Mon Dec 24 14:58:22 2007
+ #
+ CONFIG_ARM=y
+ CONFIG_CPU_ARMV5=y
+@@ -120,7 +120,8 @@
+ CONFIG_ENV_REGION="nor:0x7c000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+-# CONFIG_VARIATIONS is not set
++CONFIG_VARIATIONS=y
++CONFIG_VARIATION_SUFFIX="-alt"
+ # CONFIG_NO_BOOTSTRAP is not set
+ CONFIG_NOR_BOOT=y
+ # CONFIG_NAND_BOOT is not set
+@@ -141,13 +142,18 @@
+ #    Regions
+ #
+ CONFIG_ENV_REGION_KERNEL="fis://kernel"
++CONFIG_ENV_REGION_KERNEL_ALT_P=y
++CONFIG_ENV_REGION_KERNEL_ALT="fis://kernel"
+ 
+ #
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+ CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
++# CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+ CONFIG_RELOCATE_SIMPLE=y
+ CONFIG_INLINE_PLATFORM_INITIALIZATION=y
+Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-24 14:52:15.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-24 14:57:10.000000000 +1030
+@@ -1,7 +1,7 @@
+ #
+ # Automatically generated make config: don't edit
+ # Linux kernel version: 
+-# Mon Oct 15 10:35:10 2007
++# Mon Dec 24 14:54:47 2007
+ #
+ CONFIG_ARM=y
+ CONFIG_CPU_ARMV5=y
+@@ -120,7 +120,8 @@
+ CONFIG_ENV_REGION="nor:0x7c000+15k"
+ # CONFIG_ENV_SAVEATONCE is not set
+ CONFIG_ENV_CHECK_LEN=1024
+-# CONFIG_VARIATIONS is not set
++CONFIG_VARIATIONS=y
++CONFIG_VARIATION_SUFFIX="-alt"
+ # CONFIG_NO_BOOTSTRAP is not set
+ CONFIG_NOR_BOOT=y
+ # CONFIG_NAND_BOOT is not set
+@@ -141,13 +142,18 @@
+ #    Regions
+ #
+ CONFIG_ENV_REGION_KERNEL="fis://kernel"
++CONFIG_ENV_REGION_KERNEL_ALT_P=y
++CONFIG_ENV_REGION_KERNEL_ALT="fis://kernel"
+ 
+ #
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+ CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
++# CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+ CONFIG_RELOCATE_SIMPLE=y
+ CONFIG_INLINE_PLATFORM_INITIALIZATION=y

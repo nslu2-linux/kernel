@@ -12,3 +12,4 @@ native-little-endian-kernel.patch
 add-memtest-command.patch
 debian-nslu2-apex-env.patch
 slugos-nslu2-apex-env.patch
+variations-failsafe.patch
