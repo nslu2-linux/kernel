@@ -1,0 +1,143 @@
+---
+ arch/arm/mach-ixp4xx/Makefile    |    2 
+ arch/arm/mach-ixp4xx/fsg-power.c |  168 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 169 insertions(+), 1 deletion(-)
+
+Index: linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/fsg-power.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/fsg-power.c	2008-01-03 09:18:36.000000000 +1030
+@@ -0,0 +1,87 @@
++/*
++ * arch/arm/mach-ixp4xx/fsg-power.c
++ *
++ * FSG Power/Reset driver
++ *
++ * Copyright (C) 2008 Rod Whitby <rod@whitby.id.au>
++ *
++ * based on nslu2-power.c
++ *  Copyright (C) 2005 Tower Technologies
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/reboot.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++
++#include <asm/mach-types.h>
++
++static irqreturn_t fsg_power_handler(int irq, void *dev_id)
++{
++	/* Signal init to do the ctrlaltdel action, this will bypass init if
++	 * it hasn't started and do a kernel_restart.
++	 */
++	ctrl_alt_del();
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t fsg_reset_handler(int irq, void *dev_id)
++{
++	/* This is the paper-clip reset, it shuts the machine down directly.
++	 */
++	machine_power_off();
++
++	return IRQ_HANDLED;
++}
++
++static int __init fsg_power_init(void)
++{
++	if (!(machine_is_fsg()))
++		return 0;
++
++	set_irq_type(FSG_RB_IRQ, IRQT_LOW);
++	set_irq_type(FSG_SB_IRQ, IRQT_LOW);
++
++	if (request_irq(FSG_RB_IRQ, &fsg_reset_handler,
++		IRQF_DISABLED, "FSG reset button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
++			FSG_RB_IRQ);
++
++		return -EIO;
++	}
++
++	if (request_irq(FSG_SB_IRQ, &fsg_power_handler,
++		IRQF_DISABLED, "FSG power button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Power Button IRQ %d not available\n",
++			FSG_SB_IRQ);
++
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static void __exit fsg_power_exit(void)
++{
++	if (!(machine_is_fsg()))
++		return;
++
++	free_irq(FSG_SB_IRQ, NULL);
++	free_irq(FSG_RB_IRQ, NULL);
++}
++
++module_init(fsg_power_init);
++module_exit(fsg_power_exit);
++
++MODULE_AUTHOR("Rod Whitby <rod@whitby.id.au>");
++MODULE_DESCRIPTION("FSG Power/Reset driver");
++MODULE_LICENSE("GPL");
+Index: linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/Makefile
+===================================================================
+--- linux-2.6.21.7-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2008-01-02 21:36:57.000000000 +1030
++++ linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/Makefile	2008-01-02 21:36:58.000000000 +1030
+@@ -25,6 +25,6 @@
+ obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
+ obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
+ obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
+-obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o
++obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o fsg-power.o
+ 
+ obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
+Index: linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
+===================================================================
+--- linux-2.6.21.7-armeb.orig/arch/arm/mach-ixp4xx/fsg-setup.c	2008-01-02 23:31:43.000000000 +1030
++++ linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/fsg-setup.c	2008-01-03 09:18:21.000000000 +1030
+@@ -16,6 +16,7 @@
+ #include <linux/serial_8250.h>
+ #include <linux/leds.h>
+ #include <linux/mtd/mtd.h>
++#include <linux/reboot.h>
+ 
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+@@ -186,6 +187,12 @@
+ 	.remove = fsg_flash_remove,
+ };
+ 
++static void fsg_power_off(void)
++{
++	printk("Restarting system.\n");
++	machine_restart(NULL);
++}
++
+ static void __init fsg_init(void)
+ {
+ 	ixp4xx_sys_init();
+@@ -194,6 +201,8 @@
+ 	fsg_flash_resource.end =
+ 		IXP4XX_EXP_BUS_BASE(0) + ixp4xx_exp_bus_size - 1;
+ 
++	pm_power_off = fsg_power_off;
++
+ 	*IXP4XX_EXP_CS0 |= IXP4XX_FLASH_WRITABLE;
+ 	*IXP4XX_EXP_CS1 = *IXP4XX_EXP_CS0;
+ 

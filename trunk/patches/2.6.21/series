@@ -32,6 +32,6 @@ squashfs/squashfs-force-O2.patch
 86-nas100d-rtc-fixup.patch
 87-dsmg600-rtc-fixup.patch
 96-fsg3-support.patch
-97-fsg3-buttons.patch
+97-fsg3-power.patch
 99-avila-mtd-microcode.patch
 99-avila-loft-mac-platform.patch
