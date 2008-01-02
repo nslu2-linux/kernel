@@ -1,0 +1,32 @@
+Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-fsg3-arm_config	2008-01-03 08:58:02.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config	2008-01-03 08:58:34.000000000 +1030
+@@ -147,9 +147,9 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/hda1 rootdelay=10 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/sda1 rootdelay=10 console=ttyS0,115200"
+ CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
+-CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/hda2 rootdelay=10 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/sda2 rootdelay=10 console=ttyS0,115200"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ # CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-01-03 08:58:05.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-01-03 09:05:18.000000000 +1030
+@@ -147,9 +147,9 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/hda1 rootdelay=10 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/sda1 rootdelay=10 console=ttyS0,115200"
+ CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
+-CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/hda2 rootdelay=10 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/sda2 rootdelay=10 console=ttyS0,115200"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ # CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
