@@ -1,0 +1,292 @@
+Index: apex-1.5.13/src/mach-ixp42x/initialize.c
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/initialize.c	2007-06-04 09:01:35.000000000 +0930
++++ apex-1.5.13/src/mach-ixp42x/initialize.c	2008-01-02 20:43:50.000000000 +1030
+@@ -117,8 +117,8 @@
+   PUTC('A');
+ #endif
+ 
+-  _L(LEDf);			/* Start with all on */
+-  GPIO_ER &= ~0xf;		/* Enable LEDs as outputs */
++  _L(LEDf);				/* Start with all on */
++  GPIO_OER &= ~GPIO_OER_OUTPUTS;	/* Enable LEDs as outputs */
+ 
+ 	/* Disable write buffer coalescing */
+   {
+Index: apex-1.5.13/src/mach-ixp42x/ixp42x.h
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/ixp42x.h	2007-02-15 17:42:13.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/ixp42x.h	2008-01-02 20:43:50.000000000 +1030
+@@ -120,7 +120,7 @@
+ 
+ #define GPIO_PHYS	(0xc8004000)
+ #define GPIO_OUTR	__REG(GPIO_PHYS + 0x00)
+-#define GPIO_ER		__REG(GPIO_PHYS + 0x04)
++#define GPIO_OER	__REG(GPIO_PHYS + 0x04)
+ #define GPIO_INR	__REG(GPIO_PHYS + 0x08)
+ #define GPIO_ISR	__REG(GPIO_PHYS + 0x0c)
+ #define GPIO_IT1R	__REG(GPIO_PHYS + 0x10)
+@@ -153,8 +153,8 @@
+ #define GPIO_INT_TYPE_RISING   2
+ #define GPIO_INT_TYPE_FALLING  3
+ 
+-#define GPIO_OUT_ENABLE(i)	(GPIO_ER   &= ~(1 << (i)))
+-#define GPIO_OUT_DISABLE(i)	(GPIO_ER   |=   1 << (i))
++#define GPIO_OUT_ENABLE(i)	(GPIO_OER   &= ~(1 << (i)))
++#define GPIO_OUT_DISABLE(i)	(GPIO_OER   |=   1 << (i))
+ #define GPIO_OUT_SET(i)		(GPIO_OUTR |=   1 << (i))
+ #define GPIO_OUT_CLEAR(i)	(GPIO_OUTR &= ~(1 << (i)))
+ 
+Index: apex-1.5.13/src/mach-ixp42x/nslu2.h
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/nslu2.h	2007-01-09 17:59:23.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/nslu2.h	2008-01-02 20:43:50.000000000 +1030
+@@ -62,30 +62,25 @@
+ #define _LG(l) MASK_AND_SET(GPIO_OUTR, LED_GREEN_MASK, l)
+ 
+ 
+-#define GPIO_ER_OUTPUTS	 (1<<0)		/* Status LED */\
+-			|(1<<1)		/* Ready LED */\
+-			|(1<<2)		/* Disk2 LED */\
+-			|(1<<3)		/* Disk1 LED */\
+-			|(1<<4)		/* Buzzer */
+-
+-//#define GPIO_ER_V	(0x1f3f)	/* 0,1,6,7 are outputs */
+-#define GPIO_ER_V	(0x1f30)	/* 0,1,6,7 are outputs */
+-
+-#define GPIO_CLKR_V	(0x1ff01ff)	/* MUX14&15 33MHz clocks */
+-
+-#define GPIO_I_LEDRED		0
+-#define GPIO_I_LEDGREEN		1
+-#define GPIO_I_DISK2		2
+-#define GPIO_I_DISK1		3
++#define GPIO_OER_OUTPUTS	((1<<0)		/* Status LED */\
++				|(1<<1)		/* Ready LED */\
++				|(1<<2)		/* Disk2 LED */\
++				|(1<<3)		/* Disk1 LED */\
++				|(1<<4))	/* Buzzer */
++
++#define GPIO_I_LEDSTATUS	0	/* Red */
++#define GPIO_I_LEDREADY		1	/* Green */
++#define GPIO_I_LEDDISK2		2
++#define GPIO_I_LEDDISK1		3
+ #define GPIO_I_BUZZER		4
+-#define GPIO_I_POWERBUTTON	5	/* 0: pressed  */
++#define GPIO_I_POWERBUTTON	5	/* 0: pressed */
+ #define GPIO_I_I2C_SCL		6
+ #define GPIO_I_I2C_SDA		7
+ #define GPIO_I_POWEROFF		8
+ #define GPIO_I_PCI_INTC		9
+ #define GPIO_I_PCI_INTB		10
+ #define GPIO_I_PCI_INTA		11
+-#define GPIO_I_RESETBUTTON	12	/* 1: pressed  */
++#define GPIO_I_RESETBUTTON	12	/* 1: pressed */
+ #define GPIO_I_PCI_RESET	13
+ #define GPIO_I_PCI_CLOCK	14
+ 
+Index: apex-1.5.13/src/mach-ixp42x/fsg3.h
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/fsg3.h	2008-01-02 20:43:50.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/fsg3.h	2008-01-02 20:43:50.000000000 +1030
+@@ -42,54 +42,18 @@
+ 
+ /* ----- Prototypes */
+ 
+-#define LED_MASK (0xf)
+-
+-#define LED0	((0<<1)|(0<<0)|(1<<2)|(1<<3))
+-#define LED1	((1<<1)|(0<<0)|(1<<2)|(1<<3))
+-#define LED2	((0<<1)|(1<<0)|(1<<2)|(1<<3))
+-#define LED3	((1<<1)|(1<<0)|(1<<2)|(1<<3))
+-#define LED4	((0<<1)|(0<<0)|(0<<2)|(1<<3))
+-#define LED5	((1<<1)|(0<<0)|(0<<2)|(1<<3))
+-#define LED6	((0<<1)|(1<<0)|(0<<2)|(1<<3))
+-#define LED7	((1<<1)|(1<<0)|(0<<2)|(1<<3))
+-
+-#define LED8	((0<<1)|(0<<0)|(1<<2)|(0<<3))
+-#define LED9	((1<<1)|(0<<0)|(1<<2)|(0<<3))
+-#define LEDa	((0<<1)|(1<<0)|(1<<2)|(0<<3))
+-#define LEDb	((1<<1)|(1<<0)|(1<<2)|(0<<3))
+-#define LEDc	((0<<1)|(0<<0)|(0<<2)|(0<<3))
+-#define LEDd	((1<<1)|(0<<0)|(0<<2)|(0<<3))
+-#define LEDe	((0<<1)|(1<<0)|(0<<2)|(0<<3))
+-#define LEDf	((1<<1)|(1<<0)|(0<<2)|(0<<3))
+-
+-/* #define _L(l) MASK_AND_SET(GPIO_OUTR, LED_MASK, l) */
++/* The FSG-3 LEDS are not directly accessible as GPIO pins */
+ #define _L(l) 0
+ 
+-/* %%% FIXME %%% */
+-#define GPIO_ER_OUTPUTS	 (1<<0)		/* Power LED */\
+-			|(1<<14)	/* WLAN LED */
+-
+-/* %%% FIXME %%% */
+-#define GPIO_ER_V	(0x1f30)	/* 0,1,6,7 are outputs */
+-
+-/* %%% FIXME %%% */
+-#define GPIO_CLKR_V	(0x1ff01ff)	/* MUX14&15 33MHz clocks */
++#define GPIO_OER_OUTPUTS	(0)
+ 
+-/*
+-#define GPIO_I_LEDPOWER		0
+-#define GPIO_I_RESETBUTTON	3
+-#define GPIO_I_I2C_SCL		4
+-#define GPIO_I_I2C_SDA		5
+-#define GPIO_I_PCI_INTF		6
+-#define GPIO_I_PCI_INTE		7
+-#define GPIO_I_PCI_INTD		8
+-#define GPIO_I_PCI_INTC		9
+-#define GPIO_I_PCI_INTB		10
+-#define GPIO_I_PCI_INTA		11
+-#define GPIO_I_POWEROFF		12
+-#define GPIO_I_PCI_RESET	13
+-#define GPIO_I_LEDWLAN		14
+-#define GPIO_I_POWERBUTTON	15
+-*/
++#define GPIO_I_SYNCBUTTON	4	/* 0: pressed */
++#define GPIO_I_PCI_INTC		5
++#define GPIO_I_PCI_INTA		6
++#define GPIO_I_PCI_INTB		7
++#define GPIO_I_RESETBUTTON	9	/* 0: pressed */
++#define GPIO_I_UNPLUGBUTTON	10	/* 0: pressed */
++#define GPIO_I_I2C_SDA		12
++#define GPIO_I_I2C_SCL		13
+ 
+ #endif  /* __FSG3_H__ */
+Index: apex-1.5.13/src/mach-ixp42x/dsmg600.h
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/dsmg600.h	2008-01-02 20:43:50.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/dsmg600.h	2008-01-02 20:43:50.000000000 +1030
+@@ -42,41 +42,14 @@
+ 
+ /* ----- Prototypes */
+ 
+-#define LED_MASK (0xf)
+-
+-#define LED0	((0<<1)|(0<<0)|(1<<2)|(1<<3))
+-#define LED1	((1<<1)|(0<<0)|(1<<2)|(1<<3))
+-#define LED2	((0<<1)|(1<<0)|(1<<2)|(1<<3))
+-#define LED3	((1<<1)|(1<<0)|(1<<2)|(1<<3))
+-#define LED4	((0<<1)|(0<<0)|(0<<2)|(1<<3))
+-#define LED5	((1<<1)|(0<<0)|(0<<2)|(1<<3))
+-#define LED6	((0<<1)|(1<<0)|(0<<2)|(1<<3))
+-#define LED7	((1<<1)|(1<<0)|(0<<2)|(1<<3))
+-
+-#define LED8	((0<<1)|(0<<0)|(1<<2)|(0<<3))
+-#define LED9	((1<<1)|(0<<0)|(1<<2)|(0<<3))
+-#define LEDa	((0<<1)|(1<<0)|(1<<2)|(0<<3))
+-#define LEDb	((1<<1)|(1<<0)|(1<<2)|(0<<3))
+-#define LEDc	((0<<1)|(0<<0)|(0<<2)|(0<<3))
+-#define LEDd	((1<<1)|(0<<0)|(0<<2)|(0<<3))
+-#define LEDe	((0<<1)|(1<<0)|(0<<2)|(0<<3))
+-#define LEDf	((1<<1)|(1<<0)|(0<<2)|(0<<3))
+-
+-/* #define _L(l) MASK_AND_SET(GPIO_OUTR, LED_MASK, l) */
++/* We haven't worked out how to control the LEDs properly yet */
+ #define _L(l) 0
+ 
+-/* %%% FIXME %%% */
+-#define GPIO_ER_OUTPUTS	 (1<<0)		/* Power LED */\
+-			|(1<<14)	/* WLAN LED */
+-
+-/* %%% FIXME %%% */
+-#define GPIO_ER_V	(0x1f30)	/* 0,1,6,7 are outputs */
+-
+-/* %%% FIXME %%% */
+-#define GPIO_CLKR_V	(0x1ff01ff)	/* MUX14&15 33MHz clocks */
++#define GPIO_OER_OUTPUTS	((1<<0)		/* Power LED */\
++				|(1<<14))	/* WLAN LED */
+ 
+ #define GPIO_I_LEDPOWER		0
+-#define GPIO_I_RESETBUTTON	3
++#define GPIO_I_RESETBUTTON	3	/* 0: pressed */
+ #define GPIO_I_I2C_SCL		4
+ #define GPIO_I_I2C_SDA		5
+ #define GPIO_I_PCI_INTF		6
+@@ -88,6 +61,6 @@
+ #define GPIO_I_POWEROFF		12
+ #define GPIO_I_PCI_RESET	13
+ #define GPIO_I_LEDWLAN		14
+-#define GPIO_I_POWERBUTTON	15
++#define GPIO_I_POWERBUTTON	15	/* 1: pressed */
+ 
+ #endif  /* __DSMG600_H__ */
+Index: apex-1.5.13/src/mach-ixp42x/nas100d.h
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/nas100d.h	2007-01-09 18:21:32.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/nas100d.h	2008-01-02 20:43:50.000000000 +1030
+@@ -42,40 +42,16 @@
+ 
+ /* ----- Prototypes */
+ 
+-#define LED_MASK (0xf)
++/* We haven't worked out how to control the LEDs properly yet */
++#define _L(l) (0)
+ 
+-#define LED0	((0<<1)|(0<<0)|(1<<2)|(1<<3))
+-#define LED1	((1<<1)|(0<<0)|(1<<2)|(1<<3))
+-#define LED2	((0<<1)|(1<<0)|(1<<2)|(1<<3))
+-#define LED3	((1<<1)|(1<<0)|(1<<2)|(1<<3))
+-#define LED4	((0<<1)|(0<<0)|(0<<2)|(1<<3))
+-#define LED5	((1<<1)|(0<<0)|(0<<2)|(1<<3))
+-#define LED6	((0<<1)|(1<<0)|(0<<2)|(1<<3))
+-#define LED7	((1<<1)|(1<<0)|(0<<2)|(1<<3))
+-
+-#define LED8	((0<<1)|(0<<0)|(1<<2)|(0<<3))
+-#define LED9	((1<<1)|(0<<0)|(1<<2)|(0<<3))
+-#define LEDa	((0<<1)|(1<<0)|(1<<2)|(0<<3))
+-#define LEDb	((1<<1)|(1<<0)|(1<<2)|(0<<3))
+-#define LEDc	((0<<1)|(0<<0)|(0<<2)|(0<<3))
+-#define LEDd	((1<<1)|(0<<0)|(0<<2)|(0<<3))
+-#define LEDe	((0<<1)|(1<<0)|(0<<2)|(0<<3))
+-#define LEDf	((1<<1)|(1<<0)|(0<<2)|(0<<3))
+-
+-#define _L(l) MASK_AND_SET(GPIO_OUTR, LED_MASK, l)
+-
+-
+-#define GPIO_ER_OUTPUTS	 (1<<0)		/* WLAN LED */\
+-			|(1<<3)		/* Disk LED */\
+-			|(1<<15)	/* Power LED */
+-
+-#define GPIO_ER_V	(0x1f30)	/* 0,1,6,7 are outputs */
+-
+-#define GPIO_CLKR_V	(0x1ff01ff)	/* MUX14&15 33MHz clocks */
+-
+-#define GPIO_I_LEDGREEN		0
+-#define GPIO_I_DISK		3
+-#define GPIO_I_RESETBUTTON	4
++#define GPIO_OER_OUTPUTS	((1<<0)		/* WLAN LED */\
++				|(1<<3)		/* Disk LED */\
++				|(1<<15))	/* Power LED */
++
++#define GPIO_I_LEDWLAN		0
++#define GPIO_I_LEDDISK		3
++#define GPIO_I_RESETBUTTON	4	/* 0: pressed */
+ #define GPIO_I_I2C_SDA		5
+ #define GPIO_I_I2C_SCL		6
+ #define GPIO_I_PCI_INTD		8
+@@ -84,7 +60,7 @@
+ #define GPIO_I_PCI_INTA		11
+ #define GPIO_I_POWEROFF		12
+ #define GPIO_I_PCI_RESET	13
+-#define GPIO_I_POWERBUTTON	14
+-#define GPIO_I_LEDBLUE		15
++#define GPIO_I_POWERBUTTON	14	/* 1: pressed */
++#define GPIO_I_LEDPOWER		15
+ 
+ #endif  /* __NAS100D_H__ */
+Index: apex-1.5.13/src/mach-ixp42x/variation-nslu2.c
+===================================================================
+--- apex-1.5.13.orig/src/mach-ixp42x/variation-nslu2.c	2007-01-09 17:59:23.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/variation-nslu2.c	2008-01-02 20:43:50.000000000 +1030
+@@ -29,8 +29,8 @@
+   if (button_pressed)
+     alias_set ("variation", CONFIG_VARIATION_SUFFIX);
+ 
+-  MASK_AND_SET (GPIO_OUTR, 1<<GPIO_I_LEDRED,
+-		button_pressed ? (1<<GPIO_I_LEDRED): 0);
++  MASK_AND_SET (GPIO_OUTR, 1<<GPIO_I_LEDSTATUS,
++		button_pressed ? (1<<GPIO_I_LEDSTATUS): 0);
+ }
+ 
+ static __service_9 struct service_d variation_service = {
