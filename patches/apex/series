@@ -15,3 +15,4 @@ slugos-nslu2-apex-env.patch
 variation-nslu2.patch
 variation-fsg3.patch
 ixp42x-gpio-output-enable.patch
+fsg3-rootfs.patch
