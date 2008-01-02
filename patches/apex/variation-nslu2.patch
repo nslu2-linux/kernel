@@ -1,7 +1,7 @@
 Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2007-12-24 14:52:15.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2007-12-24 15:02:31.000000000 +1030
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-01-02 12:25:35.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-01-02 12:25:35.000000000 +1030
 @@ -1,7 +1,7 @@
  #
  # Automatically generated make config: don't edit
@@ -42,8 +42,8 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
  CONFIG_INLINE_PLATFORM_INITIALIZATION=y
 Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2007-12-24 14:52:15.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2007-12-24 15:00:15.000000000 +1030
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-01-02 12:25:35.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-01-02 12:25:35.000000000 +1030
 @@ -1,7 +1,7 @@
  #
  # Automatically generated make config: don't edit
@@ -84,8 +84,8 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
  CONFIG_INLINE_PLATFORM_INITIALIZATION=y
 Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-24 14:52:15.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-24 14:58:34.000000000 +1030
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2008-01-02 12:25:35.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config	2008-01-02 12:25:35.000000000 +1030
 @@ -1,7 +1,7 @@
  #
  # Automatically generated make config: don't edit
@@ -126,8 +126,8 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
  CONFIG_INLINE_PLATFORM_INITIALIZATION=y
 Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-24 14:52:15.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-24 14:57:10.000000000 +1030
+--- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-01-02 12:25:35.000000000 +1030
++++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-01-02 12:25:35.000000000 +1030
 @@ -1,7 +1,7 @@
  #
  # Automatically generated make config: don't edit
