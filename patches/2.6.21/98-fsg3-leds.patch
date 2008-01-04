@@ -1,7 +1,7 @@
 Index: linux-2.6.21.7-armeb/drivers/leds/Kconfig
 ===================================================================
---- linux-2.6.21.7-armeb.orig/drivers/leds/Kconfig	2008-01-04 22:33:37.000000000 +1030
-+++ linux-2.6.21.7-armeb/drivers/leds/Kconfig	2008-01-04 22:34:50.000000000 +1030
+--- linux-2.6.21.7-armeb.orig/drivers/leds/Kconfig	2008-01-05 09:05:31.000000000 +1030
++++ linux-2.6.21.7-armeb/drivers/leds/Kconfig	2008-01-05 09:06:47.000000000 +1030
 @@ -49,6 +49,12 @@
  	  particular board must have LEDs and they must be connected
  	  to the GPIO lines.  If unsure, say Y.
@@ -17,8 +17,8 @@ Index: linux-2.6.21.7-armeb/drivers/leds/Kconfig
  	depends on LEDS_CLASS && PXA_SHARPSL
 Index: linux-2.6.21.7-armeb/drivers/leds/Makefile
 ===================================================================
---- linux-2.6.21.7-armeb.orig/drivers/leds/Makefile	2008-01-04 22:33:04.000000000 +1030
-+++ linux-2.6.21.7-armeb/drivers/leds/Makefile	2008-01-04 22:33:30.000000000 +1030
+--- linux-2.6.21.7-armeb.orig/drivers/leds/Makefile	2008-01-05 09:05:31.000000000 +1030
++++ linux-2.6.21.7-armeb/drivers/leds/Makefile	2008-01-05 09:06:47.000000000 +1030
 @@ -9,6 +9,7 @@
  obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
  obj-$(CONFIG_LEDS_SPITZ)		+= leds-spitz.o
@@ -30,8 +30,8 @@ Index: linux-2.6.21.7-armeb/drivers/leds/Makefile
 Index: linux-2.6.21.7-armeb/drivers/leds/leds-fsg.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.21.7-armeb/drivers/leds/leds-fsg.c	2008-01-04 22:49:26.000000000 +1030
-@@ -0,0 +1,212 @@
++++ linux-2.6.21.7-armeb/drivers/leds/leds-fsg.c	2008-01-05 10:04:05.000000000 +1030
+@@ -0,0 +1,243 @@
 +/*
 + * LED Driver for the Freecom FSG-3
 + *
@@ -56,57 +56,82 @@ Index: linux-2.6.21.7-armeb/drivers/leds/leds-fsg.c
 +#include <asm/arch/hardware.h>
 +#include <asm/io.h>
 +
-+static volatile short __iomem *latch_address;
-+static volatile unsigned short latch_value;
++static short __iomem *latch_address;
++static unsigned short latch_value;
 +
 +
 +static void fsg_led_wlan_set(struct led_classdev *led_cdev, enum led_brightness value)
 +{
-+	if (value)
-+		writew(latch_value |=  (1 << FSG_LED_WLAN_BIT), latch_address);
-+	else
-+		writew(latch_value &= ~(1 << FSG_LED_WLAN_BIT), latch_address);
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_WLAN_BIT);
++		*latch_address = latch_value;
++	}
++	else {
++		latch_value |=  (1 << FSG_LED_WLAN_BIT);
++		*latch_address = latch_value;
++	}
 +}
 +
 +static void fsg_led_wan_set(struct led_classdev *led_cdev, enum led_brightness value)
 +{
-+	if (value)
-+		writew(latch_value |=  (1 << FSG_LED_WAN_BIT), latch_address);
-+	else
-+		writew(latch_value &= ~(1 << FSG_LED_WAN_BIT), latch_address);
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_WAN_BIT);
++		*latch_address = latch_value;
++	}
++	else {
++		latch_value |=  (1 << FSG_LED_WAN_BIT);
++		*latch_address = latch_value;
++	}
 +}
 +
 +static void fsg_led_sata_set(struct led_classdev *led_cdev, enum led_brightness value)
 +{
-+	if (value)
-+		writew(latch_value |=  (1 << FSG_LED_SATA_BIT), latch_address);
-+	else
-+		writew(latch_value &= ~(1 << FSG_LED_SATA_BIT), latch_address);
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_SATA_BIT);
++		*latch_address = latch_value;
++	}
++	else {
++		latch_value |=  (1 << FSG_LED_SATA_BIT);
++		*latch_address = latch_value;
++	}
 +}
 +
 +static void fsg_led_usb_set(struct led_classdev *led_cdev, enum led_brightness value)
 +{
-+	if (value)
-+		writew(latch_value |=  (1 << FSG_LED_USB_BIT), latch_address);
-+	else
-+		writew(latch_value &= ~(1 << FSG_LED_USB_BIT), latch_address);
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_USB_BIT);
++		*latch_address = latch_value;
++	}
++	else {
++		latch_value |=  (1 << FSG_LED_USB_BIT);
++		*latch_address = latch_value;
++	}
 +}
 +
 +static void fsg_led_sync_set(struct led_classdev *led_cdev, enum led_brightness value)
 +{
-+	if (value)
-+		writew(latch_value |=  (1 << FSG_LED_SYNC_BIT), latch_address);
-+	else
-+		writew(latch_value &= ~(1 << FSG_LED_SYNC_BIT), latch_address);
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_SYNC_BIT);
++		*latch_address = latch_value;
++	}
++	else {
++		latch_value |=  (1 << FSG_LED_SYNC_BIT);
++		*latch_address = latch_value;
++	}
 +}
 +
 +static void fsg_led_ring_set(struct led_classdev *led_cdev, enum led_brightness value)
 +{
-+	if (value)
-+		writew(latch_value |=  (1 << FSG_LED_RING_BIT), latch_address);
-+	else
-+		writew(latch_value &= ~(1 << FSG_LED_RING_BIT), latch_address);
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_RING_BIT);
++		*latch_address = latch_value;
++	}
++	else {
++		latch_value |=  (1 << FSG_LED_RING_BIT);
++		*latch_address = latch_value;
++	}
 +}
++
 +
 +
 +static struct led_classdev fsg_wlan_led = {
@@ -140,6 +165,7 @@ Index: linux-2.6.21.7-armeb/drivers/leds/leds-fsg.c
 +};
 +
 +
++
 +#ifdef CONFIG_PM
 +static int fsg_led_suspend(struct platform_device *dev, pm_message_t state)
 +{
@@ -168,6 +194,8 @@ Index: linux-2.6.21.7-armeb/drivers/leds/leds-fsg.c
 +static int fsg_led_probe(struct platform_device *pdev)
 +{
 +	int ret;
++
++	/* FIXME: Need to work out how to handle failure below */
 +
 +	ret = led_classdev_register(&pdev->dev, &fsg_wlan_led);
 +	if (ret < 0)
@@ -225,16 +253,19 @@ Index: linux-2.6.21.7-armeb/drivers/leds/leds-fsg.c
 +static int __init fsg_led_init(void)
 +{
 +	/* Map the LED chip select address space */
-+	latch_address = (volatile unsigned short *) ioremap(IXP4XX_EXP_BUS_BASE(2), 512);
-+	if (!latch_address) return -ENOMEM;
-+	writew(latch_value = 0xffff, latch_address);
++	latch_address = (unsigned short *) ioremap(IXP4XX_EXP_BUS_BASE(2), 512);
++	if (!latch_address)
++		return -ENOMEM;
++	latch_value = 0xffff;
++	*latch_address = latch_value;
++	/* FIXME: We leak memory if the next line fails */
 +	return platform_driver_register(&fsg_led_driver);
 +}
 +
 +static void __exit fsg_led_exit(void)
 +{
 + 	platform_driver_unregister(&fsg_led_driver);
-+	if (latch_address) iounmap(latch_address);
++	iounmap(latch_address);
 +}
 +
 +
@@ -244,3 +275,26 @@ Index: linux-2.6.21.7-armeb/drivers/leds/leds-fsg.c
 +MODULE_AUTHOR("Rod Whitby <rod@whitby.id.au>");
 +MODULE_DESCRIPTION("Freecom FSG-3 LED driver");
 +MODULE_LICENSE("GPL");
+Index: linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
+===================================================================
+--- linux-2.6.21.7-armeb.orig/arch/arm/mach-ixp4xx/fsg-setup.c	2008-01-05 09:06:46.000000000 +1030
++++ linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/fsg-setup.c	2008-01-05 09:06:47.000000000 +1030
+@@ -151,12 +151,18 @@
+ 	.dev.platform_data	= &fsg_npe_ucode_data,
+ };
+ 
++static struct platform_device fsg_leds = {
++	.name		= "fsg-led",
++	.id		= -1,
++};
++
+ static struct platform_device *fsg_devices[] __initdata = {
+ 	&fsg_i2c_controller,
+ 	&fsg_flash,
+         &mac0,
+         &mac1,
+ 	&fsg_npe_ucode,
++	&fsg_leds,
+ };
+ 
+ static void fsg_flash_add(struct mtd_info *mtd)

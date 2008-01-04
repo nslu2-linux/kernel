@@ -1,8 +1,8 @@
-Index: linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/Kconfig
+Index: linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.21.5-armeb.orig/arch/arm/mach-ixp4xx/Kconfig
-+++ linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/Kconfig
-@@ -103,6 +103,14 @@ config	ARCH_IXDP4XX
+--- linux-2.6.21.7-armeb.orig/arch/arm/mach-ixp4xx/Kconfig	2008-01-05 01:31:17.000000000 +1030
++++ linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/Kconfig	2008-01-05 01:31:20.000000000 +1030
+@@ -103,6 +103,14 @@
  	depends on ARCH_IXDP425 || MACH_IXDP465
  	default y
  
@@ -17,11 +17,11 @@ Index: linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/Kconfig
  #
  # Certain registers and IRQs are only enabled if supporting IXP465 CPUs
  #
-Index: linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/Makefile
+Index: linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.21.5-armeb.orig/arch/arm/mach-ixp4xx/Makefile
-+++ linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/Makefile
-@@ -13,6 +13,7 @@ obj-pci-$(CONFIG_MACH_GTWX5715)		+= gtwx
+--- linux-2.6.21.7-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2008-01-05 01:31:17.000000000 +1030
++++ linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/Makefile	2008-01-05 09:05:33.000000000 +1030
+@@ -13,6 +13,7 @@
  obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
  obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
  obj-pci-$(CONFIG_MACH_DSMG600)		+= dsmg600-pci.o
@@ -29,17 +29,17 @@ Index: linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/Makefile
  
  obj-y	+= common.o
  
-@@ -24,5 +25,6 @@ obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-
+@@ -24,5 +25,6 @@
  obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
  obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
  obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
 +obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o
  
  obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
-Index: linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/fsg-pci.c
+Index: linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/fsg-pci.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/fsg-pci.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/fsg-pci.c	2008-01-05 01:31:20.000000000 +1030
 @@ -0,0 +1,71 @@
 +/*
 + * arch/arch/mach-ixp4xx/fsg-pci.c
@@ -112,10 +112,10 @@ Index: linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/fsg-pci.c
 +}
 +
 +subsys_initcall(fsg_pci_init);
-Index: linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
+Index: linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 ===================================================================
---- /dev/null
-+++ linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.21.7-armeb/arch/arm/mach-ixp4xx/fsg-setup.c	2008-01-05 09:05:33.000000000 +1030
 @@ -0,0 +1,223 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
@@ -340,10 +340,10 @@ Index: linux-2.6.21.5-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 +	.init_machine	= fsg_init,
 +MACHINE_END
 +
-Index: linux-2.6.21.5-armeb/include/asm-arm/arch-ixp4xx/fsg.h
+Index: linux-2.6.21.7-armeb/include/asm-arm/arch-ixp4xx/fsg.h
 ===================================================================
---- /dev/null
-+++ linux-2.6.21.5-armeb/include/asm-arm/arch-ixp4xx/fsg.h
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.21.7-armeb/include/asm-arm/arch-ixp4xx/fsg.h	2008-01-05 09:06:28.000000000 +1030
 @@ -0,0 +1,58 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/fsg.h
@@ -397,27 +397,27 @@ Index: linux-2.6.21.5-armeb/include/asm-arm/arch-ixp4xx/fsg.h
 +
 +/* LEDs */
 +
-+#define FSG_LED_RING_BIT	0
-+#define FSG_LED_SYNC_BIT	1
-+#define FSG_LED_USB_BIT		2
-+#define FSG_LED_SATA_BIT	3
-+#define FSG_LED_WAN_BIT		4
-+#define FSG_LED_WLAN_BIT	5
-Index: linux-2.6.21.5-armeb/include/asm-arm/arch-ixp4xx/hardware.h
++#define FSG_LED_WLAN_BIT	0
++#define FSG_LED_WAN_BIT		1
++#define FSG_LED_SATA_BIT	2
++#define FSG_LED_USB_BIT		4
++#define FSG_LED_RING_BIT	5
++#define FSG_LED_SYNC_BIT	7
+Index: linux-2.6.21.7-armeb/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.21.5-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h
-+++ linux-2.6.21.5-armeb/include/asm-arm/arch-ixp4xx/hardware.h
-@@ -48,5 +48,6 @@ extern unsigned int processor_id;
+--- linux-2.6.21.7-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-05 01:31:17.000000000 +1030
++++ linux-2.6.21.7-armeb/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-05 01:31:20.000000000 +1030
+@@ -48,5 +48,6 @@
  #include "nslu2.h"
  #include "nas100d.h"
  #include "dsmg600.h"
 +#include "fsg.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
-Index: linux-2.6.21.5-armeb/include/asm-arm/arch-ixp4xx/irqs.h
+Index: linux-2.6.21.7-armeb/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.21.5-armeb.orig/include/asm-arm/arch-ixp4xx/irqs.h
-+++ linux-2.6.21.5-armeb/include/asm-arm/arch-ixp4xx/irqs.h
+--- linux-2.6.21.7-armeb.orig/include/asm-arm/arch-ixp4xx/irqs.h	2008-01-05 01:31:17.000000000 +1030
++++ linux-2.6.21.7-armeb/include/asm-arm/arch-ixp4xx/irqs.h	2008-01-05 01:31:20.000000000 +1030
 @@ -128,4 +128,11 @@
  #define        IRQ_DSMG600_PCI_INTE    IRQ_IXP4XX_GPIO7
  #define        IRQ_DSMG600_PCI_INTF    IRQ_IXP4XX_GPIO6

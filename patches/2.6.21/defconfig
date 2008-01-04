@@ -1293,6 +1293,7 @@ CONFIG_LEDS_CLASS=y
 # LED drivers
 #
 CONFIG_LEDS_IXP4XX=y
+CONFIG_LEDS_FSG=y
 
 #
 # LED Triggers
