@@ -1,3 +1,8 @@
+Fixes a compilation error caused by cbcdd87593a1d85c5c4b259945a3a09eee12814d
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+---
+
 Index: linux-2.6.24-rc6-armeb/drivers/ata/pata_ixp4xx_cf.c
 ===================================================================
 --- linux-2.6.24-rc6-armeb.orig/drivers/ata/pata_ixp4xx_cf.c	2008-01-06 08:23:21.000000000 +1030
