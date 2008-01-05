@@ -1,0 +1,19 @@
+# Add Krzysztof Halasa's IXP4XX ethernet driver
+# These patches are currently inline for mainstream inclusion.
+# The 47xx numbers refer to the Patch Tracking System IDs
+#ixp4xx-net-drivers-4712.patch
+#ixp4xx-net-drivers-4713.patch
+#ixp4xx-net-drivers-4714.patch
+#ixp4xx-net-drivers-4715.patch
+#ixp4xx-net-drivers-netdev.patch
+
+# Migrate the rest of the devices using the deprecated i2c-ixp4xx
+# driver to the i2c-gpio driver.
+ixp4xx-i2c-gpio.patch
+ixp4xx-remove-i2c-pins.patch
+
+# Modify power control behaviour, to allow for auto-power-on mods.
+16-dsmg600-auto-power-on.patch
+17-nas100d-auto-power-on.patch
+
+
