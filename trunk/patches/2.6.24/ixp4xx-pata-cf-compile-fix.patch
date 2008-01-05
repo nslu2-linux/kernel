@@ -1,0 +1,17 @@
+Index: linux-2.6.24-rc6-armeb/drivers/ata/pata_ixp4xx_cf.c
+===================================================================
+--- linux-2.6.24-rc6-armeb.orig/drivers/ata/pata_ixp4xx_cf.c	2008-01-06 08:23:21.000000000 +1030
++++ linux-2.6.24-rc6-armeb/drivers/ata/pata_ixp4xx_cf.c	2008-01-06 08:24:33.000000000 +1030
+@@ -130,10 +130,11 @@
+ 	.port_start		= ata_port_start,
+ };
+ 
+-static void ixp4xx_setup_port(struct ata_ioports *ioaddr,
++static void ixp4xx_setup_port(struct ata_port *ap,
+ 			      struct ixp4xx_pata_data *data,
+ 			      unsigned long raw_cs0, unsigned long raw_cs1)
+ {
++	struct ata_ioports *ioaddr = &ap->ioaddr;
+ 	unsigned long raw_cmd = raw_cs0;
+ 	unsigned long raw_ctl = raw_cs1 + 0x06;
+ 
