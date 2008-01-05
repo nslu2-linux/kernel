@@ -1,0 +1,251 @@
+Complete the migration of all ixp4xx devices to the i2c-gpio driver by
+removing the obsolete i2c-ixp4xx driver.
+
+The i2c-ixp4xx driver has been marked as DEPRECATED since 2007-05-01,
+and was marked in feature-removal-schedule.txt as scheduled for
+removal in September 2007 by Jean Delvare <khali@linux-fr.org>.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+
+Index: linux-2.6.24-rc6-armeb/include/asm-arm/arch-ixp4xx/platform.h
+===================================================================
+--- linux-2.6.24-rc6-armeb.orig/include/asm-arm/arch-ixp4xx/platform.h	2008-01-05 19:54:18.000000000 +1030
++++ linux-2.6.24-rc6-armeb/include/asm-arm/arch-ixp4xx/platform.h	2008-01-05 19:54:36.000000000 +1030
+@@ -76,17 +76,6 @@
+ #define IXP4XX_UART_XTAL        	14745600
+ 
+ /*
+- * The IXP4xx chips do not have an I2C unit, so GPIO lines are just
+- * used to 
+- * Used as platform_data to provide GPIO pin information to the ixp42x
+- * I2C driver.
+- */
+-struct ixp4xx_i2c_pins {
+-	unsigned long sda_pin;
+-	unsigned long scl_pin;
+-};
+-
+-/*
+  * This structure provide a means for the board setup code
+  * to give information to th pata_ixp4xx driver. It is
+  * passed as platform_data.
+Index: linux-2.6.24-rc6-armeb/drivers/i2c/busses/Kconfig
+===================================================================
+--- linux-2.6.24-rc6-armeb.orig/drivers/i2c/busses/Kconfig	2008-01-05 19:54:18.000000000 +1030
++++ linux-2.6.24-rc6-armeb/drivers/i2c/busses/Kconfig	2008-01-05 19:54:36.000000000 +1030
+@@ -259,20 +259,6 @@
+ 	  This driver can also be built as a module.  If so, the module
+ 	  will be called i2c-iop3xx.
+ 
+-config I2C_IXP4XX
+-	tristate "IXP4xx GPIO-Based I2C Interface (DEPRECATED)"
+-	depends on ARCH_IXP4XX
+-	select I2C_ALGOBIT
+-	help
+-	  Say Y here if you have an Intel IXP4xx(420,421,422,425) based 
+-	  system and are using GPIO lines for an I2C bus.
+-
+-	  This support is also available as a module. If so, the module
+-	  will be called i2c-ixp4xx.
+-
+-	  This driver is deprecated and will be dropped soon. Use i2c-gpio
+-	  instead.
+-
+ config I2C_IXP2000
+ 	tristate "IXP2000 GPIO-Based I2C Interface (DEPRECATED)"
+ 	depends on ARCH_IXP2000
+Index: linux-2.6.24-rc6-armeb/drivers/i2c/busses/Makefile
+===================================================================
+--- linux-2.6.24-rc6-armeb.orig/drivers/i2c/busses/Makefile	2008-01-05 19:54:18.000000000 +1030
++++ linux-2.6.24-rc6-armeb/drivers/i2c/busses/Makefile	2008-01-05 19:54:36.000000000 +1030
+@@ -20,7 +20,6 @@
+ obj-$(CONFIG_I2C_IBM_IIC)	+= i2c-ibm_iic.o
+ obj-$(CONFIG_I2C_IOP3XX)	+= i2c-iop3xx.o
+ obj-$(CONFIG_I2C_IXP2000)	+= i2c-ixp2000.o
+-obj-$(CONFIG_I2C_IXP4XX)	+= i2c-ixp4xx.o
+ obj-$(CONFIG_I2C_POWERMAC)	+= i2c-powermac.o
+ obj-$(CONFIG_I2C_MPC)		+= i2c-mpc.o
+ obj-$(CONFIG_I2C_MV64XXX)	+= i2c-mv64xxx.o
+Index: linux-2.6.24-rc6-armeb/drivers/i2c/busses/i2c-ixp4xx.c
+===================================================================
+--- linux-2.6.24-rc6-armeb.orig/drivers/i2c/busses/i2c-ixp4xx.c	2008-01-05 19:54:18.000000000 +1030
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,178 +0,0 @@
+-/*
+- * drivers/i2c/busses/i2c-ixp4xx.c
+- *
+- * Intel's IXP4xx XScale NPU chipsets (IXP420, 421, 422, 425) do not have
+- * an on board I2C controller but provide 16 GPIO pins that are often
+- * used to create an I2C bus. This driver provides an i2c_adapter 
+- * interface that plugs in under algo_bit and drives the GPIO pins
+- * as instructed by the alogorithm driver.
+- *
+- * Author: Deepak Saxena <dsaxena@plexity.net>
+- *
+- * Copyright (c) 2003-2004 MontaVista Software Inc.
+- *
+- * This file is licensed under the terms of the GNU General Public 
+- * License version 2. This program is licensed "as is" without any 
+- * warranty of any kind, whether express or implied.
+- *
+- * NOTE: Since different platforms will use different GPIO pins for
+- *       I2C, this driver uses an IXP4xx-specific platform_data
+- *       pointer to pass the GPIO numbers to the driver. This 
+- *       allows us to support all the different IXP4xx platforms
+- *       w/o having to put #ifdefs in this driver.
+- *
+- *       See arch/arm/mach-ixp4xx/ixdp425.c for an example of building a 
+- *       device list and filling in the ixp4xx_i2c_pins data structure 
+- *       that is passed as the platform_data to this driver.
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+-#include <linux/module.h>
+-#include <linux/i2c.h>
+-#include <linux/i2c-algo-bit.h>
+-
+-#include <asm/hardware.h>	/* Pick up IXP4xx-specific bits */
+-
+-static inline int ixp4xx_scl_pin(void *data)
+-{
+-	return ((struct ixp4xx_i2c_pins*)data)->scl_pin;
+-}
+-
+-static inline int ixp4xx_sda_pin(void *data)
+-{
+-	return ((struct ixp4xx_i2c_pins*)data)->sda_pin;
+-}
+-
+-static void ixp4xx_bit_setscl(void *data, int val)
+-{
+-	gpio_line_set(ixp4xx_scl_pin(data), 0);
+-	gpio_line_config(ixp4xx_scl_pin(data),
+-		val ? IXP4XX_GPIO_IN : IXP4XX_GPIO_OUT );
+-}
+-
+-static void ixp4xx_bit_setsda(void *data, int val)
+-{
+-	gpio_line_set(ixp4xx_sda_pin(data), 0);
+-	gpio_line_config(ixp4xx_sda_pin(data),
+-		val ? IXP4XX_GPIO_IN : IXP4XX_GPIO_OUT );
+-}
+-
+-static int ixp4xx_bit_getscl(void *data)
+-{
+-	int scl;
+-
+-	gpio_line_config(ixp4xx_scl_pin(data), IXP4XX_GPIO_IN );
+-	gpio_line_get(ixp4xx_scl_pin(data), &scl);
+-
+-	return scl;
+-}	
+-
+-static int ixp4xx_bit_getsda(void *data)
+-{
+-	int sda;
+-
+-	gpio_line_config(ixp4xx_sda_pin(data), IXP4XX_GPIO_IN );
+-	gpio_line_get(ixp4xx_sda_pin(data), &sda);
+-
+-	return sda;
+-}	
+-
+-struct ixp4xx_i2c_data {
+-	struct ixp4xx_i2c_pins *gpio_pins;
+-	struct i2c_adapter adapter;
+-	struct i2c_algo_bit_data algo_data;
+-};
+-
+-static int ixp4xx_i2c_remove(struct platform_device *plat_dev)
+-{
+-	struct ixp4xx_i2c_data *drv_data = platform_get_drvdata(plat_dev);
+-
+-	platform_set_drvdata(plat_dev, NULL);
+-
+-	i2c_del_adapter(&drv_data->adapter);
+-
+-	kfree(drv_data);
+-
+-	return 0;
+-}
+-
+-static int ixp4xx_i2c_probe(struct platform_device *plat_dev)
+-{
+-	int err;
+-	struct ixp4xx_i2c_pins *gpio = plat_dev->dev.platform_data;
+-	struct ixp4xx_i2c_data *drv_data = 
+-		kzalloc(sizeof(struct ixp4xx_i2c_data), GFP_KERNEL);
+-
+-	if(!drv_data)
+-		return -ENOMEM;
+-
+-	drv_data->gpio_pins = gpio;
+-
+-	/*
+-	 * We could make a lot of these structures static, but
+-	 * certain platforms may have multiple GPIO-based I2C
+-	 * buses for various device domains, so we need per-device
+-	 * algo_data->data. 
+-	 */
+-	drv_data->algo_data.data = gpio;
+-	drv_data->algo_data.setsda = ixp4xx_bit_setsda;
+-	drv_data->algo_data.setscl = ixp4xx_bit_setscl;
+-	drv_data->algo_data.getsda = ixp4xx_bit_getsda;
+-	drv_data->algo_data.getscl = ixp4xx_bit_getscl;
+-	drv_data->algo_data.udelay = 10;
+-	drv_data->algo_data.timeout = 100;
+-
+-	drv_data->adapter.id = I2C_HW_B_IXP4XX;
+-	drv_data->adapter.class = I2C_CLASS_HWMON;
+-	strlcpy(drv_data->adapter.name, plat_dev->dev.driver->name,
+-		sizeof(drv_data->adapter.name));
+-	drv_data->adapter.algo_data = &drv_data->algo_data;
+-
+-	drv_data->adapter.dev.parent = &plat_dev->dev;
+-
+-	gpio_line_config(gpio->scl_pin, IXP4XX_GPIO_IN);
+-	gpio_line_config(gpio->sda_pin, IXP4XX_GPIO_IN);
+-	gpio_line_set(gpio->scl_pin, 0);
+-	gpio_line_set(gpio->sda_pin, 0);
+-
+-	err = i2c_bit_add_bus(&drv_data->adapter);
+-	if (err) {
+-		printk(KERN_ERR "ERROR: Could not install %s\n", plat_dev->dev.bus_id);
+-
+-		kfree(drv_data);
+-		return err;
+-	}
+-
+-	platform_set_drvdata(plat_dev, drv_data);
+-
+-	return 0;
+-}
+-
+-static struct platform_driver ixp4xx_i2c_driver = {
+-	.probe		= ixp4xx_i2c_probe,
+-	.remove		= ixp4xx_i2c_remove,
+-	.driver		= {
+-		.name	= "IXP4XX-I2C",
+-		.owner	= THIS_MODULE,
+-	},
+-};
+-
+-static int __init ixp4xx_i2c_init(void)
+-{
+-	return platform_driver_register(&ixp4xx_i2c_driver);
+-}
+-
+-static void __exit ixp4xx_i2c_exit(void)
+-{
+-	platform_driver_unregister(&ixp4xx_i2c_driver);
+-}
+-
+-module_init(ixp4xx_i2c_init);
+-module_exit(ixp4xx_i2c_exit);
+-
+-MODULE_DESCRIPTION("GPIO-based I2C adapter for IXP4xx systems");
+-MODULE_LICENSE("GPL");
+-MODULE_AUTHOR("Deepak Saxena <dsaxena@plexity.net>");
+-
