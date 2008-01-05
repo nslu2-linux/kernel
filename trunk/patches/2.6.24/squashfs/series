@@ -1,0 +1,6 @@
+squashfs-with-lzma.patch
+squashfs-initrd.patch
+squashfs-force-O2.patch
+squashfs-Kconfig.patch
+squashfs-Makefile.patch
+

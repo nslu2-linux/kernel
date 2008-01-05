@@ -1,3 +1,11 @@
+# Add squashfs 3.3 w/ LZMA compression
+# The squashfs project itself is working to mainstream inclusion.
+squashfs/squashfs-with-lzma.patch
+squashfs/squashfs-initrd.patch
+squashfs/squashfs-force-O2.patch
+squashfs/squashfs-Kconfig.patch
+squashfs/squashfs-Makefile.patch
+
 # Add Krzysztof Halasa's IXP4XX ethernet driver
 # These patches are currently inline for mainstream inclusion.
 # The 47xx numbers refer to the Patch Tracking System IDs
