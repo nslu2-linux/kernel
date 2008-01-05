@@ -3,6 +3,14 @@
 # must be all able to be applied independently in any order.
 # Patches marked with ## need reworking and are currently disabled
 
+# Add squashfs 3.3 w/ LZMA compression
+# The squashfs project is working to mainstream inclusion itself.
+squashfs/squashfs-with-lzma.patch
+squashfs/squashfs-initrd.patch
+squashfs/squashfs-force-O2.patch
+squashfs/squashfs-Kconfig.patch
+squashfs/squashfs-Makefile.patch
+
 # 0?-* patches
 # Patches to be submitted upstream
 00-binutils-buildid-arm.patch
