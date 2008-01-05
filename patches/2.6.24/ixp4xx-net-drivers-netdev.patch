@@ -1,7 +1,7 @@
 Index: linux-2.6.24-rc6-armeb/drivers/net/arm/Kconfig
 ===================================================================
---- linux-2.6.24-rc6-armeb.orig/drivers/net/arm/Kconfig	2007-10-10 06:01:38.000000000 +0930
-+++ linux-2.6.24-rc6-armeb/drivers/net/arm/Kconfig	2008-01-05 15:49:21.000000000 +1030
+--- linux-2.6.24-rc6-armeb.orig/drivers/net/arm/Kconfig	2008-01-06 06:39:27.000000000 +1030
++++ linux-2.6.24-rc6-armeb/drivers/net/arm/Kconfig	2008-01-06 06:39:30.000000000 +1030
 @@ -47,3 +47,13 @@
  	help
  	  This is a driver for the ethernet hardware included in EP93xx CPUs.
@@ -18,8 +18,8 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/Kconfig
 +	  on IXP4xx processor.
 Index: linux-2.6.24-rc6-armeb/drivers/net/arm/Makefile
 ===================================================================
---- linux-2.6.24-rc6-armeb.orig/drivers/net/arm/Makefile	2007-10-10 06:01:38.000000000 +0930
-+++ linux-2.6.24-rc6-armeb/drivers/net/arm/Makefile	2008-01-05 15:49:21.000000000 +1030
+--- linux-2.6.24-rc6-armeb.orig/drivers/net/arm/Makefile	2008-01-06 06:39:27.000000000 +1030
++++ linux-2.6.24-rc6-armeb/drivers/net/arm/Makefile	2008-01-06 06:39:30.000000000 +1030
 @@ -9,3 +9,4 @@
  obj-$(CONFIG_ARM_ETHER1)	+= ether1.o
  obj-$(CONFIG_ARM_AT91_ETHER)	+= at91_ether.o
@@ -28,8 +28,8 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/Makefile
 Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c	2008-01-05 15:49:21.000000000 +1030
-@@ -0,0 +1,1258 @@
++++ linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c	2008-01-06 07:04:04.000000000 +1030
+@@ -0,0 +1,1257 @@
 +/*
 + * Intel IXP4xx Ethernet driver for Linux
 + *
@@ -61,6 +61,7 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +#include <linux/dmapool.h>
 +#include <linux/kernel.h>
 +#include <linux/mii.h>
++#include <linux/netdevice.h>
 +#include <linux/platform_device.h>
 +#include <asm/io.h>
 +#include <asm/arch/npe.h>
@@ -192,7 +193,6 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +	struct eth_regs __iomem *regs;
 +	struct npe *npe;
 +	struct net_device *netdev;
-+	struct net_device_stats stat;
 +	struct mii_if_info mii;
 +	struct delayed_work mdio_thread;
 +	struct eth_plat_info *plat;
@@ -350,7 +350,7 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +	int cycles = 0;
 +
 +	mdio_write(dev, phy_id, MII_BMCR, port->mii_bmcr | BMCR_RESET);
-+	
++
 +	while (cycles < MAX_MII_RESET_RETRIES) {
 +		if (!(mdio_read(dev, phy_id, MII_BMCR) & BMCR_RESET)) {
 +#if DEBUG_MDIO
@@ -591,7 +591,7 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +#endif
 +
 +		if (!skb) {
-+			port->stat.rx_dropped++;
++			dev->stats.rx_dropped++;
 +			/* put the desc back on RX-ready queue */
 +			desc->buf_len = MAX_MRU;
 +			desc->pkt_len = 0;
@@ -617,8 +617,8 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +
 +		skb->protocol = eth_type_trans(skb, dev);
 +		dev->last_rx = jiffies;
-+		port->stat.rx_packets++;
-+		port->stat.rx_bytes += skb->len;
++		dev->stats.rx_packets++;
++		dev->stats.rx_bytes += skb->len;
 +		netif_receive_skb(skb);
 +
 +		/* put the new buffer on RX-free queue */
@@ -665,8 +665,8 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +		debug_desc(phys, desc);
 +
 +		if (port->tx_buff_tab[n_desc]) { /* not the draining packet */
-+			port->stat.tx_packets++;
-+			port->stat.tx_bytes += desc->pkt_len;
++			port->dev->stats.tx_packets++;
++			port->dev->stats.tx_bytes += desc->pkt_len;
 +
 +			dma_unmap_tx(port, desc);
 +#if DEBUG_TX
@@ -704,7 +704,7 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +
 +	if (unlikely(skb->len > MAX_MRU)) {
 +		dev_kfree_skb(skb);
-+		port->stat.tx_errors++;
++		dev->stats.tx_errors++;
 +		return NETDEV_TX_OK;
 +	}
 +
@@ -720,7 +720,7 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +	bytes = ALIGN(offset + len, 4);
 +	if (!(mem = kmalloc(bytes, GFP_ATOMIC))) {
 +		dev_kfree_skb(skb);
-+		port->stat.tx_dropped++;
++		dev->stats.tx_dropped++;
 +		return NETDEV_TX_OK;
 +	}
 +	memcpy_swab32(mem, (u32 *)((int)skb->data & ~3), bytes / 4);
@@ -734,7 +734,7 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +#else
 +		kfree(mem);
 +#endif
-+		port->stat.tx_dropped++;
++		dev->stats.tx_dropped++;
 +		return NETDEV_TX_OK;
 +	}
 +
@@ -779,8 +779,7 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +
 +static struct net_device_stats *eth_stats(struct net_device *dev)
 +{
-+	struct port *port = netdev_priv(dev);
-+	return &port->stat;
++	return &dev->stats;
 +}
 +
 +static void eth_set_mcast_list(struct net_device *dev)
@@ -1267,7 +1266,7 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +
 +static int __init eth_init_module(void)
 +{
-+	if (!(ixp4xx_read_fuses() & IXP4XX_FUSE_NPEB_ETH0))
++	if (!(ixp4xx_read_feature_bits() & IXP4XX_FEATURE_NPEB_ETH0))
 +		return -ENOSYS;
 +
 +	/* All MII PHY accesses use NPE-B Ethernet registers */
@@ -1290,8 +1289,8 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
 +module_exit(eth_cleanup_module);
 Index: linux-2.6.24-rc6-armeb/drivers/net/wan/Kconfig
 ===================================================================
---- linux-2.6.24-rc6-armeb.orig/drivers/net/wan/Kconfig	2007-10-10 06:01:38.000000000 +0930
-+++ linux-2.6.24-rc6-armeb/drivers/net/wan/Kconfig	2008-01-05 15:49:21.000000000 +1030
+--- linux-2.6.24-rc6-armeb.orig/drivers/net/wan/Kconfig	2008-01-06 06:39:27.000000000 +1030
++++ linux-2.6.24-rc6-armeb/drivers/net/wan/Kconfig	2008-01-06 06:39:30.000000000 +1030
 @@ -334,6 +334,15 @@
  
  	  Say Y if your card supports this feature.
@@ -1310,8 +1309,8 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/wan/Kconfig
  	---help---
 Index: linux-2.6.24-rc6-armeb/drivers/net/wan/Makefile
 ===================================================================
---- linux-2.6.24-rc6-armeb.orig/drivers/net/wan/Makefile	2007-10-10 06:01:38.000000000 +0930
-+++ linux-2.6.24-rc6-armeb/drivers/net/wan/Makefile	2008-01-05 15:49:21.000000000 +1030
+--- linux-2.6.24-rc6-armeb.orig/drivers/net/wan/Makefile	2008-01-06 06:39:27.000000000 +1030
++++ linux-2.6.24-rc6-armeb/drivers/net/wan/Makefile	2008-01-06 06:39:30.000000000 +1030
 @@ -42,6 +42,7 @@
  obj-$(CONFIG_WANXL)		+= wanxl.o
  obj-$(CONFIG_PCI200SYN)		+= pci200syn.o
@@ -1323,7 +1322,7 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/wan/Makefile
 Index: linux-2.6.24-rc6-armeb/drivers/net/wan/ixp4xx_hss.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.24-rc6-armeb/drivers/net/wan/ixp4xx_hss.c	2008-01-05 15:49:21.000000000 +1030
++++ linux-2.6.24-rc6-armeb/drivers/net/wan/ixp4xx_hss.c	2008-01-06 06:39:30.000000000 +1030
 @@ -0,0 +1,1248 @@
 +/*
 + * Intel IXP4xx HSS (synchronous serial port) driver for Linux
@@ -2557,8 +2556,8 @@ Index: linux-2.6.24-rc6-armeb/drivers/net/wan/ixp4xx_hss.c
 +
 +static int __init hss_init_module(void)
 +{
-+	if ((ixp4xx_read_fuses() & (IXP4XX_FUSE_HDLC | IXP4XX_FUSE_HSS)) !=
-+	    (IXP4XX_FUSE_HDLC | IXP4XX_FUSE_HSS))
++	if ((ixp4xx_read_feature_bits() & (IXP4XX_FEATURE_HDLC | IXP4XX_FEATURE_HSS)) !=
++	    (IXP4XX_FEATURE_HDLC | IXP4XX_FEATURE_HSS))
 +		return -ENOSYS;
 +	return platform_driver_register(&drv);
 +}
