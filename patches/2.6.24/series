@@ -1,3 +1,6 @@
+# Fix an upstream compilation error in pata_ixp4xx_cf
+ixp4xx-pata-cf-compile-fix.patch
+
 # Add squashfs 3.3 w/ LZMA compression
 # The squashfs project itself is working to mainstream inclusion.
 squashfs/squashfs-with-lzma.patch
@@ -28,4 +31,3 @@ ixp4xx-i2c-gpio.patch
 # Modify power control behaviour, to allow for auto-power-on mods.
 16-dsmg600-auto-power-on.patch
 17-nas100d-auto-power-on.patch
-
