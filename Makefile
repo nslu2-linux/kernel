@@ -19,21 +19,18 @@ ENDIAN = b
 MAJORVER = 2.6
 
 # Previous Stable
-# BASEVER  = 2.6.18
-# PATCHVER = 2.6.18
-
-# Freecom FSG-3 support 
-# BASEVER  = 2.6.18
-# PATCHVER = 2.6.18-fsg3
-# CROSS_COMPILE = /home/slug/fsg3-toolchain/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
+# BASEVER  = 2.6.21.7
+# PATCHVER = 2.6.21
 
 # Latest Stable
-BASEVER  = 2.6.21.7
-PATCHVER = 2.6.21
+BASEVER  = 2.6.23.12
+PATCHVER = 2.6.23
 
 # Latest Development
-# BASEVER  = 2.6.23.11
-# PATCHVER = 2.6.23
+# BASEVER  = 2.6.23
+# PATCHVER = 2.6.24
+
+# CROSS_COMPILE = /home/slug/angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
 
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
