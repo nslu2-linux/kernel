@@ -11,10 +11,23 @@ squashfs/squashfs-force-O2.patch
 squashfs/squashfs-Kconfig.patch
 squashfs/squashfs-Makefile.patch
 
+# i2c-gpio driver platform support
+ixp4xx-i2c-gpio.patch
+
+# Add Krzysztof Halasa's IXP4XX ethernet driver
+# These patches are currently inline for mainstream inclusion.
+# The 47xx numbers refer to the ARM Patch Tracking System IDs
+# The netdev patch comes from:
+# http://git.kernel.org/?p=linux/kernel/git/chris/linux-2.6.git
+ixp4xx-net-drivers-4712.patch
+ixp4xx-net-drivers-4713.patch
+ixp4xx-net-drivers-4714.patch
+ixp4xx-net-drivers-4715.patch
+ixp4xx-net-drivers-netdev.patch
+
 # Add mini_fo mini fan-out (or 'layered' or 'union mounted') fs.
 # Copied from openwrt patches for 2.6.23, svn revision 10120:
 # https://dev.openwrt.org/browser/trunk/target/linux/generic-2.6/patches-2.6.23/209-mini_fo.patch?rev=10120
-
 mini_fo.patch
 
 # 0?-* patches
@@ -31,22 +44,11 @@ mini_fo.patch
 16-dsmg600-auto-power-on.patch
 17-nas100d-auto-power-on.patch
 
-# 2?-* patches
-# i2c-gpio driver platform support
-21-nslu2-i2c-gpio-driver-support.patch
-22-nas100d-i2c-gpio-driver-support.patch
-25-dsmg600-i2c-gpio-driver-support.patch
-26-ixdp425-i2c-gpio-driver-support.patch
-
 # 3?-* patches
 # i2c rtc automatic setup
 #31-nslu2-i2c-rtc-setup.patch # rtc-x1205.probe=0,0x6f
 #32-nas100d-i2c-rtc-setup.patch # rtc-pcf8563.probe=0,0x51
 #35-dsmg600-i2c-rtc-setup.patch # rtc-pcf8563.probe=0,0x51
-
-# 4?-* patches
-# ixp4xx-net driver patches
-41-ixp4xx-net-drivers.patch
 
 # 5?-* patches
 # Add platform setup code for platform ixp_npe ethernet driver
