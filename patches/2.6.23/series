@@ -6,7 +6,7 @@
 # Add Completely Fair Scheduler (is mainstream in 2.6.24)
 # This is the official backport, from:
 # http://people.redhat.com/mingo/cfs-scheduler/sched-cfs-v2.6.23.12-v24.1.patch
-sched-cfs-v2.6.23.12-v24.1.patch
+#sched-cfs-v2.6.23.12-v24.1.patch
 
 # Add squashfs 3.3 w/ LZMA compression
 # The squashfs project itself is working to mainstream inclusion.
