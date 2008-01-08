@@ -1,6 +1,7 @@
-diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/fsg-pci.c linux-2.6.23/arch/arm/mach-ixp4xx/fsg-pci.c
---- linux-2.6.23.orig/arch/arm/mach-ixp4xx/fsg-pci.c	1969-12-31 18:00:00.000000000 -0600
-+++ linux-2.6.23/arch/arm/mach-ixp4xx/fsg-pci.c	2007-10-11 00:55:34.000000000 -0500
+Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-pci.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-pci.c	2008-01-08 15:51:21.000000000 +1030
 @@ -0,0 +1,71 @@
 +/*
 + * arch/arch/mach-ixp4xx/fsg-pci.c
@@ -73,10 +74,11 @@ diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/fsg-pci.c linux-2.6.23/arch/ar
 +}
 +
 +subsys_initcall(fsg_pci_init);
-diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.23/arch/arm/mach-ixp4xx/fsg-setup.c
---- linux-2.6.23.orig/arch/arm/mach-ixp4xx/fsg-setup.c	1969-12-31 18:00:00.000000000 -0600
-+++ linux-2.6.23/arch/arm/mach-ixp4xx/fsg-setup.c	2007-10-11 00:55:34.000000000 -0500
-@@ -0,0 +1,186 @@
+Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c	2008-01-08 15:51:54.000000000 +1030
+@@ -0,0 +1,256 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
 + *
@@ -99,6 +101,7 @@ diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.23/arch/
 +#include <asm/mach-types.h>
 +#include <asm/mach/arch.h>
 +#include <asm/mach/flash.h>
++#include <asm/io.h>
 +
 +static struct flash_platform_data fsg_flash_data = {
 +	.map_name		= "cfi_probe",
@@ -221,16 +224,46 @@ diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.23/arch/
 +	.resource		= fsg_uart_resources,
 +};
 +
++/* Built-in 10/100 Ethernet MAC interfaces */
++static struct eth_plat_info fsg_plat_eth[] = {
++        {
++                .phy            = 5,
++                .rxq            = 3,
++		.txreadyq	= 20,
++        }, {
++                .phy            = 4,
++                .rxq            = 4,
++		.txreadyq	= 21,
++        }
++};
++
++static struct platform_device fsg_eth[] = {
++        {
++                .name                   = "ixp4xx_eth",
++                .id                     = IXP4XX_ETH_NPEB,
++                .dev.platform_data      = fsg_plat_eth,
++        }, {
++                .name                   = "ixp4xx_eth",
++                .id                     = IXP4XX_ETH_NPEC,
++                .dev.platform_data      = fsg_plat_eth + 1,
++        }
++};
++
 +static struct platform_device *fsg_devices[] __initdata = {
 +	&fsg_i2c_gpio,
 +	&fsg_flash,
 +#ifdef CONFIG_LEDS_IXP4XX
 +	&fsg_leds,
 +#endif
++	&fsg_eth[0],
++	&fsg_eth[1],
 +};
 +
 +static void __init fsg_init(void)
 +{
++	uint8_t __iomem *f;
++	int i;
++
 +	ixp4xx_sys_init();
 +
 +	fsg_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
@@ -250,6 +283,45 @@ diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.23/arch/
 +	(void)platform_device_register(&fsg_uart);
 +
 +	platform_add_devices(fsg_devices, ARRAY_SIZE(fsg_devices));
++
++
++	/*
++	 * Map in a portion of the flash and read the MAC addresses.
++	 * Since it is stored in BE in the flash itself, we need to
++	 * byteswap it if we're in LE mode.
++	 */
++	if ((f = ioremap(IXP4XX_EXP_BUS_BASE(0), 0x400000))) {
++#ifdef __ARMEB__
++		for (i = 0; i < 6; i++) {
++			fsg_plat_eth[0].hwaddr[i] = readb(f + 0x3C0422 + i);
++			fsg_plat_eth[1].hwaddr[i] = readb(f + 0x3C043B + i);
++		}
++#else
++		fsg_plat_eth[0].hwaddr[0] = readb(f + 0x3C0422 + 3);
++		fsg_plat_eth[0].hwaddr[1] = readb(f + 0x3C0422 + 2);
++		fsg_plat_eth[0].hwaddr[2] = readb(f + 0x3C0422 + 1);
++		fsg_plat_eth[0].hwaddr[3] = readb(f + 0x3C0422 + 0);
++		fsg_plat_eth[0].hwaddr[4] = readb(f + 0x3C0422 + 7);
++		fsg_plat_eth[0].hwaddr[5] = readb(f + 0x3C0422 + 6);
++
++		fsg_plat_eth[1].hwaddr[0] = readb(f + 0x3C0422 + 3);
++		fsg_plat_eth[1].hwaddr[1] = readb(f + 0x3C0422 + 2);
++		fsg_plat_eth[1].hwaddr[2] = readb(f + 0x3C0422 + 1);
++		fsg_plat_eth[1].hwaddr[3] = readb(f + 0x3C0422 + 0);
++		fsg_plat_eth[1].hwaddr[4] = readb(f + 0x3C0422 + 7);
++		fsg_plat_eth[1].hwaddr[5] = readb(f + 0x3C0422 + 6);
++#endif
++		iounmap(f);
++	}
++	printk(KERN_INFO "FSG: Using MAC address %.2x:%.2x:%.2x:%.2x:%.2x:%.2x for port 0\n",
++	       fsg_plat_eth[0].hwaddr[0], fsg_plat_eth[0].hwaddr[1],
++	       fsg_plat_eth[0].hwaddr[2], fsg_plat_eth[0].hwaddr[3],
++	       fsg_plat_eth[0].hwaddr[4], fsg_plat_eth[0].hwaddr[5]);
++	printk(KERN_INFO "FSG: Using MAC address %.2x:%.2x:%.2x:%.2x:%.2x:%.2x for port 1\n",
++	       fsg_plat_eth[1].hwaddr[0], fsg_plat_eth[1].hwaddr[1],
++	       fsg_plat_eth[1].hwaddr[2], fsg_plat_eth[1].hwaddr[3],
++	       fsg_plat_eth[1].hwaddr[4], fsg_plat_eth[1].hwaddr[5]);
++
 +}
 +
 +MACHINE_START(FSG, "Freecom FSG-3")
@@ -263,10 +335,11 @@ diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/fsg-setup.c linux-2.6.23/arch/
 +	.init_machine	= fsg_init,
 +MACHINE_END
 +
-diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/Kconfig linux-2.6.23/arch/arm/mach-ixp4xx/Kconfig
---- linux-2.6.23.orig/arch/arm/mach-ixp4xx/Kconfig	2007-10-09 15:31:38.000000000 -0500
-+++ linux-2.6.23/arch/arm/mach-ixp4xx/Kconfig	2007-10-11 00:55:34.000000000 -0500
-@@ -125,6 +125,15 @@ config	ARCH_IXDP4XX
+Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Kconfig
+===================================================================
+--- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/Kconfig	2008-01-08 15:22:07.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Kconfig	2008-01-08 15:51:21.000000000 +1030
+@@ -125,6 +125,15 @@
  	depends on ARCH_IXDP425 || MACH_IXDP465 || MACH_KIXRP435
  	default y
  
@@ -282,10 +355,11 @@ diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/Kconfig linux-2.6.23/arch/arm/
  #
  # Certain registers and IRQs are only enabled if supporting IXP465 CPUs
  #
-diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/Makefile linux-2.6.23/arch/arm/mach-ixp4xx/Makefile
---- linux-2.6.23.orig/arch/arm/mach-ixp4xx/Makefile	2007-10-09 15:31:38.000000000 -0500
-+++ linux-2.6.23/arch/arm/mach-ixp4xx/Makefile	2007-10-11 00:55:34.000000000 -0500
-@@ -15,6 +15,7 @@ obj-pci-$(CONFIG_MACH_NAS100D)		+= nas10
+Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Makefile
+===================================================================
+--- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2008-01-08 15:22:07.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Makefile	2008-01-08 15:51:21.000000000 +1030
+@@ -15,6 +15,7 @@
  obj-pci-$(CONFIG_MACH_DSMG600)		+= dsmg600-pci.o
  obj-pci-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-pci.o
  obj-pci-$(CONFIG_MACH_WG302V2)		+= wg302v2-pci.o
@@ -293,16 +367,18 @@ diff -uprN linux-2.6.23.orig/arch/arm/mach-ixp4xx/Makefile linux-2.6.23/arch/arm
  
  obj-y	+= common.o
  
-@@ -28,5 +29,6 @@ obj-$(CONFIG_MACH_NAS100D)	+= nas100d-se
+@@ -28,6 +29,7 @@
  obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
  obj-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-setup.o
  obj-$(CONFIG_MACH_WG302V2)	+= wg302v2-setup.o
 +obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o
  
  obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
-diff -uprN linux-2.6.23.orig/include/asm-arm/arch-ixp4xx/fsg.h linux-2.6.23/include/asm-arm/arch-ixp4xx/fsg.h
---- linux-2.6.23.orig/include/asm-arm/arch-ixp4xx/fsg.h	1969-12-31 18:00:00.000000000 -0600
-+++ linux-2.6.23/include/asm-arm/arch-ixp4xx/fsg.h	2007-10-11 00:55:34.000000000 -0500
+ obj-$(CONFIG_IXP4XX_QMGR)	+= ixp4xx_qmgr.o
+Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/fsg.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/fsg.h	2008-01-08 15:51:21.000000000 +1030
 @@ -0,0 +1,74 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/fsg.h
@@ -378,9 +454,10 @@ diff -uprN linux-2.6.23.orig/include/asm-arm/arch-ixp4xx/fsg.h linux-2.6.23/incl
 +#define	FSG_IDE_CTRL_PORT	0xFFFE10FC
 +#define	FSG_IDE_ERROR_PORT	0xFFFE10E2
 +*/
-diff -uprN linux-2.6.23.orig/include/asm-arm/arch-ixp4xx/hardware.h linux-2.6.23/include/asm-arm/arch-ixp4xx/hardware.h
---- linux-2.6.23.orig/include/asm-arm/arch-ixp4xx/hardware.h	2007-10-09 15:31:38.000000000 -0500
-+++ linux-2.6.23/include/asm-arm/arch-ixp4xx/hardware.h	2007-10-11 00:55:34.000000000 -0500
+Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/hardware.h
+===================================================================
+--- linux-2.6.23.12-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-08 15:22:07.000000000 +1030
++++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-08 15:51:21.000000000 +1030
 @@ -45,5 +45,6 @@
  #include "nslu2.h"
  #include "nas100d.h"
@@ -388,9 +465,10 @@ diff -uprN linux-2.6.23.orig/include/asm-arm/arch-ixp4xx/hardware.h linux-2.6.23
 +#include "fsg.h"
  
  #endif  /* _ASM_ARCH_HARDWARE_H */
-diff -uprN linux-2.6.23.orig/include/asm-arm/arch-ixp4xx/irqs.h linux-2.6.23/include/asm-arm/arch-ixp4xx/irqs.h
---- linux-2.6.23.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-10-09 15:31:38.000000000 -0500
-+++ linux-2.6.23/include/asm-arm/arch-ixp4xx/irqs.h	2007-10-11 00:55:34.000000000 -0500
+Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/irqs.h
+===================================================================
+--- linux-2.6.23.12-armeb.orig/include/asm-arm/arch-ixp4xx/irqs.h	2008-01-08 15:21:58.000000000 +1030
++++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/irqs.h	2008-01-08 15:51:21.000000000 +1030
 @@ -128,4 +128,17 @@
  #define        IRQ_DSMG600_PCI_INTE    IRQ_IXP4XX_GPIO7
  #define        IRQ_DSMG600_PCI_INTF    IRQ_IXP4XX_GPIO6
