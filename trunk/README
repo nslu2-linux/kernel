@@ -3,16 +3,12 @@ They enable various ixp4xx-specific patches, including an open source
 ethernet driver and improved board support.
 
 =STABLE=
-2.6.21.6 + Christian's IXP_NPE 0.3.1
+2.6.21.7 + Christian's IXP_NPE 0.3.1
 Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
 
 =DEVEL=
-2.6.22 + Krzysztof's IXP_NPE (to be integrated)
-2.6.23 + Krzysztof's IXP_NPE (to be integrated)
-Should eventually support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
-The new IXP driver will not be integrated until it can load
-microcode from an MTD partition.
-Section mismatch warnings to be fixed (pointed out on l-a-k)
+2.6.23 + Krzysztof's IXP_NPE
+Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3
 
 Other kernel versions present here are maintained for reference
 purposes and should be considered deprecated.
