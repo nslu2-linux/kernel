@@ -1,7 +1,7 @@
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-pci.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-pci.c	2008-01-08 15:51:21.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-pci.c	2008-01-08 22:26:34.000000000 +1030
 @@ -0,0 +1,71 @@
 +/*
 + * arch/arch/mach-ixp4xx/fsg-pci.c
@@ -77,8 +77,8 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-pci.c
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c	2008-01-08 15:51:54.000000000 +1030
-@@ -0,0 +1,256 @@
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c	2008-01-08 22:26:34.000000000 +1030
+@@ -0,0 +1,220 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
 + *
@@ -96,6 +96,7 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 +#include <linux/serial.h>
 +#include <linux/serial_8250.h>
 +#include <linux/leds.h>
++#include <linux/reboot.h>
 +#include <linux/i2c-gpio.h>
 +
 +#include <asm/mach-types.h>
@@ -132,54 +133,6 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 +		.platform_data	= &fsg_i2c_gpio_data,
 +	},
 +};
-+
-+#ifdef CONFIG_LEDS_CLASS
-+static struct resource fsg_led_resources[] = {
-+	{
-+		.name           = "ring",
-+		.start          = FSG_LED_RING_GPIO,
-+		.end            = FSG_LED_RING_GPIO,
-+		.flags          = IXP4XX_GPIO_HIGH,
-+	},
-+	{
-+		.name           = "sync",
-+		.start          = FSG_LED_SYNC_GPIO,
-+		.end            = FSG_LED_SYNC_GPIO,
-+		.flags          = IXP4XX_GPIO_HIGH,
-+	},
-+	{
-+		.name           = "usb",
-+		.start          = FSG_LED_USB_GPIO,
-+		.end            = FSG_LED_USB_GPIO,
-+		.flags          = IXP4XX_GPIO_HIGH,
-+	},
-+	{
-+		.name           = "sata",
-+		.start          = FSG_LED_SATA_GPIO,
-+		.end            = FSG_LED_SATA_GPIO,
-+		.flags          = IXP4XX_GPIO_HIGH,
-+	},
-+	{
-+		.name           = "wan",
-+		.start          = FSG_LED_WAN_GPIO,
-+		.end            = FSG_LED_WAN_GPIO,
-+		.flags          = IXP4XX_GPIO_HIGH,
-+	},
-+	{
-+		.name           = "wlan",
-+		.start          = FSG_LED_WLAN_GPIO,
-+		.end            = FSG_LED_WLAN_GPIO,
-+		.flags          = IXP4XX_GPIO_HIGH,
-+	},
-+};
-+
-+static struct platform_device fsg_leds = {
-+        .name                   = "IXP4XX-GPIO-LED",
-+        .id                     = -1,
-+        .num_resources          = ARRAY_SIZE(fsg_led_resources),
-+        .resource               = fsg_led_resources,
-+};
-+#endif
 +
 +static struct resource fsg_uart_resources[] = {
 +	{
@@ -224,6 +177,11 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 +	.resource		= fsg_uart_resources,
 +};
 +
++static struct platform_device fsg_leds = {
++	.name		= "fsg-led",
++	.id		= -1,
++};
++
 +/* Built-in 10/100 Ethernet MAC interfaces */
 +static struct eth_plat_info fsg_plat_eth[] = {
 +        {
@@ -252,12 +210,16 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 +static struct platform_device *fsg_devices[] __initdata = {
 +	&fsg_i2c_gpio,
 +	&fsg_flash,
-+#ifdef CONFIG_LEDS_IXP4XX
 +	&fsg_leds,
-+#endif
 +	&fsg_eth[0],
 +	&fsg_eth[1],
 +};
++
++static void fsg_power_off(void)
++{
++	printk("Restarting system.\n");
++	machine_restart(NULL);
++}
 +
 +static void __init fsg_init(void)
 +{
@@ -265,6 +227,8 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 +	int i;
 +
 +	ixp4xx_sys_init();
++
++	pm_power_off = fsg_power_off;
 +
 +	fsg_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
 +	fsg_flash_resource.end =
@@ -337,8 +301,8 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 +
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/Kconfig	2008-01-08 15:22:07.000000000 +1030
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Kconfig	2008-01-08 15:51:21.000000000 +1030
+--- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/Kconfig	2008-01-08 22:26:31.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Kconfig	2008-01-08 22:26:34.000000000 +1030
 @@ -125,6 +125,15 @@
  	depends on ARCH_IXDP425 || MACH_IXDP465 || MACH_KIXRP435
  	default y
@@ -357,28 +321,28 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Kconfig
  #
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2008-01-08 15:22:07.000000000 +1030
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Makefile	2008-01-08 15:51:21.000000000 +1030
-@@ -15,6 +15,7 @@
+--- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2008-01-08 22:26:31.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Makefile	2008-01-08 22:26:34.000000000 +1030
+@@ -13,6 +13,7 @@
+ obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
+ obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
  obj-pci-$(CONFIG_MACH_DSMG600)		+= dsmg600-pci.o
++obj-pci-$(CONFIG_MACH_FSG)		+= fsg-pci.o
  obj-pci-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-pci.o
  obj-pci-$(CONFIG_MACH_WG302V2)		+= wg302v2-pci.o
-+obj-pci-$(CONFIG_MACH_FSG)		+= fsg-pci.o
  
- obj-y	+= common.o
- 
-@@ -28,6 +29,7 @@
+@@ -26,6 +27,7 @@
+ obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
+ obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
  obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
++obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o fsg-power.o
  obj-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-setup.o
  obj-$(CONFIG_MACH_WG302V2)	+= wg302v2-setup.o
-+obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o
  
- obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
- obj-$(CONFIG_IXP4XX_QMGR)	+= ixp4xx_qmgr.o
 Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/fsg.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/fsg.h	2008-01-08 15:51:21.000000000 +1030
++++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/fsg.h	2008-01-08 22:26:34.000000000 +1030
 @@ -0,0 +1,74 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/fsg.h
@@ -456,8 +420,8 @@ Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/fsg.h
 +*/
 Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.23.12-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-08 15:22:07.000000000 +1030
-+++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-08 15:51:21.000000000 +1030
+--- linux-2.6.23.12-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-08 22:26:31.000000000 +1030
++++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-08 22:26:34.000000000 +1030
 @@ -45,5 +45,6 @@
  #include "nslu2.h"
  #include "nas100d.h"
@@ -467,8 +431,8 @@ Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/hardware.h
  #endif  /* _ASM_ARCH_HARDWARE_H */
 Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.23.12-armeb.orig/include/asm-arm/arch-ixp4xx/irqs.h	2008-01-08 15:21:58.000000000 +1030
-+++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/irqs.h	2008-01-08 15:51:21.000000000 +1030
+--- linux-2.6.23.12-armeb.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-12-19 08:25:57.000000000 +1030
++++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/irqs.h	2008-01-08 22:26:34.000000000 +1030
 @@ -128,4 +128,17 @@
  #define        IRQ_DSMG600_PCI_INTE    IRQ_IXP4XX_GPIO7
  #define        IRQ_DSMG600_PCI_INTF    IRQ_IXP4XX_GPIO6
@@ -487,3 +451,95 @@ Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/irqs.h
 +*/
 +
  #endif
+Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-power.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-power.c	2008-01-08 22:26:34.000000000 +1030
+@@ -0,0 +1,87 @@
++/*
++ * arch/arm/mach-ixp4xx/fsg-power.c
++ *
++ * FSG Power/Reset driver
++ *
++ * Copyright (C) 2008 Rod Whitby <rod@whitby.id.au>
++ *
++ * based on nslu2-power.c
++ *  Copyright (C) 2005 Tower Technologies
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/module.h>
++#include <linux/reboot.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/kernel.h>
++
++#include <asm/mach-types.h>
++
++static irqreturn_t fsg_power_handler(int irq, void *dev_id)
++{
++	/* Signal init to do the ctrlaltdel action, this will bypass init if
++	 * it hasn't started and do a kernel_restart.
++	 */
++	ctrl_alt_del();
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t fsg_reset_handler(int irq, void *dev_id)
++{
++	/* This is the paper-clip reset, it shuts the machine down directly.
++	 */
++	machine_power_off();
++
++	return IRQ_HANDLED;
++}
++
++static int __init fsg_power_init(void)
++{
++	if (!(machine_is_fsg()))
++		return 0;
++
++	set_irq_type(FSG_RB_IRQ, IRQT_LOW);
++	set_irq_type(FSG_SB_IRQ, IRQT_LOW);
++
++	if (request_irq(FSG_RB_IRQ, &fsg_reset_handler,
++		IRQF_DISABLED, "FSG reset button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
++			FSG_RB_IRQ);
++
++		return -EIO;
++	}
++
++	if (request_irq(FSG_SB_IRQ, &fsg_power_handler,
++		IRQF_DISABLED, "FSG power button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Power Button IRQ %d not available\n",
++			FSG_SB_IRQ);
++
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static void __exit fsg_power_exit(void)
++{
++	if (!(machine_is_fsg()))
++		return;
++
++	free_irq(FSG_SB_IRQ, NULL);
++	free_irq(FSG_RB_IRQ, NULL);
++}
++
++module_init(fsg_power_init);
++module_exit(fsg_power_exit);
++
++MODULE_AUTHOR("Rod Whitby <rod@whitby.id.au>");
++MODULE_DESCRIPTION("FSG Power/Reset driver");
++MODULE_LICENSE("GPL");
