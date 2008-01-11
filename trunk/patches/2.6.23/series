@@ -50,8 +50,6 @@ ixp4xx-net-drivers-nas100d.patch
 # Patches for upstream next cycle
 12-velocity-BE.patch
 
-15-nas100d-pata-artop-single-port.patch
-
 16-dsmg600-auto-power-on.patch
 17-nas100d-auto-power-on.patch
 
