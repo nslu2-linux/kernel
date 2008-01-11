@@ -1,7 +1,7 @@
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-pci.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-pci.c	2008-01-08 22:26:34.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-pci.c	2008-01-09 12:49:07.000000000 +1030
 @@ -0,0 +1,71 @@
 +/*
 + * arch/arch/mach-ixp4xx/fsg-pci.c
@@ -77,7 +77,7 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-pci.c
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c	2008-01-08 22:26:34.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c	2008-01-09 12:49:07.000000000 +1030
 @@ -0,0 +1,220 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
@@ -301,8 +301,8 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-setup.c
 +
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Kconfig
 ===================================================================
---- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/Kconfig	2008-01-08 22:26:31.000000000 +1030
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Kconfig	2008-01-08 22:26:34.000000000 +1030
+--- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/Kconfig	2008-01-09 12:49:04.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Kconfig	2008-01-09 12:49:07.000000000 +1030
 @@ -125,6 +125,15 @@
  	depends on ARCH_IXDP425 || MACH_IXDP465 || MACH_KIXRP435
  	default y
@@ -321,28 +321,28 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Kconfig
  #
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2008-01-08 22:26:31.000000000 +1030
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Makefile	2008-01-08 22:26:34.000000000 +1030
-@@ -13,6 +13,7 @@
- obj-pci-$(CONFIG_MACH_NSLU2)		+= nslu2-pci.o
- obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
+--- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2008-01-09 12:49:04.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/Makefile	2008-01-09 12:49:07.000000000 +1030
+@@ -15,6 +15,7 @@
  obj-pci-$(CONFIG_MACH_DSMG600)		+= dsmg600-pci.o
-+obj-pci-$(CONFIG_MACH_FSG)		+= fsg-pci.o
  obj-pci-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-pci.o
  obj-pci-$(CONFIG_MACH_WG302V2)		+= wg302v2-pci.o
++obj-pci-$(CONFIG_MACH_FSG)		+= fsg-pci.o
  
-@@ -26,6 +27,7 @@
- obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
- obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
+ obj-y	+= common.o
+ 
+@@ -28,6 +29,7 @@
  obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
-+obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o fsg-power.o
  obj-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-setup.o
  obj-$(CONFIG_MACH_WG302V2)	+= wg302v2-setup.o
++obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o fsg-power.o
  
+ obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
+ obj-$(CONFIG_IXP4XX_QMGR)	+= ixp4xx_qmgr.o
 Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/fsg.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/fsg.h	2008-01-08 22:26:34.000000000 +1030
++++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/fsg.h	2008-01-09 12:49:07.000000000 +1030
 @@ -0,0 +1,74 @@
 +/*
 + * include/asm-arm/arch-ixp4xx/fsg.h
@@ -420,8 +420,8 @@ Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/fsg.h
 +*/
 Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/hardware.h
 ===================================================================
---- linux-2.6.23.12-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-08 22:26:31.000000000 +1030
-+++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-08 22:26:34.000000000 +1030
+--- linux-2.6.23.12-armeb.orig/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-09 12:49:04.000000000 +1030
++++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/hardware.h	2008-01-09 12:49:07.000000000 +1030
 @@ -45,5 +45,6 @@
  #include "nslu2.h"
  #include "nas100d.h"
@@ -431,8 +431,8 @@ Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/hardware.h
  #endif  /* _ASM_ARCH_HARDWARE_H */
 Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/irqs.h
 ===================================================================
---- linux-2.6.23.12-armeb.orig/include/asm-arm/arch-ixp4xx/irqs.h	2007-12-19 08:25:57.000000000 +1030
-+++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/irqs.h	2008-01-08 22:26:34.000000000 +1030
+--- linux-2.6.23.12-armeb.orig/include/asm-arm/arch-ixp4xx/irqs.h	2008-01-09 12:49:04.000000000 +1030
++++ linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/irqs.h	2008-01-09 12:49:07.000000000 +1030
 @@ -128,4 +128,17 @@
  #define        IRQ_DSMG600_PCI_INTE    IRQ_IXP4XX_GPIO7
  #define        IRQ_DSMG600_PCI_INTF    IRQ_IXP4XX_GPIO6
@@ -454,7 +454,7 @@ Index: linux-2.6.23.12-armeb/include/asm-arm/arch-ixp4xx/irqs.h
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-power.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-power.c	2008-01-08 22:26:34.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/fsg-power.c	2008-01-09 12:49:07.000000000 +1030
 @@ -0,0 +1,87 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-power.c
