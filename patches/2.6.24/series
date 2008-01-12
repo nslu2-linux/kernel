@@ -1,5 +1,10 @@
 # Fix an upstream compilation error in pata_ixp4xx_cf
+# This has already been submitted via the ata maintainer
 ixp4xx-pata-cf-compile-fix.patch
+
+# i2c-gpio driver platform support
+# This has already been submitted via the i2c maintainer
+ixp4xx-i2c-gpio.patch
 
 # Add squashfs 3.3 w/ LZMA compression
 # The squashfs project itself is working to mainstream inclusion.
@@ -9,25 +14,29 @@ squashfs/squashfs-force-O2.patch
 squashfs/squashfs-Kconfig.patch
 squashfs/squashfs-Makefile.patch
 
+# Add mini_fo mini fan-out (or 'layered' or 'union mounted') fs.
+# Copied from openwrt patches for 2.6.23, svn revision 10120:
+# https://dev.openwrt.org/browser/trunk/target/linux/generic-2.6/patches-2.6.23/209-mini_fo.patch?rev=10120
+mini_fo.patch
+
+# Migrate RTC drivers to new I2C api
+rtc-x1205-new-style.patch
+#rtc-pcf8563-new-style.patch
+ixp4xx-nslu2-i2c-info.patch
+ixp4xx-nas100d-i2c-info.patch
+ixp4xx-dsmg600-i2c-info.patch
+
+# Fix power handling on dsmg600 and nas100d
+dsmg600-auto-power-on.patch
+nas100d-auto-power-on.patch
+
 # Add Krzysztof Halasa's IXP4XX ethernet driver
 # These patches are currently inline for mainstream inclusion.
-# The 47xx numbers refer to the Patch Tracking System IDs
-ixp4xx-net-drivers-4712.patch
-ixp4xx-net-drivers-4713.patch
-ixp4xx-net-drivers-4714.patch
-ixp4xx-net-drivers-4715.patch
+# The patch comes from:
+# http://git.kernel.org/?p=linux/kernel/git/chris/linux-2.6.git
+# ixp4xx-net-drivers.patch
+# ixp4xx-net-drivers-nslu2.patch
+# ixp4xx-net-drivers-nas100d.patch
 
-# This one currently does not apply, due to netdev napi changes
-##ixp4xx-net-drivers-netdev.patch
-
-# Migrate the rest of the devices using the deprecated i2c-ixp4xx
-# driver to the i2c-gpio driver.
-ixp4xx-i2c-gpio.patch
-
-# Remove the deprecated driver.
-# Disable this patch for now, cause it conflicts with the ethernet driver.
-#ixp4xx-remove-i2c-pins.patch
-
-# Modify power control behaviour, to allow for auto-power-on mods.
-16-dsmg600-auto-power-on.patch
-17-nas100d-auto-power-on.patch
+# Add board support the Freecom FSG-3
+# ixp4xx-fsg-board-support.patch
