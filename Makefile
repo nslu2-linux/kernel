@@ -178,7 +178,6 @@ menuconfig: linux-${SNAPSHOT}-${ARCH}/.config
 ifeq (${SNAPSHOT},${BASEVER})
 linux-${SNAPSHOT}-${ARCH}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch \
 		patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${SNAPSHOT}-${ARCH} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
@@ -191,7 +190,6 @@ ifeq (${REVISION},${SNAPSHOT})
 linux-${SNAPSHOT}-${ARCH}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch \
 		patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${SNAPSHOT}-${ARCH} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
@@ -206,7 +204,6 @@ linux-${SNAPSHOT}-${ARCH}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
 		downloads/patch-${SNAPSHOT}.bz2 \
-		patches/${PATCHVER}/series patches/${PATCHVER}/??-*.patch \
 		patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${SNAPSHOT}-${ARCH} ] || \
 	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
