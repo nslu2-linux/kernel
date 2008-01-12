@@ -40,6 +40,10 @@ ixp4xx-net-drivers-nas100d.patch
 dsmg600-auto-power-on.patch
 nas100d-auto-power-on.patch
 
+# Migrate RTC drivers to new I2C api
+rtc-x1205-new-style.patch
+ixp4xx-nslu2-i2c-info.patch
+
 # 0?-* patches
 # Patches to be submitted upstream
 00-binutils-buildid-arm.patch
@@ -53,9 +57,8 @@ nas100d-auto-power-on.patch
 # Not for upstream
 90-increase-entropy-pools.patch
 
-# These should eventually be replaced by 3?-* patches,
+# These should eventually be replaced,
 # but the respective RTC drivers need to be updated first.
-91-nslu2-rtc-fixup.patch
 92-nas100d-rtc-fixup.patch
 95-dsmg600-rtc-fixup.patch
 
