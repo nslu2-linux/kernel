@@ -21,14 +21,14 @@ mini_fo.patch
 
 # Migrate RTC drivers to new I2C api
 rtc-x1205-new-style.patch
-#rtc-pcf8563-new-style.patch
+rtc-pcf8563-new-style.patch
 ixp4xx-nslu2-i2c-info.patch
 ixp4xx-nas100d-i2c-info.patch
 ixp4xx-dsmg600-i2c-info.patch
 
 # Fix power handling on dsmg600 and nas100d
-dsmg600-auto-power-on.patch
 nas100d-auto-power-on.patch
+dsmg600-auto-power-on.patch
 
 # Add Krzysztof Halasa's IXP4XX ethernet driver
 # These patches are currently inline for mainstream inclusion.
