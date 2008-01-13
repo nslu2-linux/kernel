@@ -1,7 +1,7 @@
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2008-01-12 11:52:20.000000000 +1030
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c	2008-01-12 11:59:02.000000000 +1030
+--- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2008-01-14 07:48:28.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c	2008-01-14 07:50:22.000000000 +1030
 @@ -16,6 +16,7 @@
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
@@ -10,7 +10,7 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
  #include <linux/i2c-gpio.h>
  
  #include <asm/mach-types.h>
-@@ -40,6 +41,12 @@
+@@ -39,6 +40,12 @@
  	.resource		= &nas100d_flash_resource,
  };
  
@@ -23,12 +23,13 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
  #ifdef CONFIG_LEDS_IXP4XX
  static struct resource nas100d_led_resources[] = {
  	{
-@@ -188,6 +195,8 @@
+@@ -157,6 +164,9 @@
  
- 	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
+ 	pm_power_off = nas100d_power_off;
  
 +	i2c_register_board_info(0, nas100d_i2c_board_info,
 +				ARRAY_SIZE(nas100d_i2c_board_info));
- 
++
  	/*
- 	 * Map in a portion of the flash and read the MAC address.
+ 	 * This is only useful on a modified machine, but it is valuable
+ 	 * to have it first in order to see debug messages, and so that

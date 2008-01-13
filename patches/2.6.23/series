@@ -28,6 +28,13 @@ mini_fo.patch
 # This has already been submitted via the i2c maintainer
 ixp4xx-i2c-gpio.patch
 
+# Migrate RTC drivers to new I2C api
+rtc-x1205-new-style.patch
+rtc-pcf8563-new-style.patch
+ixp4xx-nslu2-i2c-info.patch
+ixp4xx-nas100d-i2c-info.patch
+ixp4xx-dsmg600-i2c-info.patch
+
 # Add Krzysztof Halasa's IXP4XX ethernet driver
 # These patches are currently inline for mainstream inclusion.
 # The patch comes from:
@@ -40,9 +47,6 @@ ixp4xx-net-drivers-nas100d.patch
 dsmg600-auto-power-on.patch
 nas100d-auto-power-on.patch
 
-# Migrate RTC drivers to new I2C api
-rtc-x1205-new-style.patch
-ixp4xx-nslu2-i2c-info.patch
 
 # 0?-* patches
 # Patches to be submitted upstream
@@ -57,13 +61,9 @@ ixp4xx-nslu2-i2c-info.patch
 # Not for upstream
 90-increase-entropy-pools.patch
 
-# These should eventually be replaced,
-# but the respective RTC drivers need to be updated first.
-92-nas100d-rtc-fixup.patch
-95-dsmg600-rtc-fixup.patch
-
 # The kexec-cmdline patch depends on the 80-kexec-atags.patch
 96-kexec-cmdline.patch
+
 
 # Add board support the Freecom FSG-3
 ixp4xx-fsg-board-support.patch
