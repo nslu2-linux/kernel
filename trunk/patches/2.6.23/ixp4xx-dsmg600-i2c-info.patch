@@ -1,7 +1,7 @@
 Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/dsmg600-setup.c
 ===================================================================
---- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/dsmg600-setup.c	2008-01-12 11:58:32.000000000 +1030
-+++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/dsmg600-setup.c	2008-01-12 12:00:37.000000000 +1030
+--- linux-2.6.23.12-armeb.orig/arch/arm/mach-ixp4xx/dsmg600-setup.c	2008-01-14 07:48:28.000000000 +1030
++++ linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/dsmg600-setup.c	2008-01-14 07:50:50.000000000 +1030
 @@ -14,6 +14,7 @@
  #include <linux/kernel.h>
  #include <linux/serial.h>
@@ -23,13 +23,13 @@ Index: linux-2.6.23.12-armeb/arch/arm/mach-ixp4xx/dsmg600-setup.c
  #ifdef CONFIG_LEDS_CLASS
  static struct resource dsmg600_led_resources[] = {
  	{
-@@ -166,6 +173,9 @@
+@@ -158,6 +165,9 @@
  
- 	platform_add_devices(dsmg600_devices, ARRAY_SIZE(dsmg600_devices));
+ 	pm_power_off = dsmg600_power_off;
  
 +	i2c_register_board_info(0, dsmg600_i2c_board_info,
 +				ARRAY_SIZE(dsmg600_i2c_board_info));
 +
- #ifdef CONFIG_LEDS_CLASS
-         /* We don't care whether or not this works. */
-         (void)platform_device_register(&dsmg600_leds);
+ 	/* The UART is required on the DSM-G600 (Redboot cannot use the
+ 	 * NIC) -- do it here so that it does *not* get removed if
+ 	 * platform_add_devices fails!
