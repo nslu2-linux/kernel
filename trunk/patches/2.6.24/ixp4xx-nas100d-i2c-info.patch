@@ -1,7 +1,7 @@
 Index: linux-2.6.24-rc7-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
 ===================================================================
---- linux-2.6.24-rc7-armeb.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2008-01-12 12:38:09.000000000 +1030
-+++ linux-2.6.24-rc7-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c	2008-01-12 12:44:10.000000000 +1030
+--- linux-2.6.24-rc7-armeb.orig/arch/arm/mach-ixp4xx/nas100d-setup.c	2008-01-14 15:49:05.000000000 +1030
++++ linux-2.6.24-rc7-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c	2008-01-14 15:49:36.000000000 +1030
 @@ -16,6 +16,7 @@
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
@@ -23,13 +23,13 @@ Index: linux-2.6.24-rc7-armeb/arch/arm/mach-ixp4xx/nas100d-setup.c
  #ifdef CONFIG_LEDS_IXP4XX
  static struct resource nas100d_led_resources[] = {
  	{
-@@ -165,6 +172,9 @@
- 	(void)platform_device_register(&nas100d_uart);
+@@ -157,6 +164,9 @@
  
- 	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
-+
+ 	pm_power_off = nas100d_power_off;
+ 
 +	i2c_register_board_info(0, nas100d_i2c_board_info,
 +				ARRAY_SIZE(nas100d_i2c_board_info));
- }
- 
- MACHINE_START(NAS100D, "Iomega NAS 100d")
++
+ 	/*
+ 	 * This is only useful on a modified machine, but it is valuable
+ 	 * to have it first in order to see debug messages, and so that
