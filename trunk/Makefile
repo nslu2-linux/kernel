@@ -14,8 +14,8 @@
 #
 
 
-ENDIAN = l
-#ENDIAN = b
+# ENDIAN = l
+ENDIAN = b
 MAJORVER = 2.6
 
 # Previous Stable
@@ -23,24 +23,14 @@ MAJORVER = 2.6
 # PATCHVER = 2.6.21
 
 # Latest Stable
-<<<<<<< .mine
-# BASEVER  = 2.6.21.6
-# PATCHVER = 2.6.21
-=======
 BASEVER  = 2.6.23.12
 PATCHVER = 2.6.23
->>>>>>> .r978
 
 # Latest Development
-<<<<<<< .mine
-BASEVER  = 2.6.22.6
-PATCHVER = 2.6.22
-=======
 # BASEVER  = 2.6.23
 # PATCHVER = 2.6.24
->>>>>>> .r978
 
-# CROSS_COMPILE = /home/slug/angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
+CROSS_COMPILE = /home/slug/angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
 
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
@@ -66,8 +56,8 @@ APEX_SOURCE	= ftp://ftp.buici.com/pub/apex/apex-${APEX_REVISION}.tar.gz
 
 ARM_KERNEL_SHIM_SOURCE = ftp://ftp.buici.com/pub/arm/arm-kernel-shim/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz
 
-CROSS_COMPILE = ${ARCH}-linux-gnu-
-#CROSS_COMPILE ?= ${ARCH}-linux-
+# CROSS_COMPILE ?= ${ARCH}-linux-gnu-
+CROSS_COMPILE ?= ${ARCH}-linux-
 
 ifdef CROSS_COMPILE
 CROSS_COMPILE_FLAGS = CROSS_COMPILE=${CROSS_COMPILE}
