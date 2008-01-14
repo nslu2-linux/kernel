@@ -8,16 +8,16 @@ ixp4xx-i2c-gpio.patch
 
 # Add squashfs 3.3 w/ LZMA compression
 # The squashfs project itself is working to mainstream inclusion.
-squashfs/squashfs-with-lzma.patch
-squashfs/squashfs-initrd.patch
-squashfs/squashfs-force-O2.patch
-squashfs/squashfs-Kconfig.patch
-squashfs/squashfs-Makefile.patch
+# squashfs/squashfs-with-lzma.patch
+# squashfs/squashfs-initrd.patch
+# squashfs/squashfs-force-O2.patch
+# squashfs/squashfs-Kconfig.patch
+# squashfs/squashfs-Makefile.patch
 
 # Add mini_fo mini fan-out (or 'layered' or 'union mounted') fs.
 # Copied from openwrt patches for 2.6.23, svn revision 10120:
 # https://dev.openwrt.org/browser/trunk/target/linux/generic-2.6/patches-2.6.23/209-mini_fo.patch?rev=10120
-mini_fo.patch
+# mini_fo.patch
 
 # Migrate RTC drivers to new I2C api
 rtc-x1205-new-style.patch
@@ -34,9 +34,12 @@ dsmg600-auto-power-on.patch
 # These patches are currently inline for mainstream inclusion.
 # The patch comes from:
 # http://git.kernel.org/?p=linux/kernel/git/chris/linux-2.6.git
-# ixp4xx-net-drivers.patch
-# ixp4xx-net-drivers-nslu2.patch
-# ixp4xx-net-drivers-nas100d.patch
+ixp4xx-feature-bits.patch
+ixp4xx-qmgr-npe.patch
+ixp4xx-net-headers.patch
+ixp4xx-net-drivers.patch
+ixp4xx-net-drivers-nslu2.patch
+ixp4xx-net-drivers-nas100d.patch
 
 # Add board support the Freecom FSG-3
-# ixp4xx-fsg-board-support.patch
+ixp4xx-fsg-board-support.patch
