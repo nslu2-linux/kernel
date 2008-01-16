@@ -23,7 +23,7 @@ MAJORVER = 2.6
 # PATCHVER = 2.6.21
 
 # Latest Stable
-BASEVER  = 2.6.23.12
+BASEVER  = 2.6.23.14
 PATCHVER = 2.6.23
 
 # Latest Development
