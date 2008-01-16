@@ -1,7 +1,3 @@
-# Fix an upstream compilation error in pata_ixp4xx_cf
-# This has already been submitted via the ata maintainer
-ixp4xx-pata-cf-compile-fix.patch
-
 # i2c-gpio driver platform support
 # This has already been submitted via the i2c maintainer
 ixp4xx-i2c-gpio.patch
