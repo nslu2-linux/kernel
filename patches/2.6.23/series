@@ -24,6 +24,9 @@ kallsyms-missing-include.patch
 # https://dev.openwrt.org/browser/trunk/target/linux/generic-2.6/patches-2.6.23/209-mini_fo.patch?rev=10120
 mini_fo.patch
 
+# This has been submitted to l-a-k for comment
+ixp4xx-missing-bitops.patch
+
 # i2c-gpio driver platform support
 # This has already been submitted via the i2c maintainer
 ixp4xx-i2c-gpio.patch
