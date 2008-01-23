@@ -2,6 +2,9 @@
 # This has already been submitted via the i2c maintainer
 ixp4xx-i2c-gpio.patch
 
+# This has been submitted to l-a-k for comment
+ixp4xx-missing-bitops.patch
+
 # Add squashfs 3.3 w/ LZMA compression
 # The squashfs project itself is working to mainstream inclusion.
 # squashfs/squashfs-with-lzma.patch
