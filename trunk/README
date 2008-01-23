@@ -3,11 +3,11 @@ They enable various ixp4xx-specific patches, including an open source
 ethernet driver and improved board support.
 
 =STABLE=
-2.6.21.7 + Christian's IXP_NPE 0.3.1
-Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3, Loft
+2.6.23.14 + Krzysztof's IXP_NPE
+Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3
 
 =DEVEL=
-2.6.23 + Krzysztof's IXP_NPE
+2.6.24 + Krzysztof's IXP_NPE
 Should fully support NSLU2, NAS-100D, DSM-G600, FSG-3
 
 Other kernel versions present here are maintained for reference
