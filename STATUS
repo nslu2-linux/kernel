@@ -1,85 +1,40 @@
-[driver] - patch which adds NSLU2 driver support, all these depend on the
-	basic NSLU2 machine patch.
+ixp4xx-i2c-gpio.patch
+	i2c-gpio driver platform support
+	This has already been submitted via the i2c maintainer
 
-[ARM patch system] - patch already in the ARM patch system
-[l-a-k] - patch submitted via the mailing list, not resubmitted because
-	it appears it is already being handled
-[linux-mtd] - patch submitted to the linux-mtd mailing list (because
-	it is not ARM specific.)
+rtc-x1205-new-style.patch
+rtc-pcf8563-new-style.patch
+ixp4xx-nslu2-i2c-info.patch
+ixp4xx-nas100d-i2c-info.patch
+ixp4xx-dsmg600-i2c-info.patch
+	Migrate RTC drivers to new I2C api
+	Alessandro to submit upstream in the next cycle.
 
-05-nslu2-freq-fixup.patch [l-a-k]
-	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4274/1
+nas100d-auto-power-on.patch
+dsmg600-auto-power-on.patch
+	Fix power handling on dsmg600 and nas100d
+	Rod to submit upstream in the next cycle.
 
-06-dsmg600-upstream-support.patch [l-a-k]
-	http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=4318/2
-	rmk & deepak review comments addressed
+ixp4xx-feature-bits.patch
+ixp4xx-qmgr-npe.patch
+ixp4xx-net-headers.patch
+ixp4xx-net-drivers.patch
+ixp4xx-net-drivers-nslu2.patch
+ixp4xx-net-drivers-nas100d.patch
+	Krzysztof Halasa's IXP4XX ethernet driver
+	These patches are currently inline for mainstream inclusion.
+	http://git.kernel.org/?p=linux/kernel/git/chris/linux-2.6.git
 
-07-trivial-Kconfig-cleanup.patch [l-a-k]
-	Not for upstream till DSM-G600 is applied (may confuse previous patch)
+ixp4xx-fsg-board-support.patch
+	Board support the Freecom FSG-3
+	Rod to submit upstream in the next cycle.
 
-30-ixp4xx-0.3.1-driver.patch
-	driver being actively developed. Developer will probably push
-	upstream when properly tested.
+01-kexec-atags.patch
+96-kexec-cmdline.patch
+	Need to be reworked to track current ARM direction.	
 
-37-ixp4xx-net-driver-fix-mac-handling.patch
-39-ixp4xx-net-driver-mtd-load-fw.patch
-	Should all be submitted to Christian.
+12-velocity-BE.patch
+	Mike to rework for upstream acceptance.
 
-40-avila-setup-mac.patch [l-a-k]
-	Setup required for ixp4xx mac driver on avila.
-	Submit upstream after open source ixp driver.
-
-41-nslu2-setup-mac.patch [l-a-k]
-	Setup required for ixp4xx mac driver on nslu2.
-	Submit upstream after open source ixp driver.
-
-42-nas100d-setup-mac.patch [l-a-k]
-	Setup required for ixp4xx mac driver on nas100d.
-	Submit upstream after open source ixp driver.
-
-43-nslu2-mtd-microcode.patch
-44-nas100d-mtd-microcode.patch
-	??
-
-45-eeprom-new-notifier.patch
-	??
-
-50-leds-arm-cpu-activity.patch
-	Discussed with Richard Purdie.  Not yet ready for upstream.
-
-52-nas100d-mtd-load-mac.patch
-53-nslu2-mtd-load-mac.patch
-	??
-
-55-increase-entropy-pools.patch
-        No reason to push upstream. Only for use on ixp4xx hardware in
-        combination with rng daemon.
-
-60-nas100d-artop-temp-fix.patch
-	Not fixed in 2.6.20
-
-66-hwmon-ad7418.patch
-	??
-
-75-dsmg600-support.patch
-76-dsmg600-pwrbtn.patch
-	Someone with a DSMG600 to push upstream this cycle.
-
-78-velocity-BE.patch
-	??
-
-80-kexec-arm-upstream.patch
-	Backported from 2.6.21-rc1	
-
-85-nslu2-rtc-fixup.patch
-86-nas100d-rtc-fixup.patch
-87-dsmg600-rtc-fixup.patch
-	Dunno whether upstream will accept this.
-	We may need to carry them ourselves until i2c update 2.6.21/22
-
-96-fsg3-support.patch
-	Untested, should allow all functionality except wireless.
-
-99-avila-mtd-microcode.patch
-99-avila-loft-mac-platform.patch
-	??
+90-increase-entropy-pools.patch
+	We need to work out what to do about this.
