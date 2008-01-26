@@ -14,7 +14,8 @@ ixp4xx-4769-dsmg600-buttons.patch
 # http://git.kernel.org/?p=linux/kernel/git/chris/linux-2.6.git
 ixp4xx-net-drivers.patch
 
-# Add network driver support for nslu2 and nas100d
+# Add network driver support for nslu2 and nas100d\
+# These need the ARMEB stuff reworked.
 ixp4xx-nslu2-nas100d-ethernet-support.patch
 
 # i2c-gpio driver platform support
@@ -23,7 +24,7 @@ ixp4xx-i2c-gpio.patch
 
 # These have been submitted to the LEDs maintainer
 # but may need to wait the second merge window,
-# because the conflict with patches above.
+# because they conflict with patches above.
 # ixp4xx-use-leds-gpio.patch
 # ixp4xx-fix-leds-names.patch
 # ixp4xx-remove-ixp4xx-gpio-led-driver.patch
