@@ -1,0 +1,52 @@
+# Applied upstream
+ixp4xx-4712-feature-bits.patch
+ixp4xx-4713-qmgr-npe.patch
+ixp4xx-4714-ethernet-wan.patch
+ixp4xx-4715-ixdp425-ethernet.patch
+ixp4xx-4766-update-defconfig.patch
+ixp4xx-4767-missing-bitops.patch
+ixp4xx-4768-nas100d-buttons.patch
+ixp4xx-4769-dsmg600-buttons.patch
+
+# Add Krzysztof Halasa's IXP4XX ethernet driver
+# These patches are currently inline for mainstream inclusion.
+# The patch comes from:
+# http://git.kernel.org/?p=linux/kernel/git/chris/linux-2.6.git
+ixp4xx-net-drivers.patch
+
+# Add network driver support for nslu2 and nas100d
+ixp4xx-nslu2-nas100d-ethernet-support.patch
+
+# i2c-gpio driver platform support
+# This has already been submitted via the i2c maintainer
+ixp4xx-i2c-gpio.patch
+
+# These have been submitted to the LEDs maintainer
+# but may need to wait the second merge window,
+# because the conflict with patches above.
+# ixp4xx-use-leds-gpio.patch
+# ixp4xx-fix-leds-names.patch
+# ixp4xx-remove-ixp4xx-gpio-led-driver.patch
+
+# Add squashfs 3.3 w/ LZMA compression
+# The squashfs project itself is working to mainstream inclusion.
+squashfs/squashfs-with-lzma.patch
+squashfs/squashfs-initrd.patch
+squashfs/squashfs-force-O2.patch
+squashfs/squashfs-Kconfig.patch
+squashfs/squashfs-Makefile.patch
+
+# Add mini_fo mini fan-out (or 'layered' or 'union mounted') fs.
+# Copied from openwrt patches for 2.6.23, svn revision 10120:
+# https://dev.openwrt.org/browser/trunk/target/linux/generic-2.6/patches-2.6.23/209-mini_fo.patch?rev=10120
+mini_fo.patch
+
+# Migrate RTC drivers to new I2C api
+rtc-x1205-new-style.patch
+rtc-pcf8563-new-style.patch
+ixp4xx-nslu2-i2c-info.patch
+ixp4xx-nas100d-i2c-info.patch
+ixp4xx-dsmg600-i2c-info.patch
+
+# Add board support the Freecom FSG-3
+ixp4xx-fsg-board-support.patch
