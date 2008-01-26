@@ -13,6 +13,7 @@ Subject: [PATCH] ixp4xx: Button and LED updates for the nas100d board
  * Update the board LED setup code to use those constants.
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
+Acked-by: Lennert Buytenhek <buytenh@wantstofly.org>
 ---
  arch/arm/mach-ixp4xx/nas100d-power.c  |   75 +++++++++++++++++++++++++++++----
  arch/arm/mach-ixp4xx/nas100d-setup.c  |   14 +++---

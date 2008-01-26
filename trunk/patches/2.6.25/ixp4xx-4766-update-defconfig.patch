@@ -19,6 +19,7 @@ taking all the defaults, with the following additions:
    (pata_artop) and avila (ixp4xx_cf) boards.
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
+Acked-by: Lennert Buytenhek <buytenh@wantstofly.org>
 ---
  arch/arm/configs/ixp4xx_defconfig |  978 ++++++++++++++++++++++++-------------
  1 files changed, 645 insertions(+), 333 deletions(-)

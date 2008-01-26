@@ -11,6 +11,7 @@ Subject: [PATCH] ixp4xx: Button updates for the dsmg600 board
  * Remove all superflous constants from dsmg600.h
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
+Acked-by: Lennert Buytenhek <buytenh@wantstofly.org>
 ---
  arch/arm/mach-ixp4xx/dsmg600-power.c  |   30 +++++++++++++++++-------------
  include/asm-arm/arch-ixp4xx/dsmg600.h |    7 +------

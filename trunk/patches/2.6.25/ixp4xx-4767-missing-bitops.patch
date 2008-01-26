@@ -8,6 +8,7 @@ files such as drivers/w1/w1_io.c caused by the ixp4xx version of io.h
 using the BIT() macro without including <linux/bitops.h> first.
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
+Acked-by: Lennert Buytenhek <buytenh@wantstofly.org>
 ---
  include/asm-arm/arch-ixp4xx/io.h |    2 ++
  1 files changed, 2 insertions(+), 0 deletions(-)
