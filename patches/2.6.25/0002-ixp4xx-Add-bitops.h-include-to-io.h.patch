@@ -1,0 +1,30 @@
+From d92ee2275fb5a07936b31fa300ed09e68445e2ca Mon Sep 17 00:00:00 2001
+From: Rod Whitby <rod@whitby.id.au>
+Date: Wed, 23 Jan 2008 18:43:52 +1030
+Subject: [PATCH] ixp4xx: Add bitops.h include to io.h
+
+Add include of <linux/bitops.h> to io.h to solve compilations errors in
+files such as drivers/w1/w1_io.c caused by the ixp4xx version of io.h
+using the BIT() macro without including <linux/bitops.h> first.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+---
+ include/asm-arm/arch-ixp4xx/io.h |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/include/asm-arm/arch-ixp4xx/io.h b/include/asm-arm/arch-ixp4xx/io.h
+index eeeea90..7cdb8e7 100644
+--- a/include/asm-arm/arch-ixp4xx/io.h
++++ b/include/asm-arm/arch-ixp4xx/io.h
+@@ -13,6 +13,8 @@
+ #ifndef __ASM_ARM_ARCH_IO_H
+ #define __ASM_ARM_ARCH_IO_H
+ 
++#include <linux/bitops.h>
++
+ #include <asm/hardware.h>
+ 
+ #define IO_SPACE_LIMIT 0xffff0000
+-- 
+1.5.2.5
+
