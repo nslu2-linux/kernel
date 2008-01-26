@@ -1,4 +1,4 @@
-From 3fab6ffcd74de09e63b3b767633cf3e01b214091 Mon Sep 17 00:00:00 2001
+From 31f59b98f850870515f73d05517b2fa00d9e46fd Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Sun, 27 Jan 2008 09:06:51 +1030
 Subject: [PATCH] ixp4xx: Ethernet support for the nslu2 and nas100d boards
@@ -15,9 +15,9 @@ Signed-off-by: Michael Westerhof <mwester@dls.net>
 Tested-by: Tom King <tom@websb.net>
 ---
  arch/arm/configs/ixp4xx_defconfig    |    8 ++++-
- arch/arm/mach-ixp4xx/nas100d-setup.c |   49 ++++++++++++++++++++++++++++++++++
- arch/arm/mach-ixp4xx/nslu2-setup.c   |   49 ++++++++++++++++++++++++++++++++++
- 3 files changed, 104 insertions(+), 2 deletions(-)
+ arch/arm/mach-ixp4xx/nas100d-setup.c |   49 +++++++++++++++++++++++++++++++++
+ arch/arm/mach-ixp4xx/nslu2-setup.c   |   50 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 105 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/configs/ixp4xx_defconfig b/arch/arm/configs/ixp4xx_defconfig
 index 2d5ae33..45192ef 100644
@@ -59,7 +59,7 @@ index 2d5ae33..45192ef 100644
  CONFIG_DLCI_MAX=8
  CONFIG_WAN_ROUTER_DRIVERS=m
 diff --git a/arch/arm/mach-ixp4xx/nas100d-setup.c b/arch/arm/mach-ixp4xx/nas100d-setup.c
-index ea334f3..8e8fbe7 100644
+index ea334f3..36421b3 100644
 --- a/arch/arm/mach-ixp4xx/nas100d-setup.c
 +++ b/arch/arm/mach-ixp4xx/nas100d-setup.c
 @@ -20,6 +20,7 @@
@@ -76,19 +76,19 @@ index ea334f3..8e8fbe7 100644
  
 +/* Built-in 10/100 Ethernet MAC interfaces */
 +static struct eth_plat_info nas100d_plat_eth[] = {
-+        {
-+                .phy            = 0,
-+                .rxq            = 3,
++	{
++		.phy		= 0,
++		.rxq		= 3,
 +		.txreadyq	= 20,
-+        }
++	}
 +};
 +
 +static struct platform_device nas100d_eth[] = {
-+        {
-+                .name                   = "ixp4xx_eth",
-+                .id                     = IXP4XX_ETH_NPEB,
-+                .dev.platform_data      = nas100d_plat_eth,
-+        }
++	{
++		.name			= "ixp4xx_eth",
++		.id			= IXP4XX_ETH_NPEB,
++		.dev.platform_data	= nas100d_plat_eth,
++	}
 +};
 +
  static struct platform_device *nas100d_devices[] __initdata = {
@@ -116,17 +116,16 @@ index ea334f3..8e8fbe7 100644
  
  	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
 +
-+
 +	/*
 +	 * Map in a portion of the flash and read the MAC address.
 +	 * Since it is stored in BE in the flash itself, we need to
 +	 * byteswap it if we're in LE mode.
 +	 */
-+	if ((f = ioremap(IXP4XX_EXP_BUS_BASE(0), 0x1000000))) {
++	f = ioremap(IXP4XX_EXP_BUS_BASE(0), 0x1000000);
++	if (f) {
 +#ifdef __ARMEB__
-+		for (i = 0; i < 6; i++) {
++		for (i = 0; i < 6; i++)
 +			nas100d_plat_eth[0].hwaddr[i] = readb(f + 0xFC0FD8 + i);
-+		}
 +#else
 +		nas100d_plat_eth[0].hwaddr[0] = readb(f + 0xFC0FD8 + 3);
 +		nas100d_plat_eth[0].hwaddr[1] = readb(f + 0xFC0FD8 + 2);
@@ -137,7 +136,8 @@ index ea334f3..8e8fbe7 100644
 +#endif
 +		iounmap(f);
 +	}
-+	printk(KERN_INFO "NAS100D: Using MAC address %.2x:%.2x:%.2x:%.2x:%.2x:%.2x for port 0\n",
++	printk(KERN_INFO "NAS100D: Using MAC address "
++			 "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x for port 0\n",
 +	       nas100d_plat_eth[0].hwaddr[0], nas100d_plat_eth[0].hwaddr[1],
 +	       nas100d_plat_eth[0].hwaddr[2], nas100d_plat_eth[0].hwaddr[3],
 +	       nas100d_plat_eth[0].hwaddr[4], nas100d_plat_eth[0].hwaddr[5]);
@@ -146,7 +146,7 @@ index ea334f3..8e8fbe7 100644
  
  MACHINE_START(NAS100D, "Iomega NAS 100d")
 diff --git a/arch/arm/mach-ixp4xx/nslu2-setup.c b/arch/arm/mach-ixp4xx/nslu2-setup.c
-index 9bf8ccb..d1add67 100644
+index 9bf8ccb..b10e094 100644
 --- a/arch/arm/mach-ixp4xx/nslu2-setup.c
 +++ b/arch/arm/mach-ixp4xx/nslu2-setup.c
 @@ -23,6 +23,7 @@
@@ -199,7 +199,7 @@ index 9bf8ccb..d1add67 100644
  	ixp4xx_sys_init();
  
  	nslu2_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
-@@ -189,6 +211,33 @@ static void __init nslu2_init(void)
+@@ -189,6 +211,34 @@ static void __init nslu2_init(void)
  	(void)platform_device_register(&nslu2_uart);
  
  	platform_add_devices(nslu2_devices, ARRAY_SIZE(nslu2_devices));
@@ -210,11 +210,11 @@ index 9bf8ccb..d1add67 100644
 +	 * Since it is stored in BE in the flash itself, we need to
 +	 * byteswap it if we're in LE mode.
 +	 */
-+	if ((f = ioremap(IXP4XX_EXP_BUS_BASE(0), 0x40000))) {
++	f = ioremap(IXP4XX_EXP_BUS_BASE(0), 0x40000);
++	if (f) {
 +#ifdef __ARMEB__
-+		for (i = 0; i < 6; i++) {
++		for (i = 0; i < 6; i++)
 +			nslu2_plat_eth[0].hwaddr[i] = readb(f + 0x3FFB0 + i);
-+		}
 +#else
 +		nslu2_plat_eth[0].hwaddr[0] = readb(f + 0x3FFB0 + 3);
 +		nslu2_plat_eth[0].hwaddr[1] = readb(f + 0x3FFB0 + 2);
@@ -225,7 +225,8 @@ index 9bf8ccb..d1add67 100644
 +#endif
 +		iounmap(f);
 +	}
-+	printk(KERN_INFO "NSLU2: Using MAC address %.2x:%.2x:%.2x:%.2x:%.2x:%.2x for port 0\n",
++	printk(KERN_INFO "NSLU2: Using MAC address "
++			 "%.2x:%.2x:%.2x:%.2x:%.2x:%.2x for port 0\n",
 +	       nslu2_plat_eth[0].hwaddr[0], nslu2_plat_eth[0].hwaddr[1],
 +	       nslu2_plat_eth[0].hwaddr[2], nslu2_plat_eth[0].hwaddr[3],
 +	       nslu2_plat_eth[0].hwaddr[4], nslu2_plat_eth[0].hwaddr[5]);
