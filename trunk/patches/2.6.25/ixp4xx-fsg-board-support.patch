@@ -1,13 +1,23 @@
-From f9778ba57fa85155fbddd4c45abc824cd0ce0368 Mon Sep 17 00:00:00 2001
+From 7dd05b4081577022268fba78c0152f93cd225ed9 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Tue, 29 Jan 2008 23:12:44 +1030
 Subject: ixp4xx: Add support for the Freecom FSG-3 board
 
-The Freecom-FSG3 is a small network-attached-storage device containing
-a internal hard disk.  It has 4MB of internal flash, and 64MB of RAM.
+The Freecom-FSG3 is a small network-attached-storage device with the
+following feature set:
 
-Support is enabled in this patch for everything apart from the LEDs
-(which must wait until the specialised LED driver is merged).
+* Intel IXP422
+* 4MB Flash (ixp4xx flash driver)
+* 64MB RAM
+* 4 USB 2.0 host ports (ehci and ohci drivers)
+* 1 WAN (eth1) and 3 LAN (eth0) ethernet ports
+  * Supported by the open source ixp4xx ethernet driver
+* Via VT6421 disk controller (libata and sata-via drivers)
+  * Internal hard disk
+  * External SATA port (not yet supported)
+* ISL1208 RTC chip
+* Winbond 83782 temp sensor and fan controller
+* MiniPCI slot
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 
@@ -228,10 +238,10 @@ index 0000000..dc3884e
 +MODULE_LICENSE("GPL");
 diff --git a/arch/arm/mach-ixp4xx/fsg-setup.c b/arch/arm/mach-ixp4xx/fsg-setup.c
 new file mode 100644
-index 0000000..bf1c25a
+index 0000000..86ca346
 --- /dev/null
 +++ b/arch/arm/mach-ixp4xx/fsg-setup.c
-@@ -0,0 +1,212 @@
+@@ -0,0 +1,219 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
 + *
@@ -249,6 +259,7 @@ index 0000000..bf1c25a
 +#include <linux/kernel.h>
 +#include <linux/serial.h>
 +#include <linux/serial_8250.h>
++#include <linux/leds.h>
 +#include <linux/reboot.h>
 +#include <linux/i2c-gpio.h>
 +
@@ -330,6 +341,11 @@ index 0000000..bf1c25a
 +	.resource		= fsg_uart_resources,
 +};
 +
++static struct platform_device fsg_leds = {
++	.name		= "fsg-led",
++	.id		= -1,
++};
++
 +/* Built-in 10/100 Ethernet MAC interfaces */
 +static struct eth_plat_info fsg_plat_eth[] = {
 +	{
@@ -358,6 +374,7 @@ index 0000000..bf1c25a
 +static struct platform_device *fsg_devices[] __initdata = {
 +	&fsg_i2c_gpio,
 +	&fsg_flash,
++	&fsg_leds,
 +	&fsg_eth[0],
 +	&fsg_eth[1],
 +};
