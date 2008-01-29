@@ -23,7 +23,6 @@ ixp4xx-4774-dsmg600-i2c-info.patch
 ixp4xx-use-leds-gpio.patch
 ixp4xx-fsg-board-support.patch
 ixp4xx-fsg-led-driver.patch
-ixp4xx-fsg-add-led-support.patch
 
 # Add Krzysztof Halasa's IXP4XX ethernet driver
 # These patches are currently inline for mainstream inclusion.
