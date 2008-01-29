@@ -1,19 +1,19 @@
-From d07f5baa6326dde08d5a462a68a248083081e316 Mon Sep 17 00:00:00 2001
+From aa9d35dae397402f57f1baa8d53fed75d76aed8d Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
-Date: Sun, 27 Jan 2008 10:36:52 +1030
-Subject: [PATCH] ixp4xx: Register dsmg600 rtc i2c_board_info
+Date: Tue, 29 Jan 2008 10:09:41 +1030
+Subject: ixp4xx: Register dsmg600 rtc i2c_board_info (Patch #4774)
 
 Register the i2c board info related to the RTC chip on the dsmg600
 board to allow it to be found automatically on boot.
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
----
- arch/arm/mach-ixp4xx/dsmg600-setup.c |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+
+PATCH FOLLOWS
+KernelVersion: 2.6.24-git5
 
 diff --git a/arch/arm/mach-ixp4xx/dsmg600-setup.c b/arch/arm/mach-ixp4xx/dsmg600-setup.c
-index 1e75e10..14bc67a 100644
+index c473d40..a1c44ef 100644
 --- a/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +++ b/arch/arm/mach-ixp4xx/dsmg600-setup.c
 @@ -14,6 +14,7 @@
@@ -21,11 +21,11 @@ index 1e75e10..14bc67a 100644
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
 +#include <linux/i2c.h>
+ #include <linux/i2c-gpio.h>
  
  #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -48,6 +49,12 @@ static struct platform_device dsmg600_i2c_controller = {
- 	.dev.platform_data	= &dsmg600_i2c_gpio_pins,
+@@ -51,6 +52,12 @@ static struct platform_device dsmg600_i2c_gpio = {
+ 	},
  };
  
 +static struct i2c_board_info __initdata dsmg600_i2c_board_info [] = {
@@ -37,7 +37,7 @@ index 1e75e10..14bc67a 100644
  #ifdef CONFIG_LEDS_CLASS
  static struct resource dsmg600_led_resources[] = {
  	{
-@@ -155,6 +162,9 @@ static void __init dsmg600_init(void)
+@@ -158,6 +165,9 @@ static void __init dsmg600_init(void)
  
  	pm_power_off = dsmg600_power_off;
  

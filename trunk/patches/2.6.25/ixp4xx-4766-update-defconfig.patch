@@ -1,7 +1,7 @@
-From 0bcb993c4db9c05f7eda62d7251deb97855510fb Mon Sep 17 00:00:00 2001
+From 9882d8cedd79d23e939fa5f6017253f63fc97821 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
-Date: Wed, 23 Jan 2008 12:17:40 +1030
-Subject: [PATCH] ixp4xx: Update ixp4xx_defconfig, enabling all supported boards
+Date: Tue, 29 Jan 2008 09:41:10 +1030
+Subject: ixp4xx: Update ixp4xx_defconfig, enabling all supported boards (Patch #4766)
 
 This updates the defconfig for the ixp4xx machine in arch/arm/config
 taking all the defaults, with the following additions:
@@ -20,9 +20,9 @@ taking all the defaults, with the following additions:
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 Acked-by: Lennert Buytenhek <buytenh@wantstofly.org>
----
- arch/arm/configs/ixp4xx_defconfig |  978 ++++++++++++++++++++++++-------------
- 1 files changed, 645 insertions(+), 333 deletions(-)
+
+PATCH FOLLOWS
+KernelVersion: 2.6.24-git5
 
 diff --git a/arch/arm/configs/ixp4xx_defconfig b/arch/arm/configs/ixp4xx_defconfig
 index db850a5..2d5ae33 100644

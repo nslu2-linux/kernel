@@ -1,30 +1,30 @@
-From 0b7237ceb7d55199e4e4b5e44ac87f7e32cf25e6 Mon Sep 17 00:00:00 2001
+From d4ef1ee0daf96e42bf93421960eaded71e189712 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
-Date: Sun, 27 Jan 2008 10:34:58 +1030
-Subject: [PATCH] ixp4xx: Register nas100d rtc i2c_board_info
+Date: Tue, 29 Jan 2008 10:07:29 +1030
+Subject: ixp4xx: Register nas100d rtc i2c_board_info (Patch #4773)
 
 Register the i2c board info related to the RTC chip on the nas100d
 board to allow it to be found automatically on boot.
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 Signed-off-by: Alessandro Zummo <a.zummo@towertech.it>
----
- arch/arm/mach-ixp4xx/nas100d-setup.c |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+
+PATCH FOLLOWS
+KernelVersion: 2.6.24-git5
 
 diff --git a/arch/arm/mach-ixp4xx/nas100d-setup.c b/arch/arm/mach-ixp4xx/nas100d-setup.c
-index 36421b3..117489a 100644
+index b0884c2..09f75b9 100644
 --- a/arch/arm/mach-ixp4xx/nas100d-setup.c
 +++ b/arch/arm/mach-ixp4xx/nas100d-setup.c
-@@ -16,6 +16,7 @@
+@@ -17,6 +17,7 @@
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
  #include <linux/leds.h>
 +#include <linux/i2c.h>
+ #include <linux/i2c-gpio.h>
  
  #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -39,6 +40,12 @@ static struct platform_device nas100d_flash = {
+@@ -41,6 +42,12 @@ static struct platform_device nas100d_flash = {
  	.resource		= &nas100d_flash_resource,
  };
  
@@ -37,7 +37,7 @@ index 36421b3..117489a 100644
  #ifdef CONFIG_LEDS_IXP4XX
  static struct resource nas100d_led_resources[] = {
  	{
-@@ -177,6 +184,9 @@ static void __init nas100d_init(void)
+@@ -181,6 +188,9 @@ static void __init nas100d_init(void)
  
  	pm_power_off = nas100d_power_off;
  

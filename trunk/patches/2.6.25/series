@@ -15,7 +15,6 @@ ixp4xx-4773-nas100d-i2c-info.patch
 ixp4xx-4774-dsmg600-i2c-info.patch
 rtc-x1205-new-style.patch
 rtc-pcf8563-new-style.patch
-ixp4xx-i2c-gpio.patch
 
 # Add Krzysztof Halasa's IXP4XX ethernet driver
 # These patches are currently inline for mainstream inclusion.
