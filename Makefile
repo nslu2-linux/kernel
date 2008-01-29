@@ -27,13 +27,14 @@ BASEVER  = 2.6.23.14
 PATCHVER = 2.6.23
 
 # Latest Development
-# BASEVER  = 2.6.23
-# PATCHVER = 2.6.24
+# BASEVER  = 2.6.24
+# PATCHVER = 2.6.25
 
 # CROSS_COMPILE = /home/slug/angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
 
 REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
-SNAPSHOT := $(shell cat patches/${PATCHVER}/KERNEL)
+SNAPSHOT := $(shell sed -e 's/-v.*//' patches/${PATCHVER}/KERNEL)
+COMMITID := $(shell sed -e 's/.*-\(v[0-9.]*.*\)/\1/' patches/${PATCHVER}/KERNEL)
 
 APEX_REVISION = 1.5.13
 APEX_CONFIG = slugos
@@ -175,6 +176,21 @@ vmlinuz-${SNAPSHOT}-${ARCH}: linux-${SNAPSHOT}-${ARCH}/.config
 menuconfig: linux-${SNAPSHOT}-${ARCH}/.config
 	${MAKE} -C linux-${SNAPSHOT}-${ARCH} ARCH=arm CROSS_COMPILE=${CROSS_COMPILE} menuconfig
 
+ifneq (${COMMITID},)
+linux-${SNAPSHOT}-${ARCH}/.config: \
+		patches/${PATCHVER}/$(DEFCONFIG)
+	[ -e linux-${SNAPSHOT}-${ARCH} ] || \
+	( git clone -q \
+	  git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git \
+	  linux-${SNAPSHOT}-${ARCH} )
+	( cd linux-${SNAPSHOT}-${ARCH} ; \
+	  git checkout master ; \
+	  git reset --hard ${COMMITID} ; \
+	  git clean -d -x )
+	( cd linux-${SNAPSHOT}-${ARCH} ; \
+	  ln -s ../patches/${PATCHVER} patches ; \
+	  quilt push -a )
+else
 ifeq (${SNAPSHOT},${BASEVER})
 linux-${SNAPSHOT}-${ARCH}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
@@ -200,6 +216,20 @@ linux-${SNAPSHOT}-${ARCH}/.config: \
 	  ln -s ../patches/${PATCHVER} patches ; \
 	  quilt push -a )
 else
+ifeq (${REVISION},${BASEVER})
+linux-${SNAPSHOT}-${ARCH}/.config: \
+		downloads/linux-${BASEVER}.tar.bz2 \
+		downloads/patch-${SNAPSHOT}.bz2 \
+		patches/${PATCHVER}/$(DEFCONFIG)
+	[ -e linux-${SNAPSHOT}-${ARCH} ] || \
+	( tar xjf downloads/linux-${BASEVER}.tar.bz2 ; \
+	  mv linux-${BASEVER} linux-${SNAPSHOT}-${ARCH} ; \
+	  bzcat downloads/patch-${SNAPSHOT}.bz2 | \
+	  patch -d linux-${SNAPSHOT}-${ARCH} -p1 ; \
+	  cd linux-${SNAPSHOT}-${ARCH} ; \
+	  ln -s ../patches/${PATCHVER} patches ; \
+	  quilt push -a )
+else
 linux-${SNAPSHOT}-${ARCH}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
 		downloads/patch-${REVISION}.bz2 \
@@ -213,6 +243,8 @@ linux-${SNAPSHOT}-${ARCH}/.config: \
 	  cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
 	  quilt push -a )
+endif
+endif
 endif
 endif
 ifeq (${ENDIAN},b)
