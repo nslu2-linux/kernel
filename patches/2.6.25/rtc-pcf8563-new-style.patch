@@ -2,8 +2,10 @@
  drivers/rtc/rtc-pcf8563.c |  109 +++++++++++++---------------------------------
  1 file changed, 32 insertions(+), 77 deletions(-)
 
---- linux-2.6.orig/drivers/rtc/rtc-pcf8563.c	2008-01-13 12:25:26.000000000 +0100
-+++ linux-2.6/drivers/rtc/rtc-pcf8563.c	2008-01-13 12:53:06.000000000 +0100
+Index: linux-2.6.24-git4-armeb/drivers/rtc/rtc-pcf8563.c
+===================================================================
+--- linux-2.6.24-git4-armeb.orig/drivers/rtc/rtc-pcf8563.c	2008-01-29 12:37:41.000000000 +1030
++++ linux-2.6.24-git4-armeb/drivers/rtc/rtc-pcf8563.c	2008-01-29 12:44:30.000000000 +1030
 @@ -18,17 +18,7 @@
  #include <linux/bcd.h>
  #include <linux/rtc.h>
@@ -15,7 +17,7 @@
 - * located at 0x51 will pass the validation routine due to
 - * the way the registers are implemented.
 - */
--static unsigned short normal_i2c[] = { I2C_CLIENT_END };
+-static const unsigned short normal_i2c[] = { I2C_CLIENT_END };
 -
 -/* Module parameters */
 -I2C_CLIENT_INSMOD;
@@ -23,7 +25,7 @@
  
  #define PCF8563_REG_ST1		0x00 /* status */
  #define PCF8563_REG_ST2		0x01
-@@ -53,8 +43,10 @@ I2C_CLIENT_INSMOD;
+@@ -53,8 +43,10 @@
  #define PCF8563_SC_LV		0x80 /* low voltage */
  #define PCF8563_MO_C		0x80 /* century */
  
@@ -35,7 +37,7 @@
  	/*
  	 * The meaning of MO_C bit varies by the chip type.
  	 * From PCF8563 datasheet: this bit is toggled when the years
-@@ -72,16 +64,13 @@ struct pcf8563 {
+@@ -72,16 +64,13 @@
  	int c_polarity;	/* 0: MO_C=1 means 19xx, otherwise MO_C=1 means 20xx */
  };
  
@@ -53,7 +55,7 @@
  	unsigned char buf[13] = { PCF8563_REG_ST1 };
  
  	struct i2c_msg msgs[] = {
-@@ -138,7 +127,7 @@ static int pcf8563_get_datetime(struct i
+@@ -138,7 +127,7 @@
  
  static int pcf8563_set_datetime(struct i2c_client *client, struct rtc_time *tm)
  {
@@ -62,7 +64,7 @@
  	int i, err;
  	unsigned char buf[9];
  
-@@ -257,100 +246,66 @@ static const struct rtc_class_ops pcf856
+@@ -257,100 +246,66 @@
  	.set_time	= pcf8563_rtc_set_time,
  };
  
