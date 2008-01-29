@@ -1,8 +1,17 @@
-Index: linux-2.6.24-armeb/drivers/leds/Kconfig
-===================================================================
---- linux-2.6.24-armeb.orig/drivers/leds/Kconfig	2008-01-29 13:15:25.000000000 +1030
-+++ linux-2.6.24-armeb/drivers/leds/Kconfig	2008-01-29 13:15:27.000000000 +1030
-@@ -48,6 +48,12 @@
+From 2a35da9c4a27a0f28230e0229e2a92102287bfe2 Mon Sep 17 00:00:00 2001
+From: Rod Whitby <rod@whitby.id.au>
+Date: Tue, 29 Jan 2008 23:17:42 +1030
+Subject: leds: Add new driver for the LEDs on the Freecom FSG-3
+
+The LEDs on the Freecom FSG-3 are connected to an external memory-mapped latch on the ixp4xx expansion bus, and therefore cannot be supported by any of the existing LEDs drivers.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index ec568fa..1bda273 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -48,6 +48,12 @@ config LEDS_IXP4XX
  	  particular board must have LEDs and they must be connected
  	  to the GPIO lines.  If unsure, say Y.
  
@@ -15,11 +24,11 @@ Index: linux-2.6.24-armeb/drivers/leds/Kconfig
  config LEDS_TOSA
  	tristate "LED Support for the Sharp SL-6000 series"
  	depends on LEDS_CLASS && PXA_SHARPSL
-Index: linux-2.6.24-armeb/drivers/leds/Makefile
-===================================================================
---- linux-2.6.24-armeb.orig/drivers/leds/Makefile	2008-01-29 13:15:25.000000000 +1030
-+++ linux-2.6.24-armeb/drivers/leds/Makefile	2008-01-29 13:15:27.000000000 +1030
-@@ -9,6 +9,7 @@
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index a60de1b..acacfee 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_LEDS_CORGI)		+= leds-corgi.o
  obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
  obj-$(CONFIG_LEDS_SPITZ)		+= leds-spitz.o
  obj-$(CONFIG_LEDS_IXP4XX)		+= leds-ixp4xx-gpio.o
@@ -27,10 +36,11 @@ Index: linux-2.6.24-armeb/drivers/leds/Makefile
  obj-$(CONFIG_LEDS_TOSA)			+= leds-tosa.o
  obj-$(CONFIG_LEDS_S3C24XX)		+= leds-s3c24xx.o
  obj-$(CONFIG_LEDS_AMS_DELTA)		+= leds-ams-delta.o
-Index: linux-2.6.24-armeb/drivers/leds/leds-fsg.c
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.24-armeb/drivers/leds/leds-fsg.c	2008-01-29 13:42:20.000000000 +1030
+diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
+new file mode 100644
+index 0000000..8de714c
+--- /dev/null
++++ b/drivers/leds/leds-fsg.c
 @@ -0,0 +1,262 @@
 +/*
 + * LED Driver for the Freecom FSG-3
@@ -294,3 +304,6 @@ Index: linux-2.6.24-armeb/drivers/leds/leds-fsg.c
 +MODULE_AUTHOR("Rod Whitby <rod@whitby.id.au>");
 +MODULE_DESCRIPTION("Freecom FSG-3 LED driver");
 +MODULE_LICENSE("GPL");
+-- 
+1.5.2.5
+

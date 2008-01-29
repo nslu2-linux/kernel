@@ -1,7 +1,7 @@
-From 1a98a764ad629f116b00f9d1a3485275b300cb82 Mon Sep 17 00:00:00 2001
+From fac6af8ef2f70d88e50cd9c719dfeb44487f7b87 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
-Date: Fri, 25 Jan 2008 22:41:06 +1030
-Subject: [PATCH] ixp4xx: Use leds-gpio driver instead of IXP4XX-GPIO-LED driver
+Date: Tue, 29 Jan 2008 17:17:29 +1030
+Subject: ixp4xx: Use leds-gpio driver instead of IXP4XX-GPIO-LED driver
 
 These are the only three boards to use the IXP4XX-GPIO-LED driver, and
 they can all use the new leds-gpio driver instead with no change in
@@ -9,17 +9,14 @@ functionality.
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 ---
- arch/arm/configs/ixp4xx_defconfig    |    4 +-
- arch/arm/mach-ixp4xx/dsmg600-setup.c |   36 +++++++++++++++------------------
- arch/arm/mach-ixp4xx/nas100d-setup.c |   31 +++++++++++++----------------
- arch/arm/mach-ixp4xx/nslu2-setup.c   |   34 +++++++++++++------------------
- 4 files changed, 46 insertions(+), 59 deletions(-)
+PATCH FOLLOWS
+KernelVersion: v2.6.24-2182-g8561b08
 
 diff --git a/arch/arm/configs/ixp4xx_defconfig b/arch/arm/configs/ixp4xx_defconfig
-index 2d5ae33..77fe3b0 100644
+index 45192ef..efa0485 100644
 --- a/arch/arm/configs/ixp4xx_defconfig
 +++ b/arch/arm/configs/ixp4xx_defconfig
-@@ -1330,8 +1330,8 @@ CONFIG_LEDS_CLASS=y
+@@ -1334,8 +1334,8 @@ CONFIG_LEDS_CLASS=y
  #
  # LED drivers
  #
@@ -31,7 +28,7 @@ index 2d5ae33..77fe3b0 100644
  #
  # LED Triggers
 diff --git a/arch/arm/mach-ixp4xx/dsmg600-setup.c b/arch/arm/mach-ixp4xx/dsmg600-setup.c
-index 1e75e10..1909ad5 100644
+index a1c44ef..d0e1295 100644
 --- a/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +++ b/arch/arm/mach-ixp4xx/dsmg600-setup.c
 @@ -14,6 +14,7 @@
@@ -39,11 +36,11 @@ index 1e75e10..1909ad5 100644
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
 +#include <linux/leds.h>
+ #include <linux/i2c.h>
+ #include <linux/i2c-gpio.h>
  
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
-@@ -48,29 +49,28 @@ static struct platform_device dsmg600_i2c_controller = {
- 	.dev.platform_data	= &dsmg600_i2c_gpio_pins,
+@@ -58,29 +59,28 @@ static struct i2c_board_info __initdata dsmg600_i2c_board_info [] = {
+ 	},
  };
  
 -#ifdef CONFIG_LEDS_CLASS
@@ -86,15 +83,15 @@ index 1e75e10..1909ad5 100644
  
  static struct resource dsmg600_uart_resources[] = {
  	{
-@@ -118,6 +118,7 @@ static struct platform_device dsmg600_uart = {
+@@ -128,6 +128,7 @@ static struct platform_device dsmg600_uart = {
  static struct platform_device *dsmg600_devices[] __initdata = {
- 	&dsmg600_i2c_controller,
+ 	&dsmg600_i2c_gpio,
  	&dsmg600_flash,
 +	&dsmg600_leds,
  };
  
  static void dsmg600_power_off(void)
-@@ -162,11 +163,6 @@ static void __init dsmg600_init(void)
+@@ -175,11 +176,6 @@ static void __init dsmg600_init(void)
          (void)platform_device_register(&dsmg600_uart);
  
  	platform_add_devices(dsmg600_devices, ARRAY_SIZE(dsmg600_devices));
@@ -107,11 +104,11 @@ index 1e75e10..1909ad5 100644
  
  MACHINE_START(DSMG600, "D-Link DSM-G600 RevA")
 diff --git a/arch/arm/mach-ixp4xx/nas100d-setup.c b/arch/arm/mach-ixp4xx/nas100d-setup.c
-index ea334f3..68e18cb 100644
+index 09f75b9..33137c2 100644
 --- a/arch/arm/mach-ixp4xx/nas100d-setup.c
 +++ b/arch/arm/mach-ixp4xx/nas100d-setup.c
-@@ -38,35 +38,34 @@ static struct platform_device nas100d_flash = {
- 	.resource		= &nas100d_flash_resource,
+@@ -48,35 +48,34 @@ static struct i2c_board_info __initdata nas100d_i2c_board_info [] = {
+ 	},
  };
  
 -#ifdef CONFIG_LEDS_IXP4XX
@@ -158,24 +155,24 @@ index ea334f3..68e18cb 100644
  };
 -#endif
  
- static struct ixp4xx_i2c_pins nas100d_i2c_gpio_pins = {
+ static struct i2c_gpio_platform_data nas100d_i2c_gpio_data = {
  	.sda_pin		= NAS100D_SDA_PIN,
-@@ -126,9 +125,7 @@ static struct platform_device nas100d_uart = {
+@@ -154,9 +153,7 @@ static struct platform_device nas100d_eth[] = {
  static struct platform_device *nas100d_devices[] __initdata = {
- 	&nas100d_i2c_controller,
+ 	&nas100d_i2c_gpio,
  	&nas100d_flash,
 -#ifdef CONFIG_LEDS_IXP4XX
  	&nas100d_leds,
 -#endif
+ 	&nas100d_eth[0],
  };
  
- static void nas100d_power_off(void)
 diff --git a/arch/arm/mach-ixp4xx/nslu2-setup.c b/arch/arm/mach-ixp4xx/nslu2-setup.c
-index 9bf8ccb..6a39862 100644
+index ebeb566..82febf6 100644
 --- a/arch/arm/mach-ixp4xx/nslu2-setup.c
 +++ b/arch/arm/mach-ixp4xx/nslu2-setup.c
-@@ -46,41 +46,37 @@ static struct ixp4xx_i2c_pins nslu2_i2c_gpio_pins = {
- 	.scl_pin		= NSLU2_SCL_PIN,
+@@ -56,41 +56,37 @@ static struct i2c_board_info __initdata nslu2_i2c_board_info [] = {
+ 	},
  };
  
 -#ifdef CONFIG_LEDS_IXP4XX
@@ -228,18 +225,18 @@ index 9bf8ccb..6a39862 100644
  };
 -#endif
  
- static struct platform_device nslu2_i2c_controller = {
- 	.name			= "IXP4XX-I2C",
-@@ -142,9 +138,7 @@ static struct platform_device *nslu2_devices[] __initdata = {
- 	&nslu2_i2c_controller,
+ static struct platform_device nslu2_i2c_gpio = {
+ 	.name			= "i2c-gpio",
+@@ -170,9 +166,7 @@ static struct platform_device *nslu2_devices[] __initdata = {
+ 	&nslu2_i2c_gpio,
  	&nslu2_flash,
  	&nslu2_beeper,
 -#ifdef CONFIG_LEDS_IXP4XX
  	&nslu2_leds,
 -#endif
+ 	&nslu2_eth[0],
  };
  
- static void nslu2_power_off(void)
 -- 
 1.5.2.5
 
