@@ -1,4 +1,6 @@
-# Applied upstream
+# Accepted upstream, and merged by Linus.
+
+# Accepted upstream, but not yet merged.
 ixp4xx-4712-feature-bits.patch
 ixp4xx-4713-qmgr-npe.patch
 ixp4xx-4714-ethernet-wan.patch
@@ -8,26 +10,26 @@ ixp4xx-4767-missing-bitops.patch
 ixp4xx-4768-nas100d-buttons.patch
 ixp4xx-4769-dsmg600-buttons.patch
 
-# Submitted upstream, but not yet applied
+rtc-x1205-new-style.patch
+rtc-pcf8563-new-style.patch
+
+# Submitted upstream, but not yet accepted
 ixp4xx-4771-ethernet-support.patch
 ixp4xx-4772-nslu2-i2c-info.patch
 ixp4xx-4773-nas100d-i2c-info.patch
 ixp4xx-4774-dsmg600-i2c-info.patch
-rtc-x1205-new-style.patch
-rtc-pcf8563-new-style.patch
+
+# To be submitted upstream
+ixp4xx-use-leds-gpio.patch
+ixp4xx-fsg-board-support.patch
+ixp4xx-fsg-led-driver.patch
+ixp4xx-fsg-add-led-support.patch
 
 # Add Krzysztof Halasa's IXP4XX ethernet driver
 # These patches are currently inline for mainstream inclusion.
 # The patch comes from:
 # http://git.kernel.org/?p=linux/kernel/git/chris/linux-2.6.git
 ixp4xx-net-drivers.patch
-
-# These have been submitted to the LEDs maintainer
-# but may need to wait the second merge window,
-# because they conflict with patches above.
-# ixp4xx-use-leds-gpio.patch
-# ixp4xx-fix-leds-names.patch
-# ixp4xx-remove-ixp4xx-gpio-led-driver.patch
 
 # Add squashfs 3.3 w/ LZMA compression
 # The squashfs project itself is working to mainstream inclusion.
@@ -42,5 +44,8 @@ squashfs/squashfs-Makefile.patch
 # https://dev.openwrt.org/browser/trunk/target/linux/generic-2.6/patches-2.6.23/209-mini_fo.patch?rev=10120
 mini_fo.patch
 
-# Add board support the Freecom FSG-3
-ixp4xx-fsg-board-support.patch
+# These have been submitted to the LEDs maintainer
+# but may need to wait the second merge window,
+# because they conflict with patches above.
+# ixp4xx-fix-leds-names.patch
+# ixp4xx-remove-ixp4xx-gpio-led-driver.patch

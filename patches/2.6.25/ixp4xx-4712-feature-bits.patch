@@ -1,3 +1,19 @@
+From: Krzysztof Halasa <khc@pm.waw.pl>
+Subject: Adds functions to read and write IXP4xx "feature" bits
+
+Adds functions to read and write IXP4xx "feature" (aka "fuse")
+bits, containing information about available/enabled CPU features.
+
+The uncompress.h included by boot/compressed/misc.c resides in
+a different space than rest of the kernel and thus can't use
+asm/hardware.h (including asm/arch/cpu.h - which, in turn, may use
+EXPORTed symbol "processor_id").
+
+Signed-off-by: Krzysztof Halasa <khc@pm.waw.pl>
+--
+PATCH FOLLOWS
+KernelVersion: 2.6.23
+
 diff --git a/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h b/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
 index 5d949d7..c704fe8 100644
 --- a/include/asm-arm/arch-ixp4xx/ixp4xx-regs.h
