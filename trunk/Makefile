@@ -32,7 +32,7 @@ PATCHVER = 2.6.23
 
 # CROSS_COMPILE = /home/slug/angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
 
-REVISION := $(shell sed -e 's/-git.*//' patches/${PATCHVER}/KERNEL)
+REVISION := $(shell sed -e 's/-\(git\|v\).*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell sed -e 's/-v.*//' patches/${PATCHVER}/KERNEL)
 COMMITID := $(shell sed -e 's/.*-\(v[0-9.]*.*\)/\1/' patches/${PATCHVER}/KERNEL)
 
@@ -176,7 +176,7 @@ vmlinuz-${SNAPSHOT}-${ARCH}: linux-${SNAPSHOT}-${ARCH}/.config
 menuconfig: linux-${SNAPSHOT}-${ARCH}/.config
 	${MAKE} -C linux-${SNAPSHOT}-${ARCH} ARCH=arm CROSS_COMPILE=${CROSS_COMPILE} menuconfig
 
-ifneq (${COMMITID},)
+ifneq (${SNAPSHOT},${COMMITID})
 linux-${SNAPSHOT}-${ARCH}/.config: \
 		patches/${PATCHVER}/$(DEFCONFIG)
 	[ -e linux-${SNAPSHOT}-${ARCH} ] || \
