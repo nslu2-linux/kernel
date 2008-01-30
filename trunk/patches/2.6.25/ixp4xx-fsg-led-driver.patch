@@ -1,11 +1,16 @@
-From 2a35da9c4a27a0f28230e0229e2a92102287bfe2 Mon Sep 17 00:00:00 2001
+From c8dc7fbd10624617877259dd1c85a0a35d9131bd Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Tue, 29 Jan 2008 23:17:42 +1030
 Subject: leds: Add new driver for the LEDs on the Freecom FSG-3
 
-The LEDs on the Freecom FSG-3 are connected to an external memory-mapped latch on the ixp4xx expansion bus, and therefore cannot be supported by any of the existing LEDs drivers.
+The LEDs on the Freecom FSG-3 are connected to an external
+memory-mapped latch on the ixp4xx expansion bus, and therefore cannot
+be supported by any of the existing LEDs drivers.
 
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+PATCH FOLLOWS
+KernelVersion: 2.6.24-git6
 
 diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
 index ec568fa..1bda273 100644
