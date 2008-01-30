@@ -1,0 +1,314 @@
+From c8dc7fbd10624617877259dd1c85a0a35d9131bd Mon Sep 17 00:00:00 2001
+From: Rod Whitby <rod@whitby.id.au>
+Date: Tue, 29 Jan 2008 23:17:42 +1030
+Subject: leds: Add new driver for the LEDs on the Freecom FSG-3
+
+The LEDs on the Freecom FSG-3 are connected to an external
+memory-mapped latch on the ixp4xx expansion bus, and therefore cannot
+be supported by any of the existing LEDs drivers.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+PATCH FOLLOWS
+KernelVersion: 2.6.24-git6
+
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index ec568fa..1bda273 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -48,6 +48,12 @@ config LEDS_IXP4XX
+ 	  particular board must have LEDs and they must be connected
+ 	  to the GPIO lines.  If unsure, say Y.
+ 
++config LEDS_FSG
++	tristate "LED Support for the Freecom FSG-3"
++	depends on LEDS_CLASS && MACH_FSG
++	help
++	  This option enables support for the LEDs on the Freecom FSG-3.
++
+ config LEDS_TOSA
+ 	tristate "LED Support for the Sharp SL-6000 series"
+ 	depends on LEDS_CLASS && PXA_SHARPSL
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index a60de1b..acacfee 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_LEDS_CORGI)		+= leds-corgi.o
+ obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
+ obj-$(CONFIG_LEDS_SPITZ)		+= leds-spitz.o
+ obj-$(CONFIG_LEDS_IXP4XX)		+= leds-ixp4xx-gpio.o
++obj-$(CONFIG_LEDS_FSG)			+= leds-fsg.o
+ obj-$(CONFIG_LEDS_TOSA)			+= leds-tosa.o
+ obj-$(CONFIG_LEDS_S3C24XX)		+= leds-s3c24xx.o
+ obj-$(CONFIG_LEDS_AMS_DELTA)		+= leds-ams-delta.o
+diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
+new file mode 100644
+index 0000000..8de714c
+--- /dev/null
++++ b/drivers/leds/leds-fsg.c
+@@ -0,0 +1,262 @@
++/*
++ * LED Driver for the Freecom FSG-3
++ *
++ * Copyright (c) 2008 Rod Whitby <rod@whitby.id.au>
++ *
++ * Author: Rod Whitby <rod@whitby.id.au>
++ *
++ * Based on leds-spitz.c
++ * Copyright 2005-2006 Openedhand Ltd.
++ * Author: Richard Purdie <rpurdie@openedhand.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/leds.h>
++#include <asm/arch/hardware.h>
++#include <asm/io.h>
++
++static short __iomem *latch_address;
++static unsigned short latch_value;
++
++
++static void fsg_led_wlan_set(struct led_classdev *led_cdev,
++			     enum led_brightness value)
++{
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_WLAN_BIT);
++		*latch_address = latch_value;
++	} else {
++		latch_value |=  (1 << FSG_LED_WLAN_BIT);
++		*latch_address = latch_value;
++	}
++}
++
++static void fsg_led_wan_set(struct led_classdev *led_cdev,
++			    enum led_brightness value)
++{
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_WAN_BIT);
++		*latch_address = latch_value;
++	} else {
++		latch_value |=  (1 << FSG_LED_WAN_BIT);
++		*latch_address = latch_value;
++	}
++}
++
++static void fsg_led_sata_set(struct led_classdev *led_cdev,
++			     enum led_brightness value)
++{
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_SATA_BIT);
++		*latch_address = latch_value;
++	} else {
++		latch_value |=  (1 << FSG_LED_SATA_BIT);
++		*latch_address = latch_value;
++	}
++}
++
++static void fsg_led_usb_set(struct led_classdev *led_cdev,
++			    enum led_brightness value)
++{
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_USB_BIT);
++		*latch_address = latch_value;
++	} else {
++		latch_value |=  (1 << FSG_LED_USB_BIT);
++		*latch_address = latch_value;
++	}
++}
++
++static void fsg_led_sync_set(struct led_classdev *led_cdev,
++			     enum led_brightness value)
++{
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_SYNC_BIT);
++		*latch_address = latch_value;
++	} else {
++		latch_value |=  (1 << FSG_LED_SYNC_BIT);
++		*latch_address = latch_value;
++	}
++}
++
++static void fsg_led_ring_set(struct led_classdev *led_cdev,
++			     enum led_brightness value)
++{
++	if (value) {
++		latch_value &= ~(1 << FSG_LED_RING_BIT);
++		*latch_address = latch_value;
++	} else {
++		latch_value |=  (1 << FSG_LED_RING_BIT);
++		*latch_address = latch_value;
++	}
++}
++
++
++
++static struct led_classdev fsg_wlan_led = {
++	.name			= "fsg:blue:wlan",
++	.brightness_set		= fsg_led_wlan_set,
++};
++
++static struct led_classdev fsg_wan_led = {
++	.name			= "fsg:blue:wan",
++	.brightness_set		= fsg_led_wan_set,
++};
++
++static struct led_classdev fsg_sata_led = {
++	.name			= "fsg:blue:sata",
++	.brightness_set		= fsg_led_sata_set,
++};
++
++static struct led_classdev fsg_usb_led = {
++	.name			= "fsg:blue:usb",
++	.brightness_set		= fsg_led_usb_set,
++};
++
++static struct led_classdev fsg_sync_led = {
++	.name			= "fsg:blue:sync",
++	.brightness_set		= fsg_led_sync_set,
++};
++
++static struct led_classdev fsg_ring_led = {
++	.name			= "fsg:blue:ring",
++	.brightness_set		= fsg_led_ring_set,
++};
++
++
++
++#ifdef CONFIG_PM
++static int fsg_led_suspend(struct platform_device *dev, pm_message_t state)
++{
++	led_classdev_suspend(&fsg_wlan_led);
++	led_classdev_suspend(&fsg_wan_led);
++	led_classdev_suspend(&fsg_sata_led);
++	led_classdev_suspend(&fsg_usb_led);
++	led_classdev_suspend(&fsg_sync_led);
++	led_classdev_suspend(&fsg_ring_led);
++	return 0;
++}
++
++static int fsg_led_resume(struct platform_device *dev)
++{
++	led_classdev_resume(&fsg_wlan_led);
++	led_classdev_resume(&fsg_wan_led);
++	led_classdev_resume(&fsg_sata_led);
++	led_classdev_resume(&fsg_usb_led);
++	led_classdev_resume(&fsg_sync_led);
++	led_classdev_resume(&fsg_ring_led);
++	return 0;
++}
++#endif
++
++
++static int fsg_led_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = led_classdev_register(&pdev->dev, &fsg_wlan_led);
++	if (ret < 0)
++		goto failwlan;
++
++	ret = led_classdev_register(&pdev->dev, &fsg_wan_led);
++	if (ret < 0)
++		goto failwan;
++
++	ret = led_classdev_register(&pdev->dev, &fsg_sata_led);
++	if (ret < 0)
++		goto failsata;
++
++	ret = led_classdev_register(&pdev->dev, &fsg_usb_led);
++	if (ret < 0)
++		goto failusb;
++
++	ret = led_classdev_register(&pdev->dev, &fsg_sync_led);
++	if (ret < 0)
++		goto failsync;
++
++	ret = led_classdev_register(&pdev->dev, &fsg_ring_led);
++	if (ret < 0)
++		goto failring;
++
++	return ret;
++
++ failring:
++	led_classdev_unregister(&fsg_sync_led);
++ failsync:
++	led_classdev_unregister(&fsg_usb_led);
++ failusb:
++	led_classdev_unregister(&fsg_sata_led);
++ failsata:
++	led_classdev_unregister(&fsg_wan_led);
++ failwan:
++	led_classdev_unregister(&fsg_wlan_led);
++ failwlan:
++
++	return ret;
++}
++
++static int fsg_led_remove(struct platform_device *pdev)
++{
++	led_classdev_unregister(&fsg_wlan_led);
++	led_classdev_unregister(&fsg_wan_led);
++	led_classdev_unregister(&fsg_sata_led);
++	led_classdev_unregister(&fsg_usb_led);
++	led_classdev_unregister(&fsg_sync_led);
++	led_classdev_unregister(&fsg_ring_led);
++
++	return 0;
++}
++
++
++static struct platform_driver fsg_led_driver = {
++	.probe		= fsg_led_probe,
++	.remove		= fsg_led_remove,
++#ifdef CONFIG_PM
++	.suspend	= fsg_led_suspend,
++	.resume		= fsg_led_resume,
++#endif
++	.driver		= {
++		.name		= "fsg-led",
++	},
++};
++
++
++static int __init fsg_led_init(void)
++{
++	int ret;
++
++	/* Map the LED chip select address space */
++	latch_address = (unsigned short *) ioremap(IXP4XX_EXP_BUS_BASE(2), 512);
++	if (!latch_address)
++		return -ENOMEM;
++	latch_value = 0xffff;
++	*latch_address = latch_value;
++
++	ret = platform_driver_register(&fsg_led_driver);
++	if (ret == 0)
++		return ret;
++
++	iounmap(latch_address);
++	return ret;
++}
++
++static void __exit fsg_led_exit(void)
++{
++	platform_driver_unregister(&fsg_led_driver);
++	iounmap(latch_address);
++}
++
++
++module_init(fsg_led_init);
++module_exit(fsg_led_exit);
++
++MODULE_AUTHOR("Rod Whitby <rod@whitby.id.au>");
++MODULE_DESCRIPTION("Freecom FSG-3 LED driver");
++MODULE_LICENSE("GPL");
+-- 
+1.5.2.5
+

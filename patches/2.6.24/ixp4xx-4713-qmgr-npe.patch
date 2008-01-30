@@ -1,3 +1,15 @@
+From: Krzysztof Halasa <khc@pm.waw.pl>
+Subject: Adds drivers for IXP4xx QMgr and NPE features
+
+This patch adds drivers for IXP4xx hardware Queue Manager and for
+Network Processor Engines. Requires patch #4712 (reading/writing
+CPU feature (aka fuse) bits).
+
+Signed-off-by: Krzysztof Halasa <khc@pm.waw.pl>
+--
+PATCH FOLLOWS
+KernelVersion: 2.6.23
+
 diff --git a/arch/arm/mach-ixp4xx/Kconfig b/arch/arm/mach-ixp4xx/Kconfig
 index 61b2dfc..e774447 100644
 --- a/arch/arm/mach-ixp4xx/Kconfig
