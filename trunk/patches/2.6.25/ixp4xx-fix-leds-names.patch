@@ -49,7 +49,7 @@ index 68e18cb..80e8780 100644
  	},
  	{
 -		.name		= "disk",   /* yellow led */
-+		.name		= "nas100d:yellow:disk",
++		.name		= "nas100d:orange:disk",
  		.gpio		= NAS100D_LED_DISK_GPIO,
  		.active_low	= true,
  	},
