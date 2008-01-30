@@ -18,9 +18,9 @@ ixp4xx-4771-ethernet-support.patch
 ixp4xx-4772-nslu2-i2c-info.patch
 ixp4xx-4773-nas100d-i2c-info.patch
 ixp4xx-4774-dsmg600-i2c-info.patch
+ixp4xx-4799-use-leds-gpio.patch
 
 # To be submitted upstream
-ixp4xx-use-leds-gpio.patch
 ixp4xx-fsg-board-support.patch
 ixp4xx-fsg-led-driver.patch
 
