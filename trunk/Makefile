@@ -28,6 +28,10 @@ PATCHVER = 2.6.23
 
 # Latest Development
 # BASEVER  = 2.6.24
+# PATCHVER = 2.6.24
+
+# Latest Bleeding Edge
+# BASEVER  = 2.6.24
 # PATCHVER = 2.6.25
 
 # CROSS_COMPILE = /home/slug/angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
