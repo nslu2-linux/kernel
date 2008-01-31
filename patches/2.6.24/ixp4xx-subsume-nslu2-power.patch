@@ -1,0 +1,271 @@
+From 77d6352ae908b4fef3cee5d4c77dc92197e656e5 Mon Sep 17 00:00:00 2001
+From: Rod Whitby <rod@whitby.id.au>
+Date: Thu, 31 Jan 2008 21:27:32 +1030
+Subject: ixp4xx: Merge nslu2-power.c into nslu2-setup.c
+
+There is no reason to have power control in a separate file from the
+board setup code.  Merge it back into the board setup file, removing
+superfluous header includes and removing superfluous constants from
+the machine header file.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+PATCH FOLLOWS
+KernelVersion: 2.6.24-git9
+
+diff --git a/arch/arm/mach-ixp4xx/Makefile b/arch/arm/mach-ixp4xx/Makefile
+index e620ff3..604d273 100644
+--- a/arch/arm/mach-ixp4xx/Makefile
++++ b/arch/arm/mach-ixp4xx/Makefile
+@@ -24,7 +24,7 @@ obj-$(CONFIG_MACH_AVILA)	+= avila-setup.o
+ obj-$(CONFIG_MACH_IXDPG425)	+= coyote-setup.o
+ obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-setup.o
+ obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
+-obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o nslu2-power.o
++obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o
+ obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
+ obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
+ obj-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-setup.o
+diff --git a/arch/arm/mach-ixp4xx/nslu2-power.c b/arch/arm/mach-ixp4xx/nslu2-power.c
+deleted file mode 100644
+index 6f10dc2..0000000
+--- a/arch/arm/mach-ixp4xx/nslu2-power.c
++++ /dev/null
+@@ -1,91 +0,0 @@
+-/*
+- * arch/arm/mach-ixp4xx/nslu2-power.c
+- *
+- * NSLU2 Power/Reset driver
+- *
+- * Copyright (C) 2005 Tower Technologies
+- *
+- * based on nslu2-io.c
+- *  Copyright (C) 2004 Karen Spearel
+- *
+- * Author: Alessandro Zummo <a.zummo@towertech.it>
+- * Maintainers: http://www.nslu2-linux.org/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- */
+-
+-#include <linux/module.h>
+-#include <linux/reboot.h>
+-#include <linux/irq.h>
+-#include <linux/interrupt.h>
+-
+-#include <asm/mach-types.h>
+-
+-static irqreturn_t nslu2_power_handler(int irq, void *dev_id)
+-{
+-	/* Signal init to do the ctrlaltdel action, this will bypass init if
+-	 * it hasn't started and do a kernel_restart.
+-	 */
+-	ctrl_alt_del();
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static irqreturn_t nslu2_reset_handler(int irq, void *dev_id)
+-{
+-	/* This is the paper-clip reset, it shuts the machine down directly.
+-	 */
+-	machine_power_off();
+-
+-	return IRQ_HANDLED;
+-}
+-
+-static int __init nslu2_power_init(void)
+-{
+-	if (!(machine_is_nslu2()))
+-		return 0;
+-
+-	*IXP4XX_GPIO_GPISR = 0x20400000;	/* read the 2 irqs to clr */
+-
+-	set_irq_type(NSLU2_RB_IRQ, IRQT_LOW);
+-	set_irq_type(NSLU2_PB_IRQ, IRQT_HIGH);
+-
+-	if (request_irq(NSLU2_RB_IRQ, &nslu2_reset_handler,
+-		IRQF_DISABLED, "NSLU2 reset button", NULL) < 0) {
+-
+-		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
+-			NSLU2_RB_IRQ);
+-
+-		return -EIO;
+-	}
+-
+-	if (request_irq(NSLU2_PB_IRQ, &nslu2_power_handler,
+-		IRQF_DISABLED, "NSLU2 power button", NULL) < 0) {
+-
+-		printk(KERN_DEBUG "Power Button IRQ %d not available\n",
+-			NSLU2_PB_IRQ);
+-
+-		return -EIO;
+-	}
+-
+-	return 0;
+-}
+-
+-static void __exit nslu2_power_exit(void)
+-{
+-	if (!(machine_is_nslu2()))
+-		return;
+-
+-	free_irq(NSLU2_RB_IRQ, NULL);
+-	free_irq(NSLU2_PB_IRQ, NULL);
+-}
+-
+-module_init(nslu2_power_init);
+-module_exit(nslu2_power_exit);
+-
+-MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
+-MODULE_DESCRIPTION("NSLU2 Power/Reset driver");
+-MODULE_LICENSE("GPL");
+diff --git a/arch/arm/mach-ixp4xx/nslu2-setup.c b/arch/arm/mach-ixp4xx/nslu2-setup.c
+index 82febf6..19aa022 100644
+--- a/arch/arm/mach-ixp4xx/nslu2-setup.c
++++ b/arch/arm/mach-ixp4xx/nslu2-setup.c
+@@ -3,22 +3,26 @@
+  *
+  * NSLU2 board-setup
+  *
+- * based ixdp425-setup.c:
++ * Copyright (C) 2008 Rod Whitby <rod@whitby.id.au>
++ *
++ * based on ixdp425-setup.c:
+  *      Copyright (C) 2003-2004 MontaVista Software, Inc.
++ * based on nslu2-power.c:
++ *	Copyright (C) 2005 Tower Technologies
+  *
+  * Author: Mark Rakes <mrakes at mac.com>
+  * Author: Rod Whitby <rod@whitby.id.au>
++ * Author: Alessandro Zummo <a.zummo@towertech.it>
+  * Maintainers: http://www.nslu2-linux.org/
+  *
+- * Fixed missing init_time in MACHINE_START kas11 10/22/04
+- * Changed to conform to new style __init ixdp425 kas11 10/22/04
+  */
+ 
+ #include <linux/if_ether.h>
+-#include <linux/kernel.h>
++#include <linux/irq.h>
+ #include <linux/serial.h>
+ #include <linux/serial_8250.h>
+ #include <linux/leds.h>
++#include <linux/reboot.h>
+ #include <linux/i2c.h>
+ #include <linux/i2c-gpio.h>
+ 
+@@ -27,6 +31,7 @@
+ #include <asm/mach/flash.h>
+ #include <asm/mach/time.h>
+ #include <asm/io.h>
++#include <asm/gpio.h>
+ 
+ static struct flash_platform_data nslu2_flash_data = {
+ 	.map_name		= "cfi_probe",
+@@ -181,6 +186,25 @@ static void nslu2_power_off(void)
+ 	gpio_line_set(NSLU2_PO_GPIO, IXP4XX_GPIO_HIGH);
+ }
+ 
++static irqreturn_t nslu2_power_handler(int irq, void *dev_id)
++{
++	/* Signal init to do the ctrlaltdel action, this will bypass init if
++	 * it hasn't started and do a kernel_restart.
++	 */
++	ctrl_alt_del();
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t nslu2_reset_handler(int irq, void *dev_id)
++{
++	/* This is the paper-clip reset, it shuts the machine down directly.
++	 */
++	machine_power_off();
++
++	return IRQ_HANDLED;
++}
++
+ static void __init nslu2_timer_init(void)
+ {
+     /* The xtal on this machine is non-standard. */
+@@ -206,8 +230,6 @@ static void __init nslu2_init(void)
+ 	nslu2_flash_resource.end =
+ 		IXP4XX_EXP_BUS_BASE(0) + ixp4xx_exp_bus_size - 1;
+ 
+-	pm_power_off = nslu2_power_off;
+-
+ 	i2c_register_board_info(0, nslu2_i2c_board_info,
+ 				ARRAY_SIZE(nslu2_i2c_board_info));
+ 
+@@ -220,6 +242,23 @@ static void __init nslu2_init(void)
+ 
+ 	platform_add_devices(nslu2_devices, ARRAY_SIZE(nslu2_devices));
+ 
++	pm_power_off = nslu2_power_off;
++
++	set_irq_type(gpio_to_irq(NSLU2_RB_GPIO), IRQT_LOW);
++	if (request_irq(gpio_to_irq(NSLU2_RB_GPIO), &nslu2_reset_handler,
++		IRQF_DISABLED, "NSLU2 reset button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
++			gpio_to_irq(NSLU2_RB_GPIO));
++	}
++
++	set_irq_type(gpio_to_irq(NSLU2_PB_GPIO), IRQT_HIGH);
++	if (request_irq(gpio_to_irq(NSLU2_PB_GPIO), &nslu2_power_handler,
++		IRQF_DISABLED, "NSLU2 power button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Power Button IRQ %d not available\n",
++			gpio_to_irq(NSLU2_PB_GPIO));
++	}
+ 
+ 	/*
+ 	 * Map in a portion of the flash and read the MAC address.
+diff --git a/include/asm-arm/arch-ixp4xx/nslu2.h b/include/asm-arm/arch-ixp4xx/nslu2.h
+index 850fdc5..714bbc6 100644
+--- a/include/asm-arm/arch-ixp4xx/nslu2.h
++++ b/include/asm-arm/arch-ixp4xx/nslu2.h
+@@ -39,34 +39,17 @@
+ 
+ /* Buttons */
+ 
+-#define NSLU2_PB_GPIO		5
++#define NSLU2_PB_GPIO		5	/* power button */
+ #define NSLU2_PO_GPIO		8	/* power off */
+-#define NSLU2_RB_GPIO		12
+-
+-#define NSLU2_PB_IRQ		IRQ_IXP4XX_GPIO5
+-#define NSLU2_RB_IRQ		IRQ_IXP4XX_GPIO12
+-
+-#define NSLU2_PB_BM		(1L << NSLU2_PB_GPIO)
+-#define NSLU2_PO_BM		(1L << NSLU2_PO_GPIO)
+-#define NSLU2_RB_BM		(1L << NSLU2_RB_GPIO)
++#define NSLU2_RB_GPIO		12	/* reset button */
+ 
+ /* Buzzer */
+ 
+ #define NSLU2_GPIO_BUZZ		4
+-#define NSLU2_BZ_BM		(1L << NSLU2_GPIO_BUZZ)
+ 
+ /* LEDs */
+ 
+ #define NSLU2_LED_RED_GPIO	0
+ #define NSLU2_LED_GRN_GPIO	1
+-
+-#define NSLU2_LED_RED_BM	(1L << NSLU2_LED_RED_GPIO)
+-#define NSLU2_LED_GRN_BM	(1L << NSLU2_LED_GRN_GPIO)
+-
+ #define NSLU2_LED_DISK1_GPIO	3
+ #define NSLU2_LED_DISK2_GPIO	2
+-
+-#define NSLU2_LED_DISK1_BM	(1L << NSLU2_LED_DISK1_GPIO)
+-#define NSLU2_LED_DISK2_BM	(1L << NSLU2_LED_DISK2_GPIO)
+-
+-
+-- 
+1.5.2.5
+

@@ -1,7 +1,7 @@
-From 61b43c4b66c48e4ed60e2717506fd1397c1c2f5b Mon Sep 17 00:00:00 2001
+From fc38a9359c7e91be89fe0e616e2ee6952013ef88 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Tue, 29 Jan 2008 23:12:44 +1030
-Subject: [PATCH] ixp4xx: Add support for the Freecom FSG-3 board
+Subject: ixp4xx: Add support for the Freecom FSG-3 board
 
 The Freecom-FSG3 is a small network-attached-storage device with the
 following feature set:
@@ -24,22 +24,7 @@ The ixp4xx_defconfig is also updated to support this device.
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 
 PATCH FOLLOWS
-KernelVersion: 2.6.24-git6
----
- arch/arm/configs/ixp4xx_defconfig      |    7 +-
- arch/arm/mach-ixp4xx/Kconfig           |    9 ++
- arch/arm/mach-ixp4xx/Makefile          |    2 +
- arch/arm/mach-ixp4xx/fsg-pci.c         |   71 ++++++++++
- arch/arm/mach-ixp4xx/fsg-power.c       |   89 +++++++++++++
- arch/arm/mach-ixp4xx/fsg-setup.c       |  219 ++++++++++++++++++++++++++++++++
- include/asm-arm/arch-ixp4xx/fsg.h      |   50 +++++++
- include/asm-arm/arch-ixp4xx/hardware.h |    1 +
- include/asm-arm/arch-ixp4xx/irqs.h     |    7 +
- 9 files changed, 452 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm/mach-ixp4xx/fsg-pci.c
- create mode 100644 arch/arm/mach-ixp4xx/fsg-power.c
- create mode 100644 arch/arm/mach-ixp4xx/fsg-setup.c
- create mode 100644 include/asm-arm/arch-ixp4xx/fsg.h
+KernelVersion: 2.6.24-git9
 
 diff --git a/arch/arm/configs/ixp4xx_defconfig b/arch/arm/configs/ixp4xx_defconfig
 index efa0485..11a1b3e 100644
@@ -101,7 +86,7 @@ index e774447..db8b5fe 100644
  # Certain registers and IRQs are only enabled if supporting IXP465 CPUs
  #
 diff --git a/arch/arm/mach-ixp4xx/Makefile b/arch/arm/mach-ixp4xx/Makefile
-index 4bb97e1..f704210 100644
+index 4bb97e1..e620ff3 100644
 --- a/arch/arm/mach-ixp4xx/Makefile
 +++ b/arch/arm/mach-ixp4xx/Makefile
 @@ -15,6 +15,7 @@ obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
@@ -116,7 +101,7 @@ index 4bb97e1..f704210 100644
  obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
  obj-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-setup.o
  obj-$(CONFIG_MACH_WG302V2)	+= wg302v2-setup.o
-+obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o fsg-power.o
++obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o
  
  obj-$(CONFIG_PCI)		+= $(obj-pci-$(CONFIG_PCI)) common-pci.o
  obj-$(CONFIG_IXP4XX_QMGR)	+= ixp4xx_qmgr.o
@@ -197,114 +182,23 @@ index 0000000..19a8b73
 +}
 +
 +subsys_initcall(fsg_pci_init);
-diff --git a/arch/arm/mach-ixp4xx/fsg-power.c b/arch/arm/mach-ixp4xx/fsg-power.c
-new file mode 100644
-index 0000000..dc3884e
---- /dev/null
-+++ b/arch/arm/mach-ixp4xx/fsg-power.c
-@@ -0,0 +1,89 @@
-+/*
-+ * arch/arm/mach-ixp4xx/fsg-power.c
-+ *
-+ * FSG Power/Reset driver
-+ *
-+ * Copyright (C) 2008 Rod Whitby <rod@whitby.id.au>
-+ *
-+ * based on nslu2-power.c
-+ *  Copyright (C) 2005 Tower Technologies
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/reboot.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/jiffies.h>
-+#include <linux/timer.h>
-+
-+#include <asm/gpio.h>
-+#include <asm/mach-types.h>
-+
-+static irqreturn_t fsg_power_handler(int irq, void *dev_id)
-+{
-+	/* Signal init to do the ctrlaltdel action, this will bypass init if
-+	 * it hasn't started and do a kernel_restart.
-+	 */
-+	ctrl_alt_del();
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t fsg_reset_handler(int irq, void *dev_id)
-+{
-+	/* This is the paper-clip reset, it shuts the machine down directly.
-+	 */
-+	machine_power_off();
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int __init fsg_power_init(void)
-+{
-+	if (!(machine_is_fsg()))
-+		return 0;
-+
-+	set_irq_type(gpio_to_irq(FSG_RB_GPIO), IRQT_LOW);
-+	set_irq_type(gpio_to_irq(FSG_SB_GPIO), IRQT_LOW);
-+
-+	if (request_irq(gpio_to_irq(FSG_RB_GPIO), &fsg_reset_handler,
-+		IRQF_DISABLED, "FSG reset button", NULL) < 0) {
-+
-+		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
-+			gpio_to_irq(FSG_RB_GPIO));
-+
-+		return -EIO;
-+	}
-+
-+	if (request_irq(gpio_to_irq(FSG_SB_GPIO), &fsg_power_handler,
-+		IRQF_DISABLED, "FSG power button", NULL) < 0) {
-+
-+		printk(KERN_DEBUG "Power Button IRQ %d not available\n",
-+			gpio_to_irq(FSG_SB_GPIO));
-+
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static void __exit fsg_power_exit(void)
-+{
-+	if (!(machine_is_fsg()))
-+		return;
-+
-+	free_irq(gpio_to_irq(FSG_SB_GPIO), NULL);
-+	free_irq(gpio_to_irq(FSG_RB_GPIO), NULL);
-+}
-+
-+module_init(fsg_power_init);
-+module_exit(fsg_power_exit);
-+
-+MODULE_AUTHOR("Rod Whitby <rod@whitby.id.au>");
-+MODULE_DESCRIPTION("FSG Power/Reset driver");
-+MODULE_LICENSE("GPL");
 diff --git a/arch/arm/mach-ixp4xx/fsg-setup.c b/arch/arm/mach-ixp4xx/fsg-setup.c
 new file mode 100644
-index 0000000..86ca346
+index 0000000..e4b3719
 --- /dev/null
 +++ b/arch/arm/mach-ixp4xx/fsg-setup.c
-@@ -0,0 +1,219 @@
+@@ -0,0 +1,267 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
 + *
 + * FSG board-setup
 + *
-+ * based ixdp425-setup.c:
++ * Copyright (C) 2008 Rod Whitby <rod@whitby.id.au>
++ *
++ * based on ixdp425-setup.c:
 + *	Copyright (C) 2003-2004 MontaVista Software, Inc.
++ * based on nslu2-power.c
++ *	Copyright (C) 2005 Tower Technologies
 + *
 + * Author: Rod Whitby <rod@whitby.id.au>
 + * Maintainers: http://www.nslu2-linux.org/
@@ -318,6 +212,16 @@ index 0000000..86ca346
 +#include <linux/leds.h>
 +#include <linux/reboot.h>
 +#include <linux/i2c-gpio.h>
++
++#include <linux/module.h>
++#include <linux/reboot.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/jiffies.h>
++#include <linux/timer.h>
++
++#include <asm/gpio.h>
++#include <asm/mach-types.h>
 +
 +#include <asm/mach-types.h>
 +#include <asm/mach/arch.h>
@@ -441,6 +345,25 @@ index 0000000..86ca346
 +	machine_restart(NULL);
 +}
 +
++static irqreturn_t fsg_power_handler(int irq, void *dev_id)
++{
++	/* Signal init to do the ctrlaltdel action, this will bypass init if
++	 * it hasn't started and do a kernel_restart.
++	 */
++	ctrl_alt_del();
++
++	return IRQ_HANDLED;
++}
++
++static irqreturn_t fsg_reset_handler(int irq, void *dev_id)
++{
++	/* This is the paper-clip reset, it shuts the machine down directly.
++	 */
++	machine_power_off();
++
++	return IRQ_HANDLED;
++}
++
 +static void __init fsg_init(void)
 +{
 +	DECLARE_MAC_BUF(mac_buf);
@@ -448,8 +371,6 @@ index 0000000..86ca346
 +	int i;
 +
 +	ixp4xx_sys_init();
-+
-+	pm_power_off = fsg_power_off;
 +
 +	fsg_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
 +	fsg_flash_resource.end =
@@ -469,6 +390,23 @@ index 0000000..86ca346
 +
 +	platform_add_devices(fsg_devices, ARRAY_SIZE(fsg_devices));
 +
++	pm_power_off = fsg_power_off;
++
++	set_irq_type(gpio_to_irq(FSG_RB_GPIO), IRQT_LOW);
++	if (request_irq(gpio_to_irq(FSG_RB_GPIO), &fsg_reset_handler,
++		IRQF_DISABLED, "FSG reset button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
++			gpio_to_irq(FSG_RB_GPIO));
++	}
++
++	set_irq_type(gpio_to_irq(FSG_SB_GPIO), IRQT_LOW);
++	if (request_irq(gpio_to_irq(FSG_SB_GPIO), &fsg_power_handler,
++		IRQF_DISABLED, "FSG power button", NULL) < 0) {
++
++		printk(KERN_DEBUG "Power Button IRQ %d not available\n",
++			gpio_to_irq(FSG_SB_GPIO));
++	}
 +
 +	/*
 +	 * Map in a portion of the flash and read the MAC addresses.
