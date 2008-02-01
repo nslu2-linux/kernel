@@ -1,4 +1,4 @@
-From d596d27862ccbd8ce10fb6160e556ba83b0ceda2 Mon Sep 17 00:00:00 2001
+From 1bcd974638f69159d2040c95c8c6adb01abad9e4 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Tue, 29 Jan 2008 23:12:44 +1030
 Subject: ixp4xx: Add support for the Freecom FSG-3 board
@@ -21,10 +21,12 @@ following feature set:
 
 The ixp4xx_defconfig is also updated to support this device.
 
+This has been tested on both big-endian and little-endian kernels.
+
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 
 PATCH FOLLOWS
-KernelVersion: 2.6.24-git9
+KernelVersion: 2.6.24-git9 (+ patches already applied on ixp branch)
 
 diff --git a/arch/arm/configs/ixp4xx_defconfig b/arch/arm/configs/ixp4xx_defconfig
 index efa0485..11a1b3e 100644
@@ -184,10 +186,10 @@ index 0000000..19a8b73
 +subsys_initcall(fsg_pci_init);
 diff --git a/arch/arm/mach-ixp4xx/fsg-setup.c b/arch/arm/mach-ixp4xx/fsg-setup.c
 new file mode 100644
-index 0000000..693e04d
+index 0000000..411f617
 --- /dev/null
 +++ b/arch/arm/mach-ixp4xx/fsg-setup.c
-@@ -0,0 +1,256 @@
+@@ -0,0 +1,274 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
 + *
@@ -415,15 +417,33 @@ index 0000000..693e04d
 +	 */
 +	f = ioremap(IXP4XX_EXP_BUS_BASE(0), 0x400000);
 +	if (f) {
-+		for (i = 0; i < 6; i++) {
 +#ifdef __ARMEB__
++		for (i = 0; i < 6; i++) {
 +			fsg_plat_eth[0].hwaddr[i] = readb(f + 0x3C0422 + i);
 +			fsg_plat_eth[1].hwaddr[i] = readb(f + 0x3C043B + i);
-+#else
-+			fsg_plat_eth[0].hwaddr[i] = readb(f + 0x3C0422 + (i^3));
-+			fsg_plat_eth[1].hwaddr[i] = readb(f + 0x3C043B + (i^3));
-+#endif
 +		}
++#else
++
++		/*
++		  Endian-swapped reads from unaligned addresses are
++		  required to extract the two MACs from the big-endian
++		  Redboot config area in flash.
++		*/
++
++		fsg_plat_eth[0].hwaddr[0] = readb(f + 0x3C0421);
++		fsg_plat_eth[0].hwaddr[1] = readb(f + 0x3C0420);
++		fsg_plat_eth[0].hwaddr[2] = readb(f + 0x3C0427);
++		fsg_plat_eth[0].hwaddr[3] = readb(f + 0x3C0426);
++		fsg_plat_eth[0].hwaddr[4] = readb(f + 0x3C0425);
++		fsg_plat_eth[0].hwaddr[5] = readb(f + 0x3C0424);
++
++		fsg_plat_eth[1].hwaddr[0] = readb(f + 0x3C0439);
++		fsg_plat_eth[1].hwaddr[1] = readb(f + 0x3C043F);
++		fsg_plat_eth[1].hwaddr[2] = readb(f + 0x3C043E);
++		fsg_plat_eth[1].hwaddr[3] = readb(f + 0x3C043D);
++		fsg_plat_eth[1].hwaddr[4] = readb(f + 0x3C043C);
++		fsg_plat_eth[1].hwaddr[5] = readb(f + 0x3C0443);
++#endif
 +		iounmap(f);
 +	}
 +	printk(KERN_INFO "FSG: Using MAC address %s for port 0\n",
