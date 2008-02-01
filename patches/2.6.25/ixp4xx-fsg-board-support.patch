@@ -1,4 +1,4 @@
-From 1bcd974638f69159d2040c95c8c6adb01abad9e4 Mon Sep 17 00:00:00 2001
+From 0b64383e483b2d554df96084070dc72b028d1c3a Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Tue, 29 Jan 2008 23:12:44 +1030
 Subject: ixp4xx: Add support for the Freecom FSG-3 board
@@ -186,10 +186,10 @@ index 0000000..19a8b73
 +subsys_initcall(fsg_pci_init);
 diff --git a/arch/arm/mach-ixp4xx/fsg-setup.c b/arch/arm/mach-ixp4xx/fsg-setup.c
 new file mode 100644
-index 0000000..411f617
+index 0000000..6ca0dfa
 --- /dev/null
 +++ b/arch/arm/mach-ixp4xx/fsg-setup.c
-@@ -0,0 +1,274 @@
+@@ -0,0 +1,275 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
 + *
@@ -208,27 +208,19 @@ index 0000000..411f617
 + */
 +
 +#include <linux/if_ether.h>
-+#include <linux/kernel.h>
++#include <linux/irq.h>
 +#include <linux/serial.h>
 +#include <linux/serial_8250.h>
 +#include <linux/leds.h>
 +#include <linux/reboot.h>
++#include <linux/i2c.h>
 +#include <linux/i2c-gpio.h>
-+
-+#include <linux/module.h>
-+#include <linux/reboot.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/jiffies.h>
-+#include <linux/timer.h>
-+
-+#include <asm/gpio.h>
-+#include <asm/mach-types.h>
 +
 +#include <asm/mach-types.h>
 +#include <asm/mach/arch.h>
 +#include <asm/mach/flash.h>
 +#include <asm/io.h>
++#include <asm/gpio.h>
 +
 +static struct flash_platform_data fsg_flash_data = {
 +	.map_name		= "cfi_probe",
@@ -257,6 +249,12 @@ index 0000000..411f617
 +	.id			= 0,
 +	.dev	 = {
 +		.platform_data	= &fsg_i2c_gpio_data,
++	},
++};
++
++static struct i2c_board_info __initdata fsg_i2c_board_info [] = {
++	{
++		I2C_BOARD_INFO("rtc-isl1208", 0x6f),
 +	},
 +};
 +
@@ -383,6 +381,9 @@ index 0000000..411f617
 +
 +	/* Configure CS2 for operation, 8bit and writable */
 +	*IXP4XX_EXP_CS2 = 0xbfff0002;
++
++	i2c_register_board_info(0, fsg_i2c_board_info,
++				ARRAY_SIZE(fsg_i2c_board_info));
 +
 +	/* This is only useful on a modified machine, but it is valuable
 +	 * to have it first in order to see debug messages, and so that
