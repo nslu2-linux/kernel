@@ -48,3 +48,6 @@ squashfs/squashfs-Makefile.patch
 # Copied from openwrt patches for 2.6.23, svn revision 10120:
 # https://dev.openwrt.org/browser/trunk/target/linux/generic-2.6/patches-2.6.23/209-mini_fo.patch?rev=10120
 mini_fo.patch
+
+# DSM-G600 via-velocity driver patches for BE and misc fixes
+velocity-BE.patch
