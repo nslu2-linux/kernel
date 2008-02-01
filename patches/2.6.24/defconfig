@@ -254,6 +254,7 @@ CONFIG_ZBOOT_ROM_BSS=0x0
 CONFIG_CMDLINE="console=ttyS0,115200 ip=bootp root=/dev/nfs"
 # CONFIG_XIP_KERNEL is not set
 CONFIG_KEXEC=y
+CONFIG_ATAGS_PROC=y
 
 #
 # Floating point emulation
