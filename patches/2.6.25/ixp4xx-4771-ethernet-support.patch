@@ -1,4 +1,4 @@
-From 9ede340308525a8213550e4ca9d16118aaefd2ab Mon Sep 17 00:00:00 2001
+From 1cfe9ba73f2a6e05878b10695b28d10016d28961 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Tue, 29 Jan 2008 10:03:19 +1030
 Subject: ixp4xx: Ethernet support for the nslu2 and nas100d boards (Patch #4771)
@@ -18,7 +18,7 @@ PATCH FOLLOWS
 KernelVersion: 2.6.24-git5
 
 diff --git a/arch/arm/configs/ixp4xx_defconfig b/arch/arm/configs/ixp4xx_defconfig
-index 2d5ae33..45192ef 100644
+index 77fe3b0..efa0485 100644
 --- a/arch/arm/configs/ixp4xx_defconfig
 +++ b/arch/arm/configs/ixp4xx_defconfig
 @@ -1,7 +1,7 @@
@@ -57,7 +57,7 @@ index 2d5ae33..45192ef 100644
  CONFIG_DLCI_MAX=8
  CONFIG_WAN_ROUTER_DRIVERS=m
 diff --git a/arch/arm/mach-ixp4xx/nas100d-setup.c b/arch/arm/mach-ixp4xx/nas100d-setup.c
-index 213a4ce..b0884c2 100644
+index 5801579..a432226 100644
 --- a/arch/arm/mach-ixp4xx/nas100d-setup.c
 +++ b/arch/arm/mach-ixp4xx/nas100d-setup.c
 @@ -12,6 +12,7 @@
@@ -68,7 +68,7 @@ index 213a4ce..b0884c2 100644
  #include <linux/kernel.h>
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
-@@ -21,6 +22,7 @@
+@@ -22,6 +23,7 @@
  #include <asm/mach-types.h>
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
@@ -76,7 +76,7 @@ index 213a4ce..b0884c2 100644
  
  static struct flash_platform_data nas100d_flash_data = {
  	.map_name		= "cfi_probe",
-@@ -125,12 +127,30 @@ static struct platform_device nas100d_uart = {
+@@ -131,10 +133,28 @@ static struct platform_device nas100d_uart = {
  	.resource		= nas100d_uart_resources,
  };
  
@@ -100,14 +100,12 @@ index 213a4ce..b0884c2 100644
  static struct platform_device *nas100d_devices[] __initdata = {
  	&nas100d_i2c_gpio,
  	&nas100d_flash,
- #ifdef CONFIG_LEDS_IXP4XX
  	&nas100d_leds,
- #endif
 +	&nas100d_eth[0],
  };
  
  static void nas100d_power_off(void)
-@@ -146,6 +166,10 @@ static void nas100d_power_off(void)
+@@ -150,6 +170,10 @@ static void nas100d_power_off(void)
  
  static void __init nas100d_init(void)
  {
@@ -118,7 +116,7 @@ index 213a4ce..b0884c2 100644
  	ixp4xx_sys_init();
  
  	/* gpio 14 and 15 are _not_ clocks */
-@@ -165,6 +189,30 @@ static void __init nas100d_init(void)
+@@ -172,6 +196,25 @@ static void __init nas100d_init(void)
  	(void)platform_device_register(&nas100d_uart);
  
  	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
@@ -130,16 +128,11 @@ index 213a4ce..b0884c2 100644
 +	 */
 +	f = ioremap(IXP4XX_EXP_BUS_BASE(0), 0x1000000);
 +	if (f) {
-+#ifdef __ARMEB__
 +		for (i = 0; i < 6; i++)
++#ifdef __ARMEB__
 +			nas100d_plat_eth[0].hwaddr[i] = readb(f + 0xFC0FD8 + i);
 +#else
-+		nas100d_plat_eth[0].hwaddr[0] = readb(f + 0xFC0FD8 + 3);
-+		nas100d_plat_eth[0].hwaddr[1] = readb(f + 0xFC0FD8 + 2);
-+		nas100d_plat_eth[0].hwaddr[2] = readb(f + 0xFC0FD8 + 1);
-+		nas100d_plat_eth[0].hwaddr[3] = readb(f + 0xFC0FD8 + 0);
-+		nas100d_plat_eth[0].hwaddr[4] = readb(f + 0xFC0FD8 + 7);
-+		nas100d_plat_eth[0].hwaddr[5] = readb(f + 0xFC0FD8 + 6);
++			nas100d_plat_eth[0].hwaddr[i] = readb(f + 0xFC0FD8 + (i^3));
 +#endif
 +		iounmap(f);
 +	}
@@ -150,7 +143,7 @@ index 213a4ce..b0884c2 100644
  
  MACHINE_START(NAS100D, "Iomega NAS 100d")
 diff --git a/arch/arm/mach-ixp4xx/nslu2-setup.c b/arch/arm/mach-ixp4xx/nslu2-setup.c
-index 77277d2..332a066 100644
+index 41d55c8..fd9ec17 100644
 --- a/arch/arm/mach-ixp4xx/nslu2-setup.c
 +++ b/arch/arm/mach-ixp4xx/nslu2-setup.c
 @@ -14,6 +14,7 @@
@@ -161,7 +154,7 @@ index 77277d2..332a066 100644
  #include <linux/kernel.h>
  #include <linux/serial.h>
  #include <linux/serial_8250.h>
-@@ -24,6 +25,7 @@
+@@ -25,6 +26,7 @@
  #include <asm/mach/arch.h>
  #include <asm/mach/flash.h>
  #include <asm/mach/time.h>
@@ -169,7 +162,7 @@ index 77277d2..332a066 100644
  
  static struct flash_platform_data nslu2_flash_data = {
  	.map_name		= "cfi_probe",
-@@ -140,6 +142,23 @@ static struct platform_device nslu2_uart = {
+@@ -143,11 +145,29 @@ static struct platform_device nslu2_uart = {
  	.resource		= nslu2_uart_resources,
  };
  
@@ -193,15 +186,13 @@ index 77277d2..332a066 100644
  static struct platform_device *nslu2_devices[] __initdata = {
  	&nslu2_i2c_gpio,
  	&nslu2_flash,
-@@ -147,6 +166,7 @@ static struct platform_device *nslu2_devices[] __initdata = {
- #ifdef CONFIG_LEDS_IXP4XX
+ 	&nslu2_beeper,
  	&nslu2_leds,
- #endif
 +	&nslu2_eth[0],
  };
  
  static void nslu2_power_off(void)
-@@ -175,6 +195,10 @@ static struct sys_timer nslu2_timer = {
+@@ -176,6 +196,10 @@ static struct sys_timer nslu2_timer = {
  
  static void __init nslu2_init(void)
  {
@@ -212,7 +203,7 @@ index 77277d2..332a066 100644
  	ixp4xx_sys_init();
  
  	nslu2_flash_resource.start = IXP4XX_EXP_BUS_BASE(0);
-@@ -191,6 +215,31 @@ static void __init nslu2_init(void)
+@@ -195,6 +219,26 @@ static void __init nslu2_init(void)
  	(void)platform_device_register(&nslu2_uart);
  
  	platform_add_devices(nslu2_devices, ARRAY_SIZE(nslu2_devices));
@@ -225,16 +216,11 @@ index 77277d2..332a066 100644
 +	 */
 +	f = ioremap(IXP4XX_EXP_BUS_BASE(0), 0x40000);
 +	if (f) {
-+#ifdef __ARMEB__
 +		for (i = 0; i < 6; i++)
++#ifdef __ARMEB__
 +			nslu2_plat_eth[0].hwaddr[i] = readb(f + 0x3FFB0 + i);
 +#else
-+		nslu2_plat_eth[0].hwaddr[0] = readb(f + 0x3FFB0 + 3);
-+		nslu2_plat_eth[0].hwaddr[1] = readb(f + 0x3FFB0 + 2);
-+		nslu2_plat_eth[0].hwaddr[2] = readb(f + 0x3FFB0 + 1);
-+		nslu2_plat_eth[0].hwaddr[3] = readb(f + 0x3FFB0 + 0);
-+		nslu2_plat_eth[0].hwaddr[4] = readb(f + 0x3FFB0 + 7);
-+		nslu2_plat_eth[0].hwaddr[5] = readb(f + 0x3FFB0 + 6);
++			nslu2_plat_eth[0].hwaddr[i] = readb(f + 0x3FFB0 + (i^3));
 +#endif
 +		iounmap(f);
 +	}

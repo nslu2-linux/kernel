@@ -1,4 +1,4 @@
-From fc38a9359c7e91be89fe0e616e2ee6952013ef88 Mon Sep 17 00:00:00 2001
+From d596d27862ccbd8ce10fb6160e556ba83b0ceda2 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Tue, 29 Jan 2008 23:12:44 +1030
 Subject: ixp4xx: Add support for the Freecom FSG-3 board
@@ -184,10 +184,10 @@ index 0000000..19a8b73
 +subsys_initcall(fsg_pci_init);
 diff --git a/arch/arm/mach-ixp4xx/fsg-setup.c b/arch/arm/mach-ixp4xx/fsg-setup.c
 new file mode 100644
-index 0000000..e4b3719
+index 0000000..693e04d
 --- /dev/null
 +++ b/arch/arm/mach-ixp4xx/fsg-setup.c
-@@ -0,0 +1,267 @@
+@@ -0,0 +1,256 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
 + *
@@ -415,26 +415,15 @@ index 0000000..e4b3719
 +	 */
 +	f = ioremap(IXP4XX_EXP_BUS_BASE(0), 0x400000);
 +	if (f) {
-+#ifdef __ARMEB__
 +		for (i = 0; i < 6; i++) {
++#ifdef __ARMEB__
 +			fsg_plat_eth[0].hwaddr[i] = readb(f + 0x3C0422 + i);
 +			fsg_plat_eth[1].hwaddr[i] = readb(f + 0x3C043B + i);
-+		}
 +#else
-+		fsg_plat_eth[0].hwaddr[0] = readb(f + 0x3C0422 + 3);
-+		fsg_plat_eth[0].hwaddr[1] = readb(f + 0x3C0422 + 2);
-+		fsg_plat_eth[0].hwaddr[2] = readb(f + 0x3C0422 + 1);
-+		fsg_plat_eth[0].hwaddr[3] = readb(f + 0x3C0422 + 0);
-+		fsg_plat_eth[0].hwaddr[4] = readb(f + 0x3C0422 + 7);
-+		fsg_plat_eth[0].hwaddr[5] = readb(f + 0x3C0422 + 6);
-+
-+		fsg_plat_eth[1].hwaddr[0] = readb(f + 0x3C0422 + 3);
-+		fsg_plat_eth[1].hwaddr[1] = readb(f + 0x3C0422 + 2);
-+		fsg_plat_eth[1].hwaddr[2] = readb(f + 0x3C0422 + 1);
-+		fsg_plat_eth[1].hwaddr[3] = readb(f + 0x3C0422 + 0);
-+		fsg_plat_eth[1].hwaddr[4] = readb(f + 0x3C0422 + 7);
-+		fsg_plat_eth[1].hwaddr[5] = readb(f + 0x3C0422 + 6);
++			fsg_plat_eth[0].hwaddr[i] = readb(f + 0x3C0422 + (i^3));
++			fsg_plat_eth[1].hwaddr[i] = readb(f + 0x3C043B + (i^3));
 +#endif
++		}
 +		iounmap(f);
 +	}
 +	printk(KERN_INFO "FSG: Using MAC address %s for port 0\n",
