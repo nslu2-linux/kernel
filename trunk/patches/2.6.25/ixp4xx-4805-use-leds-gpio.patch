@@ -1,7 +1,5 @@
-From 923efacfdb201317cd8fe0fadcf0bb00a259485c Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
-Date: Tue, 29 Jan 2008 17:17:29 +1030
-Subject: ixp4xx: Use leds-gpio driver instead of IXP4XX-GPIO-LED driver (Patch #4799)
+Subject: ixp4xx: Use leds-gpio driver instead of IXP4XX-GPIO-LED driver
 
 These are the only three boards to use the IXP4XX-GPIO-LED driver, and
 they can all use the new leds-gpio driver instead with no change in
@@ -10,7 +8,7 @@ functionality.
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 --
 PATCH FOLLOWS
-KernelVersion: 2.6.24-git6
+KernelVersion: v2.6.24-1915-gc9b12e6
 
 diff --git a/arch/arm/configs/ixp4xx_defconfig b/arch/arm/configs/ixp4xx_defconfig
 index 2d5ae33..77fe3b0 100644
