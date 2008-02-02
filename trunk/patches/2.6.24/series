@@ -54,3 +54,6 @@ velocity-BE.patch
 
 # RP's kexec patch, accepted and merged by RMK, not yet merged by Linus (01-Feb-2008).
 kexec-rp.patch
+
+# Fix kernel to accept an empty ATAG_CORE tag (Apex and kexec)
+atag_empty_core.patch
