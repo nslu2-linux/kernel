@@ -22,12 +22,12 @@ ixp4xx-4805-use-leds-gpio.patch
 ixp4xx-4806-ethernet-support.patch
 
 # To be submitted upstream
-ixp4xx-fsg-board-support.patch
-ixp4xx-fsg-led-driver.patch
-ixp4xx-fsg-defconfig-leds.patch 
 ixp4xx-subsume-nslu2-power.patch 
 ixp4xx-subsume-nas100d-power.patch 
 ixp4xx-subsume-dsmg600-power.patch 
+ixp4xx-fsg-board-support.patch
+ixp4xx-fsg-led-driver.patch
+ixp4xx-fsg-defconfig-leds.patch 
 
 # Add Krzysztof Halasa's IXP4XX ethernet driver
 # These patches are currently inline for mainstream inclusion.

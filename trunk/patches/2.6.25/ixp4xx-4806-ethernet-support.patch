@@ -1,4 +1,6 @@
+From af66bd3b3324d51f0c43b7672b7a0563db425377 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
+Date: Tue, 29 Jan 2008 10:03:19 +1030
 Subject: ixp4xx: Ethernet support for the nslu2 and nas100d boards
 
 Enables the new ixp4xx qmgr and npe drivers in ixp4xx_defconfig.
