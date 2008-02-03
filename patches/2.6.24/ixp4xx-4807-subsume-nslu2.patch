@@ -13,11 +13,11 @@ Signed-off-by: Rod Whitby <rod@whitby.id.au>
 PATCH FOLLOWS
 KernelVersion: 2.6.24-git9
 
-diff --git a/arch/arm/mach-ixp4xx/Makefile b/arch/arm/mach-ixp4xx/Makefile
-index 4bb97e1..4fc7316 100644
---- a/arch/arm/mach-ixp4xx/Makefile
-+++ b/arch/arm/mach-ixp4xx/Makefile
-@@ -23,7 +23,7 @@ obj-$(CONFIG_MACH_AVILA)	+= avila-setup.o
+Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/Makefile
+===================================================================
+--- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2008-02-03 12:58:54.000000000 +1030
++++ linux-2.6.24-armeb/arch/arm/mach-ixp4xx/Makefile	2008-02-03 12:58:59.000000000 +1030
+@@ -23,7 +23,7 @@
  obj-$(CONFIG_MACH_IXDPG425)	+= coyote-setup.o
  obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-setup.o
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
@@ -26,12 +26,11 @@ index 4bb97e1..4fc7316 100644
  obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
  obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
  obj-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-setup.o
-diff --git a/arch/arm/mach-ixp4xx/nslu2-power.c b/arch/arm/mach-ixp4xx/nslu2-power.c
-deleted file mode 100644
-index 6f10dc2..0000000
---- a/arch/arm/mach-ixp4xx/nslu2-power.c
-+++ /dev/null
-@@ -1,91 +0,0 @@
+Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-power.c
+===================================================================
+--- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/nslu2-power.c	2008-02-03 12:57:43.000000000 +1030
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,92 +0,0 @@
 -/*
 - * arch/arm/mach-ixp4xx/nslu2-power.c
 - *
@@ -55,6 +54,7 @@ index 6f10dc2..0000000
 -#include <linux/reboot.h>
 -#include <linux/irq.h>
 -#include <linux/interrupt.h>
+-#include <linux/reboot.h>
 -
 -#include <asm/mach-types.h>
 -
@@ -123,10 +123,10 @@ index 6f10dc2..0000000
 -MODULE_AUTHOR("Alessandro Zummo <a.zummo@towertech.it>");
 -MODULE_DESCRIPTION("NSLU2 Power/Reset driver");
 -MODULE_LICENSE("GPL");
-diff --git a/arch/arm/mach-ixp4xx/nslu2-setup.c b/arch/arm/mach-ixp4xx/nslu2-setup.c
-index fd9ec17..1f5e130 100644
---- a/arch/arm/mach-ixp4xx/nslu2-setup.c
-+++ b/arch/arm/mach-ixp4xx/nslu2-setup.c
+Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
+===================================================================
+--- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-03 12:58:54.000000000 +1030
++++ linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-03 12:58:59.000000000 +1030
 @@ -3,22 +3,26 @@
   *
   * NSLU2 board-setup
@@ -166,7 +166,7 @@ index fd9ec17..1f5e130 100644
  
  static struct flash_platform_data nslu2_flash_data = {
  	.map_name		= "cfi_probe",
-@@ -181,6 +186,25 @@ static void nslu2_power_off(void)
+@@ -181,6 +186,25 @@
  	gpio_line_set(NSLU2_PO_GPIO, IXP4XX_GPIO_HIGH);
  }
  
@@ -192,7 +192,7 @@ index fd9ec17..1f5e130 100644
  static void __init nslu2_timer_init(void)
  {
      /* The xtal on this machine is non-standard. */
-@@ -206,8 +230,6 @@ static void __init nslu2_init(void)
+@@ -206,8 +230,6 @@
  	nslu2_flash_resource.end =
  		IXP4XX_EXP_BUS_BASE(0) + ixp4xx_exp_bus_size - 1;
  
@@ -201,7 +201,7 @@ index fd9ec17..1f5e130 100644
  	i2c_register_board_info(0, nslu2_i2c_board_info,
  				ARRAY_SIZE(nslu2_i2c_board_info));
  
-@@ -220,6 +242,23 @@ static void __init nslu2_init(void)
+@@ -220,6 +242,23 @@
  
  	platform_add_devices(nslu2_devices, ARRAY_SIZE(nslu2_devices));
  
@@ -225,10 +225,10 @@ index fd9ec17..1f5e130 100644
  
  	/*
  	 * Map in a portion of the flash and read the MAC address.
-diff --git a/include/asm-arm/arch-ixp4xx/nslu2.h b/include/asm-arm/arch-ixp4xx/nslu2.h
-index 850fdc5..714bbc6 100644
---- a/include/asm-arm/arch-ixp4xx/nslu2.h
-+++ b/include/asm-arm/arch-ixp4xx/nslu2.h
+Index: linux-2.6.24-armeb/include/asm-arm/arch-ixp4xx/nslu2.h
+===================================================================
+--- linux-2.6.24-armeb.orig/include/asm-arm/arch-ixp4xx/nslu2.h	2008-02-03 12:57:43.000000000 +1030
++++ linux-2.6.24-armeb/include/asm-arm/arch-ixp4xx/nslu2.h	2008-02-03 12:58:59.000000000 +1030
 @@ -39,34 +39,17 @@
  
  /* Buttons */
@@ -266,6 +266,3 @@ index 850fdc5..714bbc6 100644
 -#define NSLU2_LED_DISK2_BM	(1L << NSLU2_LED_DISK2_GPIO)
 -
 -
--- 
-1.5.2.5
-
