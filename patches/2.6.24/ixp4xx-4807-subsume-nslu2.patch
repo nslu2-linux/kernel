@@ -1,7 +1,5 @@
-From 16f2707164dc5718499510f4506acea1154cf5bd Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
-Date: Thu, 31 Jan 2008 21:27:32 +1030
-Subject: ixp4xx: Merge nslu2-power.c into nslu2-setup.c
+Subject: ixp4xx: Merge nslu2-power.c into nslu2-setup.c (Patch #4807)
 
 There is no reason to have power control in a separate file from the
 board setup code.  Merge it back into the board setup file, removing
@@ -11,12 +9,12 @@ the machine header file.
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 --
 PATCH FOLLOWS
-KernelVersion: 2.6.24-git9
+KernelVersion: v2.6.24-1917-gaf66bd3
 
 Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/Makefile
 ===================================================================
---- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2008-02-03 12:58:54.000000000 +1030
-+++ linux-2.6.24-armeb/arch/arm/mach-ixp4xx/Makefile	2008-02-03 12:58:59.000000000 +1030
+--- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/Makefile	2008-02-03 22:45:22.000000000 +1030
++++ linux-2.6.24-armeb/arch/arm/mach-ixp4xx/Makefile	2008-02-03 22:45:44.000000000 +1030
 @@ -23,7 +23,7 @@
  obj-$(CONFIG_MACH_IXDPG425)	+= coyote-setup.o
  obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-setup.o
@@ -28,7 +26,7 @@ Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/Makefile
  obj-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-setup.o
 Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-power.c
 ===================================================================
---- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/nslu2-power.c	2008-02-03 12:57:43.000000000 +1030
+--- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/nslu2-power.c	2008-02-03 22:45:10.000000000 +1030
 +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
 @@ -1,92 +0,0 @@
 -/*
@@ -125,8 +123,8 @@ Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-power.c
 -MODULE_LICENSE("GPL");
 Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
---- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-03 12:58:54.000000000 +1030
-+++ linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-03 12:58:59.000000000 +1030
+--- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-03 22:45:22.000000000 +1030
++++ linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-03 22:45:44.000000000 +1030
 @@ -3,22 +3,26 @@
   *
   * NSLU2 board-setup
@@ -207,17 +205,17 @@ Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
  
 +	pm_power_off = nslu2_power_off;
 +
-+	set_irq_type(gpio_to_irq(NSLU2_RB_GPIO), IRQT_LOW);
 +	if (request_irq(gpio_to_irq(NSLU2_RB_GPIO), &nslu2_reset_handler,
-+		IRQF_DISABLED, "NSLU2 reset button", NULL) < 0) {
++		IRQF_DISABLED | IRQF_TRIGGER_LOW,
++		"NSLU2 reset button", NULL) < 0) {
 +
 +		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
 +			gpio_to_irq(NSLU2_RB_GPIO));
 +	}
 +
-+	set_irq_type(gpio_to_irq(NSLU2_PB_GPIO), IRQT_HIGH);
 +	if (request_irq(gpio_to_irq(NSLU2_PB_GPIO), &nslu2_power_handler,
-+		IRQF_DISABLED, "NSLU2 power button", NULL) < 0) {
++		IRQF_DISABLED | IRQF_TRIGGER_HIGH,
++		"NSLU2 power button", NULL) < 0) {
 +
 +		printk(KERN_DEBUG "Power Button IRQ %d not available\n",
 +			gpio_to_irq(NSLU2_PB_GPIO));
@@ -227,8 +225,8 @@ Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
  	 * Map in a portion of the flash and read the MAC address.
 Index: linux-2.6.24-armeb/include/asm-arm/arch-ixp4xx/nslu2.h
 ===================================================================
---- linux-2.6.24-armeb.orig/include/asm-arm/arch-ixp4xx/nslu2.h	2008-02-03 12:57:43.000000000 +1030
-+++ linux-2.6.24-armeb/include/asm-arm/arch-ixp4xx/nslu2.h	2008-02-03 12:58:59.000000000 +1030
+--- linux-2.6.24-armeb.orig/include/asm-arm/arch-ixp4xx/nslu2.h	2008-02-03 22:45:11.000000000 +1030
++++ linux-2.6.24-armeb/include/asm-arm/arch-ixp4xx/nslu2.h	2008-02-03 22:45:44.000000000 +1030
 @@ -39,34 +39,17 @@
  
  /* Buttons */

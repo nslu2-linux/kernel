@@ -13,14 +13,14 @@ ixp4xx-4769-dsmg600-buttons.patch
 ixp4xx-4772-nslu2-i2c-info.patch
 ixp4xx-4773-nas100d-i2c-info.patch
 ixp4xx-4774-dsmg600-i2c-info.patch
+ixp4xx-4805-use-leds-gpio.patch
+ixp4xx-4806-ethernet-support.patch
 
 rtc-x1205-new-style.patch
 rtc-pcf8563-new-style.patch
 rtc-isl1208-new-style.patch
 
 # Submitted upstream, but not yet accepted
-ixp4xx-4805-use-leds-gpio.patch
-ixp4xx-4806-ethernet-support.patch
 ixp4xx-4807-subsume-nslu2.patch 
 ixp4xx-4808-subsume-nas100d.patch 
 ixp4xx-4809-subsume-dsmg600.patch 

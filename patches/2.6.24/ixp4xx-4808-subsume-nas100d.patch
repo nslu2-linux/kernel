@@ -1,7 +1,5 @@
-From 23a2c7ee8d5636e09c19b473ad5f8a81ff836107 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
-Date: Thu, 31 Jan 2008 21:41:53 +1030
-Subject: ixp4xx: Merge nas100d-power.c into nas100d-setup.c
+Subject: ixp4xx: Merge nas100d-power.c into nas100d-setup.c (Patch #4808)
 
 There is no reason to have power control in a separate file from the
 board setup code.  Merge it back into the board setup file and remove
@@ -160,7 +158,7 @@ index 4c1c01b..0000000
 -MODULE_DESCRIPTION("NAS100D Power/Reset driver");
 -MODULE_LICENSE("GPL");
 diff --git a/arch/arm/mach-ixp4xx/nas100d-setup.c b/arch/arm/mach-ixp4xx/nas100d-setup.c
-index a432226..f901a82 100644
+index a432226..4cecae8 100644
 --- a/arch/arm/mach-ixp4xx/nas100d-setup.c
 +++ b/arch/arm/mach-ixp4xx/nas100d-setup.c
 @@ -3,8 +3,14 @@
@@ -275,9 +273,9 @@ index a432226..f901a82 100644
  
 +	pm_power_off = nas100d_power_off;
 +
-+	set_irq_type(gpio_to_irq(NAS100D_RB_GPIO), IRQT_LOW);
 +	if (request_irq(gpio_to_irq(NAS100D_RB_GPIO), &nas100d_reset_handler,
-+		IRQF_DISABLED, "NAS100D reset button", NULL) < 0) {
++		IRQF_DISABLED | IRQF_TRIGGER_LOW,
++		"NAS100D reset button", NULL) < 0) {
 +
 +		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
 +			gpio_to_irq(NAS100D_RB_GPIO));
