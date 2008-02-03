@@ -1,4 +1,6 @@
+From 383256474f2ba043bdb57a657f9d786df88780f1 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
+Date: Tue, 29 Jan 2008 17:17:29 +1030
 Subject: ixp4xx: Use leds-gpio driver instead of IXP4XX-GPIO-LED driver
 
 These are the only three boards to use the IXP4XX-GPIO-LED driver, and

@@ -1,4 +1,4 @@
-From 77d6352ae908b4fef3cee5d4c77dc92197e656e5 Mon Sep 17 00:00:00 2001
+From 16f2707164dc5718499510f4506acea1154cf5bd Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Thu, 31 Jan 2008 21:27:32 +1030
 Subject: ixp4xx: Merge nslu2-power.c into nslu2-setup.c
@@ -14,10 +14,10 @@ PATCH FOLLOWS
 KernelVersion: 2.6.24-git9
 
 diff --git a/arch/arm/mach-ixp4xx/Makefile b/arch/arm/mach-ixp4xx/Makefile
-index e620ff3..604d273 100644
+index 4bb97e1..4fc7316 100644
 --- a/arch/arm/mach-ixp4xx/Makefile
 +++ b/arch/arm/mach-ixp4xx/Makefile
-@@ -24,7 +24,7 @@ obj-$(CONFIG_MACH_AVILA)	+= avila-setup.o
+@@ -23,7 +23,7 @@ obj-$(CONFIG_MACH_AVILA)	+= avila-setup.o
  obj-$(CONFIG_MACH_IXDPG425)	+= coyote-setup.o
  obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-setup.o
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
@@ -124,7 +124,7 @@ index 6f10dc2..0000000
 -MODULE_DESCRIPTION("NSLU2 Power/Reset driver");
 -MODULE_LICENSE("GPL");
 diff --git a/arch/arm/mach-ixp4xx/nslu2-setup.c b/arch/arm/mach-ixp4xx/nslu2-setup.c
-index 82febf6..19aa022 100644
+index fd9ec17..1f5e130 100644
 --- a/arch/arm/mach-ixp4xx/nslu2-setup.c
 +++ b/arch/arm/mach-ixp4xx/nslu2-setup.c
 @@ -3,22 +3,26 @@

@@ -1,4 +1,4 @@
-From 88b5ee503562544967017fe86d2c90aabcbe5028 Mon Sep 17 00:00:00 2001
+From 8dcde9462203f72f45395bd6e58fd1d906604bd9 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Thu, 31 Jan 2008 21:50:15 +1030
 Subject: ixp4xx: Merge dsmg600-power.c into dsmg600-setup.c
@@ -13,10 +13,10 @@ PATCH FOLLOWS
 KernelVersion: 2.6.24-git9
 
 diff --git a/arch/arm/mach-ixp4xx/Makefile b/arch/arm/mach-ixp4xx/Makefile
-index b433f05..2e6bbf9 100644
+index a7880ab..c195688 100644
 --- a/arch/arm/mach-ixp4xx/Makefile
 +++ b/arch/arm/mach-ixp4xx/Makefile
-@@ -26,7 +26,7 @@ obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-setup.o
+@@ -25,7 +25,7 @@ obj-$(CONFIG_ARCH_ADI_COYOTE)	+= coyote-setup.o
  obj-$(CONFIG_MACH_GTWX5715)	+= gtwx5715-setup.o
  obj-$(CONFIG_MACH_NSLU2)	+= nslu2-setup.o
  obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o
@@ -24,7 +24,7 @@ index b433f05..2e6bbf9 100644
 +obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o
  obj-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-setup.o
  obj-$(CONFIG_MACH_WG302V2)	+= wg302v2-setup.o
- obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o
+ 
 diff --git a/arch/arm/mach-ixp4xx/dsmg600-power.c b/arch/arm/mach-ixp4xx/dsmg600-power.c
 deleted file mode 100644
 index db63987..0000000

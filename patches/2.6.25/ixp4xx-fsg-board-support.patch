@@ -1,4 +1,4 @@
-From 0b64383e483b2d554df96084070dc72b028d1c3a Mon Sep 17 00:00:00 2001
+From 9b72eb513a5b873845afed2aae6ae33c5d3a16f0 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Tue, 29 Jan 2008 23:12:44 +1030
 Subject: ixp4xx: Add support for the Freecom FSG-3 board
@@ -88,7 +88,7 @@ index e774447..db8b5fe 100644
  # Certain registers and IRQs are only enabled if supporting IXP465 CPUs
  #
 diff --git a/arch/arm/mach-ixp4xx/Makefile b/arch/arm/mach-ixp4xx/Makefile
-index 4bb97e1..e620ff3 100644
+index c195688..2e6bbf9 100644
 --- a/arch/arm/mach-ixp4xx/Makefile
 +++ b/arch/arm/mach-ixp4xx/Makefile
 @@ -15,6 +15,7 @@ obj-pci-$(CONFIG_MACH_NAS100D)		+= nas100d-pci.o
@@ -99,8 +99,8 @@ index 4bb97e1..e620ff3 100644
  
  obj-y	+= common.o
  
-@@ -28,6 +29,7 @@ obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o nas100d-power.o
- obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o dsmg600-power.o
+@@ -28,6 +29,7 @@ obj-$(CONFIG_MACH_NAS100D)	+= nas100d-setup.o
+ obj-$(CONFIG_MACH_DSMG600)      += dsmg600-setup.o
  obj-$(CONFIG_MACH_GATEWAY7001)	+= gateway7001-setup.o
  obj-$(CONFIG_MACH_WG302V2)	+= wg302v2-setup.o
 +obj-$(CONFIG_MACH_FSG)		+= fsg-setup.o
