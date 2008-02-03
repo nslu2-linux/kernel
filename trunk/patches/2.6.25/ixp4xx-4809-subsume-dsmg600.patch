@@ -1,7 +1,5 @@
-From 8dcde9462203f72f45395bd6e58fd1d906604bd9 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
-Date: Thu, 31 Jan 2008 21:50:15 +1030
-Subject: ixp4xx: Merge dsmg600-power.c into dsmg600-setup.c
+Subject: ixp4xx: Merge dsmg600-power.c into dsmg600-setup.c (Patch #4809)
 
 There is no reason to have power control in a separate file from the
 board setup code.  Merge it back into the board setup file and remove
@@ -161,7 +159,7 @@ index db63987..0000000
 -MODULE_DESCRIPTION("DSM-G600 Power/Reset driver");
 -MODULE_LICENSE("GPL");
 diff --git a/arch/arm/mach-ixp4xx/dsmg600-setup.c b/arch/arm/mach-ixp4xx/dsmg600-setup.c
-index d0e1295..ae48eab 100644
+index d0e1295..6886596 100644
 --- a/arch/arm/mach-ixp4xx/dsmg600-setup.c
 +++ b/arch/arm/mach-ixp4xx/dsmg600-setup.c
 @@ -1,20 +1,29 @@
@@ -279,9 +277,9 @@ index d0e1295..ae48eab 100644
 +
 +	pm_power_off = dsmg600_power_off;
 +
-+	set_irq_type(gpio_to_irq(DSMG600_RB_GPIO), IRQT_LOW);
 +	if (request_irq(gpio_to_irq(DSMG600_RB_GPIO), &dsmg600_reset_handler,
-+		IRQF_DISABLED, "DSM-G600 reset button", NULL) < 0) {
++		IRQF_DISABLED | IRQF_TRIGGER_LOW,
++		"DSM-G600 reset button", NULL) < 0) {
 +
 +		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
 +			gpio_to_irq(DSMG600_RB_GPIO));

@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Linux kernel version: 2.6.24
-# Wed Jan 30 11:51:48 2008
+# Sun Feb  3 13:09:05 2008
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -280,7 +280,7 @@ CONFIG_BINFMT_ELF=y
 # Power management options
 #
 # CONFIG_PM is not set
-CONFIG_SUSPEND_UP_POSSIBLE=y
+CONFIG_ARCH_SUSPEND_POSSIBLE=y
 
 #
 # Networking
@@ -501,6 +501,7 @@ CONFIG_NET_CLS_U32=m
 # CONFIG_CLS_U32_MARK is not set
 CONFIG_NET_CLS_RSVP=m
 CONFIG_NET_CLS_RSVP6=m
+CONFIG_NET_CLS_FLOW=m
 # CONFIG_NET_EMATCH is not set
 CONFIG_NET_CLS_ACT=y
 CONFIG_NET_ACT_POLICE=y
@@ -880,6 +881,7 @@ CONFIG_NETDEV_1000=y
 # CONFIG_DL2K is not set
 # CONFIG_E1000 is not set
 # CONFIG_E1000E is not set
+# CONFIG_E1000E_ENABLED is not set
 # CONFIG_IP1000 is not set
 # CONFIG_IGB is not set
 # CONFIG_NS83820 is not set
@@ -1235,6 +1237,7 @@ CONFIG_USB_ARCH_HAS_OHCI=y
 CONFIG_USB_ARCH_HAS_EHCI=y
 CONFIG_USB=y
 # CONFIG_USB_DEBUG is not set
+CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
 
 #
 # Miscellaneous USB options
@@ -1248,9 +1251,10 @@ CONFIG_USB_DEVICEFS=y
 # USB Host Controller Drivers
 #
 CONFIG_USB_EHCI_HCD=y
-# CONFIG_USB_EHCI_SPLIT_ISO is not set
 # CONFIG_USB_EHCI_ROOT_HUB_TT is not set
 # CONFIG_USB_EHCI_TT_NEWSCHED is not set
+CONFIG_USB_EHCI_BIG_ENDIAN_MMIO=y
+CONFIG_USB_EHCI_BIG_ENDIAN_DESC=y
 # CONFIG_USB_ISP116X_HCD is not set
 CONFIG_USB_OHCI_HCD=y
 # CONFIG_USB_OHCI_BIG_ENDIAN_DESC is not set
@@ -1297,10 +1301,6 @@ CONFIG_USB_STORAGE=y
 #
 # USB port drivers
 #
-
-#
-# USB Serial Converter support
-#
 # CONFIG_USB_SERIAL is not set
 
 #
@@ -1326,15 +1326,7 @@ CONFIG_USB_STORAGE=y
 # CONFIG_USB_TRANCEVIBRATOR is not set
 # CONFIG_USB_IOWARRIOR is not set
 # CONFIG_USB_TEST is not set
-
-#
-# USB DSL modem support
-#
 # CONFIG_USB_ATM is not set
-
-#
-# USB Gadget Support
-#
 # CONFIG_USB_GADGET is not set
 # CONFIG_MMC is not set
 CONFIG_NEW_LEDS=y
@@ -1574,6 +1566,7 @@ CONFIG_FRAME_POINTER=y
 CONFIG_FORCED_INLINING=y
 # CONFIG_BOOT_PRINTK_DELAY is not set
 # CONFIG_RCU_TORTURE_TEST is not set
+# CONFIG_BACKTRACE_SELF_TEST is not set
 # CONFIG_FAULT_INJECTION is not set
 # CONFIG_SAMPLES is not set
 # CONFIG_DEBUG_USER is not set
