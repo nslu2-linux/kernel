@@ -1,10 +1,4 @@
 # Accepted upstream, and merged by Linus.
-
-# Accepted upstream, but not yet merged.
-ixp4xx-4712-feature-bits.patch
-ixp4xx-4713-qmgr-npe.patch
-ixp4xx-4714-ethernet-wan.patch
-ixp4xx-4715-ixdp425-ethernet.patch
 ixp4xx-4766-update-defconfig.patch
 ixp4xx-4767-missing-bitops.patch
 ixp4xx-4768-nas100d-buttons.patch
@@ -12,17 +6,22 @@ ixp4xx-4769-dsmg600-buttons.patch
 ixp4xx-4772-nslu2-i2c-info.patch
 ixp4xx-4773-nas100d-i2c-info.patch
 ixp4xx-4774-dsmg600-i2c-info.patch
+ixp4xx-4712-feature-bits.patch
+ixp4xx-4713-qmgr-npe.patch
+ixp4xx-4714-ethernet-wan.patch
+ixp4xx-4715-ixdp425-ethernet.patch
 ixp4xx-4805-use-leds-gpio.patch
 ixp4xx-4806-ethernet-support.patch
+ixp4xx-4807-subsume-nslu2.patch 
+ixp4xx-4808-subsume-nas100d.patch 
+ixp4xx-4809-subsume-dsmg600.patch 
 
+# Accepted upstream, but not yet merged.
 rtc-x1205-new-style.patch
 rtc-pcf8563-new-style.patch
 rtc-isl1208-new-style.patch
 
 # Submitted upstream, but not yet accepted
-ixp4xx-4807-subsume-nslu2.patch 
-ixp4xx-4808-subsume-nas100d.patch 
-ixp4xx-4809-subsume-dsmg600.patch 
 
 # To be submitted upstream
 ixp4xx-fsg-board-support.patch
