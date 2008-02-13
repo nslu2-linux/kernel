@@ -36,6 +36,8 @@ REVISION := $(shell sed -e 's/-\(git\|v\).*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell sed -e 's/-v.*//' patches/${PATCHVER}/KERNEL)
 COMMITID := $(shell sed -e 's/.*-\(v[0-9.]*.*\)/\1/' patches/${PATCHVER}/KERNEL)
 
+U-BOOT_COMMIT = v1.3.1-494-g799891e
+
 APEX_REVISION = 1.5.13
 APEX_CONFIG = slugos
 
@@ -57,6 +59,9 @@ APEX_SOURCE	= ftp://ftp.buici.com/pub/apex/apex-${APEX_REVISION}.tar.gz
 
 ARM_KERNEL_SHIM_SOURCE = ftp://ftp.buici.com/pub/arm/arm-kernel-shim/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz
 
+U-BOOT_SITE	= http://www.denx.de/cgi-bin/gitweb.cgi?p=u-boot/u-boot-ixp.git;a=snapshot;sf=tgz
+U-BOOT_SNAPSHOT	= ${U-BOOT_SITE};h=${U-BOOT_COMMIT}
+
 # CROSS_COMPILE ?= ${ARCH}-linux-gnu-
 CROSS_COMPILE ?= ${ARCH}-linux-
 
@@ -66,11 +71,12 @@ else
 CROSS_COMPILE_FLAGS = 
 endif
 
-all: kernel modules arm-kernel-shim apex
+all: kernel modules arm-kernel-shim apex uboot
 
 kernel: vmlinuz-nslu2-${SNAPSHOT}-${ARCH} vmlinuz-nas100d-${SNAPSHOT}-${ARCH} vmlinuz-ixp4xx-${SNAPSHOT}-${ARCH} vmlinuz-dsmg600-${SNAPSHOT}-${ARCH} vmlinuz-fsg3-${SNAPSHOT}-${ARCH}
 modules: modules-${SNAPSHOT}-${ARCH}.tar.gz
 patched: linux-${SNAPSHOT}-${ARCH}/.config 
+uboot u-boot: u-boot-nslu2.bin
 apex:   apex-${APEX_CONFIG}-nslu2-${ARCH}-${APEX_REVISION}.bin \
 	apex-${APEX_CONFIG}-nslu2-16mb-${ARCH}-${APEX_REVISION}.bin \
 	apex-${APEX_CONFIG}-nas100d-${ARCH}-${APEX_REVISION}.bin \
@@ -81,6 +87,41 @@ arm-kernel-shim: \
 	arm-kernel-shim-nas100d${ENDIAN}e.bin \
 	arm-kernel-shim-dsmg600${ENDIAN}e.bin \
 	arm-kernel-shim-fsg3${ENDIAN}e.bin
+
+u-boot-nslu2.bin: \
+		u-boot-ixp/include/configs/nslu2.h \
+		u-boot-ixp/cpu/ixp/npe/IxNpeMicrocode.c
+	${MAKE} -C u-boot-ixp distclean
+	${MAKE} -C u-boot-ixp nslu2_config
+	${MAKE} -C u-boot-ixp all
+ifeq (${ENDIAN},b)
+	devio '<<'u-boot-ixp/u-boot.bin >$@ 'cp$$'
+else
+	devio '<<'u-boot-ixp/u-boot.bin >$@ 'xp $$,4'
+endif
+
+.PRECIOUS: u-boot-ixp/cpu/ixp/npe/IxNpeMicrocode.c
+u-boot-ixp/cpu/ixp/npe/IxNpeMicrocode.c: \
+		downloads/IPL_ixp400NpeLibrary-2_4.zip
+	unzip -p -j downloads/IPL_ixp400NpeLibrary-2_4.zip \
+		ixp400_xscale_sw/src/npeDl/IxNpeMicrocode.c \
+		> u-boot-ixp/cpu/ixp/npe/IxNpeMicrocode.c
+
+.PRECIOUS: u-boot-ixp/include/configs/nslu2.h
+
+u-boot-ixp/include/configs/nslu2.h: \
+		downloads/u-boot-ixp-${U-BOOT_COMMIT}.tar.gz
+	[ -e u-boot-ixp ] || \
+	( tar zxf downloads/u-boot-ixp-${U-BOOT_COMMIT}.tar.gz ; \
+	  cd u-boot-ixp ; \
+	  ln -s ../patches/u-boot patches ; \
+	  [ ! -e patches/series ] || quilt push -a )
+	touch u-boot-ixp/include/configs/nslu2.h
+
+downloads/u-boot-ixp-${U-BOOT_COMMIT}.tar.gz:
+	[ -e downloads/u-boot-ixp-${U-BOOT_COMMIT}.tar.gz ] || \
+	( mkdir -p downloads ; cd downloads ; \
+	  wget -O u-boot-ixp-${U-BOOT_COMMIT}.tar.gz '${U-BOOT_SNAPSHOT}' )
 
 apex-${APEX_CONFIG}-%-${ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config
 	( cd apex-${APEX_REVISION} ; \
@@ -275,13 +316,16 @@ endif
 downloads:
 	mkdir -p downloads
 
-clobber: clobber-apex clobber-arm-kernel-shim
+clobber: clobber-apex clobber-arm-kernel-shim clobber-u-boot
 	rm -rf vmlinuz-* modules-*.tar.gz
 	rm -rf linux-* modules-*
 	rm -rf *~
 
 clobber-apex:
 	rm -rf apex-*
+
+clobber-u-boot:
+	rm -rf u-boot*
 
 clobber-arm-kernel-shim:
 	rm -rf arm-kernel-shim-*
