@@ -71,12 +71,12 @@ else
 CROSS_COMPILE_FLAGS = 
 endif
 
-all: kernel modules arm-kernel-shim apex uboot
+all: kernel modules arm-kernel-shim apex u-boot
 
 kernel: vmlinuz-nslu2-${SNAPSHOT}-${ARCH} vmlinuz-nas100d-${SNAPSHOT}-${ARCH} vmlinuz-ixp4xx-${SNAPSHOT}-${ARCH} vmlinuz-dsmg600-${SNAPSHOT}-${ARCH} vmlinuz-fsg3-${SNAPSHOT}-${ARCH}
 modules: modules-${SNAPSHOT}-${ARCH}.tar.gz
 patched: linux-${SNAPSHOT}-${ARCH}/.config 
-uboot u-boot: u-boot-nslu2.bin
+u-boot uboot: u-boot-nslu2.bin
 apex:   apex-${APEX_CONFIG}-nslu2-${ARCH}-${APEX_REVISION}.bin \
 	apex-${APEX_CONFIG}-nslu2-16mb-${ARCH}-${APEX_REVISION}.bin \
 	apex-${APEX_CONFIG}-nas100d-${ARCH}-${APEX_REVISION}.bin \
@@ -324,8 +324,8 @@ clobber: clobber-apex clobber-arm-kernel-shim clobber-u-boot
 clobber-apex:
 	rm -rf apex-*
 
-clobber-u-boot:
-	rm -rf u-boot*
+clobber-u-boot clobber-uboot:
+	rm -rf u-boot-*
 
 clobber-arm-kernel-shim:
 	rm -rf arm-kernel-shim-*
