@@ -276,7 +276,7 @@ Index: u-boot-ixp/cpu/ixp/npe/include/IxNpeMicrocode.h
 Index: u-boot-ixp/include/configs/nslu2.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ u-boot-ixp/include/configs/nslu2.h	2008-02-14 13:31:52.000000000 +1030
++++ u-boot-ixp/include/configs/nslu2.h	2008-02-14 19:07:44.000000000 +1030
 @@ -0,0 +1,248 @@
 +/*
 + * (C) Copyright 2008
@@ -327,7 +327,7 @@ Index: u-boot-ixp/include/configs/nslu2.h
 + */
 +#define CONFIG_IXP4XX_NPE	1	/* include IXP4xx NPE support	*/
 +#define CONFIG_NET_MULTI	1
-+#define	CONFIG_PHY_ADDR		4	/* NPE0 PHY address		*/
++#define	CONFIG_PHY_ADDR		1	/* NPE0 PHY address		*/
 +#define CONFIG_MII		1	/* MII PHY management		*/
 +#define CFG_RX_ETH_BUFFER	16	/* Number of ethernet rx buffers & descriptors */
 +
