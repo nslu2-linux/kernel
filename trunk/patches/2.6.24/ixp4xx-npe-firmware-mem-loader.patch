@@ -1,0 +1,110 @@
+Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/ixp4xx_npe.c
+===================================================================
+--- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/ixp4xx_npe.c	2008-02-14 22:30:53.000000000 +1030
++++ linux-2.6.24-armeb/arch/arm/mach-ixp4xx/ixp4xx_npe.c	2008-02-14 23:50:25.000000000 +1030
+@@ -510,6 +510,7 @@
+ int npe_load_firmware(struct npe *npe, const char *name, struct device *dev)
+ {
+ 	const struct firmware *fw_entry;
++	struct eth_plat_info *plat = dev->platform_data;
+ 
+ 	struct dl_block {
+ 		u32 type;
+@@ -535,8 +536,14 @@
+ 	int i, j, err, data_size, instr_size, blocks, table_end;
+ 	u32 cmd;
+ 
+-	if ((err = request_firmware(&fw_entry, name, dev)) != 0)
+-		return err;
++	/* Check if the board code supplies the firmware ... */
++	if (plat->fwrequest) {
++		if ((err = plat->fwrequest(&fw_entry, name, dev)) != 0)
++			return err;
++	} else {
++		if ((err = request_firmware(&fw_entry, name, dev)) != 0)
++			return err;
++	}
+ 
+ 	err = -EINVAL;
+ 	if (fw_entry->size < sizeof(struct dl_image)) {
+@@ -656,7 +663,11 @@
+ 	npe_start(npe);
+ 	if (!npe_running(npe))
+ 		print_npe(KERN_ERR, npe, "unable to start\n");
+-	release_firmware(fw_entry);
++	if (plat->fwrelease) {
++		plat->fwrelease(fw_entry);
++	} else {
++		release_firmware(fw_entry);
++	}
+ 	return 0;
+ 
+ too_big:
+@@ -665,7 +676,11 @@
+ 		  blk->type == FW_BLOCK_TYPE_INSTR ? 'I' : 'D',
+ 		  cb->npe_addr, cb->size);
+ err:
+-	release_firmware(fw_entry);
++	if (plat->fwrelease) {
++		plat->fwrelease(fw_entry);
++	} else {
++		release_firmware(fw_entry);
++	}
+ 	return err;
+ }
+ 
+Index: linux-2.6.24-armeb/include/asm-arm/arch-ixp4xx/platform.h
+===================================================================
+--- linux-2.6.24-armeb.orig/include/asm-arm/arch-ixp4xx/platform.h	2008-02-14 22:31:11.000000000 +1030
++++ linux-2.6.24-armeb/include/asm-arm/arch-ixp4xx/platform.h	2008-02-14 23:46:56.000000000 +1030
+@@ -107,11 +107,15 @@
+ #define IXP4XX_ETH_NPEC		0x20
+ 
+ /* Information about built-in Ethernet MAC interfaces */
++struct firmware;
++struct device;
+ struct eth_plat_info {
+ 	u8 phy;		/* MII PHY ID, 0 - 31 */
+ 	u8 rxq;		/* configurable, currently 0 - 31 only */
+ 	u8 txreadyq;
+ 	u8 hwaddr[6];
++	int (*fwrequest)(const struct firmware **fw, const char *name, struct device *device);
++	void (*fwrelease)(const struct firmware *fw);
+ };
+ 
+ /* Information about built-in HSS (synchronous serial) interfaces */
+Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
+===================================================================
+--- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-14 22:56:23.000000000 +1030
++++ linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-14 23:52:18.000000000 +1030
+@@ -17,6 +17,7 @@
+  *
+  */
+ 
++#include <linux/firmware.h>
+ #include <linux/if_ether.h>
+ #include <linux/irq.h>
+ #include <linux/serial.h>
+@@ -151,11 +152,22 @@
+ };
+ 
+ /* Built-in 10/100 Ethernet MAC interfaces */
++
++static int nslu2_fwrequest(const struct firmware **fw, const char *name, struct device *device) {
++	return request_firmware(fw, name, device);
++}
++
++static void nslu2_fwrelease(const struct firmware *fw) {
++	release_firmware(fw);
++}
++
+ static struct eth_plat_info nslu2_plat_eth[] = {
+ 	{
+ 		.phy		= 1,
+ 		.rxq		= 3,
+ 		.txreadyq	= 20,
++		.fwrequest	= nslu2_fwrequest,
++		.fwrelease	= nslu2_fwrelease,
+ 	}
+ };
+ 
