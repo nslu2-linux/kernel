@@ -1,0 +1,624 @@
+From 73f14aafaba4c2508d67b1196eb618e0d6b9781d Mon Sep 17 00:00:00 2001
+From: Rod Whitby <rod@whitby.id.au>
+Date: Sun, 24 Feb 2008 13:26:35 +1030
+Subject: [PATCH] ixp: Support for NSLU2
+
+This patch adds support for the Linksys NSLU2.
+---
+ MAINTAINERS                       |    4 +
+ MAKEALL                           |    1 +
+ Makefile                          |    3 +
+ board/nslu2/Makefile              |   53 +++++++++
+ board/nslu2/config.mk             |    1 +
+ board/nslu2/load_sernum_ethaddr.c |   67 +++++++++++
+ board/nslu2/nslu2.c               |   96 +++++++++++++++
+ board/nslu2/u-boot.lds            |   56 +++++++++
+ include/configs/nslu2.h           |  230 +++++++++++++++++++++++++++++++++++++
+ lib_arm/board.c                   |    4 +-
+ 10 files changed, 513 insertions(+), 2 deletions(-)
+ create mode 100644 board/nslu2/Makefile
+ create mode 100644 board/nslu2/config.mk
+ create mode 100644 board/nslu2/load_sernum_ethaddr.c
+ create mode 100644 board/nslu2/nslu2.c
+ create mode 100644 board/nslu2/u-boot.lds
+ create mode 100644 include/configs/nslu2.h
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index dc13580..891ae00 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -564,6 +564,10 @@ Michael Schwingen <michael@schwingen.org>
+ 	actux3			xscale
+ 	actux4			xscale
+ 
++Rod Whitby <rod@whitby.id.au>
++
++	nslu2			xscale
++
+ #########################################################################
+ # x86 Systems:								#
+ #									#
+diff --git a/MAKEALL b/MAKEALL
+index 0e1c0cb..2088e78 100755
+--- a/MAKEALL
++++ b/MAKEALL
+@@ -529,6 +529,7 @@ LIST_ixp="		\
+ 	actux4		\
+ 	ixdp425		\
+ 	ixdpg425	\
++	nslu2		\
+ 	pdnb3		\
+ 	scpu		\
+ "
+diff --git a/Makefile b/Makefile
+index 2790865..ec3661e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2563,6 +2563,9 @@ ixdp425_config	:	unconfig
+ ixdpg425_config	:	unconfig
+ 	@$(MKCONFIG) $(@:_config=) arm ixp ixdp425
+ 
++nslu2_config	:	unconfig
++	@$(MKCONFIG) $(@:_config=) arm ixp nslu2
++
+ lubbock_config	:	unconfig
+ 	@$(MKCONFIG) $(@:_config=) arm pxa lubbock
+ 
+diff --git a/board/nslu2/Makefile b/board/nslu2/Makefile
+new file mode 100644
+index 0000000..934bc1a
+--- /dev/null
++++ b/board/nslu2/Makefile
+@@ -0,0 +1,53 @@
++#
++# (C) Copyright 2008
++# Rod Whitby <rod@whitby.id.au>
++#
++# (C) Copyright 2000-2006
++# Wolfgang Denk, DENX Software Engineering, wd@denx.de.
++#
++# See file CREDITS for list of people who contributed to this
++# project.
++#
++# This program is free software; you can redistribute it and/or
++# modify it under the terms of the GNU General Public License as
++# published by the Free Software Foundation; either version 2 of
++# the License, or (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++# MA 02111-1307 USA
++#
++
++include $(TOPDIR)/config.mk
++
++LIB	= $(obj)lib$(BOARD).a
++
++COBJS	:= nslu2.o load_sernum_ethaddr.o
++
++SRCS	:= $(SOBJS:.o=.S) $(COBJS:.o=.c)
++OBJS	:= $(addprefix $(obj),$(COBJS))
++SOBJS	:= $(addprefix $(obj),$(SOBJS))
++
++$(LIB):	$(obj).depend $(OBJS)
++	$(AR) $(ARFLAGS) $@ $(OBJS)
++
++clean:
++	rm -f $(SOBJS) $(OBJS)
++
++distclean:	clean
++	rm -f $(LIB) core *.bak .depend
++
++#########################################################################
++
++# defines $(obj).depend target
++include $(SRCTREE)/rules.mk
++
++sinclude $(obj).depend
++
++#########################################################################
+diff --git a/board/nslu2/config.mk b/board/nslu2/config.mk
+new file mode 100644
+index 0000000..6510cc4
+--- /dev/null
++++ b/board/nslu2/config.mk
+@@ -0,0 +1 @@
++TEXT_BASE = 0x01d00000
+diff --git a/board/nslu2/load_sernum_ethaddr.c b/board/nslu2/load_sernum_ethaddr.c
+new file mode 100644
+index 0000000..5992fa8
+--- /dev/null
++++ b/board/nslu2/load_sernum_ethaddr.c
+@@ -0,0 +1,67 @@
++/*
++ * (C) Copyright 2008
++ * Rod Whitby <rod@whitby.id.au>
++ *
++ * (C) Copyright 2000, 2001, 2002
++ * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
++ *
++ * See file CREDITS for list of people who contributed to this
++ * project.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++ * MA 02111-1307 USA
++ */
++
++#include <common.h>
++
++/*-----------------------------------------------------------------------
++ * Linksys NSLU2 RedBoot Trailer Block:
++ *
++ * If we boot from RAM on a system which still contains the original
++ * RedBoot bootloader, check if the trailer signature exists and save
++ * the MAC address information it contains.
++ *
++ * 0x3ffb0: six byte binary mac address
++ * 0x3fff8: ' sErCoMm'
++ */
++
++void load_sernum_ethaddr (void)
++{
++	unsigned char *hwi;
++	unsigned char  ethaddr[19]; /* 6 x "%02X", + 1 */
++	unsigned short ih, ie;
++
++	/* Check for signature at the end of RedBoot partition */
++	/* If RedBoot has been replaced, this will not exist. */
++	hwi = (unsigned char *)(CFG_FLASH_BASE + CFG_SERCOMM_OFFSET);
++	if (strncmp((char *)hwi, " sErCoMm", 8)) {
++		return;
++	}
++
++	hwi = (unsigned char *)(CFG_FLASH_BASE + CFG_ETHADDR_OFFSET);
++	ie = 0;
++
++	/* copy MAC address */
++	for (ih = 0; ih < 6; ih++) {
++		sprintf((char *)&ethaddr[ie], "%02X:", hwi[ih]);
++		ie += 3;
++	}
++	ethaddr[--ie] = '\0';
++
++	/* set ethaddr if not yet defined */
++	if (getenv("ethaddr") == NULL) {
++		setenv ((char *)"ethaddr", (char *)ethaddr);
++	}
++}
+diff --git a/board/nslu2/nslu2.c b/board/nslu2/nslu2.c
+new file mode 100644
+index 0000000..ca1a716
+--- /dev/null
++++ b/board/nslu2/nslu2.c
+@@ -0,0 +1,96 @@
++/*
++ * (C) Copyright 2008
++ * Rod Whitby <rod@whitby.id.au>
++ *
++ * (C) Copyright 2006
++ * Stefan Roese, DENX Software Engineering, sr@denx.de.
++ *
++ * (C) Copyright 2002
++ * Kyle Harris, Nexus Technologies, Inc. kharris@nexus-tech.net
++ *
++ * (C) Copyright 2002
++ * Sysgo Real-Time Solutions, GmbH <www.elinos.com>
++ * Marius Groeger <mgroeger@sysgo.de>
++ *
++ * See file CREDITS for list of people who contributed to this
++ * project.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++ * MA 02111-1307 USA
++ */
++
++#include <common.h>
++#include <command.h>
++#include <malloc.h>
++#include <asm/arch/ixp425.h>
++
++DECLARE_GLOBAL_DATA_PTR;
++
++/*
++ * Miscelaneous platform dependent initialisations
++ */
++int board_init (void)
++{
++	/* arch number of NSLU2 */
++	gd->bd->bi_arch_number = MACH_TYPE_NSLU2;
++
++	/* adress of boot parameters */
++	gd->bd->bi_boot_params = 0x00000100;
++
++	/*
++	 * Setup GPIO's for PCI interrupts
++	 */
++	GPIO_OUTPUT_DISABLE(CFG_GPIO_PCI_INTA_N);
++	GPIO_INT_ACT_LOW_SET(CFG_GPIO_PCI_INTA_N);
++	GPIO_OUTPUT_DISABLE(CFG_GPIO_PCI_INTB_N);
++	GPIO_INT_ACT_LOW_SET(CFG_GPIO_PCI_INTB_N);
++	GPIO_OUTPUT_DISABLE(CFG_GPIO_PCI_INTC_N);
++	GPIO_INT_ACT_LOW_SET(CFG_GPIO_PCI_INTC_N);
++
++	/*
++	 * Setup GPIO's for 33MHz clock output
++	 */
++	*IXP425_GPIO_GPCLKR = 0x01FF01FF;
++	GPIO_OUTPUT_ENABLE(CFG_GPIO_PCI_CLK);
++	GPIO_OUTPUT_ENABLE(CFG_GPIO_EXTBUS_CLK);
++
++	return 0;
++}
++
++/*
++ * Check Board Identity
++ */
++int checkboard(void)
++{
++	char *s = getenv("serial#");
++
++	puts("Board: NSLU2 - Linksys NSLU2");
++
++	if (s != NULL) {
++		puts(", serial# ");
++		puts(s);
++	}
++	putc('\n');
++
++	return (0);
++}
++
++int dram_init (void)
++{
++	gd->bd->bi_dram[0].start = PHYS_SDRAM_1;
++	gd->bd->bi_dram[0].size  = PHYS_SDRAM_1_SIZE;
++
++	return (0);
++}
+diff --git a/board/nslu2/u-boot.lds b/board/nslu2/u-boot.lds
+new file mode 100644
+index 0000000..58393d0
+--- /dev/null
++++ b/board/nslu2/u-boot.lds
+@@ -0,0 +1,56 @@
++/*
++ * (C) Copyright 2000
++ * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
++ *
++ * See file CREDITS for list of people who contributed to this
++ * project.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++ * MA 02111-1307 USA
++ */
++
++OUTPUT_FORMAT("elf32-bigarm", "elf32-bigarm", "elf32-bigarm")
++OUTPUT_ARCH(arm)
++ENTRY(_start)
++SECTIONS
++{
++	. = 0x00000000;
++
++	. = ALIGN(4);
++	.text      :
++	{
++	  cpu/ixp/start.o	(.text)
++	  *(.text)
++	}
++
++	. = ALIGN(4);
++	.rodata : { *(.rodata) }
++
++	. = ALIGN(4);
++	.data : { *(.data) }
++
++	. = ALIGN(4);
++	.got : { *(.got) }
++
++	. = .;
++	__u_boot_cmd_start = .;
++	.u_boot_cmd : { *(.u_boot_cmd) }
++	__u_boot_cmd_end = .;
++
++	. = ALIGN(4);
++	__bss_start = .;
++	.bss (NOLOAD) : { *(.bss) }
++	_end = .;
++}
+diff --git a/include/configs/nslu2.h b/include/configs/nslu2.h
+new file mode 100644
+index 0000000..879ca22
+--- /dev/null
++++ b/include/configs/nslu2.h
+@@ -0,0 +1,230 @@
++/*
++ * (C) Copyright 2008
++ * Rod Whitby <rod@whitby.id.au>
++ *
++ * (C) Copyright 2005-2006
++ * Stefan Roese, DENX Software Engineering, sr@denx.de.
++ *
++ * (C) Copyright 2003
++ * Martijn de Gouw, Prodrive B.V., martijn.de.gouw@prodrive.nl
++ *
++ * Configuation settings for the NSLU2 board.
++ *
++ * See file CREDITS for list of people who contributed to this
++ * project.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++ * MA 02111-1307 USA
++ */
++
++#ifndef __CONFIG_H
++#define __CONFIG_H
++
++/*
++ * High Level Configuration Options (easy to change)
++ */
++#define CONFIG_IXP425		1	/* This is an IXP425 CPU	*/
++#define CONFIG_NSLU2		1	/* on a Linksys NSLU2 Board	*/
++
++#define CONFIG_DISPLAY_CPUINFO	1	/* display cpu info (and speed)	*/
++#define CONFIG_DISPLAY_BOARDINFO 1	/* display board info		*/
++
++/*
++ * Serial Console (soldering skills required)
++ */
++#define CONFIG_BAUDRATE		115200
++#define CFG_IXP425_CONSOLE	IXP425_UART1   /* we use UART1 for console */
++
++/*
++ * Network Console (no hardware modifications required)
++ */
++#define CONFIG_NETCONSOLE	1	/* UDP port 6666 on dhcp server */
++#define CFG_CONSOLE_IS_IN_ENV	1	/* Allow console to be changed	*/
++
++/*
++ * Boot Delay
++ */
++#define CONFIG_BOOTDELAY	5	/* autoboot after 5 seconds	*/
++#define CONFIG_ZERO_BOOTDELAY_CHECK 1	/* check for keypress on bootdelay==0 */
++
++/*
++ * Autoboot Command
++ */
++#define CONFIG_BOOTCOMMAND	"echo;"
++#undef	CONFIG_BOOTARGS
++
++/*
++ * Pre-boot Commands
++ */
++#define CONFIG_PREBOOT	"run setncip"
++
++/*
++ * Monitor Functions
++ */
++#include <config_cmd_default.h>
++
++#define CONFIG_CMD_DHCP
++#define CONFIG_CMD_ELF
++#define CONFIG_CMD_MII
++#define CONFIG_CMD_NET
++#define CONFIG_CMD_PING
++
++/*
++ * Ethernet (requires IxNpeMicrocode.c from Intel IXP4xx NPE Microcode package)
++ */
++#define CONFIG_IXP4XX_NPE	1	/* include IXP4xx NPE support	*/
++#define	CONFIG_PHY_ADDR		1	/* NPE0 PHY address		*/
++#define CONFIG_MII		1	/* MII PHY management		*/
++#define CONFIG_NET_MULTI	1	/* Required for netconsole support */
++#define CFG_RX_ETH_BUFFER	16	/* Number of ethernet rx buffers & descriptors */
++
++/*
++ * DHCP Advanced Options
++ */
++#define CONFIG_BOOTP_SUBNETMASK		1
++#define CONFIG_BOOTP_GATEWAY		1
++#define CONFIG_BOOTP_HOSTNAME		1
++#define CONFIG_BOOTP_NISDOMAIN		1
++#define CONFIG_BOOTP_BOOTPATH		1
++#define CONFIG_BOOTP_BOOTFILESIZE	1
++#define CONFIG_BOOTP_DNS		1
++#define CONFIG_BOOTP_SEND_HOSTNAME	1
++
++/*
++ * Vendor Parameter Protection
++ */
++#define CONFIG_ENV_OVERWRITE	1	/* Allow changing of the MAC address */
++
++/*
++ * Default Environment
++ */
++#define	CONFIG_EXTRA_ENV_SETTINGS					\
++	"hostname=nslu2\0"						\
++	"setncip=setenv autoload no;dhcp;setenv autoload;"		\
++		"setenv ncip ${serverip}\0"				\
++	"setnc=setenv stdin nc;setenv stdout nc;setenv stderr nc\0"	\
++	"setser=setenv stdin serial;setenv stdout serial;"		\
++		"setenv stderr serial\0"				\
++	"bootfile=/tftpboot/nslu2/uImage\0"				\
++	"rootpath=/tftpboot/nslu2/rootfs\0"				\
++	"nfsargs=setenv bootargs root=/dev/nfs rw "			\
++		"nfsroot=${serverip}:${rootpath}\0"			\
++	"addip=setenv bootargs ${bootargs} "				\
++		"ip=${ipaddr}:${serverip}:${gatewayip}:${netmask}"	\
++		":${hostname}:eth0:off panic=1\0"			\
++	"addtty=setenv bootargs ${bootargs} console=ttyS0,${baudrate}\0"\
++	"net_nfs=tftp 10000 ${bootfile};run nfsargs addip addtty;"	\
++		"bootm\0"						\
++	""
++
++/*
++ * Configuration Settings
++ */
++#define CFG_LONGHELP		1		/* undef to save memory		*/
++#define CFG_PROMPT		"=> "	/* Monitor Command Prompt	*/
++
++#define CFG_CBSIZE		256		/* Console I/O Buffer Size	*/
++#define CFG_PBSIZE (CFG_CBSIZE+sizeof(CFG_PROMPT)+16) /* Print Buffer Size */
++#define CFG_MAXARGS		16		/* max number of command args	*/
++#define CFG_BARGSIZE		CFG_CBSIZE	/* Boot Argument Buffer Size	*/
++
++#define CFG_BAUDRATE_TABLE	{ 9600, 19200, 38400, 57600, 115200 }
++
++#define CFG_MEMTEST_START	0x00400000	/* memtest works on	*/
++#define CFG_MEMTEST_END		0x00800000	/* 4 ... 8 MB in DRAM	*/
++
++#define CFG_LOAD_ADDR		0x00010000	/* default load address */
++
++#define CFG_MONITOR_BASE	CFG_FLASH_BASE
++#define CFG_MONITOR_LEN		(256 << 10)	/* Reserve 256 kB for Monitor	*/
++
++#define CFG_MALLOC_LEN		(256 << 10)
++
++#define CFG_FLASH_BASE		0x50000000
++
++#define CFG_MAX_FLASH_BANKS	1	/* max number of memory banks		*/
++#define CFG_MAX_FLASH_SECT	128	/* max number of sectors on one chip	*/
++
++#define CFG_FLASH_CFI		1	/* The flash is CFI compatible	*/
++#define CFG_FLASH_CFI_DRIVER	1	/* Use common CFI driver	*/
++
++#define CFG_FLASH_CFI_WIDTH	FLASH_CFI_16BIT	/* no byte writes on IXP4xx	*/
++
++#define CFG_FLASH_EMPTY_INFO	1	/* print 'E' for empty sector on flinfo */
++#define CFG_FLASH_USE_BUFFER_WRITE 1	/* use buffered writes (20x faster)	*/
++
++#define CFG_ENV_IS_IN_FLASH	1
++#define CFG_ENV_OFFSET		0x40000	/* use the sysconfig partition */
++#define CFG_ENV_SECT_SIZE	0x20000	/* size of one complete sector	*/
++#define CFG_ENV_SIZE		0x2000	/* Total Size of Environment Sector	*/
++
++#define CFG_ETHADDR_OFFSET	0x3FFB0	/* Location of MAC address in flash */
++#define CFG_SERCOMM_OFFSET	0x3FFF8	/* Location of " sErCoMm" signature */
++
++#define CFG_CACHELINE_SIZE	32
++
++#define CFG_HZ			33000000	/* NSLU2 has a 33.000 MHz crystal */
++
++#define CONFIG_STACKSIZE	(128*1024)	/* regular stack */
++
++#define CFG_GBL_DATA_SIZE	128	/* size in bytes reserved for initial data */
++
++/*
++ * Platform/Board Specific Defines
++ */
++#define CONFIG_SETUP_MEMORY_TAGS 1
++#define CONFIG_CMDLINE_TAG	1
++#define CONFIG_INITRD_TAG	1
++
++/*
++ * Physical Memory Map
++ */
++#define CONFIG_NR_DRAM_BANKS	1	   /* we have 1 bank of DRAM */
++#define PHYS_SDRAM_1		0x00000000 /* SDRAM Bank #1 */
++#define PHYS_SDRAM_1_SIZE	0x02000000 /* 32 MB */
++
++/*
++ * Expansion bus settings
++ */
++#define CFG_EXP_CS0		0xbcd23c42
++
++/*
++ * SDRAM settings
++ */
++#define CFG_SDR_CONFIG		0x18
++#define CFG_SDR_MODE_CONFIG	0x1
++#define CFG_SDRAM_REFRESH_CNT	0x81a
++
++/*
++ * GPIO settings
++ */
++#define CFG_GPIO_STATUS_LED	 0
++#define CFG_GPIO_READY_LED	 1
++#define CFG_GPIO_DISK2_LED	 2
++#define CFG_GPIO_DISK1_LED	 3
++#define CFG_GPIO_BUZZER		 4
++#define CFG_GPIO_POWER_IN	 5
++#define CFG_GPIO_I2C_SCL	 6
++#define CFG_GPIO_I2C_SDA	 7
++#define CFG_GPIO_POWER_OFF	 8
++#define CFG_GPIO_PCI_INTC_N	 9
++#define CFG_GPIO_PCI_INTB_N	10
++#define CFG_GPIO_PCI_INTA_N	11
++#define CFG_GPIO_RESET_IN	12
++#define CFG_GPIO_PCI_RESET	13
++#define CFG_GPIO_PCI_CLK	14
++#define CFG_GPIO_EXTBUS_CLK	15
++
++#endif	/* __CONFIG_H */
+diff --git a/lib_arm/board.c b/lib_arm/board.c
+index 22d573a..a388d5d 100644
+--- a/lib_arm/board.c
++++ b/lib_arm/board.c
+@@ -396,9 +396,9 @@ void start_armboot (void)
+ 
+ 	devices_init ();	/* get the devices list going. */
+ 
+-#ifdef CONFIG_CMC_PU2
++#if defined(CONFIG_CMC_PU2) || defined (CONFIG_NSLU2)
+ 	load_sernum_ethaddr ();
+-#endif /* CONFIG_CMC_PU2 */
++#endif /* CONFIG_CMC_PU2 || CONFIG_NSLU2 */
+ 
+ 	jumptable_init ();
+ 
+-- 
+1.5.2.5
+
