@@ -15,7 +15,7 @@ Index: u-boot-ixp/Makefile
 Index: u-boot-ixp/board/nslu2/Makefile
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ u-boot-ixp/board/nslu2/Makefile	2008-02-14 10:06:56.000000000 +1030
++++ u-boot-ixp/board/nslu2/Makefile	2008-02-15 12:23:07.000000000 +1030
 @@ -0,0 +1,53 @@
 +#
 +# (C) Copyright 2008
@@ -47,7 +47,7 @@ Index: u-boot-ixp/board/nslu2/Makefile
 +
 +LIB	= $(obj)lib$(BOARD).a
 +
-+COBJS	:= nslu2.o
++COBJS	:= nslu2.o load_sernum_ethaddr.o
 +
 +SRCS	:= $(SOBJS:.o=.S) $(COBJS:.o=.c)
 +OBJS	:= $(addprefix $(obj),$(COBJS))
@@ -82,7 +82,7 @@ Index: u-boot-ixp/board/nslu2/config.mk
 Index: u-boot-ixp/board/nslu2/nslu2.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ u-boot-ixp/board/nslu2/nslu2.c	2008-02-14 10:06:56.000000000 +1030
++++ u-boot-ixp/board/nslu2/nslu2.c	2008-02-15 12:42:05.000000000 +1030
 @@ -0,0 +1,106 @@
 +/*
 + * (C) Copyright 2008
@@ -276,8 +276,8 @@ Index: u-boot-ixp/cpu/ixp/npe/include/IxNpeMicrocode.h
 Index: u-boot-ixp/include/configs/nslu2.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ u-boot-ixp/include/configs/nslu2.h	2008-02-14 19:07:44.000000000 +1030
-@@ -0,0 +1,248 @@
++++ u-boot-ixp/include/configs/nslu2.h	2008-02-15 14:04:57.000000000 +1030
+@@ -0,0 +1,252 @@
 +/*
 + * (C) Copyright 2008
 + * Rod Whitby <rod@whitby.id.au>
@@ -379,6 +379,7 @@ Index: u-boot-ixp/include/configs/nslu2.h
 +
 +/*
 +#define CONFIG_PCI
++#define CONFIG_PCI_SCAN_SHOW
 +#define CONFIG_CMD_PCI
 +*/
 +
@@ -477,6 +478,9 @@ Index: u-boot-ixp/include/configs/nslu2.h
 +#define CFG_MONITOR_BASE	CFG_FLASH_BASE
 +#define CFG_MONITOR_LEN		(256 << 10)	/* Reserve 256 kB for Monitor	*/
 +
++#define CFG_ETHADDR_OFFSET	0x3FFB0	/* Location of MAC address in flash */
++#define CFG_SERCOMM_OFFSET	0x3FFF8	/* Location of " sErCoMm" signature */
++
 +/*
 + * Expansion bus settings
 + */
@@ -526,3 +530,91 @@ Index: u-boot-ixp/include/configs/nslu2.h
 +#define CFG_CACHELINE_SIZE	32
 +
 +#endif  /* __CONFIG_H */
+Index: u-boot-ixp/board/nslu2/load_sernum_ethaddr.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ u-boot-ixp/board/nslu2/load_sernum_ethaddr.c	2008-02-15 14:05:30.000000000 +1030
+@@ -0,0 +1,67 @@
++/*
++ * (C) Copyright 2008
++ * Rod Whitby <rod@whitby.id.au>
++ *
++ * (C) Copyright 2000, 2001, 2002
++ * Wolfgang Denk, DENX Software Engineering, wd@denx.de.
++ *
++ * See file CREDITS for list of people who contributed to this
++ * project.
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License as
++ * published by the Free Software Foundation; either version 2 of
++ * the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
++ * MA 02111-1307 USA
++ */
++
++#include <common.h>
++
++/*-----------------------------------------------------------------------
++ * Linksys NSLU2 RedBoot Trailer Block:
++ *
++ * If we boot from RAM on a system which still contains the original
++ * RedBoot bootloader, check if the trailer signature exists and save
++ * the MAC address information it contains.
++ *
++ * 0x3ffb0: six byte binary mac address
++ * 0x3fff8: ' sErCoMm'
++ */
++
++void load_sernum_ethaddr (void)
++{
++	unsigned char *hwi;
++	unsigned char  ethaddr[19]; /* 6 x "%02X", + 1 */
++	unsigned short ih, ie;
++
++	/* Check for signature at the end of RedBoot partition */
++	/* If RedBoot has been replaced, this will not exist. */
++	hwi = (unsigned char *)(CFG_FLASH_BASE + CFG_SERCOMM_OFFSET);
++	if (strncmp((char *)hwi, " sErCoMm", 8)) {
++		return;
++	}
++
++	hwi = (unsigned char *)(CFG_FLASH_BASE + CFG_ETHADDR_OFFSET);
++	ie = 0;
++
++	/* copy MAC address */
++	for (ih = 0; ih < 6; ih++) {
++		sprintf((char *)&ethaddr[ie], "%02X:", hwi[ih]);
++		ie += 3;
++	}
++	ethaddr[--ie] = '\0';
++
++	/* set ethaddr if not yet defined */
++	if (getenv("ethaddr") == NULL) {
++		setenv ((char *)"ethaddr", (char *)ethaddr);
++	}
++}
+Index: u-boot-ixp/lib_arm/board.c
+===================================================================
+--- u-boot-ixp.orig/lib_arm/board.c	2008-02-15 12:48:16.000000000 +1030
++++ u-boot-ixp/lib_arm/board.c	2008-02-15 12:49:32.000000000 +1030
+@@ -378,9 +378,9 @@
+ 
+ 	devices_init ();	/* get the devices list going. */
+ 
+-#ifdef CONFIG_CMC_PU2
++#if defined(CONFIG_CMC_PU2) || defined (CONFIG_NSLU2)
+ 	load_sernum_ethaddr ();
+-#endif /* CONFIG_CMC_PU2 */
++#endif /* CONFIG_CMC_PU2 || CONFIG_NSLU2 */
+ 
+ 	jumptable_init ();
+ 
