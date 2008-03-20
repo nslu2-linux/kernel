@@ -1,8 +1,8 @@
-diff --git a/drivers/net/arm/Kconfig b/drivers/net/arm/Kconfig
-index f9cc2b6..9274d3f 100644
---- a/drivers/net/arm/Kconfig
-+++ b/drivers/net/arm/Kconfig
-@@ -47,3 +47,13 @@ config EP93XX_ETH
+Index: linux-2.6.25-rc6-armeb/drivers/net/arm/Kconfig
+===================================================================
+--- linux-2.6.25-rc6-armeb.orig/drivers/net/arm/Kconfig	2008-03-20 10:26:37.000000000 +1030
++++ linux-2.6.25-rc6-armeb/drivers/net/arm/Kconfig	2008-03-20 10:27:09.000000000 +1030
+@@ -47,3 +47,13 @@
  	help
  	  This is a driver for the ethernet hardware included in EP93xx CPUs.
  	  Say Y if you are building a kernel for EP93xx based devices.
@@ -16,20 +16,19 @@ index f9cc2b6..9274d3f 100644
 +	help
 +	  Say Y here if you want to use built-in Ethernet ports
 +	  on IXP4xx processor.
-diff --git a/drivers/net/arm/Makefile b/drivers/net/arm/Makefile
-index a4c8682..7c812ac 100644
---- a/drivers/net/arm/Makefile
-+++ b/drivers/net/arm/Makefile
-@@ -9,3 +9,4 @@ obj-$(CONFIG_ARM_ETHER3)	+= ether3.o
+Index: linux-2.6.25-rc6-armeb/drivers/net/arm/Makefile
+===================================================================
+--- linux-2.6.25-rc6-armeb.orig/drivers/net/arm/Makefile	2008-03-20 10:26:37.000000000 +1030
++++ linux-2.6.25-rc6-armeb/drivers/net/arm/Makefile	2008-03-20 10:27:09.000000000 +1030
+@@ -9,3 +9,4 @@
  obj-$(CONFIG_ARM_ETHER1)	+= ether1.o
  obj-$(CONFIG_ARM_AT91_ETHER)	+= at91_ether.o
  obj-$(CONFIG_EP93XX_ETH)	+= ep93xx_eth.o
 +obj-$(CONFIG_IXP4XX_ETH)	+= ixp4xx_eth.o
-diff --git a/drivers/net/arm/ixp4xx_eth.c b/drivers/net/arm/ixp4xx_eth.c
-new file mode 100644
-index 0000000..98131a7
---- /dev/null
-+++ b/drivers/net/arm/ixp4xx_eth.c
+Index: linux-2.6.25-rc6-armeb/drivers/net/arm/ixp4xx_eth.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.25-rc6-armeb/drivers/net/arm/ixp4xx_eth.c	2008-03-20 10:27:25.000000000 +1030
 @@ -0,0 +1,1261 @@
 +/*
 + * Intel IXP4xx Ethernet driver for Linux
@@ -355,7 +354,7 @@ index 0000000..98131a7
 +	int cycles = 0;
 +
 +	mdio_write(dev, phy_id, MII_BMCR, port->mii_bmcr | BMCR_RESET);
-+	
++
 +	while (cycles < MAX_MII_RESET_RETRIES) {
 +		if (!(mdio_read(dev, phy_id, MII_BMCR) & BMCR_RESET)) {
 +#if DEBUG_MDIO
@@ -1292,11 +1291,11 @@ index 0000000..98131a7
 +MODULE_LICENSE("GPL v2");
 +module_init(eth_init_module);
 +module_exit(eth_cleanup_module);
-diff --git a/drivers/net/wan/Kconfig b/drivers/net/wan/Kconfig
-index a3df09e..94e7aa7 100644
---- a/drivers/net/wan/Kconfig
-+++ b/drivers/net/wan/Kconfig
-@@ -334,6 +334,15 @@ config DSCC4_PCI_RST
+Index: linux-2.6.25-rc6-armeb/drivers/net/wan/Kconfig
+===================================================================
+--- linux-2.6.25-rc6-armeb.orig/drivers/net/wan/Kconfig	2008-03-20 10:26:37.000000000 +1030
++++ linux-2.6.25-rc6-armeb/drivers/net/wan/Kconfig	2008-03-20 10:27:09.000000000 +1030
+@@ -334,6 +334,15 @@
  
  	  Say Y if your card supports this feature.
  
@@ -1312,11 +1311,11 @@ index a3df09e..94e7aa7 100644
  config DLCI
  	tristate "Frame Relay DLCI support"
  	---help---
-diff --git a/drivers/net/wan/Makefile b/drivers/net/wan/Makefile
-index d61fef3..1b1d116 100644
---- a/drivers/net/wan/Makefile
-+++ b/drivers/net/wan/Makefile
-@@ -42,6 +42,7 @@ obj-$(CONFIG_C101)		+= c101.o
+Index: linux-2.6.25-rc6-armeb/drivers/net/wan/Makefile
+===================================================================
+--- linux-2.6.25-rc6-armeb.orig/drivers/net/wan/Makefile	2008-03-20 10:26:37.000000000 +1030
++++ linux-2.6.25-rc6-armeb/drivers/net/wan/Makefile	2008-03-20 10:27:09.000000000 +1030
+@@ -42,6 +42,7 @@
  obj-$(CONFIG_WANXL)		+= wanxl.o
  obj-$(CONFIG_PCI200SYN)		+= pci200syn.o
  obj-$(CONFIG_PC300TOO)		+= pc300too.o
@@ -1324,11 +1323,10 @@ index d61fef3..1b1d116 100644
  
  clean-files := wanxlfw.inc
  $(obj)/wanxl.o:	$(obj)/wanxlfw.inc
-diff --git a/drivers/net/wan/ixp4xx_hss.c b/drivers/net/wan/ixp4xx_hss.c
-new file mode 100644
-index 0000000..c4cdace
---- /dev/null
-+++ b/drivers/net/wan/ixp4xx_hss.c
+Index: linux-2.6.25-rc6-armeb/drivers/net/wan/ixp4xx_hss.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ linux-2.6.25-rc6-armeb/drivers/net/wan/ixp4xx_hss.c	2008-03-20 10:27:09.000000000 +1030
 @@ -0,0 +1,1270 @@
 +/*
 + * Intel IXP4xx HSS (synchronous serial port) driver for Linux

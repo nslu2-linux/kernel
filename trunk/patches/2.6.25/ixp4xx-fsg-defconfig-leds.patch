@@ -8,18 +8,16 @@ Signed-off-by: Rod Whitby <rod@whitby.id.au>
 PATCH FOLLOWS
 KernelVersion: 2.6.24-git6
 
-diff --git a/arch/arm/configs/ixp4xx_defconfig b/arch/arm/configs/ixp4xx_defconfig
-index 11a1b3e..b0a9639 100644
---- a/arch/arm/configs/ixp4xx_defconfig
-+++ b/arch/arm/configs/ixp4xx_defconfig
-@@ -1336,6 +1336,7 @@ CONFIG_LEDS_CLASS=y
+Index: linux-2.6.25-rc6-armeb/arch/arm/configs/ixp4xx_defconfig
+===================================================================
+--- linux-2.6.25-rc6-armeb.orig/arch/arm/configs/ixp4xx_defconfig	2008-03-20 10:26:55.000000000 +1030
++++ linux-2.6.25-rc6-armeb/arch/arm/configs/ixp4xx_defconfig	2008-03-20 10:27:00.000000000 +1030
+@@ -1335,7 +1335,7 @@
+ #
  # LED drivers
  #
- # CONFIG_LEDS_IXP4XX is not set
+-# CONFIG_LEDS_IXP4XX is not set
 +CONFIG_LEDS_FSG=y
  CONFIG_LEDS_GPIO=y
  
  #
--- 
-1.5.2.5
-
