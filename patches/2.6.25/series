@@ -20,19 +20,8 @@ ixp4xx-net-drivers.patch
 
 # Add squashfs 3.3 w/ LZMA compression
 # The squashfs project itself is working to mainstream inclusion.
-squashfs/squashfs-with-lzma.patch
-squashfs/squashfs-initrd.patch
-squashfs/squashfs-force-O2.patch
-squashfs/squashfs-Kconfig.patch
-squashfs/squashfs-Makefile.patch
-
-# Add mini_fo mini fan-out (or 'layered' or 'union mounted') fs.
-# Copied from openwrt patches for 2.6.23, svn revision 10120:
-# https://dev.openwrt.org/browser/trunk/target/linux/generic-2.6/patches-2.6.23/209-mini_fo.patch?rev=10120
-mini_fo.patch
-
-# These have been submitted to the LEDs maintainer
-# but may need to wait the second merge window,
-# because they conflict with patches above.
-# ixp4xx-fix-leds-names.patch
-# ixp4xx-remove-ixp4xx-gpio-led-driver.patch
+# squashfs/squashfs-with-lzma.patch
+# squashfs/squashfs-initrd.patch
+# squashfs/squashfs-force-O2.patch
+# squashfs/squashfs-Kconfig.patch
+# squashfs/squashfs-Makefile.patch

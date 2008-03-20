@@ -2,10 +2,10 @@
  drivers/rtc/rtc-pcf8563.c |  109 +++++++++++++---------------------------------
  1 file changed, 32 insertions(+), 77 deletions(-)
 
-Index: linux-2.6.24-git4-armeb/drivers/rtc/rtc-pcf8563.c
+Index: linux-2.6.25-rc6-armeb/drivers/rtc/rtc-pcf8563.c
 ===================================================================
---- linux-2.6.24-git4-armeb.orig/drivers/rtc/rtc-pcf8563.c	2008-01-29 12:37:41.000000000 +1030
-+++ linux-2.6.24-git4-armeb/drivers/rtc/rtc-pcf8563.c	2008-01-29 12:44:30.000000000 +1030
+--- linux-2.6.25-rc6-armeb.orig/drivers/rtc/rtc-pcf8563.c	2008-03-20 10:26:43.000000000 +1030
++++ linux-2.6.25-rc6-armeb/drivers/rtc/rtc-pcf8563.c	2008-03-20 10:26:51.000000000 +1030
 @@ -18,17 +18,7 @@
  #include <linux/bcd.h>
  #include <linux/rtc.h>
