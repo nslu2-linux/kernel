@@ -1,7 +1,7 @@
-From bc47cc117084370cb6b22c95ae826a0654a37218 Mon Sep 17 00:00:00 2001
+From a66e34fefb3f8142d7f16808563eb610225f6e77 Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
 Date: Tue, 29 Jan 2008 23:17:42 +1030
-Subject: leds: Add new driver for the LEDs on the Freecom FSG-3
+Subject: [PATCH] leds: Add new driver for the LEDs on the Freecom FSG-3
 
 The LEDs on the Freecom FSG-3 are connected to an external
 memory-mapped latch on the ixp4xx expansion bus, and therefore cannot
@@ -10,13 +10,19 @@ be supported by any of the existing LEDs drivers.
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 --
 PATCH FOLLOWS
-KernelVersion: 2.6.24-git6
+KernelVersion: v2.6.25-rc6-117-g457fb60
+---
+ drivers/leds/Kconfig    |    6 +
+ drivers/leds/Makefile   |    1 +
+ drivers/leds/leds-fsg.c |  261 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 268 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/leds/leds-fsg.c
 
-Index: linux-2.6.25-rc6-armeb/drivers/leds/Kconfig
-===================================================================
---- linux-2.6.25-rc6-armeb.orig/drivers/leds/Kconfig	2008-03-20 10:26:38.000000000 +1030
-+++ linux-2.6.25-rc6-armeb/drivers/leds/Kconfig	2008-03-20 10:26:58.000000000 +1030
-@@ -46,6 +46,12 @@
+diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+index 859814f..aefbe04 100644
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -46,6 +46,12 @@ config LEDS_SPITZ
  	  This option enables support for the LEDs on Sharp Zaurus
  	  SL-Cxx00 series (C1000, C3000, C3100).
  
@@ -29,11 +35,11 @@ Index: linux-2.6.25-rc6-armeb/drivers/leds/Kconfig
  config LEDS_TOSA
  	tristate "LED Support for the Sharp SL-6000 series"
  	depends on LEDS_CLASS && PXA_SHARPSL
-Index: linux-2.6.25-rc6-armeb/drivers/leds/Makefile
-===================================================================
---- linux-2.6.25-rc6-armeb.orig/drivers/leds/Makefile	2008-03-20 10:26:38.000000000 +1030
-+++ linux-2.6.25-rc6-armeb/drivers/leds/Makefile	2008-03-20 10:26:58.000000000 +1030
-@@ -21,6 +21,7 @@
+diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
+index 84ced3b..b17bd91 100644
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -21,6 +21,7 @@ obj-$(CONFIG_LEDS_GPIO)			+= leds-gpio.o
  obj-$(CONFIG_LEDS_CM_X270)              += leds-cm-x270.o
  obj-$(CONFIG_LEDS_CLEVO_MAIL)		+= leds-clevo-mail.o
  obj-$(CONFIG_LEDS_HP6XX)		+= leds-hp6xx.o
@@ -41,11 +47,12 @@ Index: linux-2.6.25-rc6-armeb/drivers/leds/Makefile
  
  # LED Triggers
  obj-$(CONFIG_LEDS_TRIGGER_TIMER)	+= ledtrig-timer.o
-Index: linux-2.6.25-rc6-armeb/drivers/leds/leds-fsg.c
-===================================================================
---- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ linux-2.6.25-rc6-armeb/drivers/leds/leds-fsg.c	2008-03-20 10:26:58.000000000 +1030
-@@ -0,0 +1,262 @@
+diff --git a/drivers/leds/leds-fsg.c b/drivers/leds/leds-fsg.c
+new file mode 100644
+index 0000000..a7421b8
+--- /dev/null
++++ b/drivers/leds/leds-fsg.c
+@@ -0,0 +1,261 @@
 +/*
 + * LED Driver for the Freecom FSG-3
 + *
@@ -233,8 +240,20 @@ Index: linux-2.6.25-rc6-armeb/drivers/leds/leds-fsg.c
 +	if (ret < 0)
 +		goto failring;
 +
++	/* Map the LED chip select address space */
++	latch_address = (unsigned short *) ioremap(IXP4XX_EXP_BUS_BASE(2), 512);
++	if (!latch_address) {
++		ret = -ENOMEM;
++		goto failremap;
++	}
++
++	latch_value = 0xffff;
++	*latch_address = latch_value;
++
 +	return ret;
 +
++ failremap:
++	led_classdev_unregister(&fsg_ring_led);
 + failring:
 +	led_classdev_unregister(&fsg_sync_led);
 + failsync:
@@ -252,6 +271,8 @@ Index: linux-2.6.25-rc6-armeb/drivers/leds/leds-fsg.c
 +
 +static int fsg_led_remove(struct platform_device *pdev)
 +{
++	iounmap(latch_address);
++
 +	led_classdev_unregister(&fsg_wlan_led);
 +	led_classdev_unregister(&fsg_wan_led);
 +	led_classdev_unregister(&fsg_sata_led);
@@ -278,27 +299,12 @@ Index: linux-2.6.25-rc6-armeb/drivers/leds/leds-fsg.c
 +
 +static int __init fsg_led_init(void)
 +{
-+	int ret;
-+
-+	/* Map the LED chip select address space */
-+	latch_address = (unsigned short *) ioremap(IXP4XX_EXP_BUS_BASE(2), 512);
-+	if (!latch_address)
-+		return -ENOMEM;
-+	latch_value = 0xffff;
-+	*latch_address = latch_value;
-+
-+	ret = platform_driver_register(&fsg_led_driver);
-+	if (ret == 0)
-+		return ret;
-+
-+	iounmap(latch_address);
-+	return ret;
++	return platform_driver_register(&fsg_led_driver);
 +}
 +
 +static void __exit fsg_led_exit(void)
 +{
 +	platform_driver_unregister(&fsg_led_driver);
-+	iounmap(latch_address);
 +}
 +
 +
@@ -308,3 +314,6 @@ Index: linux-2.6.25-rc6-armeb/drivers/leds/leds-fsg.c
 +MODULE_AUTHOR("Rod Whitby <rod@whitby.id.au>");
 +MODULE_DESCRIPTION("Freecom FSG-3 LED driver");
 +MODULE_LICENSE("GPL");
+-- 
+1.5.2.5
+
