@@ -76,7 +76,7 @@ Index: linux-2.6.24-armeb/include/asm-arm/arch-ixp4xx/platform.h
 Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
 ===================================================================
 --- linux-2.6.24-armeb.orig/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-14 22:56:23.000000000 +1030
-+++ linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-14 23:52:18.000000000 +1030
++++ linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c	2008-02-15 10:20:31.000000000 +1030
 @@ -17,6 +17,7 @@
   *
   */
@@ -85,16 +85,18 @@ Index: linux-2.6.24-armeb/arch/arm/mach-ixp4xx/nslu2-setup.c
  #include <linux/if_ether.h>
  #include <linux/irq.h>
  #include <linux/serial.h>
-@@ -151,11 +152,22 @@
+@@ -151,11 +152,24 @@
  };
  
  /* Built-in 10/100 Ethernet MAC interfaces */
 +
 +static int nslu2_fwrequest(const struct firmware **fw, const char *name, struct device *device) {
++	printk(KERN_DEBUG "Calling request_firmare for %s\n", name);
 +	return request_firmware(fw, name, device);
 +}
 +
 +static void nslu2_fwrelease(const struct firmware *fw) {
++	printk(KERN_DEBUG "Calling release_firmare\n");
 +	release_firmware(fw);
 +}
 +
