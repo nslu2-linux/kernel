@@ -23,9 +23,9 @@ rtc-pcf8563-new-style.patch
 rtc-isl1208-new-style.patch
 
 # Submitted upstream, but not yet accepted
+ixp4xx-4874-fsg-board-support.patch
 
 # To be submitted upstream
-ixp4xx-fsg-board-support.patch
 ixp4xx-fsg-led-driver.patch
 ixp4xx-beeper-add-module_alias.patch
 
