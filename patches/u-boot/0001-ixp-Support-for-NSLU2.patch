@@ -1,6 +1,4 @@
-From 73f14aafaba4c2508d67b1196eb618e0d6b9781d Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
-Date: Sun, 24 Feb 2008 13:26:35 +1030
 Subject: [PATCH] ixp: Support for NSLU2
 
 This patch adds support for the Linksys NSLU2.
@@ -23,11 +21,11 @@ This patch adds support for the Linksys NSLU2.
  create mode 100644 board/nslu2/u-boot.lds
  create mode 100644 include/configs/nslu2.h
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index dc13580..891ae00 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -564,6 +564,10 @@ Michael Schwingen <michael@schwingen.org>
+Index: u-boot/MAINTAINERS
+===================================================================
+--- u-boot.orig/MAINTAINERS	2008-03-10 01:50:02.000000000 +1030
++++ u-boot/MAINTAINERS	2008-03-27 15:10:31.000000000 +1030
+@@ -564,6 +564,10 @@
  	actux3			xscale
  	actux4			xscale
  
@@ -38,11 +36,11 @@ index dc13580..891ae00 100644
  #########################################################################
  # x86 Systems:								#
  #									#
-diff --git a/MAKEALL b/MAKEALL
-index 0e1c0cb..2088e78 100755
---- a/MAKEALL
-+++ b/MAKEALL
-@@ -529,6 +529,7 @@ LIST_ixp="		\
+Index: u-boot/MAKEALL
+===================================================================
+--- u-boot.orig/MAKEALL	2008-03-10 01:50:02.000000000 +1030
++++ u-boot/MAKEALL	2008-03-27 15:10:31.000000000 +1030
+@@ -529,6 +529,7 @@
  	actux4		\
  	ixdp425		\
  	ixdpg425	\
@@ -50,11 +48,11 @@ index 0e1c0cb..2088e78 100755
  	pdnb3		\
  	scpu		\
  "
-diff --git a/Makefile b/Makefile
-index 2790865..ec3661e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -2563,6 +2563,9 @@ ixdp425_config	:	unconfig
+Index: u-boot/Makefile
+===================================================================
+--- u-boot.orig/Makefile	2008-03-10 01:50:02.000000000 +1030
++++ u-boot/Makefile	2008-03-27 15:10:31.000000000 +1030
+@@ -2532,6 +2532,9 @@
  ixdpg425_config	:	unconfig
  	@$(MKCONFIG) $(@:_config=) arm ixp ixdp425
  
@@ -64,11 +62,10 @@ index 2790865..ec3661e 100644
  lubbock_config	:	unconfig
  	@$(MKCONFIG) $(@:_config=) arm pxa lubbock
  
-diff --git a/board/nslu2/Makefile b/board/nslu2/Makefile
-new file mode 100644
-index 0000000..934bc1a
---- /dev/null
-+++ b/board/nslu2/Makefile
+Index: u-boot/board/nslu2/Makefile
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ u-boot/board/nslu2/Makefile	2008-03-27 15:10:31.000000000 +1030
 @@ -0,0 +1,53 @@
 +#
 +# (C) Copyright 2008
@@ -123,18 +120,16 @@ index 0000000..934bc1a
 +sinclude $(obj).depend
 +
 +#########################################################################
-diff --git a/board/nslu2/config.mk b/board/nslu2/config.mk
-new file mode 100644
-index 0000000..6510cc4
---- /dev/null
-+++ b/board/nslu2/config.mk
+Index: u-boot/board/nslu2/config.mk
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ u-boot/board/nslu2/config.mk	2008-03-27 15:13:55.000000000 +1030
 @@ -0,0 +1 @@
 +TEXT_BASE = 0x01d00000
-diff --git a/board/nslu2/load_sernum_ethaddr.c b/board/nslu2/load_sernum_ethaddr.c
-new file mode 100644
-index 0000000..5992fa8
---- /dev/null
-+++ b/board/nslu2/load_sernum_ethaddr.c
+Index: u-boot/board/nslu2/load_sernum_ethaddr.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ u-boot/board/nslu2/load_sernum_ethaddr.c	2008-03-27 15:10:31.000000000 +1030
 @@ -0,0 +1,67 @@
 +/*
 + * (C) Copyright 2008
@@ -203,11 +198,10 @@ index 0000000..5992fa8
 +		setenv ((char *)"ethaddr", (char *)ethaddr);
 +	}
 +}
-diff --git a/board/nslu2/nslu2.c b/board/nslu2/nslu2.c
-new file mode 100644
-index 0000000..ca1a716
---- /dev/null
-+++ b/board/nslu2/nslu2.c
+Index: u-boot/board/nslu2/nslu2.c
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ u-boot/board/nslu2/nslu2.c	2008-03-27 15:10:31.000000000 +1030
 @@ -0,0 +1,96 @@
 +/*
 + * (C) Copyright 2008
@@ -305,11 +299,10 @@ index 0000000..ca1a716
 +
 +	return (0);
 +}
-diff --git a/board/nslu2/u-boot.lds b/board/nslu2/u-boot.lds
-new file mode 100644
-index 0000000..58393d0
---- /dev/null
-+++ b/board/nslu2/u-boot.lds
+Index: u-boot/board/nslu2/u-boot.lds
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ u-boot/board/nslu2/u-boot.lds	2008-03-27 15:10:31.000000000 +1030
 @@ -0,0 +1,56 @@
 +/*
 + * (C) Copyright 2000
@@ -367,11 +360,10 @@ index 0000000..58393d0
 +	.bss (NOLOAD) : { *(.bss) }
 +	_end = .;
 +}
-diff --git a/include/configs/nslu2.h b/include/configs/nslu2.h
-new file mode 100644
-index 0000000..879ca22
---- /dev/null
-+++ b/include/configs/nslu2.h
+Index: u-boot/include/configs/nslu2.h
+===================================================================
+--- /dev/null	1970-01-01 00:00:00.000000000 +0000
++++ u-boot/include/configs/nslu2.h	2008-03-27 15:10:32.000000000 +1030
 @@ -0,0 +1,230 @@
 +/*
 + * (C) Copyright 2008
@@ -603,11 +595,11 @@ index 0000000..879ca22
 +#define CFG_GPIO_EXTBUS_CLK	15
 +
 +#endif	/* __CONFIG_H */
-diff --git a/lib_arm/board.c b/lib_arm/board.c
-index 22d573a..a388d5d 100644
---- a/lib_arm/board.c
-+++ b/lib_arm/board.c
-@@ -396,9 +396,9 @@ void start_armboot (void)
+Index: u-boot/lib_arm/board.c
+===================================================================
+--- u-boot.orig/lib_arm/board.c	2008-03-10 01:50:02.000000000 +1030
++++ u-boot/lib_arm/board.c	2008-03-27 15:10:31.000000000 +1030
+@@ -396,9 +396,9 @@
  
  	devices_init ();	/* get the devices list going. */
  
@@ -619,6 +611,3 @@ index 22d573a..a388d5d 100644
  
  	jumptable_init ();
  
--- 
-1.5.2.5
-
