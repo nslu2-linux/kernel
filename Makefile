@@ -36,7 +36,7 @@ REVISION := $(shell sed -e 's/-\(git\|v\).*//' patches/${PATCHVER}/KERNEL)
 SNAPSHOT := $(shell sed -e 's/-v.*//' patches/${PATCHVER}/KERNEL)
 COMMITID := $(shell sed -e 's/.*-\(v[0-9.]*.*\)/\1/' patches/${PATCHVER}/KERNEL)
 
-U-BOOT_COMMIT = v1.3.1-494-g799891e
+U-BOOT_COMMIT = v1.3.2
 
 APEX_REVISION = 1.5.13
 APEX_CONFIG = slugos
@@ -59,8 +59,9 @@ APEX_SOURCE	= ftp://ftp.buici.com/pub/apex/apex-${APEX_REVISION}.tar.gz
 
 ARM_KERNEL_SHIM_SOURCE = ftp://ftp.buici.com/pub/arm/arm-kernel-shim/arm-kernel-shim-${ARM_KERNEL_SHIM_REVISION}.tar.gz
 
-U-BOOT_SITE	= http://www.denx.de/cgi-bin/gitweb.cgi?p=u-boot/u-boot-ixp.git;a=snapshot;sf=tgz
+U-BOOT_SITE	= http://www.denx.de/cgi-bin/gitweb.cgi?p=u-boot.git;a=snapshot;sf=tgz
 U-BOOT_SNAPSHOT	= ${U-BOOT_SITE};h=${U-BOOT_COMMIT}
+U-BOOT_DIR	= u-boot
 
 # CROSS_COMPILE ?= ${ARCH}-linux-gnu-
 CROSS_COMPILE ?= ${ARCH}-linux-
@@ -89,39 +90,39 @@ arm-kernel-shim: \
 	arm-kernel-shim-fsg3${ENDIAN}e.bin
 
 u-boot-nslu2.bin: \
-		u-boot-ixp/include/configs/nslu2.h \
-		u-boot-ixp/cpu/ixp/npe/IxNpeMicrocode.c
-	${MAKE} -C u-boot-ixp distclean
-	${MAKE} -C u-boot-ixp nslu2_config
-	${MAKE} -C u-boot-ixp all
+		${U-BOOT_DIR}/include/configs/nslu2.h \
+		${U-BOOT_DIR}/cpu/ixp/npe/IxNpeMicrocode.c
+	${MAKE} -C ${U-BOOT_DIR} distclean
+	${MAKE} -C ${U-BOOT_DIR} nslu2_config
+	${MAKE} -C ${U-BOOT_DIR} all
 ifeq (${ENDIAN},b)
-	devio '<<'u-boot-ixp/u-boot.bin >$@ 'cp$$'
+	devio '<<'${U-BOOT_DIR}/u-boot.bin >$@ 'cp$$'
 else
-	devio '<<'u-boot-ixp/u-boot.bin >$@ 'xp $$,4'
+	devio '<<'${U-BOOT_DIR}/u-boot.bin >$@ 'xp $$,4'
 endif
 
-.PRECIOUS: u-boot-ixp/cpu/ixp/npe/IxNpeMicrocode.c
-u-boot-ixp/cpu/ixp/npe/IxNpeMicrocode.c: \
-		downloads/IPL_ixp400NpeLibrary-2_4.zip
-	unzip -p -j downloads/IPL_ixp400NpeLibrary-2_4.zip \
+.PRECIOUS: ${U-BOOT_DIR}/cpu/ixp/npe/IxNpeMicrocode.c
+${U-BOOT_DIR}/cpu/ixp/npe/IxNpeMicrocode.c: \
+		downloads/IPL_ixp400NpeLibrary-2_1.zip
+	unzip -p -j downloads/IPL_ixp400NpeLibrary-2_1.zip \
 		ixp400_xscale_sw/src/npeDl/IxNpeMicrocode.c \
-		> u-boot-ixp/cpu/ixp/npe/IxNpeMicrocode.c
+		> ${U-BOOT_DIR}/cpu/ixp/npe/IxNpeMicrocode.c
 
-.PRECIOUS: u-boot-ixp/include/configs/nslu2.h
+.PRECIOUS: ${U-BOOT_DIR}/include/configs/nslu2.h
 
-u-boot-ixp/include/configs/nslu2.h: \
-		downloads/u-boot-ixp-${U-BOOT_COMMIT}.tar.gz
-	[ -e u-boot-ixp ] || \
-	( tar zxf downloads/u-boot-ixp-${U-BOOT_COMMIT}.tar.gz ; \
-	  cd u-boot-ixp ; \
+${U-BOOT_DIR}/include/configs/nslu2.h: \
+		downloads/u-boot-${U-BOOT_COMMIT}.tar.gz
+	[ -e ${U-BOOT_DIR} ] || \
+	( tar zxf downloads/u-boot-${U-BOOT_COMMIT}.tar.gz ; \
+	  cd ${U-BOOT_DIR} ; \
 	  ln -s ../patches/u-boot patches ; \
 	  [ ! -e patches/series ] || quilt push -a )
-	touch u-boot-ixp/include/configs/nslu2.h
+	touch ${U-BOOT_DIR}/include/configs/nslu2.h
 
-downloads/u-boot-ixp-${U-BOOT_COMMIT}.tar.gz:
-	[ -e downloads/u-boot-ixp-${U-BOOT_COMMIT}.tar.gz ] || \
+downloads/u-boot-${U-BOOT_COMMIT}.tar.gz:
+	[ -e downloads/u-boot-${U-BOOT_COMMIT}.tar.gz ] || \
 	( mkdir -p downloads ; cd downloads ; \
-	  wget -O u-boot-ixp-${U-BOOT_COMMIT}.tar.gz '${U-BOOT_SNAPSHOT}' )
+	  wget -O u-boot-${U-BOOT_COMMIT}.tar.gz '${U-BOOT_SNAPSHOT}' )
 
 apex-${APEX_CONFIG}-%-${ARCH}-${APEX_REVISION}.bin: apex-${APEX_REVISION}/src/mach-ixp42x/${APEX_CONFIG}-%-${ARCH}_config
 	( cd apex-${APEX_REVISION} ; \
@@ -325,7 +326,7 @@ clobber-apex:
 	rm -rf apex-*
 
 clobber-u-boot clobber-uboot:
-	rm -rf u-boot-*
+	rm -rf u-boot-* ${U-BOOT_DIR}
 
 clobber-arm-kernel-shim:
 	rm -rf arm-kernel-shim-*
