@@ -25,3 +25,6 @@ ixp4xx-net-drivers.patch
 # squashfs/squashfs-force-O2.patch
 # squashfs/squashfs-Kconfig.patch
 # squashfs/squashfs-Makefile.patch
+
+# Patches from OpenWrt
+400-dmabounce.patch
