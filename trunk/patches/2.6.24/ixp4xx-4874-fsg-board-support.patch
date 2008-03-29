@@ -1,7 +1,5 @@
-From e9d3cbc62dd847a7a40489a2972c087438d37edd Mon Sep 17 00:00:00 2001
 From: Rod Whitby <rod@whitby.id.au>
-Date: Tue, 29 Jan 2008 23:12:44 +1030
-Subject: [PATCH] ixp4xx: Add support for the Freecom FSG-3 board
+Subject: [PATCH] ixp4xx: Add support for the Freecom FSG-3 board (Patch #4874)
 
 The Freecom-FSG3 is a small network-attached-storage device with the
 following feature set:
@@ -23,22 +21,26 @@ The ixp4xx_defconfig is also updated to support this device (the
 leds-fsg driver is to be submitted separately via the leds tree after
 this initial support is merged, as it depends on header gpio defines).
 
-This has been tested on both big-endian and little-endian kernels.
-
 Signed-off-by: Rod Whitby <rod@whitby.id.au>
 
 PATCH FOLLOWS
 KernelVersion: v2.6.25-rc6-74-g264e3e8
 ---
+
+Updated to correct all issues found by RMK.
+
+The front power button calls ctrl_alt_del() and the rear reset button
+now calls machine_restart() directly.
+
  arch/arm/configs/ixp4xx_defconfig      |    9 +-
  arch/arm/mach-ixp4xx/Kconfig           |    9 +
  arch/arm/mach-ixp4xx/Makefile          |    2 +
  arch/arm/mach-ixp4xx/fsg-pci.c         |   71 ++++++++
- arch/arm/mach-ixp4xx/fsg-setup.c       |  275 ++++++++++++++++++++++++++++++++
+ arch/arm/mach-ixp4xx/fsg-setup.c       |  276 ++++++++++++++++++++++++++++++++
  include/asm-arm/arch-ixp4xx/fsg.h      |   50 ++++++
  include/asm-arm/arch-ixp4xx/hardware.h |    1 +
  include/asm-arm/arch-ixp4xx/irqs.h     |    7 +
- 8 files changed, 420 insertions(+), 4 deletions(-)
+ 8 files changed, 421 insertions(+), 4 deletions(-)
  create mode 100644 arch/arm/mach-ixp4xx/fsg-pci.c
  create mode 100644 arch/arm/mach-ixp4xx/fsg-setup.c
  create mode 100644 include/asm-arm/arch-ixp4xx/fsg.h
@@ -211,10 +213,10 @@ index 0000000..f19f3f6
 +subsys_initcall(fsg_pci_init);
 diff --git a/arch/arm/mach-ixp4xx/fsg-setup.c b/arch/arm/mach-ixp4xx/fsg-setup.c
 new file mode 100644
-index 0000000..6ca0dfa
+index 0000000..0db3a90
 --- /dev/null
 +++ b/arch/arm/mach-ixp4xx/fsg-setup.c
-@@ -0,0 +1,275 @@
+@@ -0,0 +1,276 @@
 +/*
 + * arch/arm/mach-ixp4xx/fsg-setup.c
 + *
@@ -259,7 +261,9 @@ index 0000000..6ca0dfa
 +static struct platform_device fsg_flash = {
 +	.name			= "IXP4XX-Flash",
 +	.id			= 0,
-+	.dev.platform_data	= &fsg_flash_data,
++	.dev = {
++		.platform_data	= &fsg_flash_data,
++	},
 +	.num_resources		= 1,
 +	.resource		= &fsg_flash_resource,
 +};
@@ -272,7 +276,7 @@ index 0000000..6ca0dfa
 +static struct platform_device fsg_i2c_gpio = {
 +	.name			= "i2c-gpio",
 +	.id			= 0,
-+	.dev	 = {
++	.dev = {
 +		.platform_data	= &fsg_i2c_gpio_data,
 +	},
 +};
@@ -321,7 +325,9 @@ index 0000000..6ca0dfa
 +static struct platform_device fsg_uart = {
 +	.name			= "serial8250",
 +	.id			= PLAT8250_DEV_PLATFORM,
-+	.dev.platform_data	= fsg_uart_data,
++	.dev = {
++		.platform_data	= fsg_uart_data,
++	},
 +	.num_resources		= ARRAY_SIZE(fsg_uart_resources),
 +	.resource		= fsg_uart_resources,
 +};
@@ -348,11 +354,15 @@ index 0000000..6ca0dfa
 +	{
 +		.name			= "ixp4xx_eth",
 +		.id			= IXP4XX_ETH_NPEB,
-+		.dev.platform_data	= fsg_plat_eth,
++		.dev = {
++			.platform_data	= fsg_plat_eth,
++		},
 +	}, {
 +		.name			= "ixp4xx_eth",
 +		.id			= IXP4XX_ETH_NPEC,
-+		.dev.platform_data	= fsg_plat_eth + 1,
++		.dev = {
++			.platform_data	= fsg_plat_eth + 1,
++		},
 +	}
 +};
 +
@@ -363,12 +373,6 @@ index 0000000..6ca0dfa
 +	&fsg_eth[0],
 +	&fsg_eth[1],
 +};
-+
-+static void fsg_power_off(void)
-+{
-+	printk(KERN_INFO "Restarting system.\n");
-+	machine_restart(NULL);
-+}
 +
 +static irqreturn_t fsg_power_handler(int irq, void *dev_id)
 +{
@@ -382,10 +386,11 @@ index 0000000..6ca0dfa
 +
 +static irqreturn_t fsg_reset_handler(int irq, void *dev_id)
 +{
-+	/* This is the paper-clip reset, it shuts the machine down directly.
-+	 */
-+	machine_power_off();
++	/* This is the paper-clip reset which does an emergency reboot. */
++	printk(KERN_INFO "Restarting system.\n");
++	machine_restart(NULL);
 +
++	/* This should never be reached. */
 +	return IRQ_HANDLED;
 +}
 +
@@ -418,19 +423,17 @@ index 0000000..6ca0dfa
 +
 +	platform_add_devices(fsg_devices, ARRAY_SIZE(fsg_devices));
 +
-+	pm_power_off = fsg_power_off;
-+
-+	set_irq_type(gpio_to_irq(FSG_RB_GPIO), IRQT_LOW);
 +	if (request_irq(gpio_to_irq(FSG_RB_GPIO), &fsg_reset_handler,
-+		IRQF_DISABLED, "FSG reset button", NULL) < 0) {
++			IRQF_DISABLED | IRQF_TRIGGER_LOW,
++			"FSG reset button", NULL) < 0) {
 +
 +		printk(KERN_DEBUG "Reset Button IRQ %d not available\n",
 +			gpio_to_irq(FSG_RB_GPIO));
 +	}
 +
-+	set_irq_type(gpio_to_irq(FSG_SB_GPIO), IRQT_LOW);
 +	if (request_irq(gpio_to_irq(FSG_SB_GPIO), &fsg_power_handler,
-+		IRQF_DISABLED, "FSG power button", NULL) < 0) {
++			IRQF_DISABLED | IRQF_TRIGGER_LOW,
++			"FSG power button", NULL) < 0) {
 +
 +		printk(KERN_DEBUG "Power Button IRQ %d not available\n",
 +			gpio_to_irq(FSG_SB_GPIO));
