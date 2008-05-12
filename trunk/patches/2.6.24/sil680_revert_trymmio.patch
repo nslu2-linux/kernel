@@ -1,0 +1,23 @@
+The new MMIO access implementation in the SIL680 driver is broken
+for anything else but the Cell processor. However, on IXP4xx the
+driver tries to do MMIO which I have tested to fail. This patch
+was proposed upstream by Benjamin Herrenschmidt, LKML 20080408.
+
+Signed-off-by: Leon Woestenberg <leonw@mailcan.com>
+
+Index: linux-2.6.24/drivers/ata/pata_sil680.c
+===================================================================
+--- linux-2.6.24.orig/drivers/ata/pata_sil680.c	2008-05-12 02:27:42.000000000 +0200
++++ linux-2.6.24/drivers/ata/pata_sil680.c	2008-05-12 02:29:04.000000000 +0200
+@@ -269,7 +269,10 @@
+ 	dev_dbg(&pdev->dev, "sil680: BA5_EN = %d clock = %02X\n",
+ 		tmpbyte & 1, tmpbyte & 0x30);
+ 
+-	*try_mmio = (tmpbyte & 1) || pci_resource_start(pdev, 5);
++#ifdef CONFIG_PPC_MERGE
++       if (machine_is(cell))
++               *try_mmio = (tmpbyte & 1) || pci_resource_start(pdev, 5);
++#endif
+ 
+ 	switch(tmpbyte & 0x30) {
+ 		case 0x00:
