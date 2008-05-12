@@ -1,7 +1,8 @@
-The new MMIO access implementation in the SIL680 driver is broken
-for anything else but the Cell processor. However, on IXP4xx the
-driver tries to do MMIO which I have tested to fail. This patch
-was proposed upstream by Benjamin Herrenschmidt, LKML 20080408.
+The MMIO access implementation in the SIL680 driver is broken for
+anything else but the Cell processor. Also, on IXP4xx the driver
+tries MMIO but fails. Revert MMIO, like upstream for 2.6.26:
+
+http://patchwork.ozlabs.org/linuxppc/patch?id=17772
 
 Signed-off-by: Leon Woestenberg <leonw@mailcan.com>
 
