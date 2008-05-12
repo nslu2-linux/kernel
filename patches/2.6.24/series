@@ -59,3 +59,6 @@ atag_empty_core.patch
 
 # Patches from OpenWrt
 400-dmabounce.patch
+
+# Backport from 2.6.26-work-in-progress
+sil680_revert_trymmio.patch
