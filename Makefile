@@ -19,16 +19,16 @@ ENDIAN = b
 MAJORVER = 2.6
 
 # Previous Stable
-# BASEVER  = 2.6.23.14
-# PATCHVER = 2.6.23
-
-# Latest Stable
-BASEVER  = 2.6.24.4
+BASEVER  = 2.6.24.7
 PATCHVER = 2.6.24
 
-# Latest Development
-# BASEVER  = 2.6.24
+# Latest Stable
+# BASEVER  = 2.6.25.3
 # PATCHVER = 2.6.25
+
+# Latest Development
+# BASEVER  = 2.6.25
+# PATCHVER = 2.6.26
 
 # CROSS_COMPILE = /home/slug/angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
 
@@ -317,10 +317,12 @@ endif
 downloads:
 	mkdir -p downloads
 
-clobber: clobber-apex clobber-arm-kernel-shim clobber-u-boot
+clobber: clobber-kernel clobber-apex clobber-arm-kernel-shim clobber-u-boot
+	rm -rf *~
+
+clobber-kernel:
 	rm -rf vmlinuz-* modules-*.tar.gz
 	rm -rf linux-* modules-*
-	rm -rf *~
 
 clobber-apex:
 	rm -rf apex-*
