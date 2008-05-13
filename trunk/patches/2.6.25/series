@@ -1,4 +1,6 @@
 # Accepted upstream, and merged by Linus.
+ixp4xx-4874-fsg-board-support.patch
+ixp4xx-fsg-led-driver.patch
 
 # Accepted upstream, but not yet merged.
 rtc-x1205-new-style.patch
@@ -6,11 +8,8 @@ rtc-pcf8563-new-style.patch
 rtc-isl1208-new-style.patch
 
 # Submitted upstream, but not yet accepted
-ixp4xx-4874-fsg-board-support.patch
 
 # To be submitted upstream
-ixp4xx-fsg-led-driver.patch
-ixp4xx-beeper-add-module_alias.patch
 
 # Add Krzysztof Halasa's IXP4XX ethernet driver
 # These patches are currently inline for mainstream inclusion.

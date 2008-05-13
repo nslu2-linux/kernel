@@ -19,12 +19,12 @@ ENDIAN = b
 MAJORVER = 2.6
 
 # Previous Stable
-BASEVER  = 2.6.24.7
-PATCHVER = 2.6.24
+# BASEVER  = 2.6.24.7
+# PATCHVER = 2.6.24
 
 # Latest Stable
-# BASEVER  = 2.6.25.3
-# PATCHVER = 2.6.25
+BASEVER  = 2.6.25.3
+PATCHVER = 2.6.25
 
 # Latest Development
 # BASEVER  = 2.6.25
