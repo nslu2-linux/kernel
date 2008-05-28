@@ -1,8 +1,16 @@
-Index: apex-1.5.13/src/mach-ixp42x/Makefile
+From: Rod Whitby <rod@whitby.id.au>
+Subject: FSG3 variations support
+
+Enable fail-safe variations support on the FSG-3.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/Makefile
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/Makefile	2007-02-25 08:23:43.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/Makefile	2008-01-02 20:43:50.000000000 +1030
-@@ -48,6 +48,7 @@
+--- apex.orig/src/mach-ixp42x/Makefile	2008-05-28 10:52:31.000000000 +0930
++++ apex/src/mach-ixp42x/Makefile	2008-05-28 10:53:07.000000000 +0930
+@@ -38,6 +38,7 @@
  
  obj-x$(CONFIG_MACH_NSLU2)$(CONFIG_SPINNER) += spinner-nslu2.o
  obj-x$(CONFIG_MACH_NSLU2)$(CONFIG_VARIATIONS) += variation-nslu2.o
@@ -10,10 +18,10 @@ Index: apex-1.5.13/src/mach-ixp42x/Makefile
  obj-$(CONFIG_INTERRUPTS)	+= exception_vectors.o
  
  obj-$(CONFIG_NPE)		+= npe.o npe-interface.o
-Index: apex-1.5.13/src/mach-ixp42x/variation-fsg3.c
+Index: apex/src/mach-ixp42x/variation-fsg3.c
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ apex-1.5.13/src/mach-ixp42x/variation-fsg3.c	2008-01-02 20:43:50.000000000 +1030
++++ apex/src/mach-ixp42x/variation-fsg3.c	2008-05-28 10:53:07.000000000 +0930
 @@ -0,0 +1,40 @@
 +/* variation-fsg3.c
 +
@@ -55,10 +63,10 @@ Index: apex-1.5.13/src/mach-ixp42x/variation-fsg3.c
 +static __service_9 struct service_d variation_service = {
 +  .init = variation_init,
 +};
-Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config
+Index: apex/src/mach-ixp42x/slugos-fsg3-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-01-02 20:43:50.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-01-02 20:43:50.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-05-28 10:53:07.000000000 +0930
 @@ -118,7 +118,8 @@
  CONFIG_ENV_REGION="nor:0x3bc000+15k"
  # CONFIG_ENV_SAVEATONCE is not set
@@ -89,10 +97,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config
  CONFIG_USES_NOR_BOOTFLASH=y
  CONFIG_RELOCATE_SIMPLE=y
  CONFIG_INLINE_PLATFORM_INITIALIZATION=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config
+Index: apex/src/mach-ixp42x/slugos-fsg3-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-fsg3-arm_config	2008-01-02 22:05:07.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config	2008-01-02 22:05:09.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-fsg3-arm_config	2008-05-28 10:52:58.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-fsg3-arm_config	2008-05-28 10:53:07.000000000 +0930
 @@ -118,7 +118,8 @@
  CONFIG_ENV_REGION="nor:0x3bc000+15k"
  # CONFIG_ENV_SAVEATONCE is not set

@@ -1,7 +1,15 @@
-Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config
+From: Rod Whitby <rod@whitby.id.au>
+Subject: Debian support for the IOMega NAS100D
+
+Config files for running Debian on the NAS100D.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/debian-nas100d-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nas100d-arm_config	2007-12-17 22:09:37.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config	2007-12-17 22:11:34.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nas100d-arm_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nas100d-arm_config	2008-05-28 10:52:56.000000000 +0930
 @@ -17,7 +17,7 @@
  #
  # General Setup
@@ -38,10 +46,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config
  
  #
  #    Overrides
-Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config
+Index: apex/src/mach-ixp42x/debian-nas100d-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nas100d-armeb_config	2007-12-17 22:09:37.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config	2007-12-17 22:11:42.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nas100d-armeb_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nas100d-armeb_config	2008-05-28 10:52:56.000000000 +0930
 @@ -17,7 +17,7 @@
  #
  # General Setup
@@ -89,10 +97,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config
  
  #
  #    Overrides
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config
+Index: apex/src/mach-ixp42x/slugos-nas100d-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nas100d-arm_config	2007-12-17 22:09:37.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config	2007-12-17 22:11:55.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nas100d-arm_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nas100d-arm_config	2008-05-28 10:52:56.000000000 +0930
 @@ -17,7 +17,7 @@
  #
  # General Setup
@@ -120,10 +128,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config
  # CONFIG_ENV_SAVEATONCE is not set
  CONFIG_ENV_CHECK_LEN=1024
  # CONFIG_VARIATIONS is not set
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nas100d-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nas100d-armeb_config	2007-12-17 22:09:37.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nas100d-armeb_config	2007-12-17 22:12:08.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-05-28 10:52:56.000000000 +0930
 @@ -17,7 +17,7 @@
  #
  # General Setup

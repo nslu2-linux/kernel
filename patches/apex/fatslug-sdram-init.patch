@@ -1,7 +1,16 @@
-Index: apex-1.5.13/src/mach-ixp42x/debian-dsmg600-arm_config
+From: Rod Whitby <rod@whitby.id.au>
+Subject: Enable support for up to 256MB on all ixp4xx targets.
+
+Enabled a startup prefix command which initialises the memory
+controller and scans for up to 256MB of RAM.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/debian-dsmg600-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-dsmg600-arm_config	2008-01-27 21:11:09.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-dsmg600-arm_config	2008-01-27 21:18:28.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-dsmg600-arm_config	2008-05-28 10:52:52.000000000 +0930
++++ apex/src/mach-ixp42x/debian-dsmg600-arm_config	2008-05-28 10:53:13.000000000 +0930
 @@ -140,7 +140,8 @@
  # CONFIG_ENV_REGION_KERNEL_SWAP is not set
  CONFIG_ENV_STARTUP_RAMDISK_COPY=y
@@ -12,10 +21,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-dsmg600-arm_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/debian-dsmg600-armeb_config
+Index: apex/src/mach-ixp42x/debian-dsmg600-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-dsmg600-armeb_config	2008-01-27 21:11:09.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-dsmg600-armeb_config	2008-01-27 21:18:35.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-dsmg600-armeb_config	2008-05-28 10:52:52.000000000 +0930
++++ apex/src/mach-ixp42x/debian-dsmg600-armeb_config	2008-05-28 10:53:13.000000000 +0930
 @@ -140,7 +140,8 @@
  # CONFIG_ENV_REGION_KERNEL_SWAP is not set
  CONFIG_ENV_STARTUP_RAMDISK_COPY=y
@@ -26,10 +35,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-dsmg600-armeb_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config
+Index: apex/src/mach-ixp42x/debian-nas100d-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nas100d-arm_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config	2008-01-27 21:19:14.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nas100d-arm_config	2008-05-28 10:52:56.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nas100d-arm_config	2008-05-28 10:53:13.000000000 +0930
 @@ -137,7 +137,8 @@
  # CONFIG_ENV_REGION_KERNEL_SWAP is not set
  CONFIG_ENV_STARTUP_RAMDISK_COPY=y
@@ -40,10 +49,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config
+Index: apex/src/mach-ixp42x/debian-nas100d-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nas100d-armeb_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config	2008-01-27 21:19:18.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nas100d-armeb_config	2008-05-28 10:52:56.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nas100d-armeb_config	2008-05-28 10:53:13.000000000 +0930
 @@ -137,7 +137,8 @@
  # CONFIG_ENV_REGION_KERNEL_SWAP is not set
  CONFIG_ENV_STARTUP_RAMDISK_COPY=y
@@ -54,10 +63,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-arm_config
+Index: apex/src/mach-ixp42x/debian-nslu2-16mb-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-16mb-arm_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-arm_config	2008-01-27 21:19:59.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nslu2-16mb-arm_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-16mb-arm_config	2008-05-28 10:53:13.000000000 +0930
 @@ -141,7 +141,7 @@
  CONFIG_ENV_STARTUP_RAMDISK_COPY=y
  CONFIG_ENV_REGION_RAMDISK_SWAP=y
@@ -67,10 +76,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-arm_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
+Index: apex/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-16mb-armeb_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-armeb_config	2008-01-27 21:19:44.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nslu2-16mb-armeb_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-16mb-armeb_config	2008-05-28 10:53:13.000000000 +0930
 @@ -141,7 +141,7 @@
  CONFIG_ENV_STARTUP_RAMDISK_COPY=y
  # CONFIG_ENV_REGION_RAMDISK_SWAP is not set
@@ -80,10 +89,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config
+Index: apex/src/mach-ixp42x/debian-nslu2-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-armeb_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config	2008-01-27 21:20:17.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nslu2-armeb_config	2008-05-28 10:53:02.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-armeb_config	2008-05-28 10:53:13.000000000 +0930
 @@ -140,7 +140,8 @@
  # CONFIG_ENV_REGION_KERNEL_SWAP is not set
  CONFIG_ENV_STARTUP_RAMDISK_COPY=y
@@ -94,10 +103,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-arm_config
+Index: apex/src/mach-ixp42x/slugos-dsmg600-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-dsmg600-arm_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-arm_config	2008-01-27 21:20:55.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-dsmg600-arm_config	2008-05-28 10:52:58.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-dsmg600-arm_config	2008-05-28 10:53:13.000000000 +0930
 @@ -133,7 +133,8 @@
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y
@@ -108,10 +117,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-arm_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-armeb_config
+Index: apex/src/mach-ixp42x/slugos-dsmg600-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-01-27 21:20:58.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-05-28 10:53:13.000000000 +0930
 @@ -133,7 +133,8 @@
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y
@@ -122,10 +131,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-armeb_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config
+Index: apex/src/mach-ixp42x/slugos-fsg3-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-fsg3-arm_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config	2008-01-27 21:21:05.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-fsg3-arm_config	2008-05-28 10:53:11.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-fsg3-arm_config	2008-05-28 10:53:13.000000000 +0930
 @@ -134,7 +134,8 @@
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y
@@ -136,10 +145,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config
+Index: apex/src/mach-ixp42x/slugos-fsg3-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-01-27 21:21:02.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-05-28 10:53:11.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-05-28 10:53:13.000000000 +0930
 @@ -134,7 +134,8 @@
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y
@@ -150,10 +159,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config
+Index: apex/src/mach-ixp42x/slugos-nas100d-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nas100d-arm_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config	2008-01-27 21:21:15.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nas100d-arm_config	2008-05-28 10:52:58.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nas100d-arm_config	2008-05-28 10:53:13.000000000 +0930
 @@ -133,7 +133,8 @@
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y
@@ -164,10 +173,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nas100d-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-01-27 21:21:18.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-05-28 10:52:56.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-05-28 10:53:13.000000000 +0930
 @@ -133,7 +133,8 @@
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y
@@ -178,10 +187,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-armeb_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-01-27 21:21:28.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-05-28 10:53:06.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-05-28 10:53:13.000000000 +0930
 @@ -136,7 +136,8 @@
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y
@@ -192,10 +201,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-01-27 21:21:31.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-05-28 10:53:06.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-05-28 10:53:13.000000000 +0930
 @@ -136,7 +136,8 @@
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y
@@ -206,10 +215,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config	2008-01-27 21:21:25.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2008-05-28 10:53:06.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-arm_config	2008-05-28 10:53:13.000000000 +0930
 @@ -136,7 +136,8 @@
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y
@@ -220,10 +229,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
  
  #
  #    Regions
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-01-27 21:11:10.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-01-27 21:21:23.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-05-28 10:53:06.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-05-28 10:53:13.000000000 +0930
 @@ -136,7 +136,8 @@
  CONFIG_AUTOBOOT_DELAY=10
  CONFIG_ENV_STARTUP_KERNEL_COPY=y

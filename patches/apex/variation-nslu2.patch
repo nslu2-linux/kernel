@@ -1,7 +1,15 @@
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
+From: Rod Whitby <rod@whitby.id.au>
+Subject: NSLU2 variations support
+
+Enable fail-safe variations support on the NSLU2.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-01-02 12:25:35.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-01-02 12:25:35.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-05-28 10:53:04.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-05-28 10:53:06.000000000 +0930
 @@ -1,7 +1,7 @@
  #
  # Automatically generated make config: don't edit
@@ -40,10 +48,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
  CONFIG_USES_NOR_BOOTFLASH=y
  CONFIG_RELOCATE_SIMPLE=y
  CONFIG_INLINE_PLATFORM_INITIALIZATION=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-01-02 12:25:35.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-01-02 12:25:35.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-05-28 10:53:04.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-05-28 10:53:06.000000000 +0930
 @@ -1,7 +1,7 @@
  #
  # Automatically generated make config: don't edit
@@ -82,10 +90,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
  CONFIG_USES_NOR_BOOTFLASH=y
  CONFIG_RELOCATE_SIMPLE=y
  CONFIG_INLINE_PLATFORM_INITIALIZATION=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2008-01-02 12:25:35.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config	2008-01-02 12:25:35.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2008-05-28 10:53:04.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-arm_config	2008-05-28 10:53:06.000000000 +0930
 @@ -1,7 +1,7 @@
  #
  # Automatically generated make config: don't edit
@@ -124,10 +132,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
  CONFIG_USES_NOR_BOOTFLASH=y
  CONFIG_RELOCATE_SIMPLE=y
  CONFIG_INLINE_PLATFORM_INITIALIZATION=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-01-02 12:25:35.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-01-02 12:25:35.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-05-28 10:53:04.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-05-28 10:53:06.000000000 +0930
 @@ -1,7 +1,7 @@
  #
  # Automatically generated make config: don't edit

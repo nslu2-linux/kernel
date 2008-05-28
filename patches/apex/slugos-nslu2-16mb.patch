@@ -1,7 +1,15 @@
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
+From: Rod Whitby <rod@whitby.id.au>
+Subject: SlugOS support for 16MiB NSLU2 devices.
+
+Config files for running SlugOS on 16MiB NSLU2 devices.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2007-12-17 22:08:11.000000000 +1030
++++ apex/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-05-28 10:53:57.000000000 +0930
 @@ -0,0 +1,156 @@
 +#
 +# Automatically generated make config: don't edit
@@ -159,10 +167,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
 +CONFIG_LITTLEENDIAN=y
 +CONFIG_CLEAR_STACKS=y
 +CONFIG_ALIASES=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2007-12-17 22:08:24.000000000 +1030
++++ apex/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-05-28 10:53:57.000000000 +0930
 @@ -0,0 +1,156 @@
 +#
 +# Automatically generated make config: don't edit

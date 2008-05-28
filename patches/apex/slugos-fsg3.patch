@@ -1,7 +1,15 @@
-Index: apex-1.5.13/src/mach-ixp42x/fsg3.h
+From: Rod Whitby <rod@whitby.id.au>
+Subject: Support for the Freecom FSG-3 machine.
+
+Apex support for the FSG-3.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/fsg3.h
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ apex-1.5.13/src/mach-ixp42x/fsg3.h	2007-12-17 22:09:37.000000000 +1030
++++ apex/src/mach-ixp42x/fsg3.h	2008-05-28 10:52:50.000000000 +0930
 @@ -0,0 +1,95 @@
 +/* fsg3.h
 +
@@ -98,10 +106,10 @@ Index: apex-1.5.13/src/mach-ixp42x/fsg3.h
 +*/
 +
 +#endif  /* __FSG3_H__ */
-Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config
+Index: apex/src/mach-ixp42x/slugos-fsg3-arm_config
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config	2007-12-17 22:09:59.000000000 +1030
++++ apex/src/mach-ixp42x/slugos-fsg3-arm_config	2008-05-28 10:52:50.000000000 +0930
 @@ -0,0 +1,155 @@
 +#
 +# Automatically generated make config: don't edit
@@ -258,10 +266,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config
 +CONFIG_LITTLEENDIAN=y
 +CONFIG_CLEAR_STACKS=y
 +CONFIG_ALIASES=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config
+Index: apex/src/mach-ixp42x/slugos-fsg3-armeb_config
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config	2007-12-17 22:10:07.000000000 +1030
++++ apex/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-05-28 10:52:50.000000000 +0930
 @@ -0,0 +1,155 @@
 +#
 +# Automatically generated make config: don't edit
@@ -418,10 +426,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config
 +CONFIG_BIGENDIAN=y
 +CONFIG_CLEAR_STACKS=y
 +CONFIG_ALIASES=y
-Index: apex-1.5.13/src/mach-ixp42x/Kconfig
+Index: apex/src/mach-ixp42x/Kconfig
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/Kconfig	2007-12-17 22:06:50.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/Kconfig	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/Kconfig	2008-05-28 10:52:32.000000000 +0930
++++ apex/src/mach-ixp42x/Kconfig	2008-05-28 10:52:50.000000000 +0930
 @@ -29,6 +29,14 @@
  	select INLINE_PLATFORM_INITIALIZATION
  	select INLINE_PLATFORM_INITIALIZATION_SDRAM_PRE_OVERRIDE
@@ -445,11 +453,11 @@ Index: apex-1.5.13/src/mach-ixp42x/Kconfig
  
  config APEX_VMA
  	hex "APEX runtime address"
-Index: apex-1.5.13/src/mach-ixp42x/hardware.h
+Index: apex/src/mach-ixp42x/hardware.h
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/hardware.h	2007-12-17 22:06:50.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/hardware.h	2007-12-17 22:09:37.000000000 +1030
-@@ -56,6 +56,10 @@
+--- apex.orig/src/mach-ixp42x/hardware.h	2008-05-28 10:52:32.000000000 +0930
++++ apex/src/mach-ixp42x/hardware.h	2008-05-28 10:52:50.000000000 +0930
+@@ -46,6 +46,10 @@
  # include "dsmg600.h"
  #endif
  
@@ -460,10 +468,10 @@ Index: apex-1.5.13/src/mach-ixp42x/hardware.h
  /* ----- Types */
  
  /* ----- Globals */
-Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config
+Index: apex/src/mach-ixp42x/debian-nas100d-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nas100d-arm_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nas100d-arm_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nas100d-arm_config	2008-05-28 10:52:50.000000000 +0930
 @@ -52,6 +52,7 @@
  # CONFIG_MACH_NSLU2 is not set
  CONFIG_MACH_NAS100D=y
@@ -472,10 +480,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-arm_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  # CONFIG_USER_BIGENDIAN is not set
-Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config
+Index: apex/src/mach-ixp42x/debian-nas100d-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nas100d-armeb_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nas100d-armeb_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nas100d-armeb_config	2008-05-28 10:52:50.000000000 +0930
 @@ -52,6 +52,7 @@
  # CONFIG_MACH_NSLU2 is not set
  CONFIG_MACH_NAS100D=y
@@ -484,10 +492,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nas100d-armeb_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  CONFIG_USER_BIGENDIAN=y
-Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-arm_config
+Index: apex/src/mach-ixp42x/debian-nslu2-16mb-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-16mb-arm_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-arm_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nslu2-16mb-arm_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-16mb-arm_config	2008-05-28 10:52:50.000000000 +0930
 @@ -52,6 +52,7 @@
  CONFIG_MACH_NSLU2=y
  # CONFIG_MACH_NAS100D is not set
@@ -496,10 +504,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-arm_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  # CONFIG_USER_BIGENDIAN is not set
-Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
+Index: apex/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-16mb-armeb_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-armeb_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nslu2-16mb-armeb_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-16mb-armeb_config	2008-05-28 10:52:50.000000000 +0930
 @@ -52,6 +52,7 @@
  CONFIG_MACH_NSLU2=y
  # CONFIG_MACH_NAS100D is not set
@@ -508,10 +516,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  CONFIG_USER_BIGENDIAN=y
-Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-arm_config
+Index: apex/src/mach-ixp42x/debian-nslu2-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-arm_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-arm_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nslu2-arm_config	2008-05-28 10:52:32.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-arm_config	2008-05-28 10:52:50.000000000 +0930
 @@ -52,6 +52,7 @@
  CONFIG_MACH_NSLU2=y
  # CONFIG_MACH_NAS100D is not set
@@ -520,10 +528,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-arm_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  # CONFIG_USER_BIGENDIAN is not set
-Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config
+Index: apex/src/mach-ixp42x/debian-nslu2-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-armeb_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nslu2-armeb_config	2008-05-28 10:52:32.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-armeb_config	2008-05-28 10:52:50.000000000 +0930
 @@ -52,6 +52,7 @@
  CONFIG_MACH_NSLU2=y
  # CONFIG_MACH_NAS100D is not set
@@ -532,10 +540,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  CONFIG_USER_BIGENDIAN=y
-Index: apex-1.5.13/src/mach-ixp42x/nslu2_config
+Index: apex/src/mach-ixp42x/nslu2_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/nslu2_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/nslu2_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/nslu2_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/nslu2_config	2008-05-28 10:52:50.000000000 +0930
 @@ -50,6 +50,7 @@
  CONFIG_MACH_NSLU2=y
  # CONFIG_MACH_NAS100D is not set
@@ -544,10 +552,10 @@ Index: apex-1.5.13/src/mach-ixp42x/nslu2_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  CONFIG_USER_BIGENDIAN=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-arm_config
+Index: apex/src/mach-ixp42x/slugos-dsmg600-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-dsmg600-arm_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-arm_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-dsmg600-arm_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-dsmg600-arm_config	2008-05-28 10:52:50.000000000 +0930
 @@ -50,6 +50,7 @@
  # CONFIG_MACH_NSLU2 is not set
  # CONFIG_MACH_NAS100D is not set
@@ -556,10 +564,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-arm_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  # CONFIG_USER_BIGENDIAN is not set
-Index: apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-armeb_config
+Index: apex/src/mach-ixp42x/slugos-dsmg600-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-dsmg600-armeb_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-armeb_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-05-28 10:52:50.000000000 +0930
 @@ -50,6 +50,7 @@
  # CONFIG_MACH_NSLU2 is not set
  # CONFIG_MACH_NAS100D is not set
@@ -568,10 +576,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-armeb_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  CONFIG_USER_BIGENDIAN=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config
+Index: apex/src/mach-ixp42x/slugos-nas100d-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nas100d-arm_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nas100d-arm_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nas100d-arm_config	2008-05-28 10:52:50.000000000 +0930
 @@ -50,6 +50,7 @@
  # CONFIG_MACH_NSLU2 is not set
  CONFIG_MACH_NAS100D=y
@@ -580,10 +588,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-arm_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  # CONFIG_USER_BIGENDIAN is not set
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nas100d-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nas100d-armeb_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nas100d-armeb_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-05-28 10:52:50.000000000 +0930
 @@ -50,6 +50,7 @@
  # CONFIG_MACH_NSLU2 is not set
  CONFIG_MACH_NAS100D=y
@@ -592,10 +600,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nas100d-armeb_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  CONFIG_USER_BIGENDIAN=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-05-28 10:52:50.000000000 +0930
 @@ -50,6 +50,7 @@
  CONFIG_MACH_NSLU2=y
  # CONFIG_MACH_NAS100D is not set
@@ -604,10 +612,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  # CONFIG_USER_BIGENDIAN is not set
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-05-28 10:52:50.000000000 +0930
 @@ -50,6 +50,7 @@
  CONFIG_MACH_NSLU2=y
  # CONFIG_MACH_NAS100D is not set
@@ -616,10 +624,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  CONFIG_USER_BIGENDIAN=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-arm_config	2008-05-28 10:52:50.000000000 +0930
 @@ -50,6 +50,7 @@
  CONFIG_MACH_NSLU2=y
  # CONFIG_MACH_NAS100D is not set
@@ -628,10 +636,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
  # CONFIG_MACH_AVILA2347 is not set
  # CONFIG_USER_DEFAULTENDIAN is not set
  # CONFIG_USER_BIGENDIAN is not set
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-17 22:09:26.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-17 22:09:37.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-05-28 10:52:47.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-05-28 10:52:50.000000000 +0930
 @@ -50,6 +50,7 @@
  CONFIG_MACH_NSLU2=y
  # CONFIG_MACH_NAS100D is not set
