@@ -1,8 +1,18 @@
-Index: apex-1.5.13/src/mach-ixp42x/initialize.c
+From: Rod Whitby <rod@whitby.id.au>
+Subject: Fix GPIO handling for ixp42x
+
+Correct the name of the GPIO_OER register.  Define all nslu2 buttons
+and leds and use the correct names.  Remove fsg3, nas100d and dsmg600
+led support (since it's not direct GPIO access).
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/initialize.c
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/initialize.c	2007-06-04 09:01:35.000000000 +0930
-+++ apex-1.5.13/src/mach-ixp42x/initialize.c	2008-01-02 20:43:50.000000000 +1030
-@@ -117,8 +117,8 @@
+--- apex.orig/src/mach-ixp42x/initialize.c	2008-05-28 10:52:31.000000000 +0930
++++ apex/src/mach-ixp42x/initialize.c	2008-05-28 10:53:09.000000000 +0930
+@@ -107,8 +107,8 @@
    PUTC('A');
  #endif
  
@@ -13,11 +23,11 @@ Index: apex-1.5.13/src/mach-ixp42x/initialize.c
  
  	/* Disable write buffer coalescing */
    {
-Index: apex-1.5.13/src/mach-ixp42x/ixp42x.h
+Index: apex/src/mach-ixp42x/ixp42x.h
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/ixp42x.h	2007-02-15 17:42:13.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/ixp42x.h	2008-01-02 20:43:50.000000000 +1030
-@@ -120,7 +120,7 @@
+--- apex.orig/src/mach-ixp42x/ixp42x.h	2008-05-28 10:52:31.000000000 +0930
++++ apex/src/mach-ixp42x/ixp42x.h	2008-05-28 10:53:09.000000000 +0930
+@@ -110,7 +110,7 @@
  
  #define GPIO_PHYS	(0xc8004000)
  #define GPIO_OUTR	__REG(GPIO_PHYS + 0x00)
@@ -26,7 +36,7 @@ Index: apex-1.5.13/src/mach-ixp42x/ixp42x.h
  #define GPIO_INR	__REG(GPIO_PHYS + 0x08)
  #define GPIO_ISR	__REG(GPIO_PHYS + 0x0c)
  #define GPIO_IT1R	__REG(GPIO_PHYS + 0x10)
-@@ -153,8 +153,8 @@
+@@ -143,8 +143,8 @@
  #define GPIO_INT_TYPE_RISING   2
  #define GPIO_INT_TYPE_FALLING  3
  
@@ -37,11 +47,11 @@ Index: apex-1.5.13/src/mach-ixp42x/ixp42x.h
  #define GPIO_OUT_SET(i)		(GPIO_OUTR |=   1 << (i))
  #define GPIO_OUT_CLEAR(i)	(GPIO_OUTR &= ~(1 << (i)))
  
-Index: apex-1.5.13/src/mach-ixp42x/nslu2.h
+Index: apex/src/mach-ixp42x/nslu2.h
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/nslu2.h	2007-01-09 17:59:23.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/nslu2.h	2008-01-02 20:43:50.000000000 +1030
-@@ -62,30 +62,25 @@
+--- apex.orig/src/mach-ixp42x/nslu2.h	2008-05-28 10:52:31.000000000 +0930
++++ apex/src/mach-ixp42x/nslu2.h	2008-05-28 10:53:09.000000000 +0930
+@@ -52,30 +52,25 @@
  #define _LG(l) MASK_AND_SET(GPIO_OUTR, LED_GREEN_MASK, l)
  
  
@@ -84,10 +94,10 @@ Index: apex-1.5.13/src/mach-ixp42x/nslu2.h
  #define GPIO_I_PCI_RESET	13
  #define GPIO_I_PCI_CLOCK	14
  
-Index: apex-1.5.13/src/mach-ixp42x/fsg3.h
+Index: apex/src/mach-ixp42x/fsg3.h
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/fsg3.h	2008-01-02 20:43:50.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/fsg3.h	2008-01-02 20:43:50.000000000 +1030
+--- apex.orig/src/mach-ixp42x/fsg3.h	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/fsg3.h	2008-05-28 10:53:09.000000000 +0930
 @@ -42,54 +42,18 @@
  
  /* ----- Prototypes */
@@ -153,11 +163,11 @@ Index: apex-1.5.13/src/mach-ixp42x/fsg3.h
 +#define GPIO_I_I2C_SCL		13
  
  #endif  /* __FSG3_H__ */
-Index: apex-1.5.13/src/mach-ixp42x/dsmg600.h
+Index: apex/src/mach-ixp42x/dsmg600.h
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/dsmg600.h	2008-01-02 20:43:50.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/dsmg600.h	2008-01-02 20:43:50.000000000 +1030
-@@ -42,41 +42,14 @@
+--- apex.orig/src/mach-ixp42x/dsmg600.h	2008-05-28 10:52:41.000000000 +0930
++++ apex/src/mach-ixp42x/dsmg600.h	2008-05-28 10:53:09.000000000 +0930
+@@ -32,41 +32,14 @@
  
  /* ----- Prototypes */
  
@@ -203,7 +213,7 @@ Index: apex-1.5.13/src/mach-ixp42x/dsmg600.h
  #define GPIO_I_I2C_SCL		4
  #define GPIO_I_I2C_SDA		5
  #define GPIO_I_PCI_INTF		6
-@@ -88,6 +61,6 @@
+@@ -78,6 +51,6 @@
  #define GPIO_I_POWEROFF		12
  #define GPIO_I_PCI_RESET	13
  #define GPIO_I_LEDWLAN		14
@@ -211,11 +221,11 @@ Index: apex-1.5.13/src/mach-ixp42x/dsmg600.h
 +#define GPIO_I_POWERBUTTON	15	/* 1: pressed */
  
  #endif  /* __DSMG600_H__ */
-Index: apex-1.5.13/src/mach-ixp42x/nas100d.h
+Index: apex/src/mach-ixp42x/nas100d.h
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/nas100d.h	2007-01-09 18:21:32.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/nas100d.h	2008-01-02 20:43:50.000000000 +1030
-@@ -42,40 +42,16 @@
+--- apex.orig/src/mach-ixp42x/nas100d.h	2008-05-28 10:52:31.000000000 +0930
++++ apex/src/mach-ixp42x/nas100d.h	2008-05-28 10:53:09.000000000 +0930
+@@ -32,40 +32,16 @@
  
  /* ----- Prototypes */
  
@@ -265,7 +275,7 @@ Index: apex-1.5.13/src/mach-ixp42x/nas100d.h
  #define GPIO_I_I2C_SDA		5
  #define GPIO_I_I2C_SCL		6
  #define GPIO_I_PCI_INTD		8
-@@ -84,7 +60,7 @@
+@@ -74,7 +50,7 @@
  #define GPIO_I_PCI_INTA		11
  #define GPIO_I_POWEROFF		12
  #define GPIO_I_PCI_RESET	13
@@ -275,11 +285,11 @@ Index: apex-1.5.13/src/mach-ixp42x/nas100d.h
 +#define GPIO_I_LEDPOWER		15
  
  #endif  /* __NAS100D_H__ */
-Index: apex-1.5.13/src/mach-ixp42x/variation-nslu2.c
+Index: apex/src/mach-ixp42x/variation-nslu2.c
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/variation-nslu2.c	2007-01-09 17:59:23.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/variation-nslu2.c	2008-01-02 20:43:50.000000000 +1030
-@@ -29,8 +29,8 @@
+--- apex.orig/src/mach-ixp42x/variation-nslu2.c	2008-05-28 10:52:31.000000000 +0930
++++ apex/src/mach-ixp42x/variation-nslu2.c	2008-05-28 10:53:09.000000000 +0930
+@@ -34,8 +34,8 @@
    if (button_pressed)
      alias_set ("variation", CONFIG_VARIATION_SUFFIX);
  

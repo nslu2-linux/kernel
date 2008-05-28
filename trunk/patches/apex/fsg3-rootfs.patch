@@ -1,7 +1,15 @@
-Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config
+From: Rod Whitby <rod@whitby.id.au>
+Subject: Fix the FSG-3 kernel command line root
+
+In recent FSG-3 kernels, the hard disk is /dev/sda, not /dev/hda.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/slugos-fsg3-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-fsg3-arm_config	2008-01-03 08:58:02.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config	2008-01-03 08:58:34.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-fsg3-arm_config	2008-05-28 10:53:07.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-fsg3-arm_config	2008-05-28 10:53:11.000000000 +0930
 @@ -147,9 +147,9 @@
  #    Overrides
  #
@@ -14,10 +22,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-arm_config
  # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
  # CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
  CONFIG_USES_NOR_BOOTFLASH=y
-Index: apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config
+Index: apex/src/mach-ixp42x/slugos-fsg3-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-01-03 08:58:05.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-01-03 09:05:18.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-05-28 10:53:07.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-fsg3-armeb_config	2008-05-28 10:53:11.000000000 +0930
 @@ -147,9 +147,9 @@
  #    Overrides
  #

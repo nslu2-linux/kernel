@@ -1,7 +1,13 @@
-Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-arm_config
+From: Rod Whitby <rod@whitby.id.au>
+Subject: Enable memtest command on ixp4xx machines
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/debian-nslu2-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-arm_config	2007-12-17 22:14:31.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-arm_config	2007-12-17 22:15:02.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nslu2-arm_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-arm_config	2008-05-28 10:53:00.000000000 +0930
 @@ -92,7 +92,7 @@
  CONFIG_CMD_XRECEIVE=y
  CONFIG_CMD_MEMLIMIT=y
@@ -11,10 +17,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-arm_config
  
  #
  # Generic Drivers
-Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config
+Index: apex/src/mach-ixp42x/debian-nslu2-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/debian-nslu2-armeb_config	2007-12-17 22:14:31.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config	2007-12-17 22:15:14.000000000 +1030
+--- apex.orig/src/mach-ixp42x/debian-nslu2-armeb_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-armeb_config	2008-05-28 10:53:00.000000000 +0930
 @@ -92,7 +92,7 @@
  CONFIG_CMD_XRECEIVE=y
  CONFIG_CMD_MEMLIMIT=y
@@ -24,10 +30,10 @@ Index: apex-1.5.13/src/mach-ixp42x/debian-nslu2-armeb_config
  
  #
  # Generic Drivers
-Index: apex-1.5.13/src/mach-ixp42x/nslu2_config
+Index: apex/src/mach-ixp42x/nslu2_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/nslu2_config	2007-12-17 22:14:31.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/nslu2_config	2007-12-17 22:15:22.000000000 +1030
+--- apex.orig/src/mach-ixp42x/nslu2_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/nslu2_config	2008-05-28 10:53:00.000000000 +0930
 @@ -90,7 +90,7 @@
  CONFIG_CMD_XRECEIVE=y
  CONFIG_CMD_MEMLIMIT=y
@@ -37,10 +43,10 @@ Index: apex-1.5.13/src/mach-ixp42x/nslu2_config
  
  #
  # Generic Drivers
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-arm_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-17 22:14:31.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config	2007-12-17 22:15:34.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2008-05-28 10:52:58.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-arm_config	2008-05-28 10:53:00.000000000 +0930
 @@ -90,7 +90,7 @@
  CONFIG_CMD_XRECEIVE=y
  CONFIG_CMD_MEMLIMIT=y
@@ -50,10 +56,10 @@ Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-arm_config
  
  #
  # Generic Drivers
-Index: apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-17 22:14:31.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-nslu2-armeb_config	2007-12-17 22:15:41.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-05-28 10:52:50.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-05-28 10:53:00.000000000 +0930
 @@ -90,7 +90,7 @@
  CONFIG_CMD_XRECEIVE=y
  CONFIG_CMD_MEMLIMIT=y

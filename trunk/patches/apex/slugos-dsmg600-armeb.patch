@@ -1,13 +1,24 @@
-Index: apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-armeb_config
+From: Rod Whitby <rod@whitby.id.au>
+Subject: Corrections to DSM-G600 RevA BE support
+
+The vendor firmware loads the kernel at 0x00600000, so make Apex do
+the same.  Move the apex environment into the apex partition (which is
+just before the reserved RedBoot partitions).  Also enable the memtest
+command.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/slugos-dsmg600-armeb_config
 ===================================================================
---- apex-1.5.13.orig/src/mach-ixp42x/slugos-dsmg600-armeb_config	2007-12-17 22:06:51.000000000 +1030
-+++ apex-1.5.13/src/mach-ixp42x/slugos-dsmg600-armeb_config	2007-12-17 22:07:44.000000000 +1030
+--- apex.orig/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-05-28 10:53:47.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-05-28 10:53:53.000000000 +0930
 @@ -17,7 +17,7 @@
  #
  # General Setup
  #
 -CONFIG_TARGET_DESCRIPTION="SlugOS DMSG600 (bigendian)"
-+CONFIG_TARGET_DESCRIPTION="SlugOS DMSG600/BE"
++CONFIG_TARGET_DESCRIPTION="SlugOS DSM-G600/BE"
  CONFIG_CROSS_COMPILE=""
  # CONFIG_AEABI is not set
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y

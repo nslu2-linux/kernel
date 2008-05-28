@@ -1,8 +1,16 @@
-Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
+From: Rod Whitby <rod@whitby.id.au>
+Subject: EABI support for ixp4xx machines.
+
+Enable EABI support for all ixp4xx machines.
+
+Signed-off-by: Rod Whitby <rod@whitby.id.au>
+--
+
+Index: apex/src/mach-ixp42x/debian-nas100d-arm_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/debian-nas100d-arm_config
-+++ apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/debian-nas100d-arm_config	2008-05-28 10:52:33.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nas100d-arm_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="NAS100D"
  CONFIG_CROSS_COMPILE=""
@@ -11,11 +19,11 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-arm_config
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
+Index: apex/src/mach-ixp42x/debian-nas100d-armeb_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/debian-nas100d-armeb_config
-+++ apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/debian-nas100d-armeb_config	2008-05-28 10:52:32.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nas100d-armeb_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="NAS100D"
  CONFIG_CROSS_COMPILE=""
@@ -24,11 +32,11 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nas100d-armeb_config
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-arm_config
+Index: apex/src/mach-ixp42x/debian-nslu2-16mb-arm_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/debian-nslu2-16mb-arm_config
-+++ apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-arm_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/debian-nslu2-16mb-arm_config	2008-05-28 10:52:45.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-16mb-arm_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="Debian NSLU2/LE (16MiB Flash)"
  CONFIG_CROSS_COMPILE=""
@@ -37,11 +45,11 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-arm_config
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
+Index: apex/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
-+++ apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/debian-nslu2-16mb-armeb_config	2008-05-28 10:52:45.000000000 +0930
++++ apex/src/mach-ixp42x/debian-nslu2-16mb-armeb_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="Debian NSLU2/BE (16MiB Flash)"
  CONFIG_CROSS_COMPILE=""
@@ -50,37 +58,11 @@ Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-16mb-armeb_config
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-arm_config
+Index: apex/src/mach-ixp42x/nslu2_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/debian-nslu2-arm_config
-+++ apex-1.5.8/src/mach-ixp42x/debian-nslu2-arm_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
- #
- CONFIG_TARGET_DESCRIPTION="Debian NSLU2"
- CONFIG_CROSS_COMPILE=""
--# CONFIG_AEABI is not set
-+CONFIG_AEABI=y
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
- # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/debian-nslu2-armeb_config
-===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/debian-nslu2-armeb_config
-+++ apex-1.5.8/src/mach-ixp42x/debian-nslu2-armeb_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
- #
- CONFIG_TARGET_DESCRIPTION="Debian NSLU2 (bigendian)"
- CONFIG_CROSS_COMPILE=""
--# CONFIG_AEABI is not set
-+CONFIG_AEABI=y
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
- # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
- # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/nslu2_config
-===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/nslu2_config
-+++ apex-1.5.8/src/mach-ixp42x/nslu2_config
-@@ -19,7 +19,7 @@ CONFIG_ARCH_IXP42X=y
+--- apex.orig/src/mach-ixp42x/nslu2_config	2008-05-28 10:52:33.000000000 +0930
++++ apex/src/mach-ixp42x/nslu2_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="NSLU2"
  CONFIG_CROSS_COMPILE="/usr/armv5b-softfloat-linux/gcc3/armv5b-softfloat-linux-"
@@ -89,37 +71,37 @@ Index: apex-1.5.8/src/mach-ixp42x/nslu2_config
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-arm_config
+Index: apex/src/mach-ixp42x/slugos-dsmg600-arm_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-dsmg600-arm_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-arm_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/slugos-dsmg600-arm_config	2008-05-28 10:52:35.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-dsmg600-arm_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
- CONFIG_TARGET_DESCRIPTION="SlugOS DMSG600/LE"
+ CONFIG_TARGET_DESCRIPTION="SlugOS DSM-G600/LE"
  CONFIG_CROSS_COMPILE=""
 -# CONFIG_AEABI is not set
 +CONFIG_AEABI=y
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-armeb_config
+Index: apex/src/mach-ixp42x/slugos-dsmg600-armeb_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-dsmg600-armeb_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-dsmg600-armeb_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-05-28 10:52:39.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
- CONFIG_TARGET_DESCRIPTION="SlugOS DMSG600/BE"
+ CONFIG_TARGET_DESCRIPTION="SlugOS DSM-G600/BE"
  CONFIG_CROSS_COMPILE=""
 -# CONFIG_AEABI is not set
 +CONFIG_AEABI=y
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
+Index: apex/src/mach-ixp42x/slugos-nas100d-arm_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-nas100d-arm_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/slugos-nas100d-arm_config	2008-05-28 10:52:33.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nas100d-arm_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="SlugOS NAS100D"
  CONFIG_CROSS_COMPILE=""
@@ -128,11 +110,11 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-arm_config
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nas100d-armeb_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-nas100d-armeb_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-nas100d-armeb_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-05-28 10:52:33.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="SlugOS NAS100D (bigendian)"
  CONFIG_CROSS_COMPILE=""
@@ -141,11 +123,11 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-nas100d-armeb_config
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-05-28 10:52:42.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="SlugOS NSLU2/LE (16MiB Flash)"
  CONFIG_CROSS_COMPILE=""
@@ -154,11 +136,11 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-05-28 10:52:42.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="SlugOS NSLU2/BE (16MiB Flash)"
  CONFIG_CROSS_COMPILE=""
@@ -167,11 +149,11 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-arm_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-arm_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-nslu2-arm_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-nslu2-arm_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2008-05-28 10:52:32.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-arm_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="SlugOS NSLU2"
  CONFIG_CROSS_COMPILE=""
@@ -180,11 +162,11 @@ Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-arm_config
  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
  # CONFIG_CC_OPTIMIZE_FOR_SPEED is not set
  # CONFIG_CC_NO_OPTIMIZATION is not set
-Index: apex-1.5.8/src/mach-ixp42x/slugos-nslu2-armeb_config
+Index: apex/src/mach-ixp42x/slugos-nslu2-armeb_config
 ===================================================================
---- apex-1.5.8.orig/src/mach-ixp42x/slugos-nslu2-armeb_config
-+++ apex-1.5.8/src/mach-ixp42x/slugos-nslu2-armeb_config
-@@ -19,7 +19,7 @@ CONFIG_EXPERIMENTAL=y
+--- apex.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-05-28 10:52:32.000000000 +0930
++++ apex/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-05-28 10:52:47.000000000 +0930
+@@ -19,7 +19,7 @@
  #
  CONFIG_TARGET_DESCRIPTION="SlugOS NSLU2 (bigendian)"
  CONFIG_CROSS_COMPILE=""
