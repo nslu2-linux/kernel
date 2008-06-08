@@ -92,9 +92,9 @@ arm-kernel-shim: \
 u-boot-nslu2.bin: \
 		${U-BOOT_DIR}/include/configs/nslu2.h \
 		${U-BOOT_DIR}/cpu/ixp/npe/IxNpeMicrocode.c
-	${MAKE} -C ${U-BOOT_DIR} distclean
-	${MAKE} -C ${U-BOOT_DIR} nslu2_config
-	${MAKE} -C ${U-BOOT_DIR} all
+	${MAKE} -C ${U-BOOT_DIR} ${CROSS_COMPILE_FLAGS} distclean
+	${MAKE} -C ${U-BOOT_DIR} ${CROSS_COMPILE_FLAGS} nslu2_config
+	${MAKE} -C ${U-BOOT_DIR} ${CROSS_COMPILE_FLAGS} all
 ifeq (${ENDIAN},b)
 	devio '<<'${U-BOOT_DIR}/u-boot.bin >$@ 'cp$$'
 else
