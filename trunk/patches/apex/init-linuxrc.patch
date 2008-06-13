@@ -1,0 +1,132 @@
+Index: apex-1.5.14/src/mach-ixp42x/slugos-dsmg600-arm_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/slugos-dsmg600-arm_config	2008-06-13 13:27:14.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/slugos-dsmg600-arm_config	2008-06-13 13:27:29.000000000 +0930
+@@ -145,7 +145,7 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+ CONFIG_RELOCATE_SIMPLE=y
+Index: apex-1.5.14/src/mach-ixp42x/slugos-dsmg600-armeb_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-06-13 13:27:14.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/slugos-dsmg600-armeb_config	2008-06-13 13:27:37.000000000 +0930
+@@ -145,7 +145,7 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+ CONFIG_RELOCATE_SIMPLE=y
+Index: apex-1.5.14/src/mach-ixp42x/slugos-fsg3-arm_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/slugos-fsg3-arm_config	2008-06-13 13:27:14.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/slugos-fsg3-arm_config	2008-06-13 13:27:51.000000000 +0930
+@@ -148,9 +148,9 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/sda1 rootdelay=10 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/sda1 rootdelay=10 console=ttyS0,115200 init=/linuxrc"
+ CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
+-CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/sda2 rootdelay=10 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/sda2 rootdelay=10 console=ttyS0,115200 init=/linuxrc"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ # CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+Index: apex-1.5.14/src/mach-ixp42x/slugos-nas100d-arm_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/slugos-nas100d-arm_config	2008-06-13 13:27:15.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/slugos-nas100d-arm_config	2008-06-13 13:28:22.000000000 +0930
+@@ -145,7 +145,7 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+ CONFIG_RELOCATE_SIMPLE=y
+Index: apex-1.5.14/src/mach-ixp42x/slugos-nas100d-armeb_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-06-13 13:27:15.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/slugos-nas100d-armeb_config	2008-06-13 13:28:26.000000000 +0930
+@@ -145,7 +145,7 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock2 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+ CONFIG_RELOCATE_SIMPLE=y
+Index: apex-1.5.14/src/mach-ixp42x/slugos-nslu2-16mb-arm_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-06-13 13:27:15.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/slugos-nslu2-16mb-arm_config	2008-06-13 13:28:33.000000000 +0930
+@@ -150,9 +150,9 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
+-CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ # CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+Index: apex-1.5.14/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-06-13 13:27:15.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/slugos-nslu2-16mb-armeb_config	2008-06-13 13:28:40.000000000 +0930
+@@ -150,9 +150,9 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
+-CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ # CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+Index: apex-1.5.14/src/mach-ixp42x/slugos-nslu2-arm_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/slugos-nslu2-arm_config	2008-06-13 13:27:15.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/slugos-nslu2-arm_config	2008-06-13 13:28:46.000000000 +0930
+@@ -150,9 +150,9 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
+-CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ # CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+Index: apex-1.5.14/src/mach-ixp42x/slugos-nslu2-armeb_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-06-13 13:27:15.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/slugos-nslu2-armeb_config	2008-06-13 13:28:53.000000000 +0930
+@@ -150,9 +150,9 @@
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
+-CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/mtdblock4 rootfstype=jffs2 console=ttyS0,115200 init=/linuxrc"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ # CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
