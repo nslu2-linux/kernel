@@ -38,7 +38,7 @@ COMMITID := $(shell sed -e 's/.*-\(v[0-9.]*.*\)/\1/' patches/${PATCHVER}/KERNEL)
 
 U-BOOT_COMMIT = v1.3.2
 
-APEX_REVISION = 1.5.13
+APEX_REVISION = 1.5.14
 APEX_CONFIG = slugos
 
 ARM_KERNEL_SHIM_REVISION = 1.5
