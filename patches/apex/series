@@ -1,2 +1,5 @@
 init-linuxrc.patch
 debian-ramdisk-size.patch
+debian-fisdir-offset.patch
+debian-no-swap.patch
+debian-fsg-ramdisk-size.patch
