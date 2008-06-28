@@ -1,0 +1,52 @@
+Index: apex-1.5.14/src/mach-ixp42x/debian-fsg3-arm_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/debian-fsg3-arm_config	2008-06-29 08:04:45.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/debian-fsg3-arm_config	2008-06-29 08:05:22.000000000 +0930
+@@ -149,17 +149,17 @@
+ CONFIG_ENV_REGION_KERNEL="fis://kernel"
+ CONFIG_ENV_REGION_KERNEL_ALT_P=y
+ CONFIG_ENV_REGION_KERNEL_ALT="fis://kernel"
+-CONFIG_ENV_REGION_RAMDISK="fis://rootfs"
++CONFIG_ENV_REGION_RAMDISK="fis://ramdisk"
+ CONFIG_ENV_REGION_RAMDISK_ALT_P=y
+-CONFIG_ENV_REGION_RAMDISK_ALT="fis://rootfs"
++CONFIG_ENV_REGION_RAMDISK_ALT="fis://ramdisk"
+ 
+ #
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="console=ttyS0,115200 noirqdebug"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/sda1 console=ttyS0,115200 noirqdebug"
+ CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
+-CONFIG_ENV_DEFAULT_CMDLINE_ALT="console=ttyS0,115200 noirqdebug"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/sda1 console=ttyS0,115200 noirqdebug"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ # CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
+Index: apex-1.5.14/src/mach-ixp42x/debian-fsg3-armeb_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/debian-fsg3-armeb_config	2008-06-29 08:04:45.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/debian-fsg3-armeb_config	2008-06-29 08:05:46.000000000 +0930
+@@ -149,17 +149,17 @@
+ CONFIG_ENV_REGION_KERNEL="fis://kernel"
+ CONFIG_ENV_REGION_KERNEL_ALT_P=y
+ CONFIG_ENV_REGION_KERNEL_ALT="fis://kernel"
+-CONFIG_ENV_REGION_RAMDISK="fis://rootfs"
++CONFIG_ENV_REGION_RAMDISK="fis://ramdisk"
+ CONFIG_ENV_REGION_RAMDISK_ALT_P=y
+-CONFIG_ENV_REGION_RAMDISK_ALT="fis://rootfs"
++CONFIG_ENV_REGION_RAMDISK_ALT="fis://ramdisk"
+ 
+ #
+ #    Overrides
+ #
+ CONFIG_ENV_DEFAULT_CMDLINE_OVERRIDE=y
+-CONFIG_ENV_DEFAULT_CMDLINE="console=ttyS0,115200 noirqdebug"
++CONFIG_ENV_DEFAULT_CMDLINE="root=/dev/sda1 console=ttyS0,115200 noirqdebug"
+ CONFIG_ENV_DEFAULT_CMDLINE_ALT_P=y
+-CONFIG_ENV_DEFAULT_CMDLINE_ALT="console=ttyS0,115200 noirqdebug"
++CONFIG_ENV_DEFAULT_CMDLINE_ALT="root=/dev/sda1 console=ttyS0,115200 noirqdebug"
+ # CONFIG_ENV_DEFAULT_STARTUP_OVERRIDE is not set
+ # CONFIG_ENV_DEFAULT_STARTUP_ALT_P is not set
+ CONFIG_USES_NOR_BOOTFLASH=y
