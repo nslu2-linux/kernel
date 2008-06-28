@@ -1,0 +1,16 @@
+Index: apex-1.5.14/src/mach-ixp42x/debian-fsg3-arm_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/debian-fsg3-arm_config	2008-06-28 14:54:49.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/debian-fsg3-arm_config	2008-06-28 14:55:21.000000000 +0930
+@@ -137,9 +137,9 @@
+ CONFIG_AUTOBOOT=y
+ CONFIG_AUTOBOOT_DELAY=10
+ CONFIG_ENV_STARTUP_KERNEL_COPY=y
+-CONFIG_ENV_REGION_KERNEL_SWAP=y
++# CONFIG_ENV_REGION_KERNEL_SWAP is not set
+ CONFIG_ENV_STARTUP_RAMDISK_COPY=y
+-CONFIG_ENV_REGION_RAMDISK_SWAP=y
++# CONFIG_ENV_REGION_RAMDISK_SWAP is not set
+ CONFIG_ENV_STARTUP_PREFIX_P=y
+ CONFIG_ENV_STARTUP_PREFIX="sdram-init; memscan -u 0+256m"
+ 

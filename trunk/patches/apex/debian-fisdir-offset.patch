@@ -1,0 +1,26 @@
+Index: apex-1.5.14/src/mach-ixp42x/debian-fsg3-arm_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/debian-fsg3-arm_config	2008-06-28 14:44:54.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/debian-fsg3-arm_config	2008-06-28 14:45:11.000000000 +0930
+@@ -101,7 +101,7 @@
+ # CONFIG_DRIVER_EXT2 is not set
+ # CONFIG_DRIVER_JFFS2 is not set
+ CONFIG_DRIVER_FIS=y
+-CONFIG_DRIVER_FIS_BLOCKDEVICE="nor:0xfe0000+4k"
++CONFIG_DRIVER_FIS_BLOCKDEVICE="nor:0x3e0000+4k"
+ CONFIG_DRIVER_NOR_CFI=y
+ # CONFIG_DRIVER_NOR_CFI_NO_BUFFERED is not set
+ # CONFIG_DRIVER_NOR_CFI_USE_CACHE is not set
+Index: apex-1.5.14/src/mach-ixp42x/debian-fsg3-armeb_config
+===================================================================
+--- apex-1.5.14.orig/src/mach-ixp42x/debian-fsg3-armeb_config	2008-06-28 14:44:58.000000000 +0930
++++ apex-1.5.14/src/mach-ixp42x/debian-fsg3-armeb_config	2008-06-28 14:45:17.000000000 +0930
+@@ -101,7 +101,7 @@
+ # CONFIG_DRIVER_EXT2 is not set
+ # CONFIG_DRIVER_JFFS2 is not set
+ CONFIG_DRIVER_FIS=y
+-CONFIG_DRIVER_FIS_BLOCKDEVICE="nor:0xfe0000+4k"
++CONFIG_DRIVER_FIS_BLOCKDEVICE="nor:0xee0000+4k"
+ CONFIG_DRIVER_NOR_CFI=y
+ # CONFIG_DRIVER_NOR_CFI_NO_BUFFERED is not set
+ # CONFIG_DRIVER_NOR_CFI_USE_CACHE is not set
