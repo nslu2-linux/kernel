@@ -19,16 +19,16 @@ ENDIAN = b
 MAJORVER = 2.6
 
 # Previous Stable
-# BASEVER  = 2.6.24.7
-# PATCHVER = 2.6.24
+# BASEVER  = 2.6.25.6
+# PATCHVER = 2.6.25
 
 # Latest Stable
-BASEVER  = 2.6.25.6
-PATCHVER = 2.6.25
+BASEVER  = 2.6.26
+PATCHVER = 2.6.26
 
 # Latest Development
-# BASEVER  = 2.6.25
-# PATCHVER = 2.6.26
+# BASEVER  = 2.6.26
+# PATCHVER = 2.6.27
 
 # CROSS_COMPILE = /home/slug/angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-
 
@@ -231,7 +231,7 @@ linux-${SNAPSHOT}-${ARCH}/.config: \
 	  git clean -d -x )
 	( cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
-	  quilt push -a )
+	  [ ! -e patches/series ] || quilt push -a )
 else
 ifeq (${SNAPSHOT},${BASEVER})
 linux-${SNAPSHOT}-${ARCH}/.config: \
@@ -242,7 +242,7 @@ linux-${SNAPSHOT}-${ARCH}/.config: \
 	  mv linux-${BASEVER} linux-${SNAPSHOT}-${ARCH} ; \
 	  cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
-	  quilt push -a )
+	  [ ! -e patches/series ] || quilt push -a )
 else
 ifeq (${REVISION},${SNAPSHOT})
 linux-${SNAPSHOT}-${ARCH}/.config: \
@@ -256,7 +256,7 @@ linux-${SNAPSHOT}-${ARCH}/.config: \
 	  patch -d linux-${SNAPSHOT}-${ARCH} -p1 ; \
 	  cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
-	  quilt push -a )
+	  [ ! -e patches/series ] || quilt push -a )
 else
 ifeq (${REVISION},${BASEVER})
 linux-${SNAPSHOT}-${ARCH}/.config: \
@@ -270,7 +270,7 @@ linux-${SNAPSHOT}-${ARCH}/.config: \
 	  patch -d linux-${SNAPSHOT}-${ARCH} -p1 ; \
 	  cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
-	  quilt push -a )
+	  [ ! -e patches/series ] || quilt push -a )
 else
 linux-${SNAPSHOT}-${ARCH}/.config: \
 		downloads/linux-${BASEVER}.tar.bz2 \
@@ -284,7 +284,7 @@ linux-${SNAPSHOT}-${ARCH}/.config: \
 	  patch -d linux-${SNAPSHOT}-${ARCH} -p1 ; \
 	  cd linux-${SNAPSHOT}-${ARCH} ; \
 	  ln -s ../patches/${PATCHVER} patches ; \
-	  quilt push -a )
+	  [ ! -e patches/series ] || quilt push -a )
 endif
 endif
 endif
