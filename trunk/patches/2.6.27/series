@@ -1,0 +1,2 @@
+# Fix kernel to accept an empty ATAG_CORE tag (Apex and kexec)
+atag_empty_core.patch
