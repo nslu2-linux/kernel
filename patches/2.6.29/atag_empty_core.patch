@@ -1,0 +1,37 @@
+The content of the ATAG_CORE tag is optional, according to the
+specification.  The existing code that validates the atag list
+pointed to by r2 at boot does not accept an empty ATAG_CORE tag.
+
+This patch fixes the test so that the empty tag is accepted as
+well as the complete tag.  (This corrects issues observed with
+the Apex bootloader, as well as with the kexec mechanism.)
+
+Signed-off-by: Mike Westerhof <mwester@dls.net>
+--
+PATCH FOLLOWS
+KernelVersion: 2.6.27
+
+diff -Naur linux.orig/arch/arm/kernel/head-common.S linux/arch/arm/kernel/head-common.S
+--- old/arch/arm/kernel/head-common.S	2008-12-08 00:18:31.000000000 -0600
++++ new/arch/arm/kernel/head-common.S	2008-12-08 00:20:49.000000000 -0600
+@@ -12,6 +12,7 @@
+  */
+ 
+ #define ATAG_CORE 0x54410001
++#define ATAG_CORE_EMPTY_SIZE ((2*4) >> 2)
+ #define ATAG_CORE_SIZE ((2*4 + 3*4) >> 2)
+ 
+ 	.type	__switch_data, %object
+@@ -247,8 +248,11 @@ __vet_atags:
+ 
+ 	ldr	r5, [r2, #0]			@ is first tag ATAG_CORE?
+ 	subs	r5, r5, #ATAG_CORE_SIZE
++	beq	2f
++	ldr	r5, [r2, #0]
++	subs	r5, r5, #ATAG_CORE_EMPTY_SIZE
+ 	bne	1f
+-	ldr	r5, [r2, #4]
++2:	ldr	r5, [r2, #4]
+ 	ldr	r6, =ATAG_CORE
+ 	cmp	r5, r6
+ 	bne	1f
