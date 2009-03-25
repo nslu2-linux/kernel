@@ -3,3 +3,6 @@ atag_empty_core.patch
 
 # Fix hangs and oopses on the DSM-G600A
 velocity-init.patch
+
+# Fix problem where the PHY is not detected, resulting in panic on boot
+ixp4xx-net-reset-phy.patch
