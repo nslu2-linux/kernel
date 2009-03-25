@@ -1,0 +1,74 @@
+# With the switch to PHYLIB, the PHY on the NSLU2 is not being
+# explicitly reset on boot, resulting in the PHY becoming non-responsive
+# to probing upon a kexec boot.  A workaround might be to leave the
+# network running when doing the kexec boot, but this really awful,
+# horrible patch is a suitable alternative for experimentation with
+# the 2.6.29 kernel.
+#
+# Ideally, we need to implement the reset callback, and use the .phy
+# structure member to reset the phy associated with the network interfaces.
+#
+# This current patch just hard-codes the right stuff for NSLU2.
+#
+# Mike Westerhof
+#
+--- old/drivers/net/arm/ixp4xx_eth.c	2009-03-24 22:02:53.000000000 -0500
++++ new/drivers/net/arm/ixp4xx_eth.c	2009-03-24 22:11:41.000000000 -0500
+@@ -322,12 +322,47 @@ static int ixp4xx_mdio_write(struct mii_
+ 	ret = ixp4xx_mdio_cmd(bus, phy_id, location, 1, val);
+ 	spin_unlock_irqrestore(&mdio_lock, flags);
+ #if DEBUG_MDIO
+-	printk(KERN_DEBUG "%s #%i: MII read [%i] <- 0x%X, err = %i\n",
++	printk(KERN_DEBUG "%s #%i: MII write [%i] <- 0x%X, err = %i\n",
+ 	       bus->name, phy_id, location, val, ret);
+ #endif
+ 	return ret;
+ }
+ 
++static int ixp4xx_mdio_reset(int phy_id)
++{
++	unsigned long flags;
++	int location = MII_BMCR;
++	u16 cmd = BMCR_RESET;
++	int cycles = 0;
++	int ret = 0;
++
++	spin_lock_irqsave(&mdio_lock, flags);
++
++	__raw_writel(cmd & 0xFF, &mdio_regs->mdio_command[0]);
++	__raw_writel(cmd >> 8, &mdio_regs->mdio_command[1]);
++
++	__raw_writel(((phy_id << 5) | location) & 0xFF,
++		     &mdio_regs->mdio_command[2]);
++	__raw_writel((phy_id >> 3) | (1 << 2) | 0x80 /* GO */,
++		     &mdio_regs->mdio_command[3]);
++
++	while ((cycles < MAX_MDIO_RETRIES) &&
++	       (__raw_readl(&mdio_regs->mdio_command[3]) & 0x80)) {
++		udelay(1);
++		cycles++;
++	}
++
++	if (cycles == MAX_MDIO_RETRIES) {
++		printk(KERN_ERR "IXP4xx MII Bus reset failed\n");
++		ret = -1;
++	} else {
++		printk(KERN_ERR "IXP4xx MII Bus reset.\n");
++	}
++
++	spin_unlock_irqrestore(&mdio_lock, flags);
++	return ret;
++}
++
+ static int ixp4xx_mdio_register(void)
+ {
+ 	int err;
+@@ -345,6 +380,8 @@ static int ixp4xx_mdio_register(void)
+ 	mdio_bus->write = &ixp4xx_mdio_write;
+ 	strcpy(mdio_bus->id, "0");
+ 
++	err = ixp4xx_mdio_reset(1);  /* Hard-coded to the NSLU2 PHY number */
++
+ 	if ((err = mdiobus_register(mdio_bus)))
+ 		mdiobus_free(mdio_bus);
+ 	return err;
