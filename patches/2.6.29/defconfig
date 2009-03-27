@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Linux kernel version: 2.6.29-rc8
-# Tue Mar 24 22:03:41 2009
+# Linux kernel version: 2.6.29
+# Thu Mar 26 23:11:00 2009
 #
 CONFIG_ARM=y
 CONFIG_SYS_SUPPORTS_APM_EMULATION=y
@@ -942,6 +942,7 @@ CONFIG_IXP4XX_ETH=y
 # CONFIG_DM9000 is not set
 # CONFIG_SMC911X is not set
 # CONFIG_SMSC911X is not set
+# CONFIG_DNET is not set
 # CONFIG_NET_TULIP is not set
 # CONFIG_HP100 is not set
 # CONFIG_IBM_NEW_EMAC_ZMII is not set
@@ -1011,6 +1012,7 @@ CONFIG_CHELSIO_T3_DEPENDS=y
 # CONFIG_BNX2X is not set
 # CONFIG_QLGE is not set
 # CONFIG_SFC is not set
+# CONFIG_BE2NET is not set
 # CONFIG_TR is not set
 
 #

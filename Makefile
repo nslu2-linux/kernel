@@ -27,7 +27,7 @@ BASEVER  = 2.6.28.1
 PATCHVER = 2.6.28
 
 # Latest Development
-# BASEVER  = 2.6.28
+# BASEVER  = 2.6.29
 # PATCHVER = 2.6.29
 
 # CROSS_COMPILE = /home/slug/angstrom/tmp/cross/bin/${ARCH}-angstrom-linux-gnueabi-

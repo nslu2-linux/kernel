@@ -5,4 +5,5 @@ atag_empty_core.patch
 velocity-init.patch
 
 # Fix problem where the PHY is not detected, resulting in panic on boot
-ixp4xx-net-reset-phy.patch
+# This one disabled until it gets cleaned up to run on all ixp4xx devices
+#ixp4xx-net-reset-phy.patch
