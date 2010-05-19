@@ -3,3 +3,6 @@ atag_empty_core.patch
 
 # Fix hangs and oopses on the DSM-G600A
 velocity-init.patch
+
+# Fix a naming conflict for recent buildhosts (build problem, not kernel issue)
+rename_getline_to_something_else.patch
