@@ -1,0 +1,18 @@
+--- old/drivers/net/via-velocity.c	2011-02-06 11:05:28.176912613 -0600
++++ new/drivers/net/via-velocity.c	2011-02-06 10:02:09.402037476 -0600
+@@ -1383,6 +1383,7 @@
+ 		/*
+ 		 *	Init CAM filter
+ 		 */
++		mdelay(5);  /* fixes oopses and hangs on DSM-G600 */
+ 		velocity_init_cam_filter(vptr);
+ 
+ 		/*
+@@ -2774,6 +2775,7 @@
+ 			VELOCITY_FULL_DRV_NAM, VELOCITY_VERSION);
+ 		printk(KERN_INFO "Copyright (c) 2002, 2003 VIA Networking Technologies, Inc.\n");
+ 		printk(KERN_INFO "Copyright (c) 2004 Red Hat Inc.\n");
++		printk(KERN_INFO "(DSM-G600 patch version of 12-Dec-2008, *unstable*)\n");
+ 		first = 0;
+ 	}
+ 

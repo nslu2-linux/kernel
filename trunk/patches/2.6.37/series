@@ -1,0 +1,2 @@
+# Fix hangs and oopses on the DSM-G600A
+velocity-init.patch
